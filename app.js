@@ -242,14 +242,16 @@ function renderAlphabetView() {
     card.className = 'alpha-card';
     card.innerHTML = `
       <div class="alpha-letter">${item.char} ${item.lower}</div>
+      <div style="font-size: 13px; font-weight: 800; color: #15803d; background: #dcfce7; border-radius: 10px; padding: 2px 8px; display: inline-block; margin: 2px 0 6px 0;">Phát âm: "${item.phonetic}"</div>
       <div class="alpha-icon">${item.icon}</div>
       <div class="alpha-word">${item.word}</div>
       <div class="alpha-ja">${item.ja}</div>
     `;
     card.addEventListener('click', () => {
       window.soundMgr.playClick();
-      window.soundMgr.speak(`${item.char}. ${item.spell}`);
-      showToast(`Chữ cái ${item.char}: ${item.word}`);
+      // Đọc đúng chuẩn ngữ âm của chữ cái theo yêu cầu: A -> "a", Đ -> "đờ", H -> "hờ", B -> "bờ"...
+      window.soundMgr.speak(item.phonetic);
+      showToast(`Chữ ${item.char} ${item.lower}: đọc là "${item.phonetic}"`);
     });
     alphaGrid.appendChild(card);
   });
