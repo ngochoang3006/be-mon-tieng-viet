@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bé Mon Thám Hiểm Tiếng Việt - Học Đọc & Đánh Vần</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Google Fonts chuẩn trẻ thơ -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Hiệu ứng mây bay nền trời xanh mây trắng -->
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+
+  <!-- Thanh điều hướng trên cùng (Top Nav Bar) -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <button class="home-btn" onclick="switchMode('vocab')">
+        <span>🏠</span>
+        <span>Trang chủ</span>
+      </button>
+
+      <!-- Các tab chế độ như hình 1 & 2 -->
+      <nav class="mode-pills">
+        <button class="mode-pill" data-mode="alphabet">
+          <span>🔠</span>
+          <span>Bảng chữ cái ABC</span>
+        </button>
+        <button class="mode-pill active" data-mode="vocab">
+          <span>📖</span>
+          <span>Học từ mới</span>
+        </button>
+        <button class="mode-pill" data-mode="phonics">
+          <span>🔤</span>
+          <span>Tập đánh vần</span>
+        </button>
+        <button class="mode-pill" data-mode="game">
+          <span>🧩</span>
+          <span>Ghép chữ vui</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="nav-right">
+      <div class="mon-avatar-pill">
+        <span>🌟</span>
+        <span>Bé Mon (6 tuổi) 🇯🇵</span>
+      </div>
+      <button class="control-pill" id="btnAccent">
+        <span>🗣️</span>
+        <span>Chuẩn Hà Nội</span>
+      </button>
+      <button class="control-pill" id="btnSpeed">
+        <span>⚡</span>
+        <span>Tốc độ: Chuẩn</span>
+      </button>
+      <button class="control-pill" id="btnMute">
+        <span>🔊</span>
+        <span>Âm thanh</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Vùng nội dung chính -->
+  <main class="main-content">
+    <!-- Tiêu đề lớn: Bản Đồ Thám Hiểm -->
+    <section class="expedition-header">
+      <div class="expedition-title-badge">
+        <span class="compass-icon">🧭</span>
+        <span>Bản Đồ Thám Hiểm</span>
+      </div>
+      <div class="expedition-subtitle">
+        Bé Mon hãy chọn Bài học và chạm vào các trạm từ vựng để phiêu lưu nhé!
+      </div>
+    </section>
+
+    <!-- Khung Lộ Trình Học Tập (Roadmap Header) -->
+    <section class="roadmap-box" id="roadmapBox">
+      <div class="roadmap-top-row">
+        <div class="roadmap-tag-group">
+          <span class="roadmap-label" id="roadmapTag">LỘ TRÌNH HỌC TẬP</span>
+          <span class="roadmap-current-title" id="roadmapTitle">Bài 1: Từ 1 tiếng, 2 chữ cái – Nhóm 1 – Rất dễ</span>
+        </div>
+        <div class="roadmap-tools">
+          <span class="tool-chip">🪄 Tự do chọn bài: BẬT</span>
+          <span class="tool-chip" onclick="currentLessonIdx = 0; renderCurrentView();">🔄 Đặt lại</span>
+        </div>
+      </div>
+
+      <!-- Danh sách trạm bài học (Tabs) -->
+      <div class="lesson-tabs-track" id="lessonTabsTrack">
+        <!-- Render động từ JS -->
+      </div>
+
+      <!-- Nút Thử thách ghép hình nổi bật ở giữa -->
+      <div class="challenge-btn-wrapper">
+        <button class="challenge-btn" id="bigChallengeBtn">
+          <span>🎯</span>
+          <span id="bigChallengeBtnText">Thử thách ghép hình Bài 1 (10 câu)</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Khu vực hiển thị thẻ từ vựng (Chế độ Học từ mới & Tập đánh vần) -->
+    <section class="cards-grid" id="cardsContainer">
+      <!-- Thẻ từ render từ app.js -->
+    </section>
+
+    <!-- Khu vực Bảng chữ cái ABC & 5 Dấu Thanh (Chế độ Alphabet) -->
+    <section id="alphabetContainer" style="display: none;">
+      <div style="background: #ffffff; border-radius: 28px; padding: 24px; box-shadow: 0 8px 30px rgba(0, 75, 140, 0.12); margin-bottom: 24px;">
+        <h3 style="font-size: 22px; font-weight: 900; color: #0284c7; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+          <span>🎨</span> 29 Chữ Cái Tiếng Việt (Bé chạm vào chữ để nghe đọc nhé)
+        </h3>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Dành riêng cho bé ở Nhật làm quen với các chữ cái đặc trưng: Ă, Â, Đ, Ê, Ô, Ơ, Ư</p>
+        <div class="alphabet-grid" id="alphabetGrid"></div>
+      </div>
+
+      <!-- 5 Dấu Thanh Tiếng Việt -->
+      <div class="tones-section">
+        <div class="tones-title">
+          <span>🎵</span> 5 Dấu Thanh Tiếng Việt (Thanh điệu kỳ diệu)
+        </div>
+        <p style="color: #64748b; font-size: 14px; margin-bottom: 16px;">Tiếng Việt có dấu thanh giúp từ có giai điệu như hát!</p>
+        <div class="tones-grid" id="tonesGrid"></div>
+      </div>
+    </section>
+
+    <!-- Khu vực Mini Game Ghép Chữ & Thử Thách (Chế độ Game) -->
+    <section id="gameViewContainer" style="display: none;">
+      <div class="game-view">
+        <div class="game-score-row">
+          <span class="game-progress-text" id="gameProgressText">Câu 1 / 10</span>
+          <span class="game-stars" id="gameStarsCount">⭐ 0 sao</span>
+        </div>
+
+        <div class="game-card-target">
+          <div class="game-target-icon" id="gameTargetIcon">🐮</div>
+          <div class="game-target-hint" id="gameTargetHint">Ghép chữ: "bò" (Con bò)</div>
+          <div class="game-target-ja" id="gameTargetJa">🇯🇵 うし (Ushi)</div>
+        </div>
+
+        <!-- Các ô chờ bé điền chữ -->
+        <div class="puzzle-slots-container" id="puzzleSlots"></div>
+
+        <!-- Các nút chữ cái để bé chọn -->
+        <div class="options-letters-row" id="optionsLettersRow"></div>
+
+        <div class="game-controls-row">
+          <button class="btn-hear-hint" id="btnHearHint">
+            <span>🔊</span> Nghe lại từ
+          </button>
+          <button class="btn-reset-puzzle" id="btnResetPuzzle">
+            <span>🔄</span> Xóa xếp lại
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal Chi Tiết Từ Vựng & Đánh Vần Khi Chạm Thẻ -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="modalCloseBtn">✕</button>
+      
+      <div class="modal-icon" id="modalIcon">👨</div>
+      <div class="modal-word" id="modalWord">ba</div>
+      
+      <!-- Phân tích vần -->
+      <div class="modal-breakdown-box" id="modalBreakdownBox">
+        <div class="breakdown-item">b</div>
+        <div class="breakdown-item">a</div>
+      </div>
+
+      <div class="modal-ja-box" id="modalJaText">🇯🇵 お父さん (Otousan)</div>
+      <div class="modal-example" id="modalExample">Ví dụ: "Ba yêu bé Mon"</div>
+
+      <div class="modal-btn-row">
+        <button class="modal-act-btn btn-sound-main" id="modalBtnSpeakWord">
+          <span>🔊</span> Nghe đọc
+        </button>
+        <button class="modal-act-btn btn-sound-spell" id="modalBtnSpell">
+          <span>🔤</span> Đánh vần chậm
+        </button>
+        <button class="modal-act-btn btn-drawing" id="modalBtnToggleDrawing">
+          <span>✍️</span> Tập viết nét
+        </button>
+      </div>
+
+      <!-- Khung vẽ Canvas cho bé tập đồ nét chữ -->
+      <div class="canvas-container" id="canvasDrawingBox">
+        <p style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 6px;">Bé Mon hãy dùng ngón tay hoặc chuột để tô theo nét chữ nhé:</p>
+        <canvas id="drawingCanvas"></canvas>
+        <div class="canvas-controls">
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <span style="font-size: 12px; font-weight: 700; color: #475569;">Màu cọ:</span>
+            <span class="color-picker-dot" data-color="#0284c7" style="background: #0284c7;"></span>
+            <span class="color-picker-dot" data-color="#f43f5e" style="background: #f43f5e;"></span>
+            <span class="color-picker-dot" data-color="#10b981" style="background: #10b981;"></span>
+            <span class="color-picker-dot" data-color="#f59e0b" style="background: #f59e0b;"></span>
+          </div>
+          <button class="tool-chip" id="btnCanvasClear">🧹 Xóa vẽ lại</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Thông báo Toast dưới đáy màn hình (như ảnh 2) -->
+  <div class="toast-notice" id="toastNotice">
+    Đã chuyển sang: 🔤 Tập ĐÁNH VẦN!
+  </div>
+
+  <!-- Canvas Pháo hoa Confetti chúc mừng -->
+  <canvas id="confettiCanvas"></canvas>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="speech.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
