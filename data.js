@@ -34,12 +34,12 @@ const ALPHABET_DATA = [
 ];
 
 const TONES_DATA = [
-  { name: 'Thanh Ngang (Không dấu)', sign: '—', example: 'ba (bố)', audioText: 'ba, thanh ngang', desc: 'Giọng đọc đều, bằng phẳng' },
-  { name: 'Dấu Sắc', sign: '´', example: 'bá, cá, bé', audioText: 'Dấu sắc, cá, bé', desc: 'Giọng lên cao vút' },
-  { name: 'Dấu Huyền', sign: '`', example: 'bà, bò, gà', audioText: 'Dấu huyền, bà, bò, gà', desc: 'Giọng hạ thấp êm đềm' },
-  { name: 'Dấu Hỏi', sign: '?', example: 'bả, hổ, thỏ', audioText: 'Dấu hỏi, hổ, thỏ', desc: 'Giọng hơi lượn sóng xuống rồi lên' },
-  { name: 'Dấu Ngã', sign: '~', example: 'bã, sữa, vẽ', audioText: 'Dấu ngã, sữa, vẽ', desc: 'Giọng ngắt rồi lên cao' },
-  { name: 'Dấu Nặng', sign: '.', example: 'bạ, mẹ, nạ', audioText: 'Dấu nặng, mẹ, vẹt', desc: 'Giọng đọc gọn, dứt khoát' }
+  { key: 'ngang', name: 'Thanh Ngang (Không dấu)', sign: '—', example: 'ba (bố)', audioText: 'Thanh ngang. ba', desc: 'Giọng đọc đều, bằng phẳng' },
+  { key: 'sac', name: 'Dấu Sắc', sign: '´', example: 'bá, cá, bé', audioText: 'Dấu sắc. cá, bé', desc: 'Giọng lên cao vút' },
+  { key: 'huyen', name: 'Dấu Huyền', sign: '`', example: 'bà, bò, gà', audioText: 'Dấu huyền. bà, bò, gà', desc: 'Giọng hạ thấp êm đềm' },
+  { key: 'hoi', name: 'Dấu Hỏi', sign: '?', example: 'bả, hổ, thỏ', audioText: 'Dấu hỏi. hổ, thỏ', desc: 'Giọng lượn sóng xuống rồi lên' },
+  { key: 'nga', name: 'Dấu Ngã', sign: '~', example: 'bã, sữa, vẽ', audioText: 'Dấu ngã. sữa, vẽ', desc: 'Giọng ngắt rồi lên cao' },
+  { key: 'nang', name: 'Dấu Nặng', sign: '.', example: 'bạ, mẹ, vẹt', audioText: 'Dấu nặng. mẹ, vẹt', desc: 'Giọng đọc gọn, dứt khoát' }
 ];
 
 const VOCAB_LESSONS = [

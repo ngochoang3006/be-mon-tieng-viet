@@ -31,18 +31,22 @@ function initEventListeners() {
     });
   });
 
-  // Tùy chỉnh giọng đọc & tốc độ
-  const btnAccent = document.getElementById('btnAccent');
-  if (btnAccent) {
-    btnAccent.addEventListener('click', () => {
-      if (window.soundMgr.accent === 'hn') {
-        window.soundMgr.setAccent('sg');
-        btnAccent.innerHTML = '🗣️ Chuẩn Sài Gòn';
-        showToast('Đã đổi sang giọng Chuẩn Sài Gòn');
+  // Tùy chỉnh giọng đọc Người thật: Nữ (Cô giáo) hoặc Nam (Ba)
+  const btnVoiceGender = document.getElementById('btnVoiceGender');
+  if (btnVoiceGender) {
+    btnVoiceGender.addEventListener('click', () => {
+      if (window.soundMgr.gender === 'female') {
+        window.soundMgr.setGender('male');
+        btnVoiceGender.innerHTML = '<span>👨</span> <span>Giọng: Nam (Ba)</span>';
+        showToast('Đã đổi sang Giọng Nam (Nam Minh) người thật ấm áp!');
+        window.soundMgr.playClick();
+        window.soundMgr.speakWord('bố');
       } else {
-        window.soundMgr.setAccent('hn');
-        btnAccent.innerHTML = '🗣️ Chuẩn Hà Nội';
-        showToast('Đã đổi sang giọng Chuẩn Hà Nội');
+        window.soundMgr.setGender('female');
+        btnVoiceGender.innerHTML = '<span>👩</span> <span>Giọng: Nữ (Cô giáo)</span>';
+        showToast('Đã đổi sang Giọng Nữ (Hoài My) người thật truyền cảm!');
+        window.soundMgr.playClick();
+        window.soundMgr.speakWord('mẹ');
       }
     });
   }
@@ -50,13 +54,13 @@ function initEventListeners() {
   const btnSpeed = document.getElementById('btnSpeed');
   if (btnSpeed) {
     btnSpeed.addEventListener('click', () => {
-      if (window.soundMgr.speed > 0.8) {
+      if (window.soundMgr.speedRate > 0.9) {
         window.soundMgr.setSpeed('slow');
-        btnSpeed.innerHTML = '🐢 Tốc độ: Chậm';
+        btnSpeed.innerHTML = '<span>🐢</span> <span>Tốc độ: Chậm</span>';
         showToast('Đã chuyển sang Tốc độ Đọc Chậm cho Bé');
       } else {
         window.soundMgr.setSpeed('normal');
-        btnSpeed.innerHTML = '⚡ Tốc độ: Chuẩn';
+        btnSpeed.innerHTML = '<span>⚡</span> <span>Tốc độ: Chuẩn</span>';
         showToast('Đã chuyển sang Tốc độ Chuẩn');
       }
     });
@@ -91,14 +95,14 @@ function initEventListeners() {
   document.getElementById('modalBtnSpeakWord').addEventListener('click', () => {
     if (currentWordModal) {
       window.soundMgr.playClick();
-      window.soundMgr.speak(currentWordModal.word);
+      window.soundMgr.speakWord(currentWordModal.word);
     }
   });
 
   document.getElementById('modalBtnSpell').addEventListener('click', () => {
     if (currentWordModal) {
       window.soundMgr.playClick();
-      window.soundMgr.spellWord(currentWordModal.spellText || currentWordModal.breakdown, currentWordModal.word);
+      window.soundMgr.spellWord(currentWordModal.word, currentWordModal.spellText);
     }
   });
 
@@ -249,9 +253,9 @@ function renderAlphabetView() {
     `;
     card.addEventListener('click', () => {
       window.soundMgr.playClick();
-      // Đọc đúng chuẩn ngữ âm của chữ cái theo yêu cầu: A -> "a", Đ -> "đờ", H -> "hờ", B -> "bờ"...
-      window.soundMgr.speak(item.phonetic);
-      showToast(`Chữ ${item.char} ${item.lower}: đọc là "${item.phonetic}"`);
+      // Đọc đúng chuẩn ngữ âm của chữ cái bằng audio người thật: A -> "a", Đ -> "đờ", H -> "hờ", B -> "bờ"...
+      window.soundMgr.speakAlphabet(item.lower, item.phonetic);
+      showToast(`Chữ ${item.char} ${item.lower}: phát âm là "${item.phonetic}"`);
     });
     alphaGrid.appendChild(card);
   });
@@ -272,7 +276,7 @@ function renderAlphabetView() {
     `;
     tCard.addEventListener('click', () => {
       window.soundMgr.playClick();
-      window.soundMgr.speak(tone.audioText);
+      window.soundMgr.speakTone(tone.key, tone.audioText);
     });
     tonesGrid.appendChild(tCard);
   });
@@ -282,7 +286,7 @@ function renderAlphabetView() {
 function openModal(wordObj) {
   currentWordModal = wordObj;
   window.soundMgr.playClick();
-  window.soundMgr.speak(wordObj.word);
+  window.soundMgr.speakWord(wordObj.word);
 
   document.getElementById('modalIcon').innerText = wordObj.icon;
   document.getElementById('modalWord').innerText = wordObj.word;
@@ -472,13 +476,13 @@ function loadGameQuestion() {
     optionsContainer.appendChild(btn);
   });
 
-  // Tự động phát âm từ gợi ý
-  window.soundMgr.speak(q.target);
+  // Tự động phát âm từ gợi ý bằng audio người thật
+  window.soundMgr.speakWord(q.target);
 
   // Nút nghe lại
   document.getElementById('btnHearHint').onclick = () => {
     window.soundMgr.playClick();
-    window.soundMgr.speak(q.target);
+    window.soundMgr.speakWord(q.target);
   };
 
   // Nút xóa làm lại
@@ -518,7 +522,7 @@ function checkPuzzleResult() {
     gameScore += 10;
     document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
     showToast(`🎉 Hoan hô bé Mon! Đã ghép đúng chữ "${q.target}"!`);
-    window.soundMgr.speak(`Bé Mon giỏi quá! ${q.target}!`);
+    window.soundMgr.speakCheer('correct');
 
     setTimeout(() => {
       gameCurrentIndex++;
@@ -528,6 +532,7 @@ function checkPuzzleResult() {
     // Chưa đúng, thử lại
     window.soundMgr.playWrong();
     showToast(`Bé Mon ơi chưa chính xác rồi, cùng thử lại nhé! ❤️`);
+    window.soundMgr.speakCheer('wrong');
 
     setTimeout(() => {
       // Reset slots
@@ -538,6 +543,7 @@ function checkPuzzleResult() {
 
 function showGameVictory() {
   window.soundMgr.playVictory();
+  window.soundMgr.speakCheer('win');
   fireConfetti();
 
   const gameViewContainer = document.getElementById('gameViewContainer');
