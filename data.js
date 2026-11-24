@@ -1,6 +1,6 @@
-// Dữ liệu học tiếng Việt cho Bé Mon (6 tuổi)
+// Dữ liệu học tiếng Việt cho Bé Bảo Long (6 tuổi)
 // Chuẩn hóa phát âm và đánh vần ngữ âm tiếng Việt chuẩn: BỜ A BA, ĐỜ A ĐA...
-// Tích hợp chuyên mục Khủng Long (Dinosaur World) siêu ngầu dành riêng cho Bé Mon
+// Tích hợp chuyên mục Khủng Long (Dinosaur World) siêu ngầu dành riêng cho Bé Bảo Long
 
 const ALPHABET_DATA = [
   { char: 'A', lower: 'a', phonetic: 'a', word: 'Gà', example: 'con gà', icon: '🐔', ja: 'にわとり (Niwatori)' },
@@ -49,11 +49,11 @@ const VOCAB_LESSONS = [
     title: 'Bài 1: Từ 1 tiếng, 2 chữ cái – Nhóm 1 – Rất dễ',
     subtitle: 'Làm quen các từ đầu tiên thân quen nhất với bé',
     words: [
-      { id: 'w1', word: 'ba', breakdown: 'b - a', tone: 'Ngang', icon: '👨', ja: 'お父さん (Otousan)', spellText: 'Bờ - a - ba', example: 'Ba yêu bé Mon' },
-      { id: 'w2', word: 'bà', breakdown: 'b - a - huyền', tone: 'Huyền', icon: '👵', ja: 'おばあさん (Obaasan)', spellText: 'Bờ - a - ba - huyền - bà', example: 'Bà hiền từ' },
-      { id: 'w3', word: 'bố', breakdown: 'b - ô - sắc', tone: 'Sắc', icon: '🧔', ja: 'お父さん (Bố / Papa)', spellText: 'Bờ - ô - bô - sắc - bố', example: 'Bố của Mon' },
-      { id: 'w4', word: 'mẹ', breakdown: 'm - e - nặng', tone: 'Nặng', icon: '👩', ja: 'お母さん (Okaasan)', spellText: 'Mờ - e - me - nặng - mẹ', example: 'Mẹ yêu Mon nhất' },
-      { id: 'w5', word: 'bé', breakdown: 'b - e - sắc', tone: 'Sắc', icon: '👶', ja: 'あかちゃん / 子ども (Bé)', spellText: 'Bờ - e - be - sắc - bé', example: 'Bé Mon chăm ngoan' },
+      { id: 'w1', word: 'ba', breakdown: 'b - a', tone: 'Ngang', icon: '👨', ja: 'お父さん (Otousan)', spellText: 'Bờ - a - ba', example: 'Ba yêu Bảo Long' },
+      { id: 'w2', word: 'bà', breakdown: 'b - a - huyền', tone: 'Huyền', icon: '👵', ja: 'おばあさん (Obaasan)', spellText: 'Bờ - a - ba - huyền - bà', example: 'Bà hiền từ của Bảo Long' },
+      { id: 'w3', word: 'bố', breakdown: 'b - ô - sắc', tone: 'Sắc', icon: '🧔', ja: 'お父さん (Bố / Papa)', spellText: 'Bờ - ô - bô - sắc - bố', example: 'Bố của Bảo Long' },
+      { id: 'w4', word: 'mẹ', breakdown: 'm - e - nặng', tone: 'Nặng', icon: '👩', ja: 'お母さん (Okaasan)', spellText: 'Mờ - e - me - nặng - mẹ', example: 'Mẹ yêu Bảo Long nhất' },
+      { id: 'w5', word: 'bé', breakdown: 'b - e - sắc', tone: 'Sắc', icon: '👶', ja: 'あかちゃん / 子ども (Bé)', spellText: 'Bờ - e - be - sắc - bé', example: 'Bé Bảo Long chăm ngoan' },
       { id: 'w6', word: 'bò', breakdown: 'b - o - huyền', tone: 'Huyền', icon: '🐮', ja: 'うし (Ushi)', spellText: 'Bờ - o - bo - huyền - bò', example: 'Con bò sữa' },
       { id: 'w7', word: 'gà', breakdown: 'g - a - huyền', tone: 'Huyền', icon: '🐔', ja: 'にわとり (Niwatori)', spellText: 'Gờ - a - ga - huyền - gà', example: 'Con gà gáy ò ó o' },
       { id: 'w8', word: 'cá', breakdown: 'c - a - sắc', tone: 'Sắc', icon: '🐟', ja: 'さかな (Sakana)', spellText: 'Cờ - a - ca - sắc - cá', example: 'Con cá bơi lội' },
@@ -71,8 +71,8 @@ const VOCAB_LESSONS = [
       { id: 'w13', word: 'dê', breakdown: 'd - ê', tone: 'Ngang', icon: '🐐', ja: 'ヤギ (Yagi)', spellText: 'Dờ - ê - dê', example: 'Con dê kêu be be' },
       { id: 'w14', word: 'vịt', breakdown: 'v - it - nặng', tone: 'Nặng', icon: '🦆', ja: 'かも / あひる (Ahiru)', spellText: 'Vờ - it - vit - nặng - vịt', example: 'Con vịt bơi dưới ao' },
       { id: 'w15', word: 'chú', breakdown: 'ch - u - sắc', tone: 'Sắc', icon: '👨‍💼', ja: 'おじさん (Ojisan)', spellText: 'Chờ - u - chu - sắc - chú', example: 'Chú của bé' },
-      { id: 'w16', word: 'cô', breakdown: 'c - ô', tone: 'Ngang', icon: '👩‍🏫', ja: 'おばさん / 先生 (Cô)', spellText: 'Cờ - ô - cô', example: 'Cô giáo dạy Mon học' },
-      { id: 'w17', word: 'dì', breakdown: 'd - i - huyền', tone: 'Huyền', icon: '👩‍🦰', ja: 'おばさん (Dì)', spellText: 'Dờ - i - di - huyền - dì', example: 'Dì mua quà cho Mon' },
+      { id: 'w16', word: 'cô', breakdown: 'c - ô', tone: 'Ngang', icon: '👩‍🏫', ja: 'おばさん / 先生 (Cô)', spellText: 'Cờ - ô - cô', example: 'Cô giáo dạy Bảo Long học' },
+      { id: 'w17', word: 'dì', breakdown: 'd - i - huyền', tone: 'Huyền', icon: '👩‍🦰', ja: 'おばさん (Dì)', spellText: 'Dờ - i - di - huyền - dì', example: 'Dì mua quà cho Bảo Long' },
       { id: 'w18', word: 'hoa', breakdown: 'h - oa', tone: 'Ngang', icon: '🌸', ja: 'はな (Hana)', spellText: 'Hờ - oa - hoa', example: 'Bông hoa nở rộ' },
       { id: 'w19', word: 'xe', breakdown: 'x - e', tone: 'Ngang', icon: '🚗', ja: 'くるま (Kuruma)', spellText: 'Xờ - e - xe', example: 'Xe ô tô chạy bon bon' },
       { id: 'w20', word: 'tàu', breakdown: 't - au - huyền', tone: 'Huyền', icon: '🚅', ja: '新幹線 / でんしゃ (Shinkansen)', spellText: 'Tờ - au - tau - huyền - tàu', example: 'Tàu điện shinkansen' }
@@ -83,16 +83,16 @@ const VOCAB_LESSONS = [
     title: 'Bài 3: Đồ vật & Thức ăn bé thích',
     subtitle: 'Các từ quen thuộc trong bữa ăn và góc học tập',
     words: [
-      { id: 'w21', word: 'cơm', breakdown: 'c - ơn - cơm', tone: 'Ngang', icon: '🍚', ja: 'ごはん (Gohan)', spellText: 'Cờ - ơn - cơm', example: 'Bé Mon ăn cơm ngoan' },
+      { id: 'w21', word: 'cơm', breakdown: 'c - ơn - cơm', tone: 'Ngang', icon: '🍚', ja: 'ごはん (Gohan)', spellText: 'Cờ - ơn - cơm', example: 'Bảo Long ăn cơm ngoan' },
       { id: 'w22', word: 'sữa', breakdown: 's - ưa - ngã', tone: 'Ngã', icon: '🥛', ja: 'ぎゅうにゅう (Gyuunyuu)', spellText: 'Sờ - ưa - sưa - ngã - sữa', example: 'Sữa tươi thơm ngon' },
       { id: 'w23', word: 'táo', breakdown: 't - ao - sắc', tone: 'Sắc', icon: '🍎', ja: 'りんご (Ringo)', spellText: 'Tờ - ao - tao - sắc - táo', example: 'Quả táo đỏ' },
       { id: 'w24', word: 'chuối', breakdown: 'ch - uôi - sắc', tone: 'Sắc', icon: '🍌', ja: 'バナナ (Banana)', spellText: 'Chờ - uôi - chuôi - sắc - chuối', example: 'Quả chuối ngọt' },
       { id: 'w25', word: 'kẹo', breakdown: 'k - eo - nặng', tone: 'Nặng', icon: '🍬', ja: 'あめ (Ame / Kyandi)', spellText: 'Ca - eo - keo - nặng - kẹo', example: 'Viên kẹo ngọt ngào' },
       { id: 'w26', word: 'bút', breakdown: 'b - ut - sắc', tone: 'Sắc', icon: '✏️', ja: 'えんぴつ (Enpitsu)', spellText: 'Bờ - ut - but - sắc - bút', example: 'Bút chì tập viết' },
       { id: 'w27', word: 'vở', breakdown: 'v - ơ - hỏi', tone: 'Hỏi', icon: '📓', ja: 'ノート (Nooto)', spellText: 'Vờ - ơ - vơ - hỏi - vở', example: 'Quyển vở sạch đẹp' },
-      { id: 'w28', word: 'bóng', breakdown: 'b - ong - sắc', tone: 'Sắc', icon: '⚽', ja: 'ボール (Booru)', spellText: 'Bờ - ong - bong - sắc - bóng', example: 'Bé chơi đá bóng' },
+      { id: 'w28', word: 'bóng', breakdown: 'b - ong - sắc', tone: 'Sắc', icon: '⚽', ja: 'ボール (Booru)', spellText: 'Bờ - ong - bong - sắc - bóng', example: 'Bảo Long chơi đá bóng' },
       { id: 'w29', word: 'mũ', breakdown: 'm - u - ngã', tone: 'Ngã', icon: '🧢', ja: 'ぼうし (Boushi)', spellText: 'Mờ - u - mu - ngã - mũ', example: 'Chiếc mũ che nắng' },
-      { id: 'w30', word: 'nước', breakdown: 'n - ươc - sắc', tone: 'Sắc', icon: '💧', ja: 'みず (Mizu)', spellText: 'Nờ - ước - nươc - sắc - nước', example: 'Bé uống nước lọc' }
+      { id: 'w30', word: 'nước', breakdown: 'n - ươc - sắc', tone: 'Sắc', icon: '💧', ja: 'みず (Mizu)', spellText: 'Nờ - ước - nươc - sắc - nước', example: 'Bảo Long uống nước lọc' }
     ]
   }
 ];
@@ -105,7 +105,7 @@ const PHONICS_LESSONS = [
     words: [
       { id: 'p1', word: 'sáp', rhyme: 'Vần -ap', breakdown: 's + ap + sắc', icon: '🖍️', ja: 'クレヨン (Kureyon) / ろうそく', spellText: 'Sờ - ap - sap - sắc - sáp', example: 'Bút sáp màu tô vẽ' },
       { id: 'p2', word: 'cặp', rhyme: 'Vần -ăp', breakdown: 'c + ăp + nặng', icon: '🎒', ja: 'ランドセル / カバン (Kaban)', spellText: 'Cờ - ắp - cắp - nặng - cặp', example: 'Cặp sách đến trường' },
-      { id: 'p3', word: 'tập', rhyme: 'Vần -âp', breakdown: 't + âp + nặng', icon: '🤸', ja: 'れんしゅう (Renshuu - Tập thể dục / tập vở)', spellText: 'Tờ - ấp - tấp - nặng - tập', example: 'Mon tập thể dục buổi sáng' },
+      { id: 'p3', word: 'tập', rhyme: 'Vần -âp', breakdown: 't + âp + nặng', icon: '🤸', ja: 'れんしゅう (Renshuu - Tập thể dục / tập vở)', spellText: 'Tờ - ấp - tấp - nặng - tập', example: 'Bảo Long tập thể dục buổi sáng' },
       { id: 'p4', word: 'dép', rhyme: 'Vần -ep', breakdown: 'd + ep + sắc', icon: '🩴', ja: 'サンダル / スリッパ (Sandaru)', spellText: 'Dờ - ep - dep - sắc - dép', example: 'Đôi dép đi trong nhà' },
       { id: 'p5', word: 'bếp', rhyme: 'Vần -êp', breakdown: 'b + êp + sắc', icon: '🍳', ja: 'だいどころ / コンロ (Daidokoro)', spellText: 'Bờ - ếp - bêp - sắc - bếp', example: 'Mẹ nấu ăn trong bếp' },
       { id: 'p6', word: 'nhịp', rhyme: 'Vần -ip', breakdown: 'nh + ip + nặng', icon: '🥁', ja: 'リズム (Rizumu - Nhịp điệu)', spellText: 'Nhờ - ip - nhip - nặng - nhịp', example: 'Vỗ tay theo nhịp bài hát' },
@@ -121,7 +121,7 @@ const PHONICS_LESSONS = [
     subtitle: 'Học đánh vần các từ có kết thúc bằng âm T',
     words: [
       { id: 't1', word: 'cát', rhyme: 'Vần -at', breakdown: 'c + at + sắc', icon: '🏖️', ja: 'すな (Suna - Cát biển)', spellText: 'Cờ - at - cat - sắc - cát', example: 'Bãi cát vàng bên bờ biển' },
-      { id: 't2', word: 'mắt', rhyme: 'Vần -ăt', breakdown: 'm + ăt + sắc', icon: '👀', ja: 'め (Me - Đôi mắt)', spellText: 'Mờ - ắt - măt - sắc - mắt', example: 'Đôi mắt bé Mon sáng long lanh' },
+      { id: 't2', word: 'mắt', rhyme: 'Vần -ăt', breakdown: 'm + ăt + sắc', icon: '👀', ja: 'め (Me - Đôi mắt)', spellText: 'Mờ - ắt - măt - sắc - mắt', example: 'Đôi mắt Bảo Long sáng long lanh' },
       { id: 't3', word: 'đất', rhyme: 'Vần -ât', breakdown: 'đ + ât + sắc', icon: '🌱', ja: 'つち (Tsuchi - Đất trồng)', spellText: 'Đờ - ất - đât - sắc - đất', example: 'Đất phù sa màu mỡ' },
       { id: 't4', word: 'kẹo tét', rhyme: 'Vần -et', breakdown: 't + et + sắc', icon: '🧨', ja: 'おしょうがつ (Tết)', spellText: 'Tờ - et - tet - sắc - tét', example: 'Ngày Tết bé được mừng tuổi' },
       { id: 't5', word: 'tết', rhyme: 'Vần -êt', breakdown: 't + êt + sắc', icon: '🧧', ja: 'ベトナムの正月 (Tet)', spellText: 'Tờ - ết - têt - sắc - tết', example: 'Bé vui đón Tết Việt Nam' },
@@ -132,7 +132,7 @@ const PHONICS_LESSONS = [
   }
 ];
 
-// CHUYÊN MỤC ĐẶC BIỆT: THẾ GIỚI KHỦNG LONG CHO BÉ MON (DINOSAUR WORLD)
+// CHUYÊN MỤC ĐẶC BIỆT: THẾ GIỚI KHỦNG LONG CHO BÉ BẢO LONG (DINOSAUR WORLD)
 const DINO_LESSONS = [
   {
     id: 'dino1',
@@ -248,7 +248,7 @@ const DINO_LESSONS = [
     spellText: 'Dờ - âu - dâu - sắc - dấu, chờ - ân - chân -> dấu chân',
     icon: '🐾',
     ja: 'あしあと (Footprint)',
-    funFact: 'Dấu chân sâu và to gấp 10 lần bàn chân của bé Mon, in lại trên đá!',
+    funFact: 'Dấu chân sâu và to gấp 10 lần bàn chân của bé Bảo Long, in lại trên đá!',
     example: 'Dấu chân khủng long khổng lồ'
   },
   {

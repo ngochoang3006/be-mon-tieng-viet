@@ -43,7 +43,7 @@ function initEventListeners() {
         window.soundMgr.speakWord('bố');
       } else {
         window.soundMgr.setGender('female');
-        btnVoiceGender.innerHTML = '<span>👩</span> <span>Giọng: Nữ (Cô giáo)</span>';
+        btnVoiceGender.innerHTML = '<span>👩</span> <span>Giọng: Nữ (Cô)</span>';
         showToast('Đã đổi sang Giọng Nữ (Hoài My) người thật truyền cảm!');
         window.soundMgr.playClick();
         window.soundMgr.speakWord('mẹ');
@@ -56,11 +56,11 @@ function initEventListeners() {
     btnSpeed.addEventListener('click', () => {
       if (window.soundMgr.speedRate > 0.9) {
         window.soundMgr.setSpeed('slow');
-        btnSpeed.innerHTML = '<span>🐢</span> <span>Tốc độ: Chậm</span>';
-        showToast('Đã chuyển sang Tốc độ Đọc Chậm cho Bé');
+        btnSpeed.innerHTML = '<span>🐢</span> <span>Chậm</span>';
+        showToast('Đã chuyển sang Tốc độ Đọc Chậm cho Bảo Long');
       } else {
         window.soundMgr.setSpeed('normal');
-        btnSpeed.innerHTML = '<span>⚡</span> <span>Tốc độ: Chuẩn</span>';
+        btnSpeed.innerHTML = '<span>⚡</span> <span>Chuẩn</span>';
         showToast('Đã chuyển sang Tốc độ Chuẩn');
       }
     });
@@ -70,7 +70,7 @@ function initEventListeners() {
   if (btnMute) {
     btnMute.addEventListener('click', () => {
       window.soundMgr.isMuted = !window.soundMgr.isMuted;
-      btnMute.innerHTML = window.soundMgr.isMuted ? '🔇 Tắt âm' : '🔊 Âm thanh';
+      btnMute.innerHTML = window.soundMgr.isMuted ? '<span>🔇</span> <span>Tắt</span>' : '<span>🔊</span> <span>Bật</span>';
       showToast(window.soundMgr.isMuted ? 'Đã tắt âm thanh' : 'Đã bật âm thanh');
     });
   }
@@ -135,7 +135,7 @@ function switchMode(mode) {
   } else if (mode === 'alphabet') {
     showToast('Đã chuyển sang: 🔠 Bảng chữ cái ABC');
   } else if (mode === 'dino') {
-    showToast('Đã chuyển sang: 🦖 Thế giới Khủng Long của bé Mon!');
+    showToast('Đã chuyển sang: 🦖 Thế giới Khủng Long của Bảo Long!');
   } else if (mode === 'game') {
     showToast('Đã chuyển sang: 🧩 Thử thách ghép chữ');
   }
@@ -304,7 +304,7 @@ function renderDinoView() {
   if (btnRoar) {
     btnRoar.onclick = () => {
       window.soundMgr.playClick();
-      window.soundMgr.playAudioFile('cheer_dino', null, 'Gầm to nào bé Mon ơi! Roar!');
+      window.soundMgr.playAudioFile('cheer_dino', null, 'Gầm to nào Bảo Long ơi! Roar!');
       fireConfetti();
     };
   }
@@ -376,8 +376,10 @@ function initCanvas() {
   if (!canvas) return;
   ctx = canvas.getContext('2d');
 
-  canvas.width = 380;
-  canvas.height = 180;
+  const modalBox = document.querySelector('.modal-content');
+  const w = modalBox ? Math.min(360, modalBox.clientWidth - 40) : 340;
+  canvas.width = Math.max(280, w);
+  canvas.height = 160;
 
   canvas.addEventListener('mousedown', startDraw);
   canvas.addEventListener('mousemove', draw);
@@ -569,12 +571,12 @@ function checkPuzzleResult() {
   const currentWord = gameSlots.join('');
 
   if (currentWord === q.target) {
-    // Bé Mon làm đúng!
+    // Bảo Long làm đúng!
     window.soundMgr.playCorrect();
     fireConfetti();
     gameScore += 10;
     document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
-    showToast(`🎉 Hoan hô bé Mon! Đã ghép đúng chữ "${q.target}"!`);
+    showToast(`🎉 Hoan hô Bảo Long! Đã ghép đúng chữ "${q.target}"!`);
     window.soundMgr.speakCheer('correct');
 
     setTimeout(() => {
@@ -584,7 +586,7 @@ function checkPuzzleResult() {
   } else {
     // Chưa đúng, thử lại
     window.soundMgr.playWrong();
-    showToast(`Bé Mon ơi chưa chính xác rồi, cùng thử lại nhé! ❤️`);
+    showToast(`Bảo Long ơi chưa chính xác rồi, cùng thử lại nhé! ❤️`);
     window.soundMgr.speakCheer('wrong');
 
     setTimeout(() => {
@@ -601,11 +603,11 @@ function showGameVictory() {
 
   const gameViewContainer = document.getElementById('gameViewContainer');
   gameViewContainer.innerHTML = `
-    <div style="padding: 40px 20px; text-align: center;">
-      <div style="font-size: 80px; margin-bottom: 16px;">🏆👑🎉</div>
-      <h2 style="font-size: 32px; color: #0284c7; font-weight: 900; margin-bottom: 10px;">XUẤT SẮC QUÁ BÉ MON ƠI!</h2>
-      <p style="font-size: 18px; color: #475569; margin-bottom: 20px;">Bé Mon đã hoàn thành trọn vẹn thử thách và đạt được <strong>${gameScore} Sao Vàng</strong>!</p>
-      <div style="display: flex; justify-content: center; gap: 14px;">
+    <div style="padding: 30px 16px; text-align: center;">
+      <div style="font-size: 72px; margin-bottom: 14px;">🏆👑🦖🎉</div>
+      <h2 style="font-size: 28px; color: #0284c7; font-weight: 900; margin-bottom: 8px;">XUẤT SẮC QUÁ BẢO LONG ƠI!</h2>
+      <p style="font-size: 16px; color: #475569; margin-bottom: 20px;">Bảo Long đã hoàn thành trọn vẹn thử thách và đạt được <strong>${gameScore} Sao Vàng</strong>!</p>
+      <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
         <button class="challenge-btn" onclick="startMiniGame()">🔄 Chơi lại lần nữa</button>
         <button class="home-btn" onclick="switchMode('vocab')">📖 Về học từ mới</button>
       </div>

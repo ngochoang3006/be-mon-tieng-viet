@@ -2,29 +2,52 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bé Mon Thám Hiểm Tiếng Việt - Học Đọc & Đánh Vần</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc & Đánh Vần</title>
   <link rel="stylesheet" href="style.css">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <!-- Hiệu ứng mây bay nền trời xanh mây trắng -->
   <div class="cloud cloud-1"></div>
   <div class="cloud cloud-2"></div>
 
-  <!-- Thanh điều hướng trên cùng (Top Nav Bar) -->
+  <!-- Thanh điều hướng trên cùng (Top Nav Bar) - Tối ưu cả Mobile & Web -->
   <header class="top-nav">
-    <div class="nav-left">
-      <button class="home-btn" onclick="switchMode('vocab')">
-        <span>🏠</span>
-        <span>Trang chủ</span>
-      </button>
+    <div class="top-nav-inner">
+      <div class="nav-brand-group">
+        <button class="home-btn" onclick="switchMode('vocab')">
+          <span>🏠</span>
+          <span>Trang chủ</span>
+        </button>
+        <div class="long-avatar-pill">
+          <span>🦖</span>
+          <span>Bảo Long (6 tuổi) 🇯🇵</span>
+        </div>
+      </div>
 
-      <!-- Các tab chế độ như hình 1 & 2 -->
-      <nav class="mode-pills">
+      <div class="nav-controls-group">
+        <button class="control-pill" id="btnVoiceGender" title="Nhấn để đổi giữa giọng Cô giáo và giọng Ba">
+          <span>👩</span>
+          <span>Giọng: Nữ (Cô)</span>
+        </button>
+        <button class="control-pill" id="btnSpeed" title="Nhấn để đổi tốc độ đọc">
+          <span>⚡</span>
+          <span>Chuẩn</span>
+        </button>
+        <button class="control-pill" id="btnMute">
+          <span>🔊</span>
+          <span>Bật</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Thanh chuyển chế độ học cuộn ngang mượt mà trên điện thoại -->
+    <div class="nav-modes-container">
+      <div class="mode-pills-row">
         <button class="mode-pill" data-mode="alphabet">
           <span>🔠</span>
           <span>Bảng chữ cái ABC</span>
@@ -37,7 +60,7 @@
           <span>🔤</span>
           <span>Tập đánh vần</span>
         </button>
-        <button class="mode-pill" data-mode="dino" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff;">
+        <button class="mode-pill mode-pill-dino" data-mode="dino">
           <span>🦖</span>
           <span>Khủng Long (Dino)</span>
         </button>
@@ -45,39 +68,20 @@
           <span>🧩</span>
           <span>Ghép chữ vui</span>
         </button>
-      </nav>
-    </div>
-
-    <div class="nav-right">
-      <div class="mon-avatar-pill">
-        <span>🌟</span>
-        <span>Bé Mon (6 tuổi) 🇯🇵</span>
       </div>
-      <button class="control-pill" id="btnVoiceGender" title="Nhấn để đổi giữa giọng Cô giáo và giọng Ba">
-        <span>👩</span>
-        <span>Giọng: Nữ (Cô giáo)</span>
-      </button>
-      <button class="control-pill" id="btnSpeed" title="Nhấn để đổi tốc độ đọc">
-        <span>⚡</span>
-        <span>Tốc độ: Chuẩn</span>
-      </button>
-      <button class="control-pill" id="btnMute">
-        <span>🔊</span>
-        <span>Âm thanh</span>
-      </button>
     </div>
   </header>
 
   <!-- Vùng nội dung chính -->
   <main class="main-content">
-    <!-- Tiêu đề lớn: Bản Đồ Thám Hiểm -->
+    <!-- Tiêu đề lớn: Bản Đồ Thám Hiểm Của Bảo Long -->
     <section class="expedition-header">
       <div class="expedition-title-badge">
         <span class="compass-icon">🧭</span>
         <span>Bản Đồ Thám Hiểm</span>
       </div>
       <div class="expedition-subtitle">
-        Bé Mon hãy chọn Bài học và chạm vào các trạm từ vựng để phiêu lưu nhé!
+        Bé Bảo Long hãy chọn Bài học và chạm vào các trạm từ vựng để phiêu lưu nhé! 🚀
       </div>
     </section>
 
@@ -89,7 +93,7 @@
           <span class="roadmap-current-title" id="roadmapTitle">Bài 1: Từ 1 tiếng, 2 chữ cái – Nhóm 1 – Rất dễ</span>
         </div>
         <div class="roadmap-tools">
-          <span class="tool-chip">🪄 Tự do chọn bài: BẬT</span>
+          <span class="tool-chip">🪄 Tự do: BẬT</span>
           <span class="tool-chip" onclick="currentLessonIdx = 0; renderCurrentView();">🔄 Đặt lại</span>
         </div>
       </div>
@@ -115,11 +119,11 @@
 
     <!-- Khu vực Bảng chữ cái ABC & 5 Dấu Thanh (Chế độ Alphabet) -->
     <section id="alphabetContainer" style="display: none;">
-      <div style="background: #ffffff; border-radius: 28px; padding: 24px; box-shadow: 0 8px 30px rgba(0, 75, 140, 0.12); margin-bottom: 24px;">
-        <h3 style="font-size: 22px; font-weight: 900; color: #0284c7; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
-          <span>🎨</span> 29 Chữ Cái Tiếng Việt (Bé chạm vào chữ để nghe đọc nhé)
+      <div style="background: #ffffff; border-radius: 28px; padding: 20px; box-shadow: 0 10px 30px rgba(0, 75, 140, 0.12); margin-bottom: 22px; border: 2px solid #e2e8f0; border-bottom: 5px solid #cbd5e1;">
+        <h3 style="font-size: 20px; font-weight: 900; color: #0284c7; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+          <span>🎨</span> 29 Chữ Cái Tiếng Việt (Bảo Long chạm vào chữ để nghe đọc nhé)
         </h3>
-        <p style="color: #64748b; font-size: 14px; margin-bottom: 20px;">Dành riêng cho bé ở Nhật làm quen với các chữ cái đặc trưng: Ă, Â, Đ, Ê, Ô, Ơ, Ư</p>
+        <p style="color: #64748b; font-size: 13px; margin-bottom: 16px;">Dành riêng cho Bảo Long ở Nhật làm quen với các chữ cái đặc trưng: Ă, Â, Đ, Ê, Ô, Ơ, Ư</p>
         <div class="alphabet-grid" id="alphabetGrid"></div>
       </div>
 
@@ -128,18 +132,18 @@
         <div class="tones-title">
           <span>🎵</span> 5 Dấu Thanh Tiếng Việt (Thanh điệu kỳ diệu)
         </div>
-        <p style="color: #64748b; font-size: 14px; margin-bottom: 16px;">Tiếng Việt có dấu thanh giúp từ có giai điệu như hát!</p>
+        <p style="color: #64748b; font-size: 13px; margin-bottom: 14px;">Tiếng Việt có dấu thanh giúp từ có giai điệu như hát!</p>
         <div class="tones-grid" id="tonesGrid"></div>
       </div>
     </section>
 
-    <!-- Khu vực Chuyên Mục Khủng Long Dành Cho Bé Mon (Dino World) -->
+    <!-- Khu vực Chuyên Mục Khủng Long Dành Cho Bé Bảo Long (Dino World) -->
     <section id="dinoContainer" style="display: none;">
       <div class="dino-banner-box">
         <div class="dino-banner-content">
           <div class="dino-badge">🦕 KỶ JURA HUYỀN BÍ • DINOSAUR WORLD 🦖</div>
-          <h2 class="dino-banner-title">Công Viên Khủng Long Của Bé Mon</h2>
-          <p class="dino-banner-desc">Chạm vào chú khủng long để nghe tiếng gầm Roar, học tên tiếng Việt, tiếng Nhật và tập đánh vần siêu ngầu nhé!</p>
+          <h2 class="dino-banner-title">Công Viên Khủng Long Của Bảo Long</h2>
+          <p class="dino-banner-desc">Bảo Long hãy chạm vào chú khủng long để nghe tiếng gầm Roar, học tên tiếng Việt, tiếng Nhật và tập đánh vần siêu ngầu nhé!</p>
           <button class="dino-roar-btn" id="btnDinoRoar">
             <span>🌋</span> Gầm to nào: ROAR!
           </button>
@@ -172,10 +176,10 @@
 
         <div class="game-controls-row">
           <button class="btn-hear-hint" id="btnHearHint">
-            <span>🔊</span> Nghe lại từ
+            <span>🔊</span> Nghe lại
           </button>
           <button class="btn-reset-puzzle" id="btnResetPuzzle">
-            <span>🔄</span> Xóa xếp lại
+            <span>🔄</span> Xếp lại
           </button>
         </div>
       </div>
@@ -197,7 +201,7 @@
       </div>
 
       <div class="modal-ja-box" id="modalJaText">🇯🇵 お父さん (Otousan)</div>
-      <div class="modal-example" id="modalExample">Ví dụ: "Ba yêu bé Mon"</div>
+      <div class="modal-example" id="modalExample">Ví dụ: "Ba yêu Bảo Long"</div>
 
       <div class="modal-btn-row">
         <button class="modal-act-btn btn-sound-main" id="modalBtnSpeakWord">
@@ -213,11 +217,11 @@
 
       <!-- Khung vẽ Canvas cho bé tập đồ nét chữ -->
       <div class="canvas-container" id="canvasDrawingBox">
-        <p style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 6px;">Bé Mon hãy dùng ngón tay hoặc chuột để tô theo nét chữ nhé:</p>
+        <p style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 6px;">Bảo Long hãy dùng ngón tay hoặc chuột để tô theo nét chữ nhé:</p>
         <canvas id="drawingCanvas"></canvas>
         <div class="canvas-controls">
           <div style="display: flex; gap: 8px; align-items: center;">
-            <span style="font-size: 12px; font-weight: 700; color: #475569;">Màu cọ:</span>
+            <span style="font-size: 12px; font-weight: 700; color: #475569;">Cọ vẽ:</span>
             <span class="color-picker-dot" data-color="#0284c7" style="background: #0284c7;"></span>
             <span class="color-picker-dot" data-color="#f43f5e" style="background: #f43f5e;"></span>
             <span class="color-picker-dot" data-color="#10b981" style="background: #10b981;"></span>
@@ -229,9 +233,9 @@
     </div>
   </div>
 
-  <!-- Thông báo Toast dưới đáy màn hình (như ảnh 2) -->
+  <!-- Thông báo Toast dưới đáy màn hình -->
   <div class="toast-notice" id="toastNotice">
-    Đã chuyển sang: 🔤 Tập ĐÁNH VẦN!
+    Chào mừng Bảo Long đến với Tiếng Việt kỳ thú! 🦖
   </div>
 
   <!-- Canvas Pháo hoa Confetti chúc mừng -->
