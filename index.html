@@ -62,11 +62,15 @@
         </button>
         <button class="mode-pill mode-pill-dino" data-mode="dino">
           <span>🦖</span>
-          <span>Khủng Long (Dino)</span>
+          <span>Khủng Long</span>
         </button>
-        <button class="mode-pill" data-mode="game">
-          <span>🧩</span>
-          <span>Ghép chữ vui</span>
+        <button class="mode-pill mode-pill-veh" data-mode="vehicles">
+          <span>🚗</span>
+          <span>Xe Cộ</span>
+        </button>
+        <button class="mode-pill mode-pill-game" data-mode="game">
+          <span>🎮</span>
+          <span>Khu Trò Chơi</span>
         </button>
       </div>
     </div>
@@ -144,9 +148,14 @@
           <div class="dino-badge">🦕 KỶ JURA HUYỀN BÍ • DINOSAUR WORLD 🦖</div>
           <h2 class="dino-banner-title">Công Viên Khủng Long Của Bảo Long</h2>
           <p class="dino-banner-desc">Bảo Long hãy chạm vào chú khủng long để nghe tiếng gầm Roar, học tên tiếng Việt, tiếng Nhật và tập đánh vần siêu ngầu nhé!</p>
-          <button class="dino-roar-btn" id="btnDinoRoar">
-            <span>🌋</span> Gầm to nào: ROAR!
-          </button>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="dino-roar-btn" id="btnDinoRoar">
+              <span>🌋</span> Gầm to nào: ROAR!
+            </button>
+            <button class="dino-roar-btn" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-bottom-color: #0c4a6e;" onclick="switchMode('game'); switchSubGame('dino_memory');">
+              <span>🃏</span> Chơi Game Lật Thẻ Khủng Long
+            </button>
+          </div>
         </div>
       </div>
       <div class="cards-grid dino-cards-grid" id="dinoCardsContainer">
@@ -154,9 +163,45 @@
       </div>
     </section>
 
-    <!-- Khu vực Mini Game Ghép Chữ & Thử Thách (Chế độ Game) -->
+    <!-- Khu vực Thế Giới Xe Cộ Dành Cho Bé Bảo Long (Vehicle World) -->
+    <section id="vehicleContainer" style="display: none;">
+      <div class="veh-banner-box">
+        <div class="veh-banner-content">
+          <div class="veh-badge">🚗 THẾ GIỚI XE CỘ & SHINKANSEN • VEHICLE EXPEDITION 🚅</div>
+          <h2 class="veh-banner-title">Ga Xe Cộ Kỳ Thú Của Bảo Long</h2>
+          <p class="veh-banner-desc">Bảo Long khám phá 12 loại phương tiện giao thông quen thuộc: Tàu Shinkansen, Máy bay, Trực thăng, Xe cứu hỏa, Xe cảnh sát... Chạm vào xe để nghe phát âm, tên tiếng Nhật và đánh vần nhé!</p>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button class="challenge-btn" style="padding: 10px 22px; font-size: 14px;" onclick="switchMode('game'); switchSubGame('quiz');">
+              <span>🎯</span> Thử thách đố vui Xe Cộ
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="cards-grid veh-cards-grid" id="vehicleCardsContainer">
+        <!-- Render từ app.js -->
+      </div>
+    </section>
+
+    <!-- Khu Vực Khu Trò Chơi (Game Hub) -->
     <section id="gameViewContainer" style="display: none;">
-      <div class="game-view">
+      <!-- Thanh điều hướng các Game trong Game Hub -->
+      <div class="game-hub-nav">
+        <button class="game-tab-btn active" id="tabBtnPuzzle" onclick="switchSubGame('puzzle')">
+          <span>🧩</span>
+          <span>Ghép Chữ Vui</span>
+        </button>
+        <button class="game-tab-btn" id="tabBtnMemory" onclick="switchSubGame('dino_memory')">
+          <span>🦖</span>
+          <span>Lật Thẻ Khủng Long</span>
+        </button>
+        <button class="game-tab-btn" id="tabBtnQuiz" onclick="switchSubGame('quiz')">
+          <span>🚗</span>
+          <span>Đố Vui Xe Cộ</span>
+        </button>
+      </div>
+
+      <!-- Subgame 1: Ghép chữ (Spelling Puzzle) -->
+      <div class="game-view" id="subgamePuzzlePane">
         <div class="game-score-row">
           <span class="game-progress-text" id="gameProgressText">Câu 1 / 10</span>
           <span class="game-stars" id="gameStarsCount">⭐ 0 sao</span>
@@ -181,6 +226,40 @@
           <button class="btn-reset-puzzle" id="btnResetPuzzle">
             <span>🔄</span> Xếp lại
           </button>
+        </div>
+      </div>
+
+      <!-- Subgame 2: Lật thẻ Khủng Long (Dino Memory Card Game) -->
+      <div class="game-view" id="subgameMemoryPane" style="display: none;">
+        <div class="memory-board-header">
+          <div class="memory-stats-group">
+            <span class="memory-stat-pill" id="memoryFlipsText">👀 Lượt lật: 0</span>
+            <span class="memory-stat-pill" id="memoryPairsText">⭐ Đã ghép: 0 / 6 cặp</span>
+          </div>
+          <button class="tool-chip" id="btnRestartMemory" style="background:#fef08a; color:#854d0e; border-color:#eab308; cursor:pointer;">
+            🔄 Xáo thẻ chơi lại
+          </button>
+        </div>
+        <p style="text-align: center; font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 12px;">
+          Bảo Long hãy chạm vào 2 thẻ giống nhau để mở khóa các chú khủng long nhé! 🦖
+        </p>
+        <div class="memory-grid" id="memoryGrid">
+          <!-- Render động các thẻ 3D lật từ app.js -->
+        </div>
+      </div>
+
+      <!-- Subgame 3: Đố Vui Xe Cộ (Vehicle Quiz) -->
+      <div class="game-view" id="subgameQuizPane" style="display: none;">
+        <div class="game-score-row">
+          <span class="game-progress-text" id="quizProgressText">Câu 1 / 6</span>
+          <span class="game-stars" id="quizScoreText">⭐ 0 điểm</span>
+        </div>
+        <div class="quiz-question-box">
+          <div class="quiz-question-title" id="quizQuestionTitle">Bảo Long ơi, đâu là chiếc Xe Cứu Hỏa?</div>
+          <div class="quiz-question-ja" id="quizQuestionJa">🇯🇵 しょうぼうしゃ (Shoubousha) はどれ？</div>
+        </div>
+        <div class="quiz-options-grid" id="quizOptionsGrid">
+          <!-- Render các lựa chọn xe từ app.js -->
         </div>
       </div>
     </section>

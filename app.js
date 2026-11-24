@@ -1,15 +1,30 @@
-// Ứng dụng Học Tiếng Việt cho Bé Mon (6 tuổi)
-// Tích hợp lộ trình Từ mới, Tập đánh vần, Bảng chữ cái và Game ghép chữ
+// Ứng dụng Học Tiếng Việt cho Bé Bảo Long (6 tuổi)
+// Tích hợp lộ trình Từ mới, Tập đánh vần, Bảng chữ cái, Khủng Long, Xe Cộ và Khu Trò Chơi
 
-let currentMode = 'vocab'; // 'vocab' | 'phonics' | 'alphabet' | 'game'
+let currentMode = 'vocab'; // 'vocab' | 'phonics' | 'alphabet' | 'dino' | 'vehicles' | 'game'
 let currentLessonIdx = 0;
 let currentWordModal = null;
 
-// Game State
+// Game Hub State
+let currentSubGame = 'puzzle'; // 'puzzle' | 'dino_memory' | 'quiz'
+
+// Puzzle Game State
 let gameCurrentIndex = 0;
 let gameQuestions = [];
 let gameSlots = [];
 let gameScore = 0;
+
+// Dino Memory Game State
+let memoryCards = [];
+let memoryFlippedCards = [];
+let memoryMatchedCount = 0;
+let memoryFlips = 0;
+let memoryIsLocked = false;
+
+// Vehicle Quiz State
+let quizQuestions = [];
+let quizCurrentIndex = 0;
+let quizScore = 0;
 
 // Canvas Drawing State
 let canvas, ctx;
@@ -136,8 +151,10 @@ function switchMode(mode) {
     showToast('Đã chuyển sang: 🔠 Bảng chữ cái ABC');
   } else if (mode === 'dino') {
     showToast('Đã chuyển sang: 🦖 Thế giới Khủng Long của Bảo Long!');
+  } else if (mode === 'vehicles') {
+    showToast('Đã chuyển sang: 🚗 Thế giới Xe Cộ & Shinkansen!');
   } else if (mode === 'game') {
-    showToast('Đã chuyển sang: 🧩 Thử thách ghép chữ');
+    showToast('Đã chuyển sang: 🎮 Khu Trò Chơi (Game Hub)');
   }
 
   window.soundMgr.playClick();
@@ -149,12 +166,14 @@ function renderCurrentView() {
   const cardsContainer = document.getElementById('cardsContainer');
   const alphabetContainer = document.getElementById('alphabetContainer');
   const dinoContainer = document.getElementById('dinoContainer');
+  const vehicleContainer = document.getElementById('vehicleContainer');
   const gameViewContainer = document.getElementById('gameViewContainer');
 
   // Ẩn tất cả trước
   cardsContainer.style.display = 'none';
   alphabetContainer.style.display = 'none';
   if (dinoContainer) dinoContainer.style.display = 'none';
+  if (vehicleContainer) vehicleContainer.style.display = 'none';
   gameViewContainer.style.display = 'none';
   roadmapBox.style.display = 'none';
 
@@ -176,9 +195,14 @@ function renderCurrentView() {
       dinoContainer.style.display = 'block';
       renderDinoView();
     }
+  } else if (currentMode === 'vehicles') {
+    if (vehicleContainer) {
+      vehicleContainer.style.display = 'block';
+      renderVehicleView();
+    }
   } else if (currentMode === 'game') {
     gameViewContainer.style.display = 'block';
-    renderGameView();
+    switchSubGame(currentSubGame);
   }
 }
 
@@ -324,6 +348,31 @@ function renderDinoView() {
 
     card.addEventListener('click', () => {
       openModal(dino);
+    });
+    container.appendChild(card);
+  });
+}
+
+function renderVehicleView() {
+  const container = document.getElementById('vehicleCardsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  VEHICLE_LESSONS.forEach(veh => {
+    const card = document.createElement('div');
+    card.className = 'word-card veh-card';
+    card.innerHTML = `
+      <div class="star-corner">🚗</div>
+      <div class="word-icon-img">${veh.icon}</div>
+      <div class="word-dino-title" style="color: #0369a1;">${veh.vehName}</div>
+      <div class="word-text" style="color: #0284c7;">${veh.word}</div>
+      <div class="word-action-tag" style="background:#e0f2fe; color:#0369a1;">Chạm để nghe còi</div>
+      <div class="word-ja-sub">${veh.ja}</div>
+      <div class="word-fact-tag" style="background:#f0f9ff; border-left:3px solid #0284c7;">💡 ${veh.funFact}</div>
+    `;
+
+    card.addEventListener('click', () => {
+      openModal(veh);
     });
     container.appendChild(card);
   });
@@ -601,18 +650,302 @@ function showGameVictory() {
   window.soundMgr.speakCheer('win');
   fireConfetti();
 
-  const gameViewContainer = document.getElementById('gameViewContainer');
-  gameViewContainer.innerHTML = `
-    <div style="padding: 30px 16px; text-align: center;">
-      <div style="font-size: 72px; margin-bottom: 14px;">🏆👑🦖🎉</div>
-      <h2 style="font-size: 28px; color: #0284c7; font-weight: 900; margin-bottom: 8px;">XUẤT SẮC QUÁ BẢO LONG ƠI!</h2>
-      <p style="font-size: 16px; color: #475569; margin-bottom: 20px;">Bảo Long đã hoàn thành trọn vẹn thử thách và đạt được <strong>${gameScore} Sao Vàng</strong>!</p>
-      <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-        <button class="challenge-btn" onclick="startMiniGame()">🔄 Chơi lại lần nữa</button>
-        <button class="home-btn" onclick="switchMode('vocab')">📖 Về học từ mới</button>
+  const puzzlePane = document.getElementById('subgamePuzzlePane');
+  if (puzzlePane) {
+    puzzlePane.innerHTML = `
+      <div style="padding: 30px 16px; text-align: center;">
+        <div style="font-size: 72px; margin-bottom: 14px;">🏆👑🦖🎉</div>
+        <h2 style="font-size: 28px; color: #0284c7; font-weight: 900; margin-bottom: 8px;">XUẤT SẮC QUÁ BẢO LONG ƠI!</h2>
+        <p style="font-size: 16px; color: #475569; margin-bottom: 20px;">Bảo Long đã hoàn thành trọn vẹn thử thách ghép chữ và đạt được <strong>${gameScore} Sao Vàng</strong>!</p>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <button class="challenge-btn" onclick="startMiniGame()">🔄 Ghép chữ ván mới</button>
+          <button class="home-btn" onclick="switchSubGame('dino_memory')">🦖 Thử thách Lật Thẻ Khủng Long</button>
+          <button class="home-btn" onclick="switchMode('vocab')">📖 Về học từ mới</button>
+        </div>
       </div>
-    </div>
-  `;
+    `;
+  }
+}
+
+// ========================================================
+// SUBGAME SWITCHER & DINO MEMORY & VEHICLE QUIZ
+// ========================================================
+function switchSubGame(subgame) {
+  currentSubGame = subgame;
+  const puzPane = document.getElementById('subgamePuzzlePane');
+  const memPane = document.getElementById('subgameMemoryPane');
+  const quizPane = document.getElementById('subgameQuizPane');
+
+  const tabPuz = document.getElementById('tabBtnPuzzle');
+  const tabMem = document.getElementById('tabBtnMemory');
+  const tabQuiz = document.getElementById('tabBtnQuiz');
+
+  if (puzPane) puzPane.style.display = subgame === 'puzzle' ? 'block' : 'none';
+  if (memPane) memPane.style.display = subgame === 'dino_memory' ? 'block' : 'none';
+  if (quizPane) quizPane.style.display = subgame === 'quiz' ? 'block' : 'none';
+
+  if (tabPuz) tabPuz.classList.toggle('active', subgame === 'puzzle');
+  if (tabMem) tabMem.classList.toggle('active', subgame === 'dino_memory');
+  if (tabQuiz) tabQuiz.classList.toggle('active', subgame === 'quiz');
+
+  window.soundMgr.playClick();
+
+  if (subgame === 'puzzle') {
+    renderGameView();
+  } else if (subgame === 'dino_memory') {
+    initDinoMemoryGame();
+  } else if (subgame === 'quiz') {
+    initVehicleQuiz();
+  }
+}
+
+// 🦖 GAME LẬT THẺ KHỦNG LONG (DINO MEMORY)
+function initDinoMemoryGame() {
+  const grid = document.getElementById('memoryGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  const btnRestart = document.getElementById('btnRestartMemory');
+  if (btnRestart) {
+    btnRestart.onclick = () => {
+      window.soundMgr.playClick();
+      initDinoMemoryGame();
+    };
+  }
+
+  memoryFlips = 0;
+  memoryMatchedCount = 0;
+  memoryFlippedCards = [];
+  memoryIsLocked = false;
+  updateMemoryStats();
+
+  // Tạo 6 cặp từ DINO_MEMORY_PAIRS (12 thẻ)
+  const pairDeck = [];
+  DINO_MEMORY_PAIRS.forEach((dino) => {
+    pairDeck.push({ ...dino, instanceId: `${dino.id}_a` });
+    pairDeck.push({ ...dino, instanceId: `${dino.id}_b` });
+  });
+
+  // Xáo trộn ngẫu nhiên
+  pairDeck.sort(() => Math.random() - 0.5);
+  memoryCards = pairDeck;
+
+  pairDeck.forEach(cardData => {
+    const cardEl = document.createElement('div');
+    cardEl.className = 'memory-card';
+    cardEl.dataset.id = cardData.id;
+    cardEl.dataset.instanceId = cardData.instanceId;
+
+    cardEl.innerHTML = `
+      <div class="memory-card-inner">
+        <div class="memory-card-face memory-card-back">
+          <div class="card-back-icon">🦖</div>
+          <div class="card-back-label">Bảo Long</div>
+        </div>
+        <div class="memory-card-face memory-card-front">
+          <div class="card-dino-icon">${cardData.icon}</div>
+          <div class="card-dino-name">${cardData.name}</div>
+          <div class="card-dino-ja">${cardData.ja}</div>
+        </div>
+      </div>
+    `;
+
+    cardEl.addEventListener('click', () => {
+      handleMemoryCardClick(cardData, cardEl);
+    });
+
+    grid.appendChild(cardEl);
+  });
+}
+
+function updateMemoryStats() {
+  const flipsEl = document.getElementById('memoryFlipsText');
+  const pairsEl = document.getElementById('memoryPairsText');
+  if (flipsEl) flipsEl.innerText = `👀 Lượt lật: ${memoryFlips}`;
+  if (pairsEl) pairsEl.innerText = `⭐ Đã ghép: ${memoryMatchedCount} / 6 cặp`;
+}
+
+function handleMemoryCardClick(cardData, cardEl) {
+  if (memoryIsLocked) return;
+  if (cardEl.classList.contains('is-flipped') || cardEl.classList.contains('is-matched')) return;
+
+  window.soundMgr.playClick();
+  cardEl.classList.add('is-flipped');
+  memoryFlippedCards.push({ data: cardData, el: cardEl });
+
+  if (memoryFlippedCards.length === 2) {
+    memoryFlips++;
+    updateMemoryStats();
+    memoryIsLocked = true;
+
+    const [first, second] = memoryFlippedCards;
+    if (first.data.id === second.data.id) {
+      // ĐOÁN ĐÚNG CẶP
+      setTimeout(() => {
+        first.el.classList.add('is-matched');
+        second.el.classList.add('is-matched');
+        memoryMatchedCount++;
+        updateMemoryStats();
+
+        window.soundMgr.playCorrect();
+        window.soundMgr.playAudioFile('cheer_flip_match');
+        showToast(`🎉 Giỏi quá! Bảo Long đã tìm thấy cặp ${first.data.name}!`);
+
+        // Đọc tên chú khủng long
+        setTimeout(() => {
+          if (first.data.audioKey) {
+            window.soundMgr.playAudioFile(first.data.audioKey);
+          }
+        }, 1100);
+
+        memoryFlippedCards = [];
+        memoryIsLocked = false;
+
+        // Hoàn thành cả 6 cặp!
+        if (memoryMatchedCount === 6) {
+          setTimeout(() => {
+            fireConfetti();
+            window.soundMgr.playVictory();
+            window.soundMgr.playAudioFile('cheer_flip_win');
+            showToast(`🏆 SIÊU ĐỈNH! Bảo Long đã chiến thắng Game Lật Thẻ Khủng Long!`);
+          }, 800);
+        }
+      }, 500);
+    } else {
+      // KHÔNG KHỚP -> ÚP LẠI
+      setTimeout(() => {
+        first.el.classList.remove('is-flipped');
+        second.el.classList.remove('is-flipped');
+        memoryFlippedCards = [];
+        memoryIsLocked = false;
+      }, 950);
+    }
+  }
+}
+
+// 🚗 GAME ĐỐ VUI XE CỘ (VEHICLE QUIZ)
+function initVehicleQuiz() {
+  quizQuestions = [
+    {
+      target: VEHICLE_LESSONS.find(v => v.id === 'veh1'), // Cứu hỏa
+      question: 'Bảo Long ơi, đâu là chiếc Xe Cứu Hỏa chữa cháy?',
+      ja: '🇯🇵 しょうぼうしゃ (Shoubousha) はどれ？',
+      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh2'), VEHICLE_LESSONS.find(v => v.id === 'veh3'), VEHICLE_LESSONS.find(v => v.id === 'veh7')]
+    },
+    {
+      target: VEHICLE_LESSONS.find(v => v.id === 'veh7'), // Shinkansen
+      question: 'Đâu là Tàu Hỏa / Shinkansen siêu tốc chạy bon bon?',
+      ja: '🇯🇵 しんかんせん (Shinkansen) はどれ？',
+      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh8'), VEHICLE_LESSONS.find(v => v.id === 'veh5'), VEHICLE_LESSONS.find(v => v.id === 'veh6')]
+    },
+    {
+      target: VEHICLE_LESSONS.find(v => v.id === 'veh2'), // Cảnh sát
+      question: 'Bảo Long tìm giúp chú Xe Cảnh Sát tuần tra nào!',
+      ja: '🇯🇵 パトカー (Patokaa) はどれ？',
+      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh4'), VEHICLE_LESSONS.find(v => v.id === 'veh1'), VEHICLE_LESSONS.find(v => v.id === 'veh11')]
+    },
+    {
+      target: VEHICLE_LESSONS.find(v => v.id === 'veh8'), // Máy bay
+      question: 'Phương tiện nào có cánh bay vút trên bầu trời xanh?',
+      ja: '🇯🇵 ひこうき (Hikouki) はどれ？',
+      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh10'), VEHICLE_LESSONS.find(v => v.id === 'veh9'), VEHICLE_LESSONS.find(v => v.id === 'veh12')]
+    },
+    {
+      target: VEHICLE_LESSONS.find(v => v.id === 'veh3'), // Cứu thương
+      question: 'Xe nào đưa bệnh nhân đến bệnh viện cấp cứu kêu eng éc?',
+      ja: '🇯🇵 きゅうきゅうしゃ (Kyuukyuusha) はどれ？',
+      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh5'), VEHICLE_LESSONS.find(v => v.id === 'veh6'), VEHICLE_LESSONS.find(v => v.id === 'veh4')]
+    },
+    {
+      target: VEHICLE_LESSONS.find(v => v.id === 'veh4'), // Máy xúc
+      question: 'Xe nào có gầu xúc đất khỏe mạnh ở công trường?',
+      ja: '🇯🇵 ショベルカー (Shoberukaa) はどれ？',
+      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh11'), VEHICLE_LESSONS.find(v => v.id === 'veh12'), VEHICLE_LESSONS.find(v => v.id === 'veh10')]
+    }
+  ];
+
+  quizCurrentIndex = 0;
+  quizScore = 0;
+  loadQuizQuestion();
+}
+
+function loadQuizQuestion() {
+  if (quizCurrentIndex >= quizQuestions.length) {
+    showQuizVictory();
+    return;
+  }
+
+  const q = quizQuestions[quizCurrentIndex];
+  document.getElementById('quizProgressText').innerText = `Câu ${quizCurrentIndex + 1} / ${quizQuestions.length}`;
+  document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} điểm`;
+  document.getElementById('quizQuestionTitle').innerText = q.question;
+  document.getElementById('quizQuestionJa').innerText = q.ja;
+
+  const optionsGrid = document.getElementById('quizOptionsGrid');
+  optionsGrid.innerHTML = '';
+
+  const allChoices = [q.target, ...q.distractors].sort(() => Math.random() - 0.5);
+
+  allChoices.forEach(item => {
+    if (!item) return;
+    const card = document.createElement('div');
+    card.className = 'quiz-option-card';
+    card.innerHTML = `
+      <div class="quiz-opt-icon">${item.icon}</div>
+      <div class="quiz-opt-name">${item.word}</div>
+      <div class="quiz-opt-ja">${item.ja}</div>
+    `;
+
+    card.addEventListener('click', () => {
+      handleQuizChoice(item, q.target, card);
+    });
+
+    optionsGrid.appendChild(card);
+  });
+
+  // Tự động phát âm câu hỏi xe
+  if (q.target && q.target.audioKey) {
+    window.soundMgr.playAudioFile(q.target.audioKey);
+  }
+}
+
+function handleQuizChoice(chosen, target, cardEl) {
+  if (chosen.id === target.id) {
+    cardEl.classList.add('correct');
+    window.soundMgr.playCorrect();
+    fireConfetti();
+    quizScore += 10;
+    document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} điểm`;
+    showToast(`🎉 Chính xác! Đó là ${target.word}!`);
+
+    setTimeout(() => {
+      quizCurrentIndex++;
+      loadQuizQuestion();
+    }, 1500);
+  } else {
+    cardEl.classList.add('wrong');
+    window.soundMgr.playWrong();
+    showToast(`Bảo Long thử lại xem chiếc nào mới đúng nhé! ❤️`);
+  }
+}
+
+function showQuizVictory() {
+  fireConfetti();
+  window.soundMgr.playVictory();
+  const quizPane = document.getElementById('subgameQuizPane');
+  if (quizPane) {
+    quizPane.innerHTML = `
+      <div style="padding: 30px 16px; text-align: center;">
+        <div style="font-size: 72px; margin-bottom: 14px;">🚗🚅🏆🎉</div>
+        <h2 style="font-size: 26px; color: #0284c7; font-weight: 900; margin-bottom: 8px;">BẢO LONG LÀ BÁC TÀI XUẤT SẮC!</h2>
+        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bé đã hoàn thành xuất sắc thử thách Đố vui Xe Cộ với <strong>${quizScore} điểm</strong>!</p>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <button class="challenge-btn" onclick="initVehicleQuiz()">🔄 Chơi lại Đố Vui</button>
+          <button class="home-btn" onclick="switchSubGame('dino_memory')">🦖 Thử thách Lật Thẻ Khủng Long</button>
+        </div>
+      </div>
+    `;
+  }
 }
 
 // TOAST

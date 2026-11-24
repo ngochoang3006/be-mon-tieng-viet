@@ -1,6 +1,6 @@
 // Dữ liệu học tiếng Việt cho Bé Bảo Long (6 tuổi)
 // Chuẩn hóa phát âm và đánh vần ngữ âm tiếng Việt chuẩn: BỜ A BA, ĐỜ A ĐA...
-// Tích hợp chuyên mục Khủng Long (Dinosaur World) siêu ngầu dành riêng cho Bé Bảo Long
+// Kho từ vựng phong phú 7 bài học + Thế giới Khủng Long + Thế giới Xe Cộ + Minigames
 
 const ALPHABET_DATA = [
   { char: 'A', lower: 'a', phonetic: 'a', word: 'Gà', example: 'con gà', icon: '🐔', ja: 'にわとり (Niwatori)' },
@@ -46,7 +46,7 @@ const TONES_DATA = [
 const VOCAB_LESSONS = [
   {
     id: 1,
-    title: 'Bài 1: Từ 1 tiếng, 2 chữ cái – Nhóm 1 – Rất dễ',
+    title: 'Bài 1: Từ 1 tiếng, 2 chữ cái – Rất dễ',
     subtitle: 'Làm quen các từ đầu tiên thân quen nhất với bé',
     words: [
       { id: 'w1', word: 'ba', breakdown: 'b - a', tone: 'Ngang', icon: '👨', ja: 'お父さん (Otousan)', spellText: 'Bờ - a - ba', example: 'Ba yêu Bảo Long' },
@@ -94,6 +94,64 @@ const VOCAB_LESSONS = [
       { id: 'w29', word: 'mũ', breakdown: 'm - u - ngã', tone: 'Ngã', icon: '🧢', ja: 'ぼうし (Boushi)', spellText: 'Mờ - u - mu - ngã - mũ', example: 'Chiếc mũ che nắng' },
       { id: 'w30', word: 'nước', breakdown: 'n - ươc - sắc', tone: 'Sắc', icon: '💧', ja: 'みず (Mizu)', spellText: 'Nờ - ước - nươc - sắc - nước', example: 'Bảo Long uống nước lọc' }
     ]
+  },
+  {
+    id: 4,
+    title: 'Bài 4: Màu sắc & Hình khối vui nhộn',
+    subtitle: 'Thế giới màu sắc rực rỡ và hình học cơ bản',
+    words: [
+      { id: 'w31', word: 'đỏ', breakdown: 'đ - o - hỏi', tone: 'Hỏi', icon: '🔴', ja: 'あか (Aka - Đỏ)', spellText: 'Đờ - o - đo - hỏi - đỏ', example: 'Màu đỏ rực rỡ' },
+      { id: 'w32', word: 'vàng', breakdown: 'v - ang - huyền', tone: 'Huyền', icon: '🟡', ja: 'きいろ (Kiiro - Vàng)', spellText: 'Vờ - ang - vang - huyền - vàng', example: 'Màu vàng tươi sáng' },
+      { id: 'w33', word: 'xanh', breakdown: 'x - anh', tone: 'Ngang', icon: '🟢', ja: 'みどり / あお (Xanh)', spellText: 'Xờ - anh - xanh', example: 'Bầu trời màu xanh' },
+      { id: 'w34', word: 'tím', breakdown: 't - im - sắc', tone: 'Sắc', icon: '🟣', ja: 'むらさき (Murasaki - Tím)', spellText: 'Tờ - im - tim - sắc - tím', example: 'Bông hoa màu tím' },
+      { id: 'w35', word: 'cam', breakdown: 'c - am', tone: 'Ngang', icon: '🟠', ja: 'オレンジ (Orenji - Cam)', spellText: 'Cờ - am - cam', example: 'Quả cam màu cam' },
+      { id: 'w36', word: 'hồng', breakdown: 'h - ông - huyền', tone: 'Huyền', icon: '🌸', ja: 'ピンク (Pinku - Hồng)', spellText: 'Hờ - ông - hông - huyền - hồng', example: 'Cánh hoa màu hồng' },
+      { id: 'w37', word: 'tròn', breakdown: 'tr - on - huyền', tone: 'Huyền', icon: '⚪', ja: 'まる (Maru - Hình tròn)', spellText: 'Trờ - on - tron - huyền - tròn', example: 'Quả bóng hình tròn' },
+      { id: 'w38', word: 'vuông', breakdown: 'v - uông', tone: 'Ngang', icon: '⏹️', ja: 'しかく (Shikaku - Hình vuông)', spellText: 'Vờ - uông - vuông', example: 'Chiếc hộp hình vuông' }
+    ]
+  },
+  {
+    id: 5,
+    title: 'Bài 5: Cơ thể bé khỏe mạnh',
+    subtitle: 'Các bộ phận trên cơ thể bé Bảo Long',
+    words: [
+      { id: 'w39', word: 'tay', breakdown: 't - ay', tone: 'Ngang', icon: '🖐️', ja: 'て (Te - Bàn tay)', spellText: 'Tờ - ay - tay', example: 'Bàn tay xinh của Bảo Long' },
+      { id: 'w40', word: 'chân', breakdown: 'ch - ân', tone: 'Ngang', icon: '🦶', ja: 'あし (Ashi - Bàn chân)', spellText: 'Chờ - ân - chân', example: 'Đôi chân chạy nhanh' },
+      { id: 'w41', word: 'mắt', breakdown: 'm - ắt - sắc', tone: 'Sắc', icon: '👀', ja: 'め (Me - Mắt)', spellText: 'Mờ - ắt - măt - sắc - mắt', example: 'Đôi mắt sáng long lanh' },
+      { id: 'w42', word: 'mũi', breakdown: 'm - ui - ngã', tone: 'Ngã', icon: '👃', ja: 'はな (Hana - Mũi)', spellText: 'Mờ - ui - mui - ngã - mũi', example: 'Chiếc mũi nhỏ xinh' },
+      { id: 'w43', word: 'tai', breakdown: 't - ai', tone: 'Ngang', icon: '👂', ja: 'みみ (Mimi - Tai)', spellText: 'Tờ - ai - tai', example: 'Đôi tai lắng nghe cô giáo' },
+      { id: 'w44', word: 'miệng', breakdown: 'm - iêng - nặng', tone: 'Nặng', icon: '👄', ja: 'くち (Kuchi - Miệng)', spellText: 'Mờ - iêng - miêng - nặng - miệng', example: 'Miệng cười tươi' },
+      { id: 'w45', word: 'răng', breakdown: 'r - ăng', tone: 'Ngang', icon: '🦷', ja: 'は (Ha - Răng)', spellText: 'Rờ - ăng - răng', example: 'Hàm răng trắng tinh' },
+      { id: 'w46', word: 'tóc', breakdown: 't - oc - sắc', tone: 'Sắc', icon: '💇', ja: 'かみ (Kami - Tóc)', spellText: 'Tờ - oc - toc - sắc - tóc', example: 'Mái tóc đen nhánh' }
+    ]
+  },
+  {
+    id: 6,
+    title: 'Bài 6: Thiên nhiên & Bầu trời',
+    subtitle: 'Mặt trời, biển xanh, mây trắng kỳ thú',
+    words: [
+      { id: 'w47', word: 'mặt trời', breakdown: 'mặt - trời', tone: 'Nặng & Huyền', icon: '☀️', ja: 'たいよう (Taiyou)', spellText: 'Mặt trời chiếu sáng', example: 'Mặt trời buổi sáng bình minh' },
+      { id: 'w48', word: 'mặt trăng', breakdown: 'mặt - trăng', tone: 'Nặng & Ngang', icon: '🌙', ja: 'つき (Tsuki)', spellText: 'Mặt trăng ban đêm', example: 'Mặt trăng tròn vằng vặc' },
+      { id: 'w49', word: 'mây', breakdown: 'm - ây', tone: 'Ngang', icon: '☁️', ja: 'くも (Kumo)', spellText: 'Mờ - ây - mây', example: 'Đám mây bồng bềnh' },
+      { id: 'w50', word: 'mưa', breakdown: 'm - ưa', tone: 'Ngang', icon: '🌧️', ja: 'あめ (Ame)', spellText: 'Mờ - ưa - mưa', example: 'Cơn mưa tưới mát cây cối' },
+      { id: 'w51', word: 'nắng', breakdown: 'n - ăng - sắc', tone: 'Sắc', icon: '🌤️', ja: 'ひざし (Hizashi)', spellText: 'Nờ - ăng - năng - sắc - nắng', example: 'Ánh nắng ấm áp' },
+      { id: 'w52', word: 'gió', breakdown: 'gi - o - sắc', tone: 'Sắc', icon: '💨', ja: 'かぜ (Kaze)', spellText: 'Dờ - o - do - sắc - gió', example: 'Gió mát rượi' },
+      { id: 'w53', word: 'biển', breakdown: 'b - iên - hỏi', tone: 'Hỏi', icon: '🌊', ja: 'うみ (Umi)', spellText: 'Bờ - iên - biên - hỏi - biển', example: 'Bãi biển sóng vỗ dạt dào' },
+      { id: 'w54', word: 'núi', breakdown: 'n - ui - sắc', tone: 'Sắc', icon: '⛰️', ja: 'やま (Yama)', spellText: 'Nờ - ui - nui - sắc - núi', example: 'Núi Phú Sĩ tuyết trắng' },
+      { id: 'w55', word: 'sông', breakdown: 's - ông', tone: 'Ngang', icon: '🏞️', ja: 'かわ (Kawa)', spellText: 'Sờ - ông - sông', example: 'Dòng sông nước trong xanh' }
+    ]
+  },
+  {
+    id: 7,
+    title: 'Bài 7: Trái cây ngọt lành bé yêu',
+    subtitle: 'Những loại quả thơm ngon bổ dưỡng',
+    words: [
+      { id: 'w56', word: 'dưa hấu', breakdown: 'dưa - hấu', tone: 'Ngang & Sắc', icon: '🍉', ja: 'スイカ (Suika)', spellText: 'Dưa hấu mát ngọt', example: 'Miếng dưa hấu đỏ ngọt lịm' },
+      { id: 'w57', word: 'xoài', breakdown: 'x - oai - huyền', tone: 'Huyền', icon: '🥭', ja: 'マンゴー (Mangoo)', spellText: 'Xờ - oai - xoai - huyền - xoài', example: 'Quả xoài chín vàng' },
+      { id: 'w58', word: 'ổi', breakdown: 'ổi - hỏi', tone: 'Hỏi', icon: '🍈', ja: 'グアバ (Guaba)', spellText: 'Quả ổi giòn thơm', example: 'Quả ổi giòn ngọt' },
+      { id: 'w59', word: 'nho', breakdown: 'nh - o', tone: 'Ngang', icon: '🍇', ja: 'ぶどう (Budou)', spellText: 'Nhờ - o - nho', example: 'Chùm nho tím ngọt ngào' },
+      { id: 'w60', word: 'dâu tây', breakdown: 'dâu - tây', tone: 'Ngang', icon: '🍓', ja: 'いちご (Ichigo)', spellText: 'Dâu tây đỏ mọng', example: 'Quả dâu tây ngon tuyệt' }
+    ]
   }
 ];
 
@@ -132,7 +190,7 @@ const PHONICS_LESSONS = [
   }
 ];
 
-// CHUYÊN MỤC ĐẶC BIỆT: THẾ GIỚI KHỦNG LONG CHO BÉ BẢO LONG (DINOSAUR WORLD)
+// CHUYÊN MỤC: THẾ GIỚI KHỦNG LONG CHO BẢO LONG (DINOSAUR WORLD)
 const DINO_LESSONS = [
   {
     id: 'dino1',
@@ -266,6 +324,176 @@ const DINO_LESSONS = [
   }
 ];
 
+// CHUYÊN MỤC MỚI: THẾ GIỚI CÁC LOẠI XE (VEHICLES WORLD)
+const VEHICLE_LESSONS = [
+  {
+    id: 'veh1',
+    word: 'xe cảnh sát',
+    vehName: 'Xe Cảnh Sát (Patrol Car)',
+    audioKey: 'veh_xe_canh_sat',
+    spellKey: 'spell_xe_canh_sat',
+    breakdown: 'c - anh - cảnh, s - at - sát',
+    spellText: 'Cờ - anh - canh - hỏi - cảnh, sờ - at - sat - sắc - sát -> xe cảnh sát',
+    icon: '🚓',
+    ja: 'パトカー (Patokaa)',
+    funFact: 'Đèn chớp đỏ xanh, còi hú vang dội, các chú cảnh sát bảo vệ bình yên!',
+    example: 'Xe cảnh sát tuần tra trên phố'
+  },
+  {
+    id: 'veh2',
+    word: 'xe cứu hỏa',
+    vehName: 'Xe Cứu Hỏa (Fire Truck)',
+    audioKey: 'veh_xe_cuu_hoa',
+    spellKey: 'spell_xe_cuu_hoa',
+    breakdown: 'c - ưu - cứu, h - oa - hỏa',
+    spellText: 'Cờ - ưu - cưu - sắc - cứu, hờ - oa - hoa - hỏi - hỏa -> xe cứu hỏa',
+    icon: '🚒',
+    ja: 'しょうぼうしゃ (Shoubousha)',
+    funFact: 'Màu đỏ rực rỡ, mang thang dài và vòi rồng dập tắt ngọn lửa khổng lồ!',
+    example: 'Xe cứu hỏa chạy nhanh tới đám cháy'
+  },
+  {
+    id: 'veh3',
+    word: 'xe cứu thương',
+    vehName: 'Xe Cứu Thương (Ambulance)',
+    audioKey: 'veh_xe_cuu_thuong',
+    spellKey: 'spell_xe_cuu_thuong',
+    breakdown: 'c - ưu - cứu, th - ương - thương',
+    spellText: 'Cờ - ưu - cưu - sắc - cứu, thờ - ương - thương -> xe cứu thương',
+    icon: '🚑',
+    ja: 'きゅうきゅうしゃ (Kyuukyuusha)',
+    funFact: 'Chở bác sĩ và bệnh nhân đến bệnh viện kịp thời, xe cộ nhường đường!',
+    example: 'Xe cứu thương chở bệnh nhân cấp cứu'
+  },
+  {
+    id: 'veh4',
+    word: 'máy xúc',
+    vehName: 'Máy Xúc Đất (Excavator)',
+    audioKey: 'veh_may_xuc',
+    spellKey: 'spell_may_xuc',
+    breakdown: 'm - ay - máy, x - uc - xúc',
+    spellText: 'Mờ - ay - may - sắc - máy, xờ - uc - xuc - sắc - xúc -> máy xúc',
+    icon: '🚜',
+    ja: 'ショベルカー (Shoberukaa)',
+    funFact: 'Chiếc cánh tay sắt khổng lồ múc đất đá khỏe như một dũng sĩ công trường!',
+    example: 'Máy xúc đào đất làm đường mới'
+  },
+  {
+    id: 'veh5',
+    word: 'xe buýt',
+    vehName: 'Xe Buýt Chở Khách (Bus)',
+    audioKey: 'veh_xe_buyt',
+    spellKey: 'spell_xe_buyt',
+    breakdown: 'b - uyt - buýt',
+    spellText: 'Bờ - uyt - buyt - sắc - buýt -> xe buýt',
+    icon: '🚌',
+    ja: 'バス (Basu)',
+    funFact: 'Xe dài nhiều chỗ ngồi, đón các bạn nhỏ Bảo Long đến trường mỗi ngày!',
+    example: 'Bảo Long lên xe buýt đi học'
+  },
+  {
+    id: 'veh6',
+    word: 'xe tải',
+    vehName: 'Xe Tải Chở Hàng (Truck)',
+    audioKey: 'veh_xe_tai',
+    spellKey: 'spell_xe_tai',
+    breakdown: 't - ai - tải',
+    spellText: 'Tờ - ai - tai - hỏi - tải -> xe tải',
+    icon: '🚛',
+    ja: 'トラック (Torakku)',
+    funFact: 'Thùng xe to lớn chở đồ chơi, hoa quả và hàng hóa đi khắp mọi miền!',
+    example: 'Xe tải chở hàng hóa nặng'
+  },
+  {
+    id: 'veh7',
+    word: 'tàu hỏa',
+    vehName: 'Tàu Hỏa / Shinkansen (Train)',
+    audioKey: 'veh_tau_hoa',
+    spellKey: 'spell_tau_hoa',
+    breakdown: 't - au - tàu, h - oa - hỏa',
+    spellText: 'Tờ - au - tau - huyền - tàu, hờ - oa - hoa - hỏi - hỏa -> tàu hỏa',
+    icon: '🚅',
+    ja: 'しんかんせん / でんしゃ (Shinkansen)',
+    funFact: 'Tàu điện Shinkansen hình viên đạn chạy siêu tốc vút như cơn gió ở Nhật!',
+    example: 'Tàu hỏa chạy trên đường ray bon bon'
+  },
+  {
+    id: 'veh8',
+    word: 'máy bay',
+    vehName: 'Máy Bay (Airplane)',
+    audioKey: 'veh_may_bay',
+    spellKey: 'spell_may_bay',
+    breakdown: 'm - ay - máy, b - ay - bay',
+    spellText: 'Mờ - ay - may - sắc - máy, bờ - ay - bay -> máy bay',
+    icon: '✈️',
+    ja: 'ひこうき (Hikouki)',
+    funFact: 'Đôi cánh bạc lướt trên bầu trời đưa bé Bảo Long từ Nhật về thăm Việt Nam!',
+    example: 'Máy bay đưa bé bay trên mây'
+  },
+  {
+    id: 'veh9',
+    word: 'trực thăng',
+    vehName: 'Máy Bay Trực Thăng (Helicopter)',
+    audioKey: 'veh_truc_thang',
+    spellKey: 'spell_truc_thang',
+    breakdown: 'tr - ực - trực, th - ăng - thăng',
+    spellText: 'Trờ - ực - trưc - nặng - trực, thờ - ăng - thăng -> trực thăng',
+    icon: '🚁',
+    ja: 'ヘリコプター (Herikoputaa)',
+    funFact: 'Cánh quạt quay tít trên đỉnh đầu, cất cánh thẳng đứng lên không trung!',
+    example: 'Trực thăng cứu hộ bay trên đỉnh núi'
+  },
+  {
+    id: 'veh10',
+    word: 'tàu thủy',
+    vehName: 'Tàu Thủy (Ship)',
+    audioKey: 'veh_tau_thuy',
+    spellKey: 'spell_tau_thuy',
+    breakdown: 't - au - tàu, th - uy - thủy',
+    spellText: 'Tờ - au - tau - huyền - tàu, thờ - uy - thuy - hỏi - thủy -> tàu thủy',
+    icon: '🚢',
+    ja: 'ふね (Fune)',
+    funFact: 'Chiếc tàu khổng lồ rẽ sóng trắng xóa lướt êm trên đại dương bao la!',
+    example: 'Tàu thủy chở hàng ra khơi'
+  },
+  {
+    id: 'veh11',
+    word: 'xe con',
+    vehName: 'Xe Ô Tô Con (Car)',
+    audioKey: 'veh_xe_con',
+    spellKey: 'spell_xe_con',
+    breakdown: 'x - e - xe, c - on - con',
+    spellText: 'Xờ - e - xe, cờ - on - con -> xe con',
+    icon: '🚗',
+    ja: 'くるま (Kuruma)',
+    funFact: 'Chiếc xe hơi gia đình chở cả nhà Bảo Long đi chơi công viên cuối tuần!',
+    example: 'Ba lái xe con đưa cả nhà đi chơi'
+  },
+  {
+    id: 'veh12',
+    word: 'xe đạp',
+    vehName: 'Xe Đạp (Bicycle)',
+    audioKey: 'veh_xe_dap',
+    spellKey: 'spell_xe_dap',
+    breakdown: 'x - e - xe, đ - ap - đạp',
+    spellText: 'Xờ - e - xe, đờ - ap - đap - nặng - đạp -> xe đạp',
+    icon: '🚲',
+    ja: 'じてんしゃ (Jitensha)',
+    funFact: 'Bảo Long đạp hai bàn đạp quay đều, rèn luyện sức khỏe dẻo dai!',
+    example: 'Bảo Long tập đi xe đạp'
+  }
+];
+
+// DỮ LIỆU GAME LẬT THẺ KHỦNG LONG (DINO MEMORY FLIP)
+const DINO_MEMORY_PAIRS = [
+  { id: 'pair1', name: 'T-Rex Bạo Chúa', icon: '🦖', ja: 'ティラノサウルス', audioKey: 'dino_bao_chua' },
+  { id: 'pair2', name: 'Ba Sừng Dũng Mãnh', icon: '🦏', ja: 'トリケラトプス', audioKey: 'dino_ba_sung' },
+  { id: 'pair3', name: 'Cổ Dài Cao Lớn', icon: '🦕', ja: 'ブラキオサウルス', audioKey: 'dino_co_dai' },
+  { id: 'pair4', name: 'Khủng Long Bay', icon: '🦅', ja: 'プテラノドン', audioKey: 'dino_khung_long_bay' },
+  { id: 'pair5', name: 'Đuôi Gai Sắc Nhọn', icon: '🦎', ja: 'ステゴサウルス', audioKey: 'dino_duoi_gai' },
+  { id: 'pair6', name: 'Giáp Búa Thiết Giáp', icon: '🛡️', ja: 'アンキロサウルス', audioKey: 'dino_giap_bua' }
+];
+
 const SPELL_BUILDER_DATA = [
   {
     target: 'ba',
@@ -366,5 +594,25 @@ const SPELL_BUILDER_DATA = [
     icon: '🍳',
     puzzle: ['b', 'ếp'],
     options: ['b', 'ếp', 'êp', 'p', 'm']
+  },
+  {
+    target: 'xe',
+    consonant: 'x',
+    vowel: 'e',
+    tone: 'ngang',
+    meaning: 'Xe cộ (くるま)',
+    icon: '🚗',
+    puzzle: ['x', 'e'],
+    options: ['x', 'e', 'a', 'c', 't']
+  },
+  {
+    target: 'tàu',
+    consonant: 't',
+    vowel: 'àu',
+    tone: 'huyền',
+    meaning: 'Tàu điện (でんしゃ)',
+    icon: '🚅',
+    puzzle: ['t', 'àu'],
+    options: ['t', 'àu', 'au', 'm', 'n']
   }
 ];
