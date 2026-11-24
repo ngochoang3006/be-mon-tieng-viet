@@ -129,7 +129,7 @@ class SoundManager {
   // Lời khen thưởng trò chơi
   speakCheer(type) {
     const key = `cheer_${type}`;
-    this.playAudioFile(key, null, type === 'correct' ? 'Bé Mon giỏi quá!' : 'Bé thử lại nhé');
+    this.playAudioFile(key, null, type === 'correct' ? 'Bảo Long giỏi quá!' : 'Bảo Long thử lại nhé!');
   }
 
   // Fallback Web Speech API nếu gặp từ chưa sinh file
@@ -137,7 +137,9 @@ class SoundManager {
     if (this.isMuted || !this.synth) return;
     this.synth.cancel();
 
-    const utter = new SpeechSynthesisUtterance(text);
+    // Chuẩn hóa dấu gạch ngang thành dấu phẩy để Web Speech đọc ngắt âm chuẩn ngữ âm
+    const cleanText = (text || '').replace(/\s*-\s*/g, ', ');
+    const utter = new SpeechSynthesisUtterance(cleanText);
     utter.rate = this.speedRate === 0.8 ? 0.75 : 0.95;
     utter.lang = 'vi-VN';
     if (this.selectedVoice) {

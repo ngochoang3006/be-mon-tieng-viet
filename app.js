@@ -396,10 +396,39 @@ function openModal(wordObj) {
   breakdownBox.innerHTML = '';
   const parts = (wordObj.breakdown || wordObj.word).split(/[-+,]/);
   parts.forEach(part => {
-    if (part.trim()) {
+    const trimmed = part.trim();
+    if (trimmed) {
       const span = document.createElement('div');
       span.className = 'breakdown-item';
-      span.innerText = part.trim();
+      span.innerText = trimmed;
+      span.title = `Chạm để nghe âm "${trimmed}"`;
+      span.style.cursor = 'pointer';
+      span.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        const clean = trimmed.toLowerCase();
+        if (clean === 'c') {
+          window.soundMgr.speakAlphabet('c', 'cờ');
+          showToast('Chữ c: phát âm là "cờ"');
+        } else if (clean === 'b') {
+          window.soundMgr.speakAlphabet('b', 'bờ');
+          showToast('Chữ b: phát âm là "bờ"');
+        } else if (clean === 'd') {
+          window.soundMgr.speakAlphabet('d', 'dờ');
+          showToast('Chữ d: phát âm là "dờ"');
+        } else if (clean === 'đ') {
+          window.soundMgr.speakAlphabet('đ', 'đờ');
+          showToast('Chữ đ: phát âm là "đờ"');
+        } else if (clean === 't') {
+          window.soundMgr.speakAlphabet('t', 'tờ');
+          showToast('Chữ t: phát âm là "tờ"');
+        } else if (clean === 's') {
+          window.soundMgr.speakAlphabet('s', 'sờ');
+          showToast('Chữ s: phát âm là "sờ"');
+        } else {
+          window.soundMgr.speakWord(clean);
+        }
+      });
       breakdownBox.appendChild(span);
     }
   });
