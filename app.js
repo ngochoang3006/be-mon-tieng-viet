@@ -296,6 +296,8 @@ function renderAlphabetView() {
         showToast('Chữ S: "sờ" (uốn cong lưỡi như trong "quyển sách") 📚');
       } else if (item.lower === 'x') {
         showToast('Chữ X: "xờ" (thẳng lưỡi nhẹ như trong "xe cộ") 🚗');
+      } else if (item.lower === 'â') {
+        showToast('Chữ Â: "ớ" (như trong "cái cây") 🌳');
       } else {
         showToast(`Chữ ${item.char} ${item.lower}: phát âm là "${item.phonetic}"`);
       }
@@ -394,7 +396,7 @@ function openModal(wordObj) {
     window.soundMgr.speakWord(wordObj.word);
   }
 
-  document.getElementById('modalIcon').innerText = wordObj.icon;
+  document.getElementById('modalIcon').innerHTML = wordObj.icon;
   document.getElementById('modalWord').innerText = wordObj.word;
 
   // Breakdown items
@@ -437,6 +439,9 @@ function openModal(wordObj) {
         } else if (clean === 'x') {
           window.soundMgr.speakAlphabet('x', 'xờ');
           showToast('Chữ x: phát âm là "xờ" (thẳng lưỡi nhẹ như trong "xe cộ") 🚗');
+        } else if (clean === 'â') {
+          window.soundMgr.speakAlphabet('â', 'ớ');
+          showToast('Chữ â: phát âm là "ớ" (như trong "cái cây") 🌳');
         } else {
           window.soundMgr.speakWord(clean);
         }
@@ -616,6 +621,7 @@ function loadGameQuestion() {
     btn.innerText = char;
     btn.id = `opt-btn-${idx}`;
     btn.addEventListener('click', () => {
+      window.soundMgr.speakAlphabet(char);
       handleLetterChoose(char, btn);
     });
     optionsContainer.appendChild(btn);
@@ -715,18 +721,26 @@ function switchSubGame(subgame) {
   currentSubGame = subgame;
   const puzPane = document.getElementById('subgamePuzzlePane');
   const memPane = document.getElementById('subgameMemoryPane');
+  const dQuizPane = document.getElementById('subgameDinoQuizPane');
+  const dDigPane = document.getElementById('subgameDinoDigPane');
   const quizPane = document.getElementById('subgameQuizPane');
 
   const tabPuz = document.getElementById('tabBtnPuzzle');
   const tabMem = document.getElementById('tabBtnMemory');
+  const tabDQuiz = document.getElementById('tabBtnDinoQuiz');
+  const tabDDig = document.getElementById('tabBtnDinoDig');
   const tabQuiz = document.getElementById('tabBtnQuiz');
 
   if (puzPane) puzPane.style.display = subgame === 'puzzle' ? 'block' : 'none';
   if (memPane) memPane.style.display = subgame === 'dino_memory' ? 'block' : 'none';
+  if (dQuizPane) dQuizPane.style.display = subgame === 'dino_quiz' ? 'block' : 'none';
+  if (dDigPane) dDigPane.style.display = subgame === 'dino_dig' ? 'block' : 'none';
   if (quizPane) quizPane.style.display = subgame === 'quiz' ? 'block' : 'none';
 
   if (tabPuz) tabPuz.classList.toggle('active', subgame === 'puzzle');
   if (tabMem) tabMem.classList.toggle('active', subgame === 'dino_memory');
+  if (tabDQuiz) tabDQuiz.classList.toggle('active', subgame === 'dino_quiz');
+  if (tabDDig) tabDDig.classList.toggle('active', subgame === 'dino_dig');
   if (tabQuiz) tabQuiz.classList.toggle('active', subgame === 'quiz');
 
   window.soundMgr.playClick();
@@ -735,6 +749,10 @@ function switchSubGame(subgame) {
     renderGameView();
   } else if (subgame === 'dino_memory') {
     initDinoMemoryGame();
+  } else if (subgame === 'dino_quiz') {
+    initDinoQuiz();
+  } else if (subgame === 'dino_dig') {
+    initDinoDig();
   } else if (subgame === 'quiz') {
     initVehicleQuiz();
   }
@@ -983,6 +1001,251 @@ function showQuizVictory() {
         <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
           <button class="challenge-btn" onclick="initVehicleQuiz()">🔄 Chơi lại Đố Vui</button>
           <button class="home-btn" onclick="switchSubGame('dino_memory')">🦖 Thử thách Lật Thẻ Khủng Long</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ========================================================
+// 🎯 GAME 2: ĐỐ VUI KHỦNG LONG CHO BẢO LONG (DINO QUIZ)
+// ========================================================
+let dinoQuizCurrentIndex = 0;
+let dinoQuizScore = 0;
+
+function initDinoQuiz() {
+  dinoQuizCurrentIndex = 0;
+  dinoQuizScore = 0;
+  const scoreEl = document.getElementById('dinoQuizScoreText');
+  if (scoreEl) scoreEl.innerText = `⭐ 0 sao`;
+  loadDinoQuizQuestion();
+}
+
+function loadDinoQuizQuestion() {
+  const total = DINO_QUIZ_DATA.length;
+  if (dinoQuizCurrentIndex >= total) {
+    showDinoQuizVictory();
+    return;
+  }
+
+  const q = DINO_QUIZ_DATA[dinoQuizCurrentIndex];
+  document.getElementById('dinoQuizProgressText').innerText = `Câu ${dinoQuizCurrentIndex + 1} / ${total}`;
+  document.getElementById('dinoQuizQuestionTitle').innerText = q.question;
+  document.getElementById('dinoQuizQuestionHint').innerText = `💡 ${q.hint}`;
+
+  const btnHear = document.getElementById('btnHearDinoQuizHint');
+  if (btnHear) {
+    btnHear.onclick = () => {
+      window.soundMgr.playClick();
+      if (q.audioKey) {
+        window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
+      } else {
+        window.soundMgr.speakWord(q.hint);
+      }
+    };
+  }
+
+  // Tự động phát âm gợi ý khi vào câu hỏi mới
+  setTimeout(() => {
+    if (q.audioKey) {
+      window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
+    }
+  }, 400);
+
+  const container = document.getElementById('dinoQuizOptionsGrid');
+  container.innerHTML = '';
+
+  q.options.forEach(optId => {
+    const item = DINO_LESSONS.find(d => d.id === optId);
+    if (!item) return;
+
+    const card = document.createElement('div');
+    card.className = 'quiz-option-card';
+    card.innerHTML = `
+      <div class="quiz-opt-icon">${item.icon}</div>
+      <div class="quiz-opt-name">${item.dinoName}</div>
+      <div class="quiz-opt-ja">🇯🇵 ${item.ja}</div>
+    `;
+
+    card.addEventListener('click', () => {
+      checkDinoQuizAnswer(optId, card, q, item);
+    });
+
+    container.appendChild(card);
+  });
+}
+
+function checkDinoQuizAnswer(chosenId, cardEl, q, item) {
+  if (cardEl.classList.contains('correct') || cardEl.classList.contains('wrong')) return;
+
+  if (chosenId === q.correctId) {
+    cardEl.classList.add('correct');
+    window.soundMgr.playCorrect();
+    fireConfetti();
+    dinoQuizScore += 10;
+    document.getElementById('dinoQuizScoreText').innerText = `⭐ ${dinoQuizScore} sao`;
+    showToast(`🎉 Giỏi quá Bảo Long ơi! Chính là ${item.dinoName}! 🦖`);
+
+    if (item.audioKey) {
+      window.soundMgr.playAudioFile(item.audioKey);
+    }
+
+    setTimeout(() => {
+      dinoQuizCurrentIndex++;
+      loadDinoQuizQuestion();
+    }, 1800);
+  } else {
+    cardEl.classList.add('wrong');
+    window.soundMgr.playWrong();
+    showToast(`Bảo Long thử lại xem chú nào mới đúng nhé! ❤️`);
+  }
+}
+
+function showDinoQuizVictory() {
+  fireConfetti();
+  window.soundMgr.playVictory();
+  const container = document.getElementById('subgameDinoQuizPane');
+  if (container) {
+    container.innerHTML = `
+      <div style="background: linear-gradient(135deg, #dcfce7 0%, #fef08a 100%); border: 3px solid #16a34a; border-radius: 28px; padding: 36px 20px; text-align: center; max-width: 540px; margin: 0 auto; box-shadow: 0 12px 30px rgba(22, 163, 74, 0.2);">
+        <div style="font-size: 72px; margin-bottom: 14px;">🦖🦕🏆🌟</div>
+        <h2 style="font-size: 26px; color: #15803d; font-weight: 900; margin-bottom: 8px;">BẢO LONG LÀ CHUYÊN GIA KHỦNG LONG!</h2>
+        <p style="font-size: 15px; color: #334155; margin-bottom: 20px;">Bé đã trả lời chính xác tất cả câu đố về kỷ Jura và đạt <strong>${dinoQuizScore} sao</strong>!</p>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <button class="challenge-btn" onclick="initDinoQuiz()">🔄 Chơi lại Đố Vui</button>
+          <button class="home-btn" style="background: #ea580c; border-color: #c2410c;" onclick="switchSubGame('dino_dig')">⛏️ Thử tài Khai Quật Hóa Thạch</button>
+          <button class="home-btn" onclick="switchSubGame('dino_memory')">🃏 Lật thẻ Khủng Long</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// ========================================================
+// ⛏️ GAME 3: KHAI QUẬT HÓA THẠCH KỲ BÍ (DINO FOSSIL DIG)
+// ========================================================
+let dinoDigCurrentIndex = 0;
+let dinoDigHits = 0;
+let dinoDigBadges = 0;
+
+function initDinoDig() {
+  dinoDigCurrentIndex = 0;
+  dinoDigBadges = 0;
+  const badgeEl = document.getElementById('dinoDigStarsText');
+  if (badgeEl) badgeEl.innerText = `🏆 0 huy hiệu`;
+  loadDinoDigStage();
+}
+
+function loadDinoDigStage() {
+  const total = DINO_DIG_DATA.length;
+  if (dinoDigCurrentIndex >= total) {
+    showDinoDigVictory();
+    return;
+  }
+
+  const stage = DINO_DIG_DATA[dinoDigCurrentIndex];
+  dinoDigHits = 0;
+
+  document.getElementById('dinoDigProgressText').innerText = `Hóa thạch ${dinoDigCurrentIndex + 1} / ${total}`;
+  document.getElementById('dinoDigTargetTitle').innerText = `Khai quật: ${stage.name}`;
+  document.getElementById('dinoDigProgressBar').style.width = '0%';
+  document.getElementById('dinoDigProgressLabel').innerText = 'Tiến độ đào: 0%';
+
+  const underlay = document.getElementById('dinoDigFossilUnderlay');
+  if (underlay) underlay.innerHTML = stage.fossilSilhouette;
+
+  const overlay = document.getElementById('dinoDigRockOverlay');
+  if (overlay) {
+    overlay.style.opacity = '1';
+    overlay.style.display = 'flex';
+  }
+
+  const revivedBox = document.getElementById('dinoDigRevivedDino');
+  if (revivedBox) revivedBox.style.display = 'none';
+
+  const rockArea = document.getElementById('dinoDigRockArea');
+  if (rockArea) {
+    rockArea.onclick = () => {
+      hitExcavationRock(stage);
+    };
+  }
+
+  const btnNext = document.getElementById('btnNextFossil');
+  if (btnNext) {
+    btnNext.onclick = (e) => {
+      e.stopPropagation();
+      window.soundMgr.playClick();
+      dinoDigCurrentIndex++;
+      loadDinoDigStage();
+    };
+  }
+}
+
+function hitExcavationRock(stage) {
+  if (dinoDigHits >= stage.hitsRequired) return;
+
+  dinoDigHits++;
+  window.soundMgr.playHammerHit();
+
+  const rockArea = document.getElementById('dinoDigRockArea');
+  if (rockArea) {
+    rockArea.classList.remove('wobble');
+    void rockArea.offsetWidth; // trigger reflow
+    rockArea.classList.add('wobble');
+  }
+
+  const pct = Math.min(100, Math.round((dinoDigHits / stage.hitsRequired) * 100));
+  const pBar = document.getElementById('dinoDigProgressBar');
+  const pLabel = document.getElementById('dinoDigProgressLabel');
+  if (pBar) pBar.style.width = `${pct}%`;
+  if (pLabel) pLabel.innerText = `Tiến độ đào: ${pct}%`;
+
+  const overlay = document.getElementById('dinoDigRockOverlay');
+  if (overlay) {
+    overlay.style.opacity = `${(stage.hitsRequired - dinoDigHits) / stage.hitsRequired}`;
+  }
+
+  if (dinoDigHits >= stage.hitsRequired) {
+    // Hoàn thành khai quật! Khủng long hồi sinh!
+    setTimeout(() => {
+      if (overlay) overlay.style.display = 'none';
+
+      const revivedBox = document.getElementById('dinoDigRevivedDino');
+      document.getElementById('dinoDigRevivedIcon').innerHTML = stage.revivedIcon;
+      document.getElementById('dinoDigRevivedTitle').innerText = stage.name;
+      document.getElementById('dinoDigRevivedJa').innerText = `🇯🇵 ${stage.ja}`;
+      if (revivedBox) revivedBox.style.display = 'flex';
+
+      window.soundMgr.playMagicalRevive();
+      fireConfetti();
+
+      setTimeout(() => {
+        if (stage.audioKey) {
+          window.soundMgr.playAudioFile(stage.audioKey, null, stage.name);
+        }
+      }, 500);
+
+      dinoDigBadges++;
+      document.getElementById('dinoDigStarsText').innerText = `🏆 ${dinoDigBadges} huy hiệu`;
+      showToast(`🎉 ${stage.celebrationText} 🌋`);
+    }, 200);
+  }
+}
+
+function showDinoDigVictory() {
+  fireConfetti();
+  window.soundMgr.playVictory();
+  const container = document.getElementById('subgameDinoDigPane');
+  if (container) {
+    container.innerHTML = `
+      <div style="background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); border: 3px solid #ea580c; border-radius: 28px; padding: 36px 20px; text-align: center; max-width: 540px; margin: 0 auto; box-shadow: 0 12px 30px rgba(234, 88, 12, 0.25);">
+        <div style="font-size: 72px; margin-bottom: 14px;">⛏️🦕🦖🏆✨</div>
+        <h2 style="font-size: 26px; color: #9a3412; font-weight: 900; margin-bottom: 8px;">NHÀ KHẢO CỔ VĨ ĐẠI BẢO LONG!</h2>
+        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bé đã khai quật và đánh thức toàn bộ các loài khủng long tiền sử từ lòng đất!</p>
+        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+          <button class="challenge-btn" style="background: #ea580c; border-color: #c2410c;" onclick="initDinoDig()">🔄 Khai quật lại từ đầu</button>
+          <button class="home-btn" onclick="switchSubGame('dino_quiz')">🎯 Chơi Đố Vui Khủng Long</button>
+          <button class="home-btn" onclick="switchSubGame('dino_memory')">🃏 Lật thẻ Khủng Long</button>
         </div>
       </div>
     `;

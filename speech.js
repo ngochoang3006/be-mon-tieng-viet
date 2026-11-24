@@ -69,7 +69,7 @@ class SoundManager {
       this.synth.cancel();
     }
 
-    const audioUrl = `audio/${this.gender}/${key}.mp3`;
+    const audioUrl = `audio/${this.gender}/${encodeURIComponent(key)}.mp3`;
     const audio = new Audio(audioUrl);
     this.currentAudio = audio;
     audio.playbackRate = this.speedRate;
@@ -80,7 +80,20 @@ class SoundManager {
     };
 
     audio.onerror = (e) => {
-      console.warn(`Không tải được file âm thanh: ${audioUrl}, fallback sang TTS.`, e);
+      console.warn(`Không tải được file âm thanh: ${audioUrl}, thử fallback alias hoặc TTS.`, e);
+      if (key === 'alpha_â') {
+        this.playAudioFile('alpha_aa', onEndCallback, fallbackText);
+        return;
+      }
+      if (key === 'word_â') {
+        this.playAudioFile('word_aa', onEndCallback, fallbackText);
+        return;
+      }
+      if (key === 'word_sách') {
+        this.playAudioFile('word_sach', onEndCallback, fallbackText);
+        return;
+      }
+
       this.currentAudio = null;
       if (fallbackText) {
         this.speakTTS(fallbackText, onEndCallback);
@@ -205,6 +218,20 @@ class SoundManager {
     const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
     notes.forEach((freq, idx) => {
       this.playToneFreq(freq, 'sine', 0.2, idx * 0.1);
+    });
+  }
+
+  // Âm thanh búa đập đá khảo cổ (Excavation hammer hit)
+  playHammerHit() {
+    this.playToneFreq(750, 'square', 0.05, 0);
+    this.playToneFreq(350, 'triangle', 0.08, 0.02);
+  }
+
+  // Âm thanh hồi sinh khủng long hóa thạch huyền bí (Magical revive)
+  playMagicalRevive() {
+    const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
+    notes.forEach((freq, idx) => {
+      this.playToneFreq(freq, 'sine', 0.3, idx * 0.08);
     });
   }
 }

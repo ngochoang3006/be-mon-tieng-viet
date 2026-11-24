@@ -153,7 +153,13 @@
               <span>🌋</span> Gầm to nào: ROAR!
             </button>
             <button class="dino-roar-btn" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-bottom-color: #0c4a6e;" onclick="switchMode('game'); switchSubGame('dino_memory');">
-              <span>🃏</span> Chơi Game Lật Thẻ Khủng Long
+              <span>🃏</span> Game 1: Lật Thẻ Khủng Long
+            </button>
+            <button class="dino-roar-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-bottom-color: #4c1d95;" onclick="switchMode('game'); switchSubGame('dino_quiz');">
+              <span>🎯</span> Game 2: Đố Vui Khủng Long
+            </button>
+            <button class="dino-roar-btn" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); border-bottom-color: #7c2d12;" onclick="switchMode('game'); switchSubGame('dino_dig');">
+              <span>⛏️</span> Game 3: Khai Quật Hóa Thạch
             </button>
           </div>
         </div>
@@ -191,8 +197,16 @@
           <span>Ghép Chữ Vui</span>
         </button>
         <button class="game-tab-btn" id="tabBtnMemory" onclick="switchSubGame('dino_memory')">
-          <span>🦖</span>
+          <span>🃏</span>
           <span>Lật Thẻ Khủng Long</span>
+        </button>
+        <button class="game-tab-btn" id="tabBtnDinoQuiz" onclick="switchSubGame('dino_quiz')">
+          <span>🎯</span>
+          <span>Đố Vui Khủng Long</span>
+        </button>
+        <button class="game-tab-btn" id="tabBtnDinoDig" onclick="switchSubGame('dino_dig')">
+          <span>⛏️</span>
+          <span>Khai Quật Hóa Thạch</span>
         </button>
         <button class="game-tab-btn" id="tabBtnQuiz" onclick="switchSubGame('quiz')">
           <span>🚗</span>
@@ -260,6 +274,68 @@
         </div>
         <div class="quiz-options-grid" id="quizOptionsGrid">
           <!-- Render các lựa chọn xe từ app.js -->
+        </div>
+      </div>
+
+      <!-- Subgame 4: Đố Vui Khủng Long (Dino Quiz) -->
+      <div class="game-view" id="subgameDinoQuizPane" style="display: none;">
+        <div class="game-score-row">
+          <span class="game-progress-text" id="dinoQuizProgressText">Câu 1 / 8</span>
+          <span class="game-stars" id="dinoQuizScoreText">⭐ 0 sao</span>
+        </div>
+        <div class="quiz-question-box" style="border-left-color: #10b981; background: #f0fdf4;">
+          <div class="quiz-question-title" id="dinoQuizQuestionTitle" style="color: #064e3b;">Bảo Long ơi, đâu là chú Khủng Long Bọc Giáp?</div>
+          <div class="quiz-question-ja" id="dinoQuizQuestionHint" style="color: #047857; font-weight: 700;">💡 Chú ý chiếc đuôi gắn quả chùy sắt nhé!</div>
+          <button class="btn-hear-hint" id="btnHearDinoQuizHint" style="margin-top: 10px; background: #10b981; border-color: #059669;">
+            <span>🔊</span> Nghe lại câu đố
+          </button>
+        </div>
+        <div class="quiz-options-grid" id="dinoQuizOptionsGrid">
+          <!-- Render các lựa chọn khủng long từ app.js -->
+        </div>
+      </div>
+
+      <!-- Subgame 5: Khai Quật Hóa Thạch Khủng Long (Dino Dig) -->
+      <div class="game-view" id="subgameDinoDigPane" style="display: none;">
+        <div class="game-score-row">
+          <span class="game-progress-text" id="dinoDigProgressText">Hóa thạch 1 / 5</span>
+          <span class="game-stars" id="dinoDigStarsText">🏆 0 huy hiệu</span>
+        </div>
+        
+        <div class="dig-site-box">
+          <div class="dig-site-header">
+            <h3 class="dig-site-title" id="dinoDigTargetTitle">Khu Khảo Cổ Tiền Sử Của Bảo Long</h3>
+            <p class="dig-site-subtitle">Chạm tay liên tục vào tảng đá để dùng búa đập vỡ lớp đất đá cổ đại, hồi sinh chú khủng long!</p>
+          </div>
+
+          <!-- Thanh tiến độ khai quật -->
+          <div class="dig-progress-container">
+            <div class="dig-progress-bar" id="dinoDigProgressBar" style="width: 0%;"></div>
+            <span class="dig-progress-label" id="dinoDigProgressLabel">Tiến độ đào: 0%</span>
+          </div>
+
+          <!-- Khu vực tảng đá tương tác -->
+          <div class="dig-rock-area" id="dinoDigRockArea">
+            <div class="dig-fossil-underlay" id="dinoDigFossilUnderlay"></div>
+            <div class="dig-rock-overlay" id="dinoDigRockOverlay">
+              <div class="dig-crack-layer" id="dinoDigCrackLayer"></div>
+              <div class="dig-rock-prompt">
+                <span class="hammer-bounce-icon">🔨</span>
+                <span class="dig-prompt-text">Chạm vào tảng đá để đập!</span>
+              </div>
+            </div>
+            <!-- Hiển thị khi khủng long sống lại -->
+            <div class="dig-revived-dino" id="dinoDigRevivedDino" style="display: none;">
+              <div class="revived-icon" id="dinoDigRevivedIcon"></div>
+              <div class="revived-title" id="dinoDigRevivedTitle">T-Rex Bạo Chúa</div>
+              <div class="revived-ja" id="dinoDigRevivedJa">ティラノサウルス</div>
+              <div class="revived-action">
+                <button class="dino-roar-btn" id="btnNextFossil" style="font-size: 15px; padding: 12px 24px;">
+                  ⛏️ Khai quật chú khủng long tiếp theo ➡️
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
