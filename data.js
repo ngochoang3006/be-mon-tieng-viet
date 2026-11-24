@@ -352,6 +352,38 @@ const DINO_SVGS = {
   </svg>`
 };
 
+// ========================================================
+// HỆ THỐNG ẢNH THẬT CHẤT LƯỢNG CAO CHO KHỦNG LONG & XE CỘ
+// Dành riêng cho bé Bảo Long: ảnh chụp thực tế / mô hình bảo tàng chân thực
+// ========================================================
+const DINO_PHOTOS = {
+  bao_chua: '<img src="images/dinos/dino_bao_chua.jpg" class="real-photo" alt="Khủng long bạo chúa T-Rex">',
+  ba_sung: '<img src="images/dinos/dino_ba_sung.jpg" class="real-photo" alt="Khủng long ba sừng Triceratops">',
+  co_dai: '<img src="images/dinos/dino_co_dai.jpg" class="real-photo" alt="Khủng long cổ dài Brachiosaurus">',
+  khung_long_bay: '<img src="images/dinos/dino_khung_long_bay.jpg" class="real-photo" alt="Thằn lằn bay Pteranodon">',
+  duoi_gai: '<img src="images/dinos/dino_duoi_gai.jpg" class="real-photo" alt="Khủng long đuôi gai Stegosaurus">',
+  giap_bua: '<img src="images/dinos/dino_giap_bua.jpg" class="real-photo" alt="Khủng long bọc giáp Ankylosaurus">',
+  chay_nhanh: '<img src="images/dinos/dino_chay_nhanh.jpg" class="real-photo" alt="Khủng long chạy nhanh Velociraptor">',
+  trung: '<img src="images/dinos/dino_trung.jpg" class="real-photo" alt="Trứng khủng long">',
+  dau_chan: '<img src="images/dinos/dino_dau_chan.jpg" class="real-photo" alt="Dấu chân khủng long">',
+  hoa_thach: '<img src="images/dinos/dino_hoa_thach.jpg" class="real-photo" alt="Hóa thạch khủng long">'
+};
+
+const VEHICLE_PHOTOS = {
+  xe_canh_sat: '<img src="images/vehicles/veh_xe_canh_sat.jpg" class="real-photo" alt="Xe Cảnh Sát">',
+  xe_cuu_hoa: '<img src="images/vehicles/veh_xe_cuu_hoa.jpg" class="real-photo" alt="Xe Cứu Hỏa">',
+  xe_cuu_thuong: '<img src="images/vehicles/veh_xe_cuu_thuong.jpg" class="real-photo" alt="Xe Cứu Thương">',
+  may_xuc: '<img src="images/vehicles/veh_may_xuc.jpg" class="real-photo" alt="Máy Xúc Đất">',
+  xe_buyt: '<img src="images/vehicles/veh_xe_buyt.jpg" class="real-photo" alt="Xe Buýt">',
+  xe_tai: '<img src="images/vehicles/veh_xe_tai.jpg" class="real-photo" alt="Xe Tải">',
+  tau_hoa: '<img src="images/vehicles/veh_tau_hoa.jpg" class="real-photo" alt="Tàu Hỏa Shinkansen">',
+  may_bay: '<img src="images/vehicles/veh_may_bay.jpg" class="real-photo" alt="Máy Bay">',
+  truc_thang: '<img src="images/vehicles/veh_truc_thang.jpg" class="real-photo" alt="Máy Bay Trực Thăng">',
+  tau_thuy: '<img src="images/vehicles/veh_tau_thuy.jpg" class="real-photo" alt="Tàu Thủy">',
+  xe_con: '<img src="images/vehicles/veh_xe_con.jpg" class="real-photo" alt="Xe Ô Tô Con">',
+  xe_dap: '<img src="images/vehicles/veh_xe_dap.jpg" class="real-photo" alt="Xe Đạp">'
+};
+
 // CHUYÊN MỤC: THẾ GIỚI KHỦNG LONG CHO BẢO LONG (DINOSAUR WORLD)
 const DINO_LESSONS = [
   {
@@ -362,7 +394,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_bao_chua',
     breakdown: 'b - ao - bạo, ch - ua - chúa',
     spellText: 'Bờ - ao - bao - nặng - bạo, chờ - ua - chua - sắc - chúa -> bạo chúa',
-    icon: DINO_SVGS.trex,
+    icon: DINO_PHOTOS.bao_chua,
     ja: 'ティラノサウルス (T-Rex)',
     funFact: 'Vua của các loài khủng long, hàm răng sắc nhọn khổng lồ, tiếng gầm vang dội!',
     example: 'T-Rex là khủng long bạo chúa dũng mãnh'
@@ -375,7 +407,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_ba_sung',
     breakdown: 'b - a - ba, s - ưng - sừng',
     spellText: 'Bờ - a - ba, sờ - ưng - sưng - huyền - sừng -> ba sừng',
-    icon: DINO_SVGS.triceratops,
+    icon: DINO_PHOTOS.ba_sung,
     ja: 'トリケラトプス (Triceratops)',
     funFact: 'Có 3 chiếc sừng dũng cảm trên đầu và tấm khiên xương cứng cáp bảo vệ cổ!',
     example: 'Triceratops có ba chiếc sừng cứng cáp'
@@ -388,7 +420,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_co_dai',
     breakdown: 'c - ô - cổ, d - ai - dài',
     spellText: 'cờ - ô - cô - hỏi - cổ, dờ - ai - dai - huyền - dài -> cổ dài',
-    icon: DINO_SVGS.brachiosaurus,
+    icon: DINO_PHOTOS.co_dai,
     ja: 'ブラキオサウルス (Brachiosaurus)',
     funFact: 'Cao như toà nhà 4 tầng, chiếc cổ siêu dài vươn tới ngọn cây cao để ăn lá non!',
     example: 'Khủng long cổ dài ăn lá cây trên cao'
@@ -401,7 +433,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_khung_long_bay',
     breakdown: 'b - ay - bay',
     spellText: 'Bờ - ay - bay -> khủng long bay',
-    icon: DINO_SVGS.pteranodon,
+    icon: DINO_PHOTOS.khung_long_bay,
     ja: 'プテラノドン (Pteranodon)',
     funFact: 'Đôi cánh da khổng lồ dang rộng liệng trên bầu trời xanh thời tiền sử!',
     example: 'Pteranodon chao liệng trên bầu trời'
@@ -414,7 +446,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_duoi_gai',
     breakdown: 'đ - uôi - đuôi, g - ai - gai',
     spellText: 'Đờ - uôi - đuôi, gờ - ai - gai -> đuôi gai',
-    icon: DINO_SVGS.stegosaurus,
+    icon: DINO_PHOTOS.duoi_gai,
     ja: 'ステゴサウルス (Stegosaurus)',
     funFact: 'Trên lưng có hai hàng phiến sừng ngũ giác, cuối đuôi có 4 chiếc gai nhọn tự vệ!',
     example: 'Stegosaurus dùng đuôi gai để tự vệ'
@@ -427,7 +459,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_giap_bua',
     breakdown: 'gi - ap - giáp, b - ua - búa',
     spellText: 'Dờ - ap - giap - sắc - giáp, bờ - ua - bua - sắc - búa -> giáp búa',
-    icon: DINO_SVGS.ankylosaurus,
+    icon: DINO_PHOTOS.giap_bua,
     ja: 'アンキロサウルス (Ankylosaurus)',
     funFact: 'Toàn thân bọc lớp áo giáp gai cứng như mai rùa thép và chiếc đuôi gắn quả chùy sắt siêu mạnh mẽ!',
     example: 'Ankylosaurus có áo giáp cứng như thép'
@@ -440,7 +472,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_chay_nhanh',
     breakdown: 'ch - ay - chạy, nh - anh - nhanh',
     spellText: 'Chờ - ay - chay - nặng - chạy, nờ - anh - nhanh -> chạy nhanh',
-    icon: DINO_SVGS.velociraptor,
+    icon: DINO_PHOTOS.chay_nhanh,
     ja: 'ヴェロキラプトル (Velociraptor)',
     funFact: 'Loài khủng long thông minh, chạy nhanh thoăn thoắt với móng vuốt hình lưỡi liềm!',
     example: 'Velociraptor chạy nhanh như gió'
@@ -453,7 +485,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_trung',
     breakdown: 'tr - ưng - trứng',
     spellText: 'Trờ - ưng - trưng - sắc - trứng',
-    icon: DINO_SVGS.egg,
+    icon: DINO_PHOTOS.trung,
     ja: 'きょうりゅうのたまご (Egg)',
     funFact: 'Vỏ trứng dày trong tổ ấp, chuẩn bị nở ra những chú khủng long con đáng yêu!',
     example: 'Trứng khủng long sắp nở con'
@@ -466,7 +498,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_dau_chan',
     breakdown: 'd - âu - dấu, ch - ân - chân',
     spellText: 'Dờ - âu - dâu - sắc - dấu, chờ - ân - chân -> dấu chân',
-    icon: DINO_SVGS.footprint,
+    icon: DINO_PHOTOS.dau_chan,
     ja: 'あしあと (Footprint)',
     funFact: 'Dấu chân sâu và to gấp 10 lần bàn chân của bé Bảo Long, in lại trên đá!',
     example: 'Dấu chân khủng long khổng lồ'
@@ -479,7 +511,7 @@ const DINO_LESSONS = [
     spellKey: 'spell_hoa_thach',
     breakdown: 'h - oa - hóa, th - ach - thạch',
     spellText: 'Hờ - oa - hoa - sắc - hóa, thờ - ach - thach - nặng - thạch -> hóa thạch',
-    icon: DINO_SVGS.fossil,
+    icon: DINO_PHOTOS.hoa_thach,
     ja: 'かせき (Fossil)',
     funFact: 'Xương khủng long nằm sâu trong lòng đất triệu năm để bé khám phá!',
     example: 'Nhà khảo cổ học tìm thấy hóa thạch'
@@ -496,7 +528,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_xe_canh_sat',
     breakdown: 'c - anh - cảnh, s - at - sát',
     spellText: 'cờ - anh - canh - hỏi - cảnh, sờ - at - sat - sắc - sát -> xe cảnh sát',
-    icon: '🚓',
+    icon: VEHICLE_PHOTOS.xe_canh_sat,
     ja: 'パトカー (Patokaa)',
     funFact: 'Đèn chớp đỏ xanh, còi hú vang dội, các chú cảnh sát bảo vệ bình yên!',
     example: 'Xe cảnh sát tuần tra trên phố'
@@ -509,7 +541,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_xe_cuu_hoa',
     breakdown: 'c - ưu - cứu, h - oa - hỏa',
     spellText: 'cờ - ưu - cưu - sắc - cứu, hờ - oa - hoa - hỏi - hỏa -> xe cứu hỏa',
-    icon: '🚒',
+    icon: VEHICLE_PHOTOS.xe_cuu_hoa,
     ja: 'しょうぼうしゃ (Shoubousha)',
     funFact: 'Màu đỏ rực rỡ, mang thang dài và vòi rồng dập tắt ngọn lửa khổng lồ!',
     example: 'Xe cứu hỏa chạy nhanh tới đám cháy'
@@ -522,7 +554,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_xe_cuu_thuong',
     breakdown: 'c - ưu - cứu, th - ương - thương',
     spellText: 'cờ - ưu - cưu - sắc - cứu, thờ - ương - thương -> xe cứu thương',
-    icon: '🚑',
+    icon: VEHICLE_PHOTOS.xe_cuu_thuong,
     ja: 'きゅうきゅうしゃ (Kyuukyuusha)',
     funFact: 'Chở bác sĩ và bệnh nhân đến bệnh viện kịp thời, xe cộ nhường đường!',
     example: 'Xe cứu thương chở bệnh nhân cấp cứu'
@@ -535,7 +567,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_may_xuc',
     breakdown: 'm - ay - máy, x - uc - xúc',
     spellText: 'Mờ - ay - may - sắc - máy, xờ - uc - xuc - sắc - xúc -> máy xúc',
-    icon: '🚜',
+    icon: VEHICLE_PHOTOS.may_xuc,
     ja: 'ショベルカー (Shoberukaa)',
     funFact: 'Chiếc cánh tay sắt khổng lồ múc đất đá khỏe như một dũng sĩ công trường!',
     example: 'Máy xúc đào đất làm đường mới'
@@ -548,7 +580,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_xe_buyt',
     breakdown: 'b - uyt - buýt',
     spellText: 'Bờ - uyt - buyt - sắc - buýt -> xe buýt',
-    icon: '🚌',
+    icon: VEHICLE_PHOTOS.xe_buyt,
     ja: 'バス (Basu)',
     funFact: 'Xe dài nhiều chỗ ngồi, đón các bạn nhỏ Bảo Long đến trường mỗi ngày!',
     example: 'Bảo Long lên xe buýt đi học'
@@ -561,7 +593,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_xe_tai',
     breakdown: 't - ai - tải',
     spellText: 'Tờ - ai - tai - hỏi - tải -> xe tải',
-    icon: '🚛',
+    icon: VEHICLE_PHOTOS.xe_tai,
     ja: 'トラック (Torakku)',
     funFact: 'Thùng xe to lớn chở đồ chơi, hoa quả và hàng hóa đi khắp mọi miền!',
     example: 'Xe tải chở hàng hóa nặng'
@@ -574,7 +606,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_tau_hoa',
     breakdown: 't - au - tàu, h - oa - hỏa',
     spellText: 'Tờ - au - tau - huyền - tàu, hờ - oa - hoa - hỏi - hỏa -> tàu hỏa',
-    icon: '🚅',
+    icon: VEHICLE_PHOTOS.tau_hoa,
     ja: 'しんかんせん / でんしゃ (Shinkansen)',
     funFact: 'Tàu điện Shinkansen hình viên đạn chạy siêu tốc vút như cơn gió ở Nhật!',
     example: 'Tàu hỏa chạy trên đường ray bon bon'
@@ -587,7 +619,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_may_bay',
     breakdown: 'm - ay - máy, b - ay - bay',
     spellText: 'Mờ - ay - may - sắc - máy, bờ - ay - bay -> máy bay',
-    icon: '✈️',
+    icon: VEHICLE_PHOTOS.may_bay,
     ja: 'ひこうき (Hikouki)',
     funFact: 'Đôi cánh bạc lướt trên bầu trời đưa bé Bảo Long từ Nhật về thăm Việt Nam!',
     example: 'Máy bay đưa bé bay trên mây'
@@ -600,7 +632,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_truc_thang',
     breakdown: 'tr - ực - trực, th - ăng - thăng',
     spellText: 'Trờ - ực - trưc - nặng - trực, thờ - ăng - thăng -> trực thăng',
-    icon: '🚁',
+    icon: VEHICLE_PHOTOS.truc_thang,
     ja: 'ヘリコプター (Herikoputaa)',
     funFact: 'Cánh quạt quay tít trên đỉnh đầu, cất cánh thẳng đứng lên không trung!',
     example: 'Trực thăng cứu hộ bay trên đỉnh núi'
@@ -613,7 +645,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_tau_thuy',
     breakdown: 't - au - tàu, th - uy - thủy',
     spellText: 'Tờ - au - tau - huyền - tàu, thờ - uy - thuy - hỏi - thủy -> tàu thủy',
-    icon: '🚢',
+    icon: VEHICLE_PHOTOS.tau_thuy,
     ja: 'ふね (Fune)',
     funFact: 'Chiếc tàu khổng lồ rẽ sóng trắng xóa lướt êm trên đại dương bao la!',
     example: 'Tàu thủy chở hàng ra khơi'
@@ -626,7 +658,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_xe_con',
     breakdown: 'x - e - xe, c - on - con',
     spellText: 'Xờ - e - xe, cờ - on - con -> xe con',
-    icon: '🚗',
+    icon: VEHICLE_PHOTOS.xe_con,
     ja: 'くるま (Kuruma)',
     funFact: 'Chiếc xe hơi gia đình chở cả nhà Bảo Long đi chơi công viên cuối tuần!',
     example: 'Ba lái xe con đưa cả nhà đi chơi'
@@ -639,7 +671,7 @@ const VEHICLE_LESSONS = [
     spellKey: 'spell_xe_dap',
     breakdown: 'x - e - xe, đ - ap - đạp',
     spellText: 'Xờ - e - xe, đờ - ap - đap - nặng - đạp -> xe đạp',
-    icon: '🚲',
+    icon: VEHICLE_PHOTOS.xe_dap,
     ja: 'じてんしゃ (Jitensha)',
     funFact: 'Bảo Long đạp hai bàn đạp quay đều, rèn luyện sức khỏe dẻo dai!',
     example: 'Bảo Long tập đi xe đạp'
@@ -648,12 +680,12 @@ const VEHICLE_LESSONS = [
 
 // DỮ LIỆU GAME 1: LẬT THẺ KHỦNG LONG (DINO MEMORY FLIP)
 const DINO_MEMORY_PAIRS = [
-  { id: 'pair1', name: 'T-Rex Bạo Chúa', icon: DINO_SVGS.trex, ja: 'ティラノサウルス', audioKey: 'dino_bao_chua' },
-  { id: 'pair2', name: 'Ba Sừng Dũng Mãnh', icon: DINO_SVGS.triceratops, ja: 'トリケラトプス', audioKey: 'dino_ba_sung' },
-  { id: 'pair3', name: 'Cổ Dài Cao Lớn', icon: DINO_SVGS.brachiosaurus, ja: 'ブラキオサウルス', audioKey: 'dino_co_dai' },
-  { id: 'pair4', name: 'Khủng Long Bay', icon: DINO_SVGS.pteranodon, ja: 'プテラノドン', audioKey: 'dino_khung_long_bay' },
-  { id: 'pair5', name: 'Đuôi Gai Sắc Nhọn', icon: DINO_SVGS.stegosaurus, ja: 'ステゴサウルス', audioKey: 'dino_duoi_gai' },
-  { id: 'pair6', name: 'Giáp Búa Ankylosaurus', icon: DINO_SVGS.ankylosaurus, ja: 'アンキロサウルス', audioKey: 'dino_giap_bua' }
+  { id: 'pair1', name: 'T-Rex Bạo Chúa', icon: DINO_PHOTOS.bao_chua, ja: 'ティラノサウルス', audioKey: 'dino_bao_chua' },
+  { id: 'pair2', name: 'Ba Sừng Dũng Mãnh', icon: DINO_PHOTOS.ba_sung, ja: 'トリケラトプス', audioKey: 'dino_ba_sung' },
+  { id: 'pair3', name: 'Cổ Dài Cao Lớn', icon: DINO_PHOTOS.co_dai, ja: 'ブラキオサウルス', audioKey: 'dino_co_dai' },
+  { id: 'pair4', name: 'Khủng Long Bay', icon: DINO_PHOTOS.khung_long_bay, ja: 'プテラノドン', audioKey: 'dino_khung_long_bay' },
+  { id: 'pair5', name: 'Đuôi Gai Sắc Nhọn', icon: DINO_PHOTOS.duoi_gai, ja: 'ステゴサウルス', audioKey: 'dino_duoi_gai' },
+  { id: 'pair6', name: 'Giáp Búa Ankylosaurus', icon: DINO_PHOTOS.giap_bua, ja: 'アンキロサウルス', audioKey: 'dino_giap_bua' }
 ];
 
 // DỮ LIỆU GAME 2: ĐỐ VUI KHỦNG LONG CHO BẢO LONG (DINO QUIZ)
@@ -737,7 +769,7 @@ const DINO_DIG_DATA = [
       <circle cx="58" cy="32" r="4" fill="#1e293b"/>
       <path d="M50 42 L52 46 L54 42 L56 46 L58 42" stroke="#ffffff" stroke-width="2"/>
     </svg>`,
-    revivedIcon: DINO_SVGS.trex,
+    revivedIcon: DINO_PHOTOS.bao_chua,
     celebrationText: 'Bảo Long đã khai quật thành công Vua Khủng Long T-Rex dũng mãnh!'
   },
   {
@@ -751,7 +783,7 @@ const DINO_DIG_DATA = [
       <path d="M56 36 C56 26 72 26 74 44 Z" fill="#92400e"/>
       <path d="M68 40 L82 32 M78 44 L88 42" stroke="#fde047" stroke-width="3" stroke-linecap="round"/>
     </svg>`,
-    revivedIcon: DINO_SVGS.triceratops,
+    revivedIcon: DINO_PHOTOS.ba_sung,
     celebrationText: 'Bảo Long đã khai quật thành công Khủng long ba sừng Triceratops!'
   },
   {
@@ -765,7 +797,7 @@ const DINO_DIG_DATA = [
       <path d="M26 56 Q16 60 10 58" stroke="#451a03" stroke-width="6"/>
       <circle cx="8" cy="58" r="6" fill="#451a03"/>
     </svg>`,
-    revivedIcon: DINO_SVGS.ankylosaurus,
+    revivedIcon: DINO_PHOTOS.giap_bua,
     celebrationText: 'Bảo Long đã khai quật thành công Khủng long bọc giáp Ankylosaurus đuôi chùy!'
   },
   {
@@ -779,7 +811,7 @@ const DINO_DIG_DATA = [
       <path d="M48 68 C52 48 58 28 72 18" stroke="#78350f" stroke-width="8" stroke-linecap="round" fill="none"/>
       <circle cx="74" cy="18" r="6" fill="#78350f"/>
     </svg>`,
-    revivedIcon: DINO_SVGS.brachiosaurus,
+    revivedIcon: DINO_PHOTOS.co_dai,
     celebrationText: 'Bảo Long đã khai quật thành công Khủng long cổ dài Brachiosaurus!'
   },
   {
@@ -794,7 +826,7 @@ const DINO_DIG_DATA = [
       <polygon points="45,43 50,30 55,43" fill="#ea580c"/>
       <polygon points="56,43 61,31 67,45" fill="#f97316"/>
     </svg>`,
-    revivedIcon: DINO_SVGS.stegosaurus,
+    revivedIcon: DINO_PHOTOS.duoi_gai,
     celebrationText: 'Bảo Long đã khai quật thành công Khủng long đuôi gai Stegosaurus!'
   }
 ];
