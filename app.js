@@ -410,6 +410,9 @@ function openModal(wordObj) {
         if (clean === 'c') {
           window.soundMgr.speakAlphabet('c', 'cờ');
           showToast('Chữ c: phát âm là "cờ"');
+        } else if (clean === 'k') {
+          window.soundMgr.speakAlphabet('k', 'ca');
+          showToast('Chữ k: phát âm là "ca"');
         } else if (clean === 'b') {
           window.soundMgr.speakAlphabet('b', 'bờ');
           showToast('Chữ b: phát âm là "bờ"');
