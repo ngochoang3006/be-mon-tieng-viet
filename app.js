@@ -102,7 +102,11 @@ function initEventListeners() {
   document.getElementById('modalBtnSpell').addEventListener('click', () => {
     if (currentWordModal) {
       window.soundMgr.playClick();
-      window.soundMgr.spellWord(currentWordModal.word, currentWordModal.spellText);
+      if (currentWordModal.spellKey) {
+        window.soundMgr.playAudioFile(currentWordModal.spellKey, null, currentWordModal.spellText);
+      } else {
+        window.soundMgr.spellWord(currentWordModal.word, currentWordModal.spellText);
+      }
     }
   });
 
@@ -130,6 +134,8 @@ function switchMode(mode) {
     showToast('Đã chuyển sang: 🔤 Tập ĐÁNH VẦN');
   } else if (mode === 'alphabet') {
     showToast('Đã chuyển sang: 🔠 Bảng chữ cái ABC');
+  } else if (mode === 'dino') {
+    showToast('Đã chuyển sang: 🦖 Thế giới Khủng Long của bé Mon!');
   } else if (mode === 'game') {
     showToast('Đã chuyển sang: 🧩 Thử thách ghép chữ');
   }
@@ -142,11 +148,13 @@ function renderCurrentView() {
   const roadmapBox = document.getElementById('roadmapBox');
   const cardsContainer = document.getElementById('cardsContainer');
   const alphabetContainer = document.getElementById('alphabetContainer');
+  const dinoContainer = document.getElementById('dinoContainer');
   const gameViewContainer = document.getElementById('gameViewContainer');
 
   // Ẩn tất cả trước
   cardsContainer.style.display = 'none';
   alphabetContainer.style.display = 'none';
+  if (dinoContainer) dinoContainer.style.display = 'none';
   gameViewContainer.style.display = 'none';
   roadmapBox.style.display = 'none';
 
@@ -163,6 +171,11 @@ function renderCurrentView() {
   } else if (currentMode === 'alphabet') {
     alphabetContainer.style.display = 'block';
     renderAlphabetView();
+  } else if (currentMode === 'dino') {
+    if (dinoContainer) {
+      dinoContainer.style.display = 'block';
+      renderDinoView();
+    }
   } else if (currentMode === 'game') {
     gameViewContainer.style.display = 'block';
     renderGameView();
@@ -282,11 +295,49 @@ function renderAlphabetView() {
   });
 }
 
+function renderDinoView() {
+  const container = document.getElementById('dinoCardsContainer');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const btnRoar = document.getElementById('btnDinoRoar');
+  if (btnRoar) {
+    btnRoar.onclick = () => {
+      window.soundMgr.playClick();
+      window.soundMgr.playAudioFile('cheer_dino', null, 'Gầm to nào bé Mon ơi! Roar!');
+      fireConfetti();
+    };
+  }
+
+  DINO_LESSONS.forEach(dino => {
+    const card = document.createElement('div');
+    card.className = 'word-card dino-card';
+    card.innerHTML = `
+      <div class="star-corner">🦖</div>
+      <div class="word-icon-img">${dino.icon}</div>
+      <div class="word-dino-title">${dino.dinoName}</div>
+      <div class="word-text" style="color: #047857;">${dino.word}</div>
+      <div class="word-action-tag" style="background:#dcfce7; color:#15803d;">Khám phá ngay</div>
+      <div class="word-ja-sub">${dino.ja}</div>
+      <div class="word-fact-tag">💡 ${dino.funFact}</div>
+    `;
+
+    card.addEventListener('click', () => {
+      openModal(dino);
+    });
+    container.appendChild(card);
+  });
+}
+
 // MODAL
 function openModal(wordObj) {
   currentWordModal = wordObj;
   window.soundMgr.playClick();
-  window.soundMgr.speakWord(wordObj.word);
+  if (wordObj.audioKey) {
+    window.soundMgr.playAudioFile(wordObj.audioKey, null, wordObj.word);
+  } else {
+    window.soundMgr.speakWord(wordObj.word);
+  }
 
   document.getElementById('modalIcon').innerText = wordObj.icon;
   document.getElementById('modalWord').innerText = wordObj.word;
@@ -294,12 +345,14 @@ function openModal(wordObj) {
   // Breakdown items
   const breakdownBox = document.getElementById('modalBreakdownBox');
   breakdownBox.innerHTML = '';
-  const parts = wordObj.breakdown.split('-');
+  const parts = (wordObj.breakdown || wordObj.word).split(/[-+,]/);
   parts.forEach(part => {
-    const span = document.createElement('div');
-    span.className = 'breakdown-item';
-    span.innerText = part.trim();
-    breakdownBox.appendChild(span);
+    if (part.trim()) {
+      const span = document.createElement('div');
+      span.className = 'breakdown-item';
+      span.innerText = part.trim();
+      breakdownBox.appendChild(span);
+    }
   });
 
   document.getElementById('modalJaText').innerText = wordObj.ja ? `🇯🇵 ${wordObj.ja}` : '';

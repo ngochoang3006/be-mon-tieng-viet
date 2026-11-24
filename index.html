@@ -37,6 +37,10 @@
           <span>🔤</span>
           <span>Tập đánh vần</span>
         </button>
+        <button class="mode-pill" data-mode="dino" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff;">
+          <span>🦖</span>
+          <span>Khủng Long (Dino)</span>
+        </button>
         <button class="mode-pill" data-mode="game">
           <span>🧩</span>
           <span>Ghép chữ vui</span>
@@ -126,6 +130,23 @@
         </div>
         <p style="color: #64748b; font-size: 14px; margin-bottom: 16px;">Tiếng Việt có dấu thanh giúp từ có giai điệu như hát!</p>
         <div class="tones-grid" id="tonesGrid"></div>
+      </div>
+    </section>
+
+    <!-- Khu vực Chuyên Mục Khủng Long Dành Cho Bé Mon (Dino World) -->
+    <section id="dinoContainer" style="display: none;">
+      <div class="dino-banner-box">
+        <div class="dino-banner-content">
+          <div class="dino-badge">🦕 KỶ JURA HUYỀN BÍ • DINOSAUR WORLD 🦖</div>
+          <h2 class="dino-banner-title">Công Viên Khủng Long Của Bé Mon</h2>
+          <p class="dino-banner-desc">Chạm vào chú khủng long để nghe tiếng gầm Roar, học tên tiếng Việt, tiếng Nhật và tập đánh vần siêu ngầu nhé!</p>
+          <button class="dino-roar-btn" id="btnDinoRoar">
+            <span>🌋</span> Gầm to nào: ROAR!
+          </button>
+        </div>
+      </div>
+      <div class="cards-grid dino-cards-grid" id="dinoCardsContainer">
+        <!-- Render từ app.js -->
       </div>
     </section>
 
