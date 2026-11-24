@@ -292,7 +292,13 @@ function renderAlphabetView() {
       window.soundMgr.playClick();
       // Đọc đúng chuẩn ngữ âm của chữ cái bằng audio người thật: A -> "a", Đ -> "đờ", H -> "hờ", B -> "bờ"...
       window.soundMgr.speakAlphabet(item.lower, item.phonetic);
-      showToast(`Chữ ${item.char} ${item.lower}: phát âm là "${item.phonetic}"`);
+      if (item.lower === 's') {
+        showToast('Chữ S: "sờ" (uốn cong lưỡi như trong "quyển sách") 📚');
+      } else if (item.lower === 'x') {
+        showToast('Chữ X: "xờ" (thẳng lưỡi nhẹ như trong "xe cộ") 🚗');
+      } else {
+        showToast(`Chữ ${item.char} ${item.lower}: phát âm là "${item.phonetic}"`);
+      }
     });
     alphaGrid.appendChild(card);
   });
@@ -427,7 +433,10 @@ function openModal(wordObj) {
           showToast('Chữ t: phát âm là "tờ"');
         } else if (clean === 's') {
           window.soundMgr.speakAlphabet('s', 'sờ');
-          showToast('Chữ s: phát âm là "sờ"');
+          showToast('Chữ s: phát âm là "sờ" (uốn cong lưỡi như trong "quyển sách") 📚');
+        } else if (clean === 'x') {
+          window.soundMgr.speakAlphabet('x', 'xờ');
+          showToast('Chữ x: phát âm là "xờ" (thẳng lưỡi nhẹ như trong "xe cộ") 🚗');
         } else {
           window.soundMgr.speakWord(clean);
         }

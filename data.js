@@ -25,12 +25,12 @@ const ALPHABET_DATA = [
   { char: 'P', lower: 'p', phonetic: 'pờ', word: 'Pin', example: 'cục pin', icon: '🔋', ja: 'でんち (Denchi)' },
   { char: 'Q', lower: 'q', phonetic: 'cu', word: 'Quạt', example: 'cái quạt', icon: '🪭', ja: 'せんぷうき / うちわ' },
   { char: 'R', lower: 'r', phonetic: 'rờ', word: 'Rùa', example: 'con rùa', icon: '🐢', ja: 'かめ (Kame)' },
-  { char: 'S', lower: 's', phonetic: 'sờ', word: 'Sách', example: 'quyển sách', icon: '📚', ja: 'ほん (Hon)' },
+  { char: 'S', lower: 's', phonetic: 'sờ (uốn lưỡi)', word: 'Sách', example: 'quyển sách', icon: '📚', ja: 'ほん (Hon)' },
   { char: 'T', lower: 't', phonetic: 'tờ', word: 'Tàu', example: 'tàu hoả', icon: '🚂', ja: 'でんしゃ (Densha)' },
   { char: 'U', lower: 'u', phonetic: 'u', word: 'Cú', example: 'con cú', icon: '🦉', ja: 'ふくろう (Fukurou)' },
   { char: 'Ư', lower: 'ư', phonetic: 'ư', word: 'Sư tử', example: 'sư tử', icon: '🦁', ja: 'ライオン (Raion)' },
   { char: 'V', lower: 'v', phonetic: 'vờ', word: 'Voi', example: 'con voi', icon: '🐘', ja: 'ぞう (Zou)' },
-  { char: 'X', lower: 'x', phonetic: 'xờ', word: 'Xe', example: 'xe ô tô', icon: '🚗', ja: 'くるま (Kuruma)' },
+  { char: 'X', lower: 'x', phonetic: 'xờ (nhẹ)', word: 'Xe', example: 'xe ô tô', icon: '🚗', ja: 'くるま (Kuruma)' },
   { char: 'Y', lower: 'y', phonetic: 'i dài', word: 'Y tá', example: 'y tá', icon: '👩‍⚕️', ja: 'かんごし (Kangoshi)' }
 ];
 
