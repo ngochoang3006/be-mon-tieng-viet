@@ -65,6 +65,10 @@
           <span>🦖</span>
           <span>Khủng Long</span>
         </button>
+        <button class="mode-pill mode-pill-dragon" data-mode="dragons">
+          <span>🐉</span>
+          <span>Thế Giới Rồng</span>
+        </button>
         <button class="mode-pill mode-pill-veh" data-mode="vehicles">
           <span>🚗</span>
           <span>Xe Cộ</span>
@@ -213,6 +217,93 @@
         </div>
       </div>
       <div class="cards-grid dino-cards-grid" id="dinoCardsContainer"></div>
+    </section>
+
+    <!-- ========================================================
+         KHU VỰC THẾ GIỚI RỒNG THẦN CHO BẢO LONG (DRAGON WORLD)
+         ======================================================== -->
+    <section id="dragonContainer" style="display: none;">
+      <div class="dragon-banner-box">
+        <div class="dino-banner-content">
+          <div class="dino-badge">🐉 VƯƠNG QUỐC RỒNG THIÊNG • BẢO LONG 6 TUỔI 🔥</div>
+          <h2 class="dino-banner-title">Vương Quốc Rồng Thần Của Bảo Long</h2>
+          <p class="dino-banner-desc">Khám phá 8 loài Rồng kỳ thú (Rồng Lửa, Rồng Nước, Rồng Băng, Rồng Vàng...), chạm vào từng chú rồng để nghe đọc, đánh vần, tập viết và chơi Đố Vui / Lật Thẻ Rồng!</p>
+          <div class="banner-action-row">
+            <button class="dino-roar-btn" id="btnDragonRoar">
+              <span>🔥</span> Rồng gầm nào: ROAAAR!
+            </button>
+            <button class="dino-roar-btn" id="btnAutoPlayDragons" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #064e3b;">
+              <span>🎧</span> Nghe cả 8 loài Rồng
+            </button>
+            <button class="dino-roar-btn active" id="btnDragonModeExplore" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); border-bottom-color: #7f1d1d;" onclick="switchDragonSubMode('explore')">
+              <span>🐉</span> 8 Loài Rồng
+            </button>
+            <button class="dino-roar-btn" id="btnDragonModeQuiz" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-bottom-color: #4c1d95;" onclick="switchDragonSubMode('quiz')">
+              <span>🎯</span> Đố Vui Rồng
+            </button>
+            <button class="dino-roar-btn" id="btnDragonModeMemory" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-bottom-color: #0c4a6e;" onclick="switchDragonSubMode('memory')">
+              <span>🃏</span> Lật Thẻ Rồng
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Khung 8 Thẻ Loài Rồng -->
+      <div class="cards-grid dino-cards-grid" id="dragonCardsContainer"></div>
+
+      <!-- Đố Vui Loài Rồng -->
+      <div class="dragon-sub-panel" id="dragonQuizPane" style="display: none;">
+        <div id="dragonQuizPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="dragonQuizProgressText">Câu 1 / 8</span>
+            <span class="game-stars" id="dragonQuizScoreText">⭐ 0 điểm</span>
+          </div>
+          <div class="quiz-question-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-color: #fca5a5; border-bottom-color: #dc2626;">
+            <div class="quiz-question-title" id="dragonQuizQuestionTitle" style="color: #7f1d1d;">Câu hỏi về loài Rồng</div>
+            <div class="quiz-question-ja" id="dragonQuizHintJa" style="color: #b91c1c;">🇯🇵</div>
+            <button class="btn-hear-hint" id="btnHearDragonQuiz" style="margin: 10px auto 0 auto;">
+              <span>🔊</span> Nghe tên Rồng
+            </button>
+          </div>
+          <div class="quiz-options-grid" id="dragonQuizOptionsGrid"></div>
+        </div>
+        <div id="dragonQuizVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🐉🔥🏆👑</div>
+          <h2 class="victory-title" style="color: #b91c1c;">HIỆP SĨ RỒNG THIÊNG BẢO LONG!</h2>
+          <p class="victory-desc" id="dragonQuizVictoryScore">Bảo Long đã vượt qua tất cả thử thách về 8 loài Rồng!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initDragonQuiz()">🔄 Chơi lại Đố Vui Rồng</button>
+            <button class="home-btn" onclick="switchDragonSubMode('memory')">🃏 Chơi Lật Thẻ Rồng</button>
+            <button class="home-btn" onclick="switchDragonSubMode('explore')">🐉 Xem lại 8 Loài Rồng</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lật Thẻ Rồng Thần -->
+      <div class="dragon-sub-panel" id="dragonMemoryPane" style="display: none;">
+        <div id="dragonMemoryPlayStage">
+          <div class="memory-board-header">
+            <div class="memory-stats-group">
+              <span class="memory-stat-pill" id="dragonMemFlipsText">👀 Lượt lật: 0</span>
+              <span class="memory-stat-pill" id="dragonMemPairsText">⭐ Đã ghép: 0 / 6 cặp</span>
+            </div>
+            <button class="tool-chip" onclick="initDragonMemoryGame()" style="background:#fef08a; color:#854d0e; border-color:#facc15;">
+              <span>🔄</span> Đổi bộ Rồng mới
+            </button>
+          </div>
+          <div class="memory-grid" id="dragonMemoryGrid"></div>
+        </div>
+        <div id="dragonMemoryVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🐉🃏✨🏆</div>
+          <h2 class="victory-title" style="color: #b91c1c;">BẢO LONG TRIỆU HỒI ĐỦ 6 RỒNG THẦN!</h2>
+          <p class="victory-desc" id="dragonMemoryVictoryFlips">Trí nhớ siêu đỉnh quá Bảo Long ơi!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initDragonMemoryGame()">🔄 Chơi ván Rồng mới</button>
+            <button class="home-btn" onclick="switchDragonSubMode('quiz')">🎯 Chơi Đố Vui Rồng</button>
+            <button class="home-btn" onclick="switchDragonSubMode('explore')">🐉 Về 8 Loài Rồng</button>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Khu vực Thế Giới Xe Cộ Dành Cho Bé Bảo Long (Vehicle World) -->
@@ -1303,6 +1394,7 @@
   <script src="ethics.js"></script>
   <script src="english.js"></script>
   <script src="japanese.js"></script>
+  <script src="dragons.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

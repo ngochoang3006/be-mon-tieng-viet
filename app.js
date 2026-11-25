@@ -390,6 +390,7 @@ function stopAutoPlay() {
   if (typeof stopEthicsAutoPlay === 'function') stopEthicsAutoPlay();
   if (typeof stopEnAutoPlay === 'function') stopEnAutoPlay();
   if (typeof stopJaAutoPlay === 'function') stopJaAutoPlay();
+  if (typeof stopDragonAutoPlay === 'function') stopDragonAutoPlay();
   if (autoPlayTimer) {
     clearTimeout(autoPlayTimer);
     autoPlayTimer = null;
@@ -469,6 +470,7 @@ function switchMode(mode) {
     phonics: '🔤 Chế độ: Tập đánh vần (5 bài chuẩn Lớp 1)',
     alphabet: '🔠 Bảng chữ cái, 11 Phụ âm ghép & 6 Thanh điệu',
     dino: '🦖 Công viên Khủng Long (Ảnh chụp thực tế!)',
+    dragons: '🐉 Chế độ: Vương Quốc Rồng Thần Của Bảo Long!',
     vehicles: '🚗 Ga Xe Cộ & Shinkansen (Ảnh chụp thực tế!)',
     math: '🧮 Chế độ: Học Toán Lớp 1 Kỳ Thú (Số đếm, Cộng Trừ, Đồng Hồ)',
     ethics: '🌱 Chế độ: Đạo Đức & Giáo Dục Công Dân (Bé Ngoan Văn Minh)',
@@ -488,6 +490,7 @@ function renderCurrentView() {
   const cardsContainer = document.getElementById('cardsContainer');
   const alphabetContainer = document.getElementById('alphabetContainer');
   const dinoContainer = document.getElementById('dinoContainer');
+  const dragonContainer = document.getElementById('dragonContainer');
   const vehicleContainer = document.getElementById('vehicleContainer');
   const mathContainer = document.getElementById('mathContainer');
   const ethicsContainer = document.getElementById('ethicsContainer');
@@ -498,6 +501,7 @@ function renderCurrentView() {
   cardsContainer.style.display = 'none';
   alphabetContainer.style.display = 'none';
   if (dinoContainer) dinoContainer.style.display = 'none';
+  if (dragonContainer) dragonContainer.style.display = 'none';
   if (vehicleContainer) vehicleContainer.style.display = 'none';
   if (mathContainer) mathContainer.style.display = 'none';
   if (ethicsContainer) ethicsContainer.style.display = 'none';
@@ -523,6 +527,11 @@ function renderCurrentView() {
     if (dinoContainer) {
       dinoContainer.style.display = 'block';
       renderDinoView();
+    }
+  } else if (currentMode === 'dragons') {
+    if (dragonContainer) {
+      dragonContainer.style.display = 'block';
+      if (typeof renderDragonHub === 'function') renderDragonHub();
     }
   } else if (currentMode === 'vehicles') {
     if (vehicleContainer) {
@@ -937,6 +946,8 @@ function refreshCurrentGridStarsOnly() {
     renderLessonCards(PHONICS_LESSONS[currentLessonIdx].words, 'phonics');
   } else if (currentMode === 'dino') {
     renderDinoView();
+  } else if (currentMode === 'dragons') {
+    if (typeof renderDragonCardsView === 'function') renderDragonCardsView();
   } else if (currentMode === 'vehicles') {
     renderVehicleView();
   }
@@ -1225,6 +1236,7 @@ function startMiniGame(source = 'default') {
   document.getElementById('cardsContainer').style.display = 'none';
   document.getElementById('alphabetContainer').style.display = 'none';
   document.getElementById('dinoContainer').style.display = 'none';
+  if (document.getElementById('dragonContainer')) document.getElementById('dragonContainer').style.display = 'none';
   document.getElementById('vehicleContainer').style.display = 'none';
   if (document.getElementById('mathContainer')) document.getElementById('mathContainer').style.display = 'none';
   if (document.getElementById('ethicsContainer')) document.getElementById('ethicsContainer').style.display = 'none';
