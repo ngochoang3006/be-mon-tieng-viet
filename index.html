@@ -77,6 +77,14 @@
           <span>🌱</span>
           <span>Đạo Đức</span>
         </button>
+        <button class="mode-pill mode-pill-english" data-mode="english">
+          <span>🇬🇧</span>
+          <span>Tiếng Anh</span>
+        </button>
+        <button class="mode-pill mode-pill-japanese" data-mode="japanese">
+          <span>🇯🇵</span>
+          <span>Tiếng Nhật</span>
+        </button>
         <button class="mode-pill mode-pill-game" data-mode="game">
           <span>🎮</span>
           <span>Khu Trò Chơi</span>
@@ -663,6 +671,252 @@
       </div>
     </section>
 
+    <!-- ========================================================
+         KHU VỰC TIẾNG ANH CHO BẢO LONG (ENGLISH KIDS CLUB)
+         ======================================================== -->
+    <section id="englishContainer" style="display: none;">
+      <div class="en-banner-box">
+        <div class="dino-badge">🇬🇧 ENGLISH KIDS CLUB • CHUẨN MỸ BẢN XỨ 🇺🇸</div>
+        <h2 class="dino-banner-title">Vương Quốc Tiếng Anh Của Bảo Long</h2>
+        <p class="dino-banner-desc">Học bảng chữ cái A–Z, 32 từ vựng &amp; câu giao tiếp quen thuộc, chơi Nghe chọn hình và Ghép từ tiếng Anh cùng giọng đọc chuẩn Jenny &amp; Guy!</p>
+        <div class="math-session-badge" id="enSessionStars">⭐ English Stars: 0</div>
+      </div>
+
+      <div class="lang-subnav">
+        <button class="game-tab-btn active" id="enTabAbc" onclick="switchEnglishSubTab('abc')">
+          <span>🔤</span><span>26 Chữ ABC</span>
+        </button>
+        <button class="game-tab-btn" id="enTabVocab" onclick="switchEnglishSubTab('vocab')">
+          <span>📚</span><span>Từ Vựng &amp; Giao Tiếp</span>
+        </button>
+        <button class="game-tab-btn" id="enTabQuiz" onclick="switchEnglishSubTab('quiz')">
+          <span>👂</span><span>Nghe Chọn Hình</span>
+        </button>
+        <button class="game-tab-btn" id="enTabSpelling" onclick="switchEnglishSubTab('spelling')">
+          <span>🧩</span><span>Ghép Chữ Vui</span>
+        </button>
+      </div>
+
+      <!-- PANE 1: 26 CHỮ CÁI ABC -->
+      <div class="en-sub-pane" id="enPaneAbc">
+        <div class="section-header-flex" style="margin-bottom: 14px;">
+          <div>
+            <h3 class="section-blue-title" style="color: #1d4ed8;"><span>🔤</span> 26 Chữ Cái Tiếng Anh (A – Z)</h3>
+            <p class="section-sub-desc" style="margin-bottom: 0;">Chạm vào từng thẻ chữ cái để nghe phát âm tiếng Anh chuẩn và xem nghĩa tiếng Việt &amp; tiếng Nhật nhé!</p>
+          </div>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayEnAbc">
+            <span>🎧</span> Nghe A → Z
+          </button>
+        </div>
+        <div class="alphabet-grid" id="enAbcGrid"></div>
+      </div>
+
+      <!-- PANE 2: TỪ VỰNG & GIAO TIẾP -->
+      <div class="en-sub-pane" id="enPaneVocab" style="display: none;">
+        <div class="lesson-tabs-track" id="enTopicsTrack"></div>
+        <div class="section-header-flex" style="margin: 14px 0;">
+          <div>
+            <h3 class="section-blue-title" id="enTopicTitleText" style="color: #1d4ed8;">🦖 Dinosaurs &amp; Animals</h3>
+            <p class="section-sub-desc" style="margin-bottom: 0;">Chạm từng thẻ để nghe đọc chuẩn Anh–Mỹ và sưu tầm thêm ⭐ nhé!</p>
+          </div>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayEnVocab">
+            <span>🎧</span> Nghe cả chủ đề
+          </button>
+        </div>
+        <div class="cards-grid" id="enVocabGrid"></div>
+      </div>
+
+      <!-- PANE 3: NGHE TIẾNG ANH CHỌN HÌNH -->
+      <div class="en-sub-pane" id="enPaneQuiz" style="display: none;">
+        <div id="enQuizPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="enQuizProgressText">Câu 1 / 10</span>
+            <span class="streak-pill" id="enQuizStreakBadge">🔥 Streak x0</span>
+            <span class="game-stars" id="enQuizScoreText">⭐ 0 điểm</span>
+          </div>
+
+          <div class="quiz-question-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #93c5fd; border-bottom-color: #2563eb;">
+            <div class="quiz-question-title" style="color: #1e3a8a;">👂 Nghe tiếng Anh và chọn đúng hình nhé Bảo Long!</div>
+            <div class="quiz-question-ja" id="enQuizHintText" style="color: #1d4ed8;">💡 Nghe kỹ từ tiếng Anh và chọn hình đúng nhé!</div>
+            <button class="challenge-btn" id="btnHearEnQuiz" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); border-color: #3730a3; border-bottom-color: #1e1b4b;">
+              <span>🔊</span> Nghe Từ Tiếng Anh
+            </button>
+          </div>
+
+          <div class="quiz-options-grid" id="enQuizOptionsGrid"></div>
+        </div>
+
+        <div id="enQuizVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🇬🇧🌟🏆🎉</div>
+          <h2 class="victory-title" style="color: #1d4ed8;">AWESOME JOB BẢO LONG!</h2>
+          <p class="victory-desc" id="enQuizVictoryScore">Bảo Long nghe tiếng Anh siêu chuẩn!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initEnQuizGame()">🔄 Chơi ván mới</button>
+            <button class="home-btn" onclick="switchEnglishSubTab('spelling')">🧩 Chơi Ghép Chữ Tiếng Anh</button>
+            <button class="home-btn" onclick="switchEnglishSubTab('vocab')">📚 Ôn lại Từ vựng</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 4: GHÉP CHỮ TIẾNG ANH VUI -->
+      <div class="en-sub-pane" id="enPaneSpelling" style="display: none;">
+        <div id="enSpellPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="enSpellProgressText">Word 1 / 10</span>
+            <span class="game-stars" id="enSpellScoreText">⭐ 0 điểm</span>
+          </div>
+
+          <div class="game-card-target">
+            <div class="game-target-icon" id="enSpellIcon">🐱</div>
+            <div class="game-target-hint" id="enSpellMeaning">Ghép từ tiếng Anh: Con mèo</div>
+            <div class="game-target-ja" id="enSpellJa">🇯🇵 ねこ</div>
+          </div>
+
+          <p class="slot-tip-text">💡 Mẹo: Chạm chữ cái bên dưới để ghép từ đúng; chạm lại vào ô sai nếu muốn sửa nhé!</p>
+          <div class="puzzle-slots-container" id="enSpellSlots"></div>
+          <div class="options-letters-row" id="enSpellLettersRow"></div>
+
+          <div class="game-controls-row">
+            <button class="btn-hear-hint" id="btnHearEnSpell"><span>🔊</span> Nghe từ mẫu</button>
+            <button class="btn-reset-puzzle" id="btnResetEnSpell"><span>🔄</span> Xếp lại</button>
+          </div>
+        </div>
+
+        <div id="enSpellVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🧩✨🏆🎉</div>
+          <h2 class="victory-title" style="color: #1d4ed8;">EXCELLENT SPELLER BẢO LONG!</h2>
+          <p class="victory-desc" id="enSpellVictoryScore">Bảo Long ghép đúng cả 10 từ tiếng Anh!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initEnSpellingGame()">🔄 Ghép chữ ván mới</button>
+            <button class="home-btn" onclick="switchEnglishSubTab('quiz')">👂 Chơi Nghe Chọn Hình</button>
+            <button class="home-btn" onclick="switchEnglishSubTab('abc')">🔤 Về Bảng chữ cái A–Z</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         KHU VỰC TIẾNG NHẬT SONG NGỮ CHO BẢO LONG (NIHONGO KIDS)
+         ======================================================== -->
+    <section id="japaneseContainer" style="display: none;">
+      <div class="ja-banner-box">
+        <div class="dino-badge">🇯🇵 NIHONGO KIDS • TIẾNG NHẬT SONG NGỮ 🌸</div>
+        <h2 class="dino-banner-title">Ngôi Trường Tiếng Nhật Của Bảo Long</h2>
+        <p class="dino-banner-desc">Khám phá 46 chữ Hiragana (あ → ん), từ vựng &amp; giao tiếp hàng ngày, bảng tập viết ô vuông Nhật Bản Masume và đố vui cùng giọng đọc Nanami &amp; Keita!</p>
+        <div class="math-session-badge" id="jaSessionStars">⭐ Điểm Tiếng Nhật: 0</div>
+      </div>
+
+      <div class="lang-subnav">
+        <button class="game-tab-btn active" id="jaTabHira" onclick="switchJapaneseSubTab('hiragana')">
+          <span>🌸</span><span>46 Chữ Hiragana</span>
+        </button>
+        <button class="game-tab-btn" id="jaTabVocab" onclick="switchJapaneseSubTab('vocab')">
+          <span>🍱</span><span>Từ Vựng &amp; Số 1–10</span>
+        </button>
+        <button class="game-tab-btn" id="jaTabWriting" onclick="switchJapaneseSubTab('writing')">
+          <span>✍️</span><span>Tập Viết Masume</span>
+        </button>
+        <button class="game-tab-btn" id="jaTabQuiz" onclick="switchJapaneseSubTab('quiz')">
+          <span>🎯</span><span>Đố Vui Tiếng Nhật</span>
+        </button>
+      </div>
+
+      <!-- PANE 1: 46 CHỮ HIRAGANA -->
+      <div class="ja-sub-pane" id="jaPaneHira">
+        <div class="section-header-flex" style="margin-bottom: 14px;">
+          <div>
+            <h3 class="section-blue-title" style="color: #be123c;"><span>🌸</span> Bảng 46 Chữ Cái Hiragana (あ → ん)</h3>
+            <p class="section-sub-desc" style="margin-bottom: 0;">Chạm vào từng chữ cái Hiragana để nghe người Nhật đọc chuẩn âm và học từ ví dụ thật vui!</p>
+          </div>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayJaHira">
+            <span>🎧</span> Nghe あ → ん
+          </button>
+        </div>
+        <div class="ja-hira-grid" id="jaHiraGrid"></div>
+      </div>
+
+      <!-- PANE 2: TỪ VỰNG & GIAO TIẾP + SỐ 1–10 -->
+      <div class="ja-sub-pane" id="jaPaneVocab" style="display: none;">
+        <div class="lesson-tabs-track" id="jaTopicsTrack"></div>
+        <div class="section-header-flex" style="margin: 14px 0;">
+          <div>
+            <h3 class="section-blue-title" id="jaTopicTitleText" style="color: #be123c;">👋 Chào Hỏi &amp; Lễ Phép</h3>
+            <p class="section-sub-desc" style="margin-bottom: 0;">Chạm vào từng thẻ để nghe phát âm tiếng Nhật chuẩn và ghi nhớ thật nhanh nhé!</p>
+          </div>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayJaVocab">
+            <span>🎧</span> Nghe cả chủ đề
+          </button>
+        </div>
+        <div class="cards-grid" id="jaVocabGrid"></div>
+      </div>
+
+      <!-- PANE 3: TẬP VIẾT HIRAGANA Ô VUÔNG NHẬT (MASUME) -->
+      <div class="ja-sub-pane" id="jaPaneWriting" style="display: none;">
+        <h3 class="section-blue-title" style="color: #be123c; margin-bottom: 10px;">
+          <span>✍️</span> Tập Viết Chữ Hiragana Trên Ô Vuông Nhật Bản (マス目)
+        </h3>
+        <div class="ja-write-layout">
+          <div class="ja-write-board">
+            <div style="font-size: 16px; font-weight: 900; color: #9f1239; margin-bottom: 6px;" id="jaWriteCurrentTitle">Tập viết chữ: あ (a)</div>
+            <button class="btn-hear-hint" id="btnHearJaWrite" style="margin: 0 auto 6px auto;">
+              <span>🔊</span> Nghe phát âm
+            </button>
+            <canvas id="jaWritingCanvas"></canvas>
+            <div class="canvas-controls" style="justify-content: center; flex-wrap: wrap; gap: 10px;">
+              <div style="display: flex; gap: 7px; align-items: center;">
+                <span style="font-size: 12px; font-weight: 800; color: #475569;">Mực:</span>
+                <span class="color-picker-dot ja-color-dot active-dot" data-color="#e11d48" style="background: #e11d48;"></span>
+                <span class="color-picker-dot ja-color-dot" data-color="#0284c7" style="background: #0284c7;"></span>
+                <span class="color-picker-dot ja-color-dot" data-color="#10b981" style="background: #10b981;"></span>
+                <span class="color-picker-dot ja-color-dot" data-color="#7c3aed" style="background: #7c3aed;"></span>
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button class="tool-chip" id="btnJaClear">🧹 Xóa bảng</button>
+                <button class="tool-chip" id="btnJaFinish" style="background:#dcfce7; color:#15803d; border-color:#22c55e;">⭐ Viết xong!</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="ja-write-picker-box">
+            <div style="font-size: 14px; font-weight: 900; color: #881337;">👇 Chọn chữ cái muốn tập viết:</div>
+            <div class="ja-picker-grid" id="jaWritePicker"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 4: ĐỐ VUI TIẾNG NHẬT (10 CÂU) -->
+      <div class="ja-sub-pane" id="jaPaneQuiz" style="display: none;">
+        <div id="jaQuizPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="jaQuizProgressText">Câu 1 / 10</span>
+            <span class="streak-pill" id="jaQuizStreakBadge">🔥 Chuỗi x0</span>
+            <span class="game-stars" id="jaQuizScoreText">⭐ 0 điểm</span>
+          </div>
+
+          <div class="quiz-question-box" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border-color: #fda4af; border-bottom-color: #e11d48;">
+            <div class="quiz-question-title" style="color: #881337;">👂 Nghe tiếng Nhật và chọn đúng nghĩa nhé!</div>
+            <div class="quiz-question-ja" id="jaQuizPromptWord" style="font-size: 22px; font-weight: 900; color: #be123c; margin-top: 4px;">おはよう (Ohayou)</div>
+            <button class="challenge-btn" id="btnHearJaQuiz" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); border-color: #9f1239; border-bottom-color: #881337;">
+              <span>🔊</span> Nghe Tiếng Nhật
+            </button>
+          </div>
+
+          <div class="quiz-options-grid" id="jaQuizOptionsGrid"></div>
+        </div>
+
+        <div id="jaQuizVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🇯🇵🌸🏆🎉</div>
+          <h2 class="victory-title" style="color: #be123c;">SUGOI BẢO LONG! すごい!</h2>
+          <p class="victory-desc" id="jaQuizVictoryScore">Bảo Long giỏi tiếng Nhật quá đi thôi!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initJaQuizGame()">🔄 Chơi ván mới</button>
+            <button class="home-btn" onclick="switchJapaneseSubTab('writing')">✍️ Tập viết Hiragana</button>
+            <button class="home-btn" onclick="switchJapaneseSubTab('hiragana')">🌸 Về bảng Hiragana</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Khu Vực Khu Trò Chơi (Game Hub - 7 Trò Chơi Cuốn Hút) -->
     <section id="gameViewContainer" style="display: none;">
       <div class="game-hub-nav">
@@ -1047,6 +1301,8 @@
   <script src="speech.js"></script>
   <script src="math.js"></script>
   <script src="ethics.js"></script>
+  <script src="english.js"></script>
+  <script src="japanese.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

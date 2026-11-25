@@ -380,6 +380,8 @@ function stopAutoPlay() {
   autoPlayRunning = false;
   if (typeof stopMathAutoPlay === 'function') stopMathAutoPlay();
   if (typeof stopEthicsAutoPlay === 'function') stopEthicsAutoPlay();
+  if (typeof stopEnAutoPlay === 'function') stopEnAutoPlay();
+  if (typeof stopJaAutoPlay === 'function') stopJaAutoPlay();
   if (autoPlayTimer) {
     clearTimeout(autoPlayTimer);
     autoPlayTimer = null;
@@ -460,6 +462,8 @@ function switchMode(mode) {
     vehicles: '🚗 Ga Xe Cộ & Shinkansen (Ảnh chụp thực tế!)',
     math: '🧮 Chế độ: Học Toán Lớp 1 Kỳ Thú (Số đếm, Cộng Trừ, Đồng Hồ)',
     ethics: '🌱 Chế độ: Đạo Đức & Giáo Dục Công Dân (Bé Ngoan Văn Minh)',
+    english: '🇬🇧 Chế độ: Học Tiếng Anh Vui (ABC, Từ vựng, Nghe & Ghép chữ)',
+    japanese: '🇯🇵 Chế độ: Học Tiếng Nhật Song Ngữ (Hiragana, Tập viết & Đố vui)',
     game: '🎮 Khu Trò Chơi (7 game cho Bảo Long!)'
   };
   if (msgs[mode]) showToast(msgs[mode]);
@@ -477,6 +481,8 @@ function renderCurrentView() {
   const vehicleContainer = document.getElementById('vehicleContainer');
   const mathContainer = document.getElementById('mathContainer');
   const ethicsContainer = document.getElementById('ethicsContainer');
+  const englishContainer = document.getElementById('englishContainer');
+  const japaneseContainer = document.getElementById('japaneseContainer');
   const gameViewContainer = document.getElementById('gameViewContainer');
 
   cardsContainer.style.display = 'none';
@@ -485,6 +491,8 @@ function renderCurrentView() {
   if (vehicleContainer) vehicleContainer.style.display = 'none';
   if (mathContainer) mathContainer.style.display = 'none';
   if (ethicsContainer) ethicsContainer.style.display = 'none';
+  if (englishContainer) englishContainer.style.display = 'none';
+  if (japaneseContainer) japaneseContainer.style.display = 'none';
   gameViewContainer.style.display = 'none';
   roadmapBox.style.display = 'none';
 
@@ -520,6 +528,16 @@ function renderCurrentView() {
     if (ethicsContainer) {
       ethicsContainer.style.display = 'block';
       if (typeof renderEthicsHub === 'function') renderEthicsHub();
+    }
+  } else if (currentMode === 'english') {
+    if (englishContainer) {
+      englishContainer.style.display = 'block';
+      if (typeof renderEnglishHub === 'function') renderEnglishHub();
+    }
+  } else if (currentMode === 'japanese') {
+    if (japaneseContainer) {
+      japaneseContainer.style.display = 'block';
+      if (typeof renderJapaneseHub === 'function') renderJapaneseHub();
     }
   } else if (currentMode === 'game') {
     gameViewContainer.style.display = 'block';
@@ -1184,6 +1202,8 @@ function startMiniGame(source = 'default') {
   document.getElementById('vehicleContainer').style.display = 'none';
   if (document.getElementById('mathContainer')) document.getElementById('mathContainer').style.display = 'none';
   if (document.getElementById('ethicsContainer')) document.getElementById('ethicsContainer').style.display = 'none';
+  if (document.getElementById('englishContainer')) document.getElementById('englishContainer').style.display = 'none';
+  if (document.getElementById('japaneseContainer')) document.getElementById('japaneseContainer').style.display = 'none';
   document.getElementById('gameViewContainer').style.display = 'block';
 
   // Đảm bảo bật đúng SubGame Puzzle

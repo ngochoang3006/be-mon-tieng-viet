@@ -205,8 +205,11 @@ class SoundManager {
       }
 
       this.currentAudio = null;
+      const ttsLang = (key && (key.startsWith('en_') || key.startsWith('cheer_en')))
+        ? 'en-US'
+        : ((key && (key.startsWith('ja_') || key.startsWith('cheer_ja'))) ? 'ja-JP' : 'vi-VN');
       if (fallbackText) {
-        this.speakTTS(fallbackText, finish);
+        this.speakTTS(fallbackText, finish, ttsLang);
       } else {
         finish();
       }
@@ -215,8 +218,11 @@ class SoundManager {
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch(() => {
+        const ttsLang = (key && (key.startsWith('en_') || key.startsWith('cheer_en')))
+          ? 'en-US'
+          : ((key && (key.startsWith('ja_') || key.startsWith('cheer_ja'))) ? 'ja-JP' : 'vi-VN');
         if (fallbackText) {
-          this.speakTTS(fallbackText, finish);
+          this.speakTTS(fallbackText, finish, ttsLang);
         } else {
           finish();
         }
@@ -303,7 +309,7 @@ class SoundManager {
   }
 
   // Fallback Web Speech API nếu gặp từ chưa sinh file
-  speakTTS(text, onEndCallback) {
+  speakTTS(text, onEndCallback, lang = 'vi-VN') {
     if (this.isMuted || !this.synth) {
       if (onEndCallback) setTimeout(onEndCallback, 250);
       return;
@@ -313,8 +319,8 @@ class SoundManager {
     const cleanText = (text || '').replace(/\s*-\s*/g, ', ');
     const utter = new SpeechSynthesisUtterance(cleanText);
     utter.rate = this.speedRate === 0.8 ? 0.75 : 0.95;
-    utter.lang = 'vi-VN';
-    if (this.selectedVoice) {
+    utter.lang = lang;
+    if (lang === 'vi-VN' && this.selectedVoice) {
       utter.voice = this.selectedVoice;
     }
     if (onEndCallback) {

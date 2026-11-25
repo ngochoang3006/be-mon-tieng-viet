@@ -3411,3 +3411,226 @@ button.long-avatar-pill:hover {
 .eco-bin-hazard { background: #fff1f2; border-color: #f43f5e; color: #be123c; }
 .eco-bin-btn.correct { transform: scale(1.06); box-shadow: 0 0 16px rgba(16, 185, 129, 0.5); }
 .eco-bin-btn.wrong { opacity: 0.55; }
+
+/* === BAO LONG EN & JA LANG STYLES === */
+/* ========================================================
+   TIẾNG ANH & TIẾNG NHẬT CHO BẢO LONG (STYLESHEET)
+   ======================================================== */
+
+/* Khóa triệt để tràn ngang trang trên Mobile trong khi vẫn giữ position: sticky */
+html, body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+.top-nav {
+  max-width: 100%;
+  overflow-x: clip;
+}
+.nav-modes-container {
+  width: 100%;
+  max-width: 100%;
+}
+#enTopicsTrack, #jaTopicsTrack {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  justify-content: center;
+}
+
+/* Căn 10 tab điều hướng thành 2 hàng 5+5 cân đối đẹp trên Desktop */
+@media (min-width: 900px) {
+  .mode-pills-row {
+    max-width: 820px;
+    gap: 7px;
+  }
+  .mode-pill {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+
+.mode-pill-english {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+  color: #ffffff !important;
+  border-color: #3730a3 !important;
+  border-bottom: 4px solid #1e1b4b !important;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+.mode-pill-english.active {
+  box-shadow: 0 0 0 3px #e0e7ff, 0 6px 16px rgba(37, 99, 235, 0.45) !important;
+  transform: translateY(-2px);
+}
+
+.mode-pill-japanese {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+  color: #ffffff !important;
+  border-color: #9f1239 !important;
+  border-bottom: 4px solid #881337 !important;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3);
+}
+.mode-pill-japanese.active {
+  box-shadow: 0 0 0 3px #ffe4e6, 0 6px 16px rgba(190, 18, 60, 0.45) !important;
+  transform: translateY(-2px);
+}
+
+/* Banners */
+.en-banner-box {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 55%, #4f46e5 100%);
+  border-radius: 28px;
+  padding: 22px 20px;
+  color: #ffffff;
+  margin-bottom: 18px;
+  border: 3px solid #93c5fd;
+  border-bottom: 6px solid #1e1b4b;
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28);
+  position: relative;
+  overflow: hidden;
+}
+.en-banner-box::before {
+  content: 'A B C 🍎 🦖 🚅';
+  position: absolute;
+  right: 14px;
+  bottom: -4px;
+  font-size: 48px;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.ja-banner-box {
+  background: linear-gradient(135deg, #9f1239 0%, #e11d48 55%, #fb7185 100%);
+  border-radius: 28px;
+  padding: 22px 20px;
+  color: #ffffff;
+  margin-bottom: 18px;
+  border: 3px solid #fecdd3;
+  border-bottom: 6px solid #881337;
+  box-shadow: 0 12px 28px rgba(225, 29, 72, 0.28);
+  position: relative;
+  overflow: hidden;
+}
+.ja-banner-box::before {
+  content: 'あ い う 🌸 🚅 🗻';
+  position: absolute;
+  right: 14px;
+  bottom: -4px;
+  font-size: 48px;
+  opacity: 0.16;
+  pointer-events: none;
+}
+
+.lang-subnav {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+@media (max-width: 600px) {
+  .lang-subnav .game-tab-btn {
+    padding: 7px 11px;
+    font-size: 12.5px;
+    gap: 5px;
+    border-radius: 15px;
+  }
+}
+
+.en-sub-pane {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 20px 16px;
+  border: 3px solid #bfdbfe;
+  border-bottom: 6px solid #3b82f6;
+  box-shadow: 0 10px 26px rgba(37, 99, 235, 0.1);
+}
+.ja-sub-pane {
+  background: #ffffff;
+  border-radius: 28px;
+  padding: 20px 16px;
+  border: 3px solid #fecdd3;
+  border-bottom: 6px solid #f43f5e;
+  box-shadow: 0 10px 26px rgba(225, 29, 72, 0.1);
+}
+
+.en-abc-card.is-learned {
+  background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%);
+  border-color: #2563eb;
+}
+.ja-hira-card.is-learned {
+  background: linear-gradient(180deg, #ffffff 0%, #fff1f2 100%);
+  border-color: #e11d48;
+}
+
+.ja-hira-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+@media (max-width: 720px) {
+  .ja-hira-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+  }
+}
+@media (max-width: 460px) {
+  .ja-hira-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+}
+
+/* Tập viết Hiragana Nhật */
+.ja-write-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.ja-write-board {
+  background: #fff1f2;
+  border: 2.5px solid #fda4af;
+  border-radius: 24px;
+  padding: 16px;
+  text-align: center;
+  flex: 0 0 auto;
+}
+#jaWritingCanvas {
+  background: #ffffff;
+  border: 3px solid #f43f5e;
+  border-radius: 18px;
+  cursor: crosshair;
+  touch-action: none;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: block;
+  margin: 10px auto;
+}
+.ja-write-picker-box {
+  flex: 1;
+  min-width: 240px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 12px;
+}
+.ja-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(42px, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+.ja-pick-char-btn {
+  height: 40px;
+  border-radius: 12px;
+  border: 2px solid #cbd5e1;
+  border-bottom: 3px solid #94a3b8;
+  background: #ffffff;
+  font-size: 20px;
+  font-weight: 900;
+  color: #881337;
+  cursor: pointer;
+}
+.ja-pick-char-btn.active {
+  background: #e11d48;
+  color: #ffffff;
+  border-color: #9f1239;
+}
+
