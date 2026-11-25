@@ -3718,116 +3718,119 @@ html, body {
   }
 }
 
-/* === BAO LONG DRAGON WORLD STYLES === */
-@media (min-width: 900px) {
-  .mode-pills-row {
-    max-width: 960px;
-    gap: 7px;
-  }
-  .mode-pill {
-    padding: 6px 12px;
-    font-size: 13px;
-  }
+/* ========================================================
+   PHẢN HỒI TỨC THÌ + CHỈ MỤC ĐANG ĐỌC ĐÁP ÁN CHO BÉ CHƯA BIẾT ĐỌC
+   ======================================================== */
+button,
+[role="button"],
+.word-card,
+.alpha-card,
+.math-num-card,
+.math-ten-card,
+.math-shape-card,
+.ethics-card,
+.en-abc-card,
+.en-vocab-card,
+.ja-hira-card,
+.ja-vocab-card,
+.ja-pick-char-btn,
+.quiz-option-card,
+.listen-choice-card,
+.memory-card,
+.cmp-choice-btn,
+.math-ans-btn,
+.ethics-sit-option,
+.tf-choice-btn,
+.eco-bin-btn,
+.tl-light-btn {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.mode-pill-dragon {
-  background: linear-gradient(135deg, #dc2626 0%, #f59e0b 100%) !important;
-  color: #ffffff !important;
-  border-color: #b91c1c !important;
-  border-bottom: 4px solid #7f1d1d !important;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
-}
-.mode-pill-dragon.active {
-  box-shadow: 0 0 0 3px #fef08a, 0 6px 16px rgba(220, 38, 38, 0.5) !important;
-  transform: translateY(-2px);
+.word-card:active,
+.alpha-card:active,
+.math-num-card:active,
+.math-ten-card:active,
+.math-shape-card:active,
+.ethics-card:active,
+.en-abc-card:active,
+.en-vocab-card:active,
+.ja-hira-card:active,
+.ja-vocab-card:active,
+.cmp-choice-btn:active,
+.tf-choice-btn:active,
+.eco-bin-btn:active,
+.ethics-sit-option:active {
+  transform: scale(0.96);
 }
 
-.dragon-banner-box {
-  background: linear-gradient(135deg, #7f1d1d 0%, #dc2626 55%, #ea580c 100%);
-  border-radius: 28px;
-  padding: 24px 20px;
-  color: #ffffff;
-  box-shadow: 0 10px 30px rgba(153, 27, 27, 0.32);
-  margin-bottom: 22px;
-  border: 3px solid #fde047;
-  border-bottom: 6px solid #7f1d1d;
+.quiz-option-card,
+.ethics-sit-option,
+.tf-choice-btn,
+.eco-bin-btn,
+.cmp-choice-btn,
+.math-ans-btn,
+.listen-choice-card,
+.eco-trash-target {
   position: relative;
-  overflow: hidden;
-}
-.dragon-banner-box::before {
-  content: '🐉🔥⚡❄️🌟';
-  position: absolute;
-  right: 12px;
-  bottom: -6px;
-  font-size: 52px;
-  opacity: 0.22;
-  pointer-events: none;
 }
 
-.dragon-card {
-  border-color: #ef4444 !important;
-  border-bottom: 6px solid #b91c1c !important;
-  background: linear-gradient(180deg, #fffbfb 0%, #fef2f2 100%) !important;
+.ethics-sit-option {
+  padding-right: 52px;
 }
-.dragon-card:hover {
-  border-color: #b91c1c !important;
-  border-bottom: 7px solid #7f1d1d !important;
-  box-shadow: 0 12px 24px rgba(220, 38, 38, 0.3) !important;
+
+.tf-choice-btn,
+.eco-bin-btn {
+  font-family: inherit;
+  text-align: center;
+  user-select: none;
 }
-.dragon-card .word-dino-title {
-  font-size: 13px;
-  font-weight: 800;
-  color: #b91c1c;
-  margin-bottom: 2px;
-}
-.dragon-card .word-fact-tag {
-  font-size: 11px;
-  color: #334155;
-  background: #ffffff;
-  border: 1px solid #fecaca;
-  padding: 4px 6px;
-  border-radius: 10px;
-  margin-top: 6px;
-  line-height: 1.3;
-  width: 100%;
-}
-.dragon-card .word-icon-img {
-  width: 100%;
-  margin-top: 16px;
-  margin-bottom: 10px;
-  display: flex;
+
+.quiz-opt-speak-btn {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #7dd3fc;
+  background: rgba(255, 255, 255, 0.96);
+  color: #0284c7;
+  font-size: 14px;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
+  cursor: pointer;
+  z-index: 6;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.14);
+  transition: transform 0.08s ease, background-color 0.12s ease;
+  padding: 0;
 }
-.dragon-card .real-photo {
-  width: 100%;
-  max-width: 196px;
-  height: 144px;
-  object-fit: cover;
-  border-radius: 18px;
+
+.quiz-opt-speak-btn:hover {
+  transform: scale(1.12);
+  background: #e0f2fe;
 }
-@media (max-width: 540px) {
-  .dragon-card .real-photo {
-    max-width: 164px;
-    height: 120px;
+
+.quiz-opt-speak-btn:active {
+  transform: scale(0.9);
+}
+
+@keyframes readingGlowPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.9), 0 8px 22px rgba(234, 179, 8, 0.38);
+  }
+  50% {
+    box-shadow: 0 0 0 7px rgba(250, 204, 21, 1), 0 12px 30px rgba(245, 158, 11, 0.55);
   }
 }
 
-.dragon-card-back {
-  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
-  border: 3px solid #fde047 !important;
-  border-bottom: 5px solid #7f1d1d !important;
+.is-reading-option {
+  border-color: #eab308 !important;
+  background-color: #fef9c3 !important;
+  transform: translateY(-3px) scale(1.03);
+  z-index: 5;
+  animation: readingGlowPulse 0.8s ease-in-out infinite;
 }
 
-.dragon-sub-panel {
-  background: #ffffff;
-  border-radius: 28px;
-  padding: 20px 16px;
-  border: 3px solid #fecaca;
-  border-bottom: 6px solid #dc2626;
-  box-shadow: 0 10px 26px rgba(220, 38, 38, 0.12);
-}
-
-.dino-roar-btn.active {
-  box-shadow: 0 0 0 3px #fef08a, 0 6px 16px rgba(0, 0, 0, 0.25);
-  transform: translateY(-1px);
-}

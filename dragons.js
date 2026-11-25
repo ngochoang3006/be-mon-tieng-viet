@@ -249,6 +249,7 @@ function renderDragonCardsView() {
     const learned = typeof explorerState !== 'undefined' && explorerState.learnedIds.includes(dg.id);
     const card = document.createElement('div');
     card.className = `word-card dragon-card ${learned ? 'is-learned' : ''}`;
+    card.dataset.wordId = dg.id;
     card.innerHTML = `
       <div class="star-corner">${learned ? '⭐' : '🐉'}</div>
       <div class="word-icon-img">${dg.icon}</div>
@@ -296,36 +297,43 @@ function loadDragonQuizQuestion() {
 
   const q = dragonQuizList[dragonQuizIdx];
   const targetObj = DRAGON_LESSONS.find(d => d.id === q.correctId);
+  const origIdx = DRAGON_LESSONS.length ? (DRAGON_QUIZ_DATA.findIndex(x => x.question === q.question) + 1) : 0;
+  const riddleKey = origIdx > 0 ? `drquiz_${origIdx}` : (targetObj ? targetObj.audioKey : '');
   document.getElementById('dragonQuizProgressText').innerText = `Câu ${dragonQuizIdx + 1} / ${dragonQuizList.length}`;
   document.getElementById('dragonQuizScoreText').innerText = `⭐ ${dragonQuizScore} điểm`;
   document.getElementById('dragonQuizQuestionTitle').innerText = q.question;
   document.getElementById('dragonQuizHintJa').innerText = targetObj ? `🇯🇵 ${targetObj.ja}` : '';
 
-  document.getElementById('btnHearDragonQuiz').onclick = () => {
-    window.soundMgr.playClick();
-    if (targetObj) window.soundMgr.playAudioFile(targetObj.audioKey, null, targetObj.dinoName);
-  };
-  setTimeout(() => {
-    if ((window.appNavEpoch || 0) === myNav && dragonEpoch === myEp && targetObj) {
-      window.soundMgr.playAudioFile(targetObj.audioKey, null, targetObj.dinoName);
-    }
-  }, 300);
-
   const grid = document.getElementById('dragonQuizOptionsGrid');
   grid.innerHTML = '';
   let locked = false;
+  const qBoxEl = document.querySelector('#dragonQuizPlayStage .quiz-question-box');
+  const drTourSteps = [{ key: riddleKey, fallbackText: q.question, el: qBoxEl, pauseAfterMs: 220 }];
+
   [...q.options].sort(() => Math.random() - 0.5).forEach(optId => {
     const item = DRAGON_LESSONS.find(d => d.id === optId);
     if (!item) return;
     const card = document.createElement('div');
     card.className = 'quiz-option-card';
     card.innerHTML = `
+      <button type="button" class="quiz-opt-speak-btn" aria-label="Nghe tên Rồng">🔊</button>
       <div class="quiz-opt-icon">${item.icon}</div>
       <div class="quiz-opt-name">${item.dinoName}</div>
       <div class="quiz-opt-ja">🇯🇵 ${item.ja}</div>
     `;
+    const spkBtn = card.querySelector('.quiz-opt-speak-btn');
+    if (spkBtn) {
+      spkBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.playAudioFile(item.audioKey, null, item.dinoName);
+      });
+    }
+    drTourSteps.push({ key: item.audioKey, fallbackText: item.dinoName, el: card, pauseAfterMs: 110 });
+
     card.addEventListener('click', () => {
       if (locked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      window.soundMgr.stopAll();
       if (item.id === q.correctId) {
         locked = true;
         card.classList.add('correct');
@@ -334,20 +342,33 @@ function loadDragonQuizQuestion() {
         window.soundMgr.playCorrect();
         if (typeof fireConfetti === 'function') fireConfetti();
         if (typeof showToast === 'function') showToast(`🔥 Tuyệt đỉnh! Chính là ${item.dinoName}!`);
-        window.soundMgr.playAudioFile(item.audioKey);
-        setTimeout(() => {
-          if ((window.appNavEpoch || 0) !== myNav || dragonEpoch !== myEp) return;
-          dragonQuizIdx++;
-          loadDragonQuizQuestion();
-        }, 1500);
+        window.soundMgr.playPraiseThen(false,
+          () => (window.appNavEpoch || 0) === myNav && dragonEpoch === myEp,
+          () => {
+            dragonQuizIdx++;
+            loadDragonQuizQuestion();
+          }
+        );
       } else {
         card.classList.add('wrong');
         window.soundMgr.playWrong();
+        window.soundMgr.speakTryAgain();
         if (typeof showToast === 'function') showToast('🐉 Chú Rồng này chưa đúng rồi, chọn lại nhé Bảo Long!');
       }
     });
     grid.appendChild(card);
   });
+
+  const playDrTour = () => window.soundMgr.playChoiceTour(drTourSteps);
+  document.getElementById('btnHearDragonQuiz').onclick = () => {
+    window.soundMgr.playClick();
+    playDrTour();
+  };
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && dragonEpoch === myEp) {
+      playDrTour();
+    }
+  }, 60);
 }
 
 // ========================================================
@@ -430,9 +451,9 @@ function initDragonMemoryGame() {
                 document.getElementById('dragonMemoryVictoryStage').style.display = 'block';
                 document.getElementById('dragonMemoryVictoryFlips').innerText =
                   `Bảo Long đã mở khóa 6 loài Rồng chỉ trong ${dragonMemFlips} lượt lật (+15 ⭐)!`;
-              }, 850);
+              }, 550);
             }
-          }, 420);
+          }, 240);
         } else {
           setTimeout(() => {
             if ((window.appNavEpoch || 0) !== myNav || dragonEpoch !== myEp) return;
@@ -440,7 +461,7 @@ function initDragonMemoryGame() {
             b.el.classList.remove('is-flipped');
             dragonMemFlipped = [];
             dragonMemLocked = false;
-          }, 850);
+          }, 650);
         }
       }
     });

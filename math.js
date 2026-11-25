@@ -219,7 +219,9 @@ function renderMathNumbersTab() {
           showToast(`⭐ +2 Sao! Bảo Long đã học Số ${item.num} (${item.word})!`);
         }
       }
-      renderMathNumbersTab();
+      grid.querySelectorAll('.math-num-card.selected').forEach(el => el.classList.remove('selected'));
+      card.classList.add('selected');
+      updateMathNumberSpotlight();
     });
     grid.appendChild(card);
   });
@@ -400,7 +402,7 @@ function initMathCalcGame(mode = mathCalcMode) {
   loadMathCalcQuestion();
 }
 
-function speakCalcEquation(q, withResult = false) {
+function speakCalcEquation(q, withResult = false, onEndCallback = null) {
   const opKey = q.op === '+' ? 'math_op_plus' : 'math_op_minus';
   const keys = withResult
     ? [`math_v_${q.a}`, opKey, `math_v_${q.b}`, 'math_eq_word', `math_v_${q.ans}`]
@@ -408,7 +410,7 @@ function speakCalcEquation(q, withResult = false) {
   const fb = withResult
     ? `${q.a} ${q.op === '+' ? 'cộng' : 'trừ'} ${q.b} bằng ${q.ans}`
     : `${q.a} ${q.op === '+' ? 'cộng' : 'trừ'} ${q.b} bằng mấy`;
-  window.soundMgr.playAudioSequence(keys, null, fb);
+  window.soundMgr.playAudioSequence(keys, onEndCallback, fb);
 }
 
 function renderCalcVisualBox(q) {
@@ -508,7 +510,7 @@ function loadMathCalcQuestion() {
   };
   setTimeout(() => {
     if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) speakCalcEquation(q, false);
-  }, 250);
+  }, 60);
 
   const optsGrid = document.getElementById('mathCalcOptionsGrid');
   optsGrid.innerHTML = '';
@@ -519,6 +521,7 @@ function loadMathCalcQuestion() {
     btn.innerText = num;
     btn.addEventListener('click', () => {
       if (calcLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+      window.soundMgr.stopAll();
       if (num === q.ans) {
         calcLocked = true;
         btn.classList.add('correct');
@@ -534,23 +537,26 @@ function loadMathCalcQuestion() {
 
         window.soundMgr.playCorrect();
         fireConfetti();
-        setTimeout(() => {
-          if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) speakCalcEquation(q, true);
-        }, 350);
         if (typeof showToast === 'function') {
           showToast(`🎉 Chuẩn luôn! ${q.a} ${q.op} ${q.b} = ${q.ans}!`);
         }
 
-        setTimeout(() => {
+        let calcAdvanced = false;
+        const goNextCalc = () => {
+          if (calcAdvanced) return;
+          calcAdvanced = true;
           if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
           mathCalcIndex++;
           loadMathCalcQuestion();
-        }, 2100);
+        };
+        speakCalcEquation(q, true, () => setTimeout(goNextCalc, 220));
+        setTimeout(goNextCalc, window.soundMgr.isMuted ? 450 : 2200);
       } else {
         btn.classList.add('wrong');
         mathCalcStreak = 0;
         document.getElementById('mathCalcStreakBadge').innerText = `🔥 Chuỗi x0`;
         window.soundMgr.playWrong();
+        window.soundMgr.speakTryAgain();
         if (typeof showToast === 'function') showToast('🧮 Bảo Long thử đếm lại các hình gợi ý bên trên xem nhé! ❤️');
       }
     });
@@ -641,10 +647,29 @@ function loadMathCompareQuestion() {
   signBox.innerText = '?';
   signBox.classList.remove('solved');
 
+  const playCmpQuestion = () => {
+    if (mathCmpMode === 'simple') {
+      window.soundMgr.playAudioSequence([`math_v_${q.leftVal}`, 'math_and', `math_v_${q.rightVal}`, 'math_q_cmp'], null, `${q.leftLabel} và ${q.rightLabel}, chọn dấu lớn hơn, bé hơn, hay bằng nhau!`);
+    } else {
+      window.soundMgr.playAudioFile('math_q_cmp', null, 'Chọn dấu lớn hơn, bé hơn, hay bằng nhau nhé!');
+    }
+  };
+  const btnHearCmp = document.getElementById('btnHearMathCmp');
+  if (btnHearCmp) {
+    btnHearCmp.onclick = () => {
+      window.soundMgr.playClick();
+      playCmpQuestion();
+    };
+  }
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) playCmpQuestion();
+  }, 60);
+
   document.querySelectorAll('.cmp-choice-btn').forEach(btn => {
     btn.classList.remove('correct', 'wrong');
     btn.onclick = () => {
       if (signBox.classList.contains('solved')) return;
+      window.soundMgr.stopAll();
       const chosen = btn.dataset.sign;
       if (chosen === q.ans) {
         btn.classList.add('correct');
@@ -656,21 +681,28 @@ function loadMathCompareQuestion() {
         window.soundMgr.playCorrect();
         fireConfetti();
 
-        const cmpAudioKey = q.ans === '>' ? 'math_cmp_gt' : (q.ans === '<' ? 'math_cmp_lt' : 'math_cmp_eq');
-        window.soundMgr.playAudioSequence([`math_v_${q.leftVal}`, cmpAudioKey, `math_v_${q.rightVal}`], null, `${q.leftVal} ${q.ans} ${q.rightVal}`);
-
         if (typeof showToast === 'function') {
           showToast(`🐊 Chính xác! ${q.leftLabel} ${q.ans} ${q.rightLabel}!`);
         }
 
-        setTimeout(() => {
+        let cmpDone = false;
+        const goNextCmp = () => {
+          if (cmpDone) return;
+          cmpDone = true;
           if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
           mathCmpIndex++;
           loadMathCompareQuestion();
-        }, 1700);
+        };
+
+        const cmpAudioKey = q.ans === '>' ? 'math_cmp_gt' : (q.ans === '<' ? 'math_cmp_lt' : 'math_cmp_eq');
+        window.soundMgr.playAudioSequence([`math_v_${q.leftVal}`, cmpAudioKey, `math_v_${q.rightVal}`], () => {
+          setTimeout(goNextCmp, 180);
+        }, `${q.leftVal} ${q.ans} ${q.rightVal}`);
+        setTimeout(goNextCmp, window.soundMgr.isMuted ? 450 : 2100);
       } else {
         btn.classList.add('wrong');
         window.soundMgr.playWrong();
+        window.soundMgr.speakTryAgain();
         if (typeof showToast === 'function') showToast('🐊 Mẹo: Cá sấu há miệng to quay về phía SỐ LỚN HƠN nhé!');
       }
     };
@@ -789,7 +821,17 @@ function loadMathSequenceQuestion() {
 
   const myNav = window.appNavEpoch || 0;
   const myMathEpoch = mathEpoch;
-  window.soundMgr.playAudioFile('math_q_missing', null, 'Tìm số còn thiếu nhé');
+  const playSeqPrompt = () => window.soundMgr.playAudioFile('math_seq_prompt', null, 'Điền số còn thiếu lên toa tàu Shinkansen!');
+  const btnHearSeq = document.getElementById('btnHearMathSeq');
+  if (btnHearSeq) {
+    btnHearSeq.onclick = () => {
+      window.soundMgr.playClick();
+      playSeqPrompt();
+    };
+  }
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) playSeqPrompt();
+  }, 60);
 
   const grid = document.getElementById('mathSeqOptionsGrid');
   grid.innerHTML = '';
@@ -800,6 +842,7 @@ function loadMathSequenceQuestion() {
     btn.innerText = num;
     btn.addEventListener('click', () => {
       if (seqLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+      window.soundMgr.stopAll();
       if (num === q.ans) {
         seqLocked = true;
         btn.classList.add('correct');
@@ -814,21 +857,20 @@ function loadMathSequenceQuestion() {
         window.soundMgr.playShinkansenWhistle();
         fireConfetti();
         trackEl.classList.add('zooming');
-        setTimeout(() => {
-          if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) {
-            window.soundMgr.playAudioFile(`math_num_${num}`, null, `Số ${num}`);
-          }
-        }, 450);
 
         if (typeof showToast === 'function') showToast(`🚅 TU TUU! Số chính xác là ${num}!`);
-        setTimeout(() => {
-          if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
-          mathSeqIndex++;
-          loadMathSequenceQuestion();
-        }, 1700);
+        window.soundMgr.playPraiseThen(false,
+          () => (window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch,
+          () => {
+            mathSeqIndex++;
+            loadMathSequenceQuestion();
+          },
+          2200
+        );
       } else {
         btn.classList.add('wrong');
         window.soundMgr.playWrong();
+        window.soundMgr.speakTryAgain();
         if (typeof showToast === 'function') showToast(`💡 Gợi ý: ${q.hint}`);
       }
     });
@@ -878,7 +920,10 @@ function renderMathGeometryTab() {
         mathCurrentHour = h;
         window.soundMgr.playClick();
         window.soundMgr.playAudioFile(`math_clock_${h}`, null, `${h} giờ đúng`);
-        renderMathGeometryTab();
+        hourBtnsWrap.querySelectorAll('.clock-hour-btn.active').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderClockFace('mathClockSvg', mathCurrentHour);
+        updateClockInfoText();
       });
       hourBtnsWrap.appendChild(btn);
     }
@@ -957,10 +1002,10 @@ function initGeoClockQuiz() {
   // Mix 4 Shape questions + 4 Clock questions = 8 rounds
   mathGeoQuizQuestions = [];
   const shapePrompts = [
-    { kind: 'shape', q: 'Bảo Long ơi, đâu là Hình Tròn (như bánh xe, mặt trời)?', targetId: 'tron', audioKey: 'math_shape_tron' },
-    { kind: 'shape', q: 'Đâu là Hình Vuông có 4 cạnh dài bằng nhau?', targetId: 'vuong', audioKey: 'math_shape_vuong' },
-    { kind: 'shape', q: 'Hình nào là Hình Tam Giác có 3 cạnh nhọn?', targetId: 'tam_giac', audioKey: 'math_shape_tam_giac' },
-    { kind: 'shape', q: 'Đâu là Hình Chữ Nhật giống quyển sách hay cánh cửa?', targetId: 'chu_nhat', audioKey: 'math_shape_chu_nhat' }
+    { kind: 'shape', q: 'Bảo Long ơi, đâu là Hình Tròn (như bánh xe, mặt trời)?', targetId: 'tron', audioKey: 'math_q_shape_tron' },
+    { kind: 'shape', q: 'Đâu là Hình Vuông có 4 cạnh dài bằng nhau?', targetId: 'vuong', audioKey: 'math_q_shape_vuong' },
+    { kind: 'shape', q: 'Hình nào là Hình Tam Giác có 3 cạnh nhọn?', targetId: 'tam_giac', audioKey: 'math_q_shape_tam_giac' },
+    { kind: 'shape', q: 'Đâu là Hình Chữ Nhật giống quyển sách hay cánh cửa?', targetId: 'chu_nhat', audioKey: 'math_q_shape_chu_nhat' }
   ];
   shapePrompts.forEach(sp => {
     mathGeoQuizQuestions.push({
@@ -1018,19 +1063,29 @@ function loadGeoClockQuestion() {
   const optsGrid = document.getElementById('mathGeoQuizOptionsGrid');
   optsGrid.innerHTML = '';
   let geoLocked = false;
-
-  window.soundMgr.playAudioFile(q.audioKey, null, q.question);
+  const qBoxEl = document.querySelector('#mathGeoQuizActive .quiz-question-box');
+  const geoTourSteps = [{ key: q.audioKey, fallbackText: q.question, el: qBoxEl, pauseAfterMs: 160 }];
 
   if (q.kind === 'clock') {
     clockWrap.style.display = 'flex';
     renderClockFace('mathQuizClockSvg', q.targetHour);
     q.options.forEach(h => {
-      const btn = document.createElement('button');
+      const btn = document.createElement('div');
+      btn.setAttribute('role', 'button');
+      btn.setAttribute('tabindex', '0');
       btn.className = 'math-ans-btn';
       btn.style.fontSize = '24px';
-      btn.innerText = `${h} giờ`;
+      btn.innerHTML = `<span>${h} giờ</span><button type="button" class="quiz-opt-speak-btn" aria-label="Nghe giờ">🔊</button>`;
+      const spk = btn.querySelector('.quiz-opt-speak-btn');
+      if (spk) spk.onclick = (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.playAudioFile(`math_clock_${h}`, null, `${h} giờ đúng`);
+      };
+      geoTourSteps.push({ key: `math_clock_${h}`, fallbackText: `${h} giờ đúng`, el: btn, pauseAfterMs: 100 });
       btn.onclick = () => {
         if (geoLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+        window.soundMgr.stopAll();
         if (h === q.targetHour) {
           geoLocked = true;
           btn.classList.add('correct');
@@ -1039,16 +1094,18 @@ function loadGeoClockQuestion() {
           document.getElementById('mathGeoScoreText').innerText = `⭐ ${mathGeoQuizScore} điểm`;
           window.soundMgr.playCorrect();
           fireConfetti();
-          window.soundMgr.playAudioFile(`math_clock_${h}`, null, `${h} giờ đúng`);
           if (typeof showToast === 'function') showToast(`🕒 Chính xác! Đồng hồ chỉ ${h} giờ đúng!`);
-          setTimeout(() => {
-            if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
-            mathGeoQuizIndex++;
-            loadGeoClockQuestion();
-          }, 1500);
+          window.soundMgr.playPraiseThen(false,
+            () => (window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch,
+            () => {
+              mathGeoQuizIndex++;
+              loadGeoClockQuestion();
+            }
+          );
         } else {
           btn.classList.add('wrong');
           window.soundMgr.playWrong();
+          window.soundMgr.speakTryAgain();
           if (typeof showToast === 'function') showToast('🕒 Mẹo: Xem kim NGẮN màu ĐỎ đang chỉ vào số nào nhé!');
         }
       };
@@ -1060,11 +1117,20 @@ function loadGeoClockQuestion() {
       const card = document.createElement('div');
       card.className = 'quiz-option-card';
       card.innerHTML = `
+        <button type="button" class="quiz-opt-speak-btn" aria-label="Nghe tên hình">🔊</button>
         <div style="width:76px; height:76px; margin-bottom:6px;">${sh.svg}</div>
         <div class="quiz-opt-name">${sh.name}</div>
       `;
+      const spk = card.querySelector('.quiz-opt-speak-btn');
+      if (spk) spk.onclick = (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.playAudioFile(sh.audioKey, null, sh.name);
+      };
+      geoTourSteps.push({ key: sh.audioKey, fallbackText: sh.name, el: card, pauseAfterMs: 110 });
       card.onclick = () => {
         if (geoLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+        window.soundMgr.stopAll();
         if (sh.id === q.target) {
           geoLocked = true;
           card.classList.add('correct');
@@ -1073,20 +1139,34 @@ function loadGeoClockQuestion() {
           document.getElementById('mathGeoScoreText').innerText = `⭐ ${mathGeoQuizScore} điểm`;
           window.soundMgr.playCorrect();
           fireConfetti();
-          window.soundMgr.playAudioFile(sh.audioKey, null, sh.name);
           if (typeof showToast === 'function') showToast(`📐 Tuyệt vời! Chính là ${sh.name}!`);
-          setTimeout(() => {
-            if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
-            mathGeoQuizIndex++;
-            loadGeoClockQuestion();
-          }, 1500);
+          window.soundMgr.playPraiseThen(false,
+            () => (window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch,
+            () => {
+              mathGeoQuizIndex++;
+              loadGeoClockQuestion();
+            }
+          );
         } else {
           card.classList.add('wrong');
           window.soundMgr.playWrong();
+          window.soundMgr.speakTryAgain();
           if (typeof showToast === 'function') showToast(`📐 Thử nhìn lại hình khác nhé Bảo Long!`);
         }
       };
       optsGrid.appendChild(card);
     });
   }
+
+  const playGeoTour = () => window.soundMgr.playChoiceTour(geoTourSteps);
+  const btnHearGeo = document.getElementById('btnHearMathGeoQuiz');
+  if (btnHearGeo) {
+    btnHearGeo.onclick = () => {
+      window.soundMgr.playClick();
+      playGeoTour();
+    };
+  }
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) playGeoTour();
+  }, 60);
 }

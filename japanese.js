@@ -231,7 +231,7 @@ function renderJaHiraganaTab() {
         const isNew = markWordLearned(`ja_h_${item.hira}`);
         if (isNew) {
           addJaScore(2);
-          renderJaHiraganaTab();
+          card.classList.add('is-learned');
         }
       }
       if (typeof showToast === 'function') showToast(`🇯🇵 Chữ "${item.hira}" (${item.romaji}) — ví dụ: ${item.word}`);
@@ -323,7 +323,9 @@ function renderJaVocabTab() {
         const isNew = markWordLearned(w.id);
         if (isNew) {
           addJaScore(2);
-          renderJaVocabTab();
+          card.classList.add('is-learned');
+          const sc = card.querySelector('.star-corner');
+          if (sc) sc.innerText = '⭐';
           if (typeof showToast === 'function') showToast(`⭐ +2 Sao! "${w.ja}" = "${w.vi}"!`);
         } else if (typeof showToast === 'function') {
           showToast(`🇯🇵 ${w.ja} (${w.romaji}) = ${w.vi}`);
@@ -388,7 +390,17 @@ function renderJaWritingTab() {
         jaWriteChar = item.hira;
         window.soundMgr.playClick();
         window.soundMgr.playAudioFile(`ja_hira_${item.hira}`, null, item.hira);
-        renderJaWritingTab();
+        picker.querySelectorAll('.ja-pick-char-btn.active').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('jaWriteCurrentTitle').innerText = `Tập viết chữ: ${item.hira} (${item.romaji}) — ${item.word}`;
+        const hearBtn = document.getElementById('btnHearJaWrite');
+        if (hearBtn) {
+          hearBtn.onclick = () => {
+            window.soundMgr.playClick();
+            window.soundMgr.playAudioFile(`ja_hira_${item.hira}`, null, item.hira);
+          };
+        }
+        requestAnimationFrame(() => drawJaMasumeGuide());
       };
       picker.appendChild(btn);
     });
@@ -556,28 +568,34 @@ function loadJaQuizQuestion() {
   document.getElementById('jaQuizScoreText').innerText = `⭐ ${jaQuizScore} điểm`;
   document.getElementById('jaQuizPromptWord').innerText = `${q.target.ja} (${q.target.romaji})`;
 
-  document.getElementById('btnHearJaQuiz').onclick = () => {
-    window.soundMgr.playClick();
-    window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.ja);
-  };
-  setTimeout(() => {
-    if ((window.appNavEpoch || 0) === myNav && jaEpoch === myJa) {
-      window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.ja);
-    }
-  }, 250);
-
   const grid = document.getElementById('jaQuizOptionsGrid');
   grid.innerHTML = '';
   let jaQuizLocked = false;
+  const qBoxEl = document.querySelector('#jaPaneQuiz .quiz-question-box');
+  const jaTourSteps = [{ key: q.target.audioKey, fallbackText: q.target.ja, el: qBoxEl, pauseAfterMs: 220 }];
+
   q.choices.forEach(item => {
+    const viKey = `vi_${item.id}`;
     const card = document.createElement('div');
     card.className = 'quiz-option-card';
     card.innerHTML = `
+      <button type="button" class="quiz-opt-speak-btn" aria-label="Nghe nghĩa tiếng Việt">🔊</button>
       <div class="quiz-opt-icon">${item.emoji}</div>
       <div class="quiz-opt-name">${item.vi}</div>
     `;
+    const spkBtn = card.querySelector('.quiz-opt-speak-btn');
+    if (spkBtn) {
+      spkBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.playAudioFile(viKey, null, item.vi);
+      });
+    }
+    jaTourSteps.push({ key: viKey, fallbackText: item.vi, el: card, pauseAfterMs: 110 });
+
     card.addEventListener('click', () => {
       if (jaQuizLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      window.soundMgr.stopAll();
       if (item.id === q.target.id) {
         jaQuizLocked = true;
         card.classList.add('correct');
@@ -590,19 +608,33 @@ function loadJaQuizQuestion() {
         window.soundMgr.playCorrect();
         if (typeof fireConfetti === 'function') fireConfetti();
         if (typeof showToast === 'function') showToast(`🌸 すごい! "${q.target.ja}" = ${q.target.vi}!`);
-        setTimeout(() => {
-          if ((window.appNavEpoch || 0) !== myNav || jaEpoch !== myJa) return;
-          jaQuizIndex++;
-          loadJaQuizQuestion();
-        }, 1500);
+        window.soundMgr.playPraiseThen(jaQuizStreak >= 3,
+          () => (window.appNavEpoch || 0) === myNav && jaEpoch === myJa,
+          () => {
+            jaQuizIndex++;
+            loadJaQuizQuestion();
+          }
+        );
       } else {
         card.classList.add('wrong');
         jaQuizStreak = 0;
         document.getElementById('jaQuizStreakBadge').innerText = `🔥 Chuỗi x0`;
         window.soundMgr.playWrong();
-        if (typeof showToast === 'function') showToast(`👂 Bấm loa nghe lại và nhìn Romaji gợi ý nhé!`);
+        window.soundMgr.speakTryAgain();
+        if (typeof showToast === 'function') showToast(`👂 Bấm "Nghe Tiếng Nhật & 4 Đáp Án" hoặc loa 🔊 trên từng thẻ nhé!`);
       }
     });
     grid.appendChild(card);
   });
+
+  const playJaTour = () => window.soundMgr.playChoiceTour(jaTourSteps);
+  document.getElementById('btnHearJaQuiz').onclick = () => {
+    window.soundMgr.playClick();
+    playJaTour();
+  };
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && jaEpoch === myJa) {
+      playJaTour();
+    }
+  }, 60);
 }

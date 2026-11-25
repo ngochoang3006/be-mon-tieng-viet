@@ -367,6 +367,7 @@ function initEventListeners() {
         resizeCanvasToFit();
         clearCanvas();
         drawLetterGuide(currentWordModal ? currentWordModal.word : '');
+        box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       });
     }
   });
@@ -637,6 +638,7 @@ function renderLessonCards(wordsList, modeType) {
     const learned = explorerState.learnedIds.includes(w.id);
     const card = document.createElement('div');
     card.className = `word-card ${learned ? 'is-learned' : ''}`;
+    card.dataset.wordId = w.id;
     const tagHtml = modeType === 'phonics'
       ? `<div class="word-rhyme-tag">${w.rhyme}</div>`
       : `<div class="word-action-tag">${learned ? 'Đã thuộc ✓' : 'Chạm để học'}</div>`;
@@ -801,6 +803,7 @@ function renderDinoView() {
     const learned = explorerState.learnedIds.includes(dino.id);
     const card = document.createElement('div');
     card.className = `word-card dino-card ${learned ? 'is-learned' : ''}`;
+    card.dataset.wordId = dino.id;
     card.innerHTML = `
       <div class="star-corner">${learned ? '⭐' : '🦖'}</div>
       <div class="word-icon-img">${dino.icon}</div>
@@ -839,6 +842,7 @@ function renderVehicleView() {
     const learned = explorerState.learnedIds.includes(veh.id);
     const card = document.createElement('div');
     card.className = `word-card veh-card ${learned ? 'is-learned' : ''}`;
+    card.dataset.wordId = veh.id;
     card.innerHTML = `
       <div class="star-corner">${learned ? '⭐' : '🚗'}</div>
       <div class="word-icon-img">${veh.icon}</div>
@@ -877,8 +881,8 @@ function openModal(wordObj, list = null, index = 0) {
   window.soundMgr.speakWordObj(wordObj);
 
   if (isNewlyLearned) {
-    // Re-render background cards silently so star badge & progress bar update!
-    refreshCurrentGridStarsOnly();
+    // Update the newly learned card badge & progress bar in place with 0ms DOM lag!
+    refreshCurrentGridStarsOnly(wordObj.id);
     showToast(`⭐ +2 Sao! Bảo Long đã khám phá từ "${wordObj.word}"!`);
   }
 
@@ -937,7 +941,29 @@ function navigateModal(delta) {
   openModal(modalPlaylist[newIdx], modalPlaylist, newIdx);
 }
 
-function refreshCurrentGridStarsOnly() {
+function refreshCurrentGridStarsOnly(newlyLearnedId = null) {
+  if (newlyLearnedId) {
+    const safeId = (typeof CSS !== 'undefined' && CSS.escape) ? CSS.escape(newlyLearnedId) : newlyLearnedId;
+    document.querySelectorAll(`[data-word-id="${safeId}"]`).forEach(card => {
+      card.classList.add('is-learned');
+      const starEl = card.querySelector('.star-corner');
+      if (starEl) starEl.innerText = '⭐';
+      const tagEl = card.querySelector('.word-action-tag');
+      if (tagEl) tagEl.innerText = 'Đã thuộc ✓';
+    });
+    if ((currentMode === 'vocab' || currentMode === 'phonics') && activeLessonContext?.lesson) {
+      const words = activeLessonContext.lesson.words;
+      const done = words.filter(w => explorerState.learnedIds.includes(w.id)).length;
+      const pct = Math.round((done / words.length) * 100);
+      const bar = document.getElementById('lessonProgressBar');
+      const txt = document.getElementById('lessonProgressText');
+      if (bar) bar.style.width = `${pct}%`;
+      if (txt) txt.innerText = `${done} / ${words.length} từ đã khám phá${pct === 100 ? ' 🎉' : ''}`;
+      const activeTab = document.querySelector('#lessonTabsTrack .lesson-tab.active span:last-child');
+      if (activeTab) activeTab.innerText = pct === 100 ? '✅' : `${done}/${words.length}`;
+    }
+    return;
+  }
   if (currentMode === 'vocab' && VOCAB_LESSONS[currentLessonIdx]) {
     renderRoadmapHeader(VOCAB_LESSONS, 'LỘ TRÌNH TỪ MỚI', 'Thử thách ghép chữ');
     renderLessonCards(VOCAB_LESSONS[currentLessonIdx].words, 'vocab');
@@ -1382,21 +1408,21 @@ function checkPuzzleResult() {
     gameScore += 10;
     document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
     showToast(`🎉 Hoan hô Bảo Long! Ghép đúng "${q.target}"!`);
-    window.soundMgr.speakCheer('correct');
-
-    setTimeout(() => {
-      if (window.appNavEpoch !== myNav || puzzleEpoch !== myPuz) return;
-      gameCurrentIndex++;
-      loadGameQuestion();
-    }, 1700);
+    window.soundMgr.playPraiseThen(false,
+      () => window.appNavEpoch === myNav && puzzleEpoch === myPuz,
+      () => {
+        gameCurrentIndex++;
+        loadGameQuestion();
+      }
+    );
   } else {
     window.soundMgr.playWrong();
     showToast(`Bảo Long chạm vào ô sai để đổi lại hoặc thử lại nhé! ❤️`);
-    window.soundMgr.speakCheer('wrong');
+    window.soundMgr.speakTryAgain();
     setTimeout(() => {
       if (window.appNavEpoch !== myNav || puzzleEpoch !== myPuz) return;
       loadGameQuestion();
-    }, 1200);
+    }, 850);
   }
 }
 
@@ -1466,7 +1492,7 @@ function loadListenCatchQuestion() {
     if (window.appNavEpoch === myNav && listenEpoch === myEpoch) {
       window.soundMgr.playAudioFile(q.audioKey, null, q.prompt);
     }
-  }, 300);
+  }, 60);
 
   const grid = document.getElementById('listenOptionsGrid');
   grid.innerHTML = '';
@@ -1492,17 +1518,18 @@ function loadListenCatchQuestion() {
         window.soundMgr.playCorrect();
         fireConfetti();
         if (listenStreak >= 3) {
-          window.soundMgr.playAudioFile('cheer_streak', null, 'Tuyệt vời quá Bảo Long ơi!');
           showToast(`🔥 COMBO x${listenStreak}! Siêu đỉnh +${pts} điểm!`);
         } else {
           showToast(`🎉 Chuẩn xác! Đó chính là "${q.target}"!`);
         }
 
-        setTimeout(() => {
-          if (window.appNavEpoch !== myNav || listenEpoch !== myEpoch) return;
-          listenIndex++;
-          loadListenCatchQuestion();
-        }, 1500);
+        window.soundMgr.playPraiseThen(listenStreak >= 3,
+          () => window.appNavEpoch === myNav && listenEpoch === myEpoch,
+          () => {
+            listenIndex++;
+            loadListenCatchQuestion();
+          }
+        );
       } else {
         card.classList.add('wrong');
         listenStreak = 0;
@@ -1513,7 +1540,7 @@ function loadListenCatchQuestion() {
           if (window.appNavEpoch === myNav && listenEpoch === myEpoch) {
             window.soundMgr.playAudioFile(q.audioKey);
           }
-        }, 450);
+        }, 280);
       }
     });
     grid.appendChild(card);
@@ -1578,7 +1605,7 @@ function loadShinkansenRound() {
   };
   setTimeout(() => {
     if (window.appNavEpoch === myNav && shinkansenEpoch === myEpoch) window.soundMgr.speakWord(q.word);
-  }, 300);
+  }, 60);
 
   // Đầu tàu (âm đầu)
   const headGrid = document.getElementById('shinkansenHeadChoices');
@@ -1636,16 +1663,23 @@ function updateTrainAssembly(q) {
       document.getElementById('trainTrainUnit').classList.add('zooming');
       showToast(`🚅 TU TUU! Ghép chuẩn tàu "${q.word}" (${q.meaning})!`);
 
-      setTimeout(() => {
-        if (window.appNavEpoch === myNav && shinkansenEpoch === myEpoch) window.soundMgr.speakWord(q.word);
-      }, 450);
-      setTimeout(() => {
+      let shinAdvanced = false;
+      const goNextShin = () => {
+        if (shinAdvanced) return;
+        shinAdvanced = true;
         if (window.appNavEpoch !== myNav || shinkansenEpoch !== myEpoch) return;
         shinkansenIndex++;
         loadShinkansenRound();
-      }, 1700);
+      };
+      setTimeout(() => {
+        if (window.appNavEpoch === myNav && shinkansenEpoch === myEpoch) {
+          window.soundMgr.speakWord(q.word, () => setTimeout(goNextShin, 220));
+        }
+      }, 220);
+      setTimeout(goNextShin, window.soundMgr.isMuted ? 500 : 1850);
     } else {
       window.soundMgr.playWrong();
+      window.soundMgr.speakTryAgain();
       showToast(`Chưa khớp toa tàu "${q.word}" rồi, chọn lại nhé Bảo Long! ❤️`);
       setTimeout(() => {
         if (window.appNavEpoch !== myNav || shinkansenEpoch !== myEpoch) return;
@@ -1657,7 +1691,7 @@ function updateTrainAssembly(q) {
         document.getElementById('trainNoseSlot').innerText = '?';
         document.getElementById('trainBodySlot').innerText = '?';
         document.getElementById('trainPreviewWord').innerText = '= ...';
-      }, 950);
+      }, 650);
     }
   }
 }
@@ -1779,16 +1813,16 @@ function handleMemoryCardClick(cardData, cardEl) {
             document.getElementById('memoryVictoryStage').style.display = 'block';
             document.getElementById('memoryVictoryFlips').innerText =
               `Bảo Long đã mở khóa 6 loài khủng long chỉ trong ${memoryFlips} lượt lật (+15 ⭐)!`;
-          }, 900);
+          }, 550);
         }
-      }, 450);
+      }, 240);
     } else {
       setTimeout(() => {
         first.el.classList.remove('is-flipped');
         second.el.classList.remove('is-flipped');
         memoryFlippedCards = [];
         memoryIsLocked = false;
-      }, 900);
+      }, 650);
     }
   }
 }
@@ -1818,25 +1852,17 @@ function loadDinoQuizQuestion() {
   }
 
   const q = dinoQuizQuestions[dinoQuizCurrentIndex];
+  const riddleKey = q.id || q.audioKey;
   document.getElementById('dinoQuizProgressText').innerText = `Câu ${dinoQuizCurrentIndex + 1} / ${total}`;
   document.getElementById('dinoQuizQuestionTitle').innerText = q.question;
   document.getElementById('dinoQuizQuestionHint').innerText = `💡 ${q.hint}`;
-
-  document.getElementById('btnHearDinoQuizHint').onclick = () => {
-    window.soundMgr.playClick();
-    window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
-  };
-
-  setTimeout(() => {
-    if (window.appNavEpoch === myNav && dinoQuizEpoch === myEpoch) {
-      window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
-    }
-  }, 350);
 
   const container = document.getElementById('dinoQuizOptionsGrid');
   container.innerHTML = '';
   const shuffledOpts = [...q.options].sort(() => Math.random() - 0.5);
   let dinoQuizLocked = false;
+  const qBoxEl = document.querySelector('#dinoQuizPlayStage .quiz-question-box');
+  const dinoTourSteps = [{ key: riddleKey, fallbackText: q.question, el: qBoxEl, pauseAfterMs: 200 }];
 
   shuffledOpts.forEach(optId => {
     const item = DINO_LESSONS.find(d => d.id === optId);
@@ -1845,17 +1871,40 @@ function loadDinoQuizQuestion() {
     const card = document.createElement('div');
     card.className = 'quiz-option-card';
     card.innerHTML = `
+      <button type="button" class="quiz-opt-speak-btn" aria-label="Nghe tên khủng long">🔊</button>
       <div class="quiz-opt-icon">${item.icon}</div>
       <div class="quiz-opt-name">${item.dinoName}</div>
       <div class="quiz-opt-ja">🇯🇵 ${item.ja}</div>
     `;
+    const spkBtn = card.querySelector('.quiz-opt-speak-btn');
+    if (spkBtn) {
+      spkBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.playAudioFile(item.audioKey, null, item.dinoName);
+      });
+    }
+    dinoTourSteps.push({ key: item.audioKey, fallbackText: item.dinoName, el: card, pauseAfterMs: 110 });
+
     card.addEventListener('click', () => {
       if (dinoQuizLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      window.soundMgr.stopAll();
       if (optId === q.correctId) dinoQuizLocked = true;
       checkDinoQuizAnswer(optId, card, q, item, myNav, myEpoch);
     });
     container.appendChild(card);
   });
+
+  const playDinoTour = () => window.soundMgr.playChoiceTour(dinoTourSteps);
+  document.getElementById('btnHearDinoQuizHint').onclick = () => {
+    window.soundMgr.playClick();
+    playDinoTour();
+  };
+  setTimeout(() => {
+    if (window.appNavEpoch === myNav && dinoQuizEpoch === myEpoch) {
+      playDinoTour();
+    }
+  }, 60);
 }
 
 function checkDinoQuizAnswer(chosenId, cardEl, q, item, myNav, myEpoch) {
@@ -1868,16 +1917,18 @@ function checkDinoQuizAnswer(chosenId, cardEl, q, item, myNav, myEpoch) {
     dinoQuizScore += 10;
     document.getElementById('dinoQuizScoreText').innerText = `⭐ ${dinoQuizScore} sao`;
     showToast(`🎉 Giỏi quá Bảo Long ơi! Chính là ${item.dinoName}! 🦖`);
-    if (item.audioKey) window.soundMgr.playAudioFile(item.audioKey);
 
-    setTimeout(() => {
-      if (window.appNavEpoch !== myNav || dinoQuizEpoch !== myEpoch) return;
-      dinoQuizCurrentIndex++;
-      loadDinoQuizQuestion();
-    }, 1650);
+    window.soundMgr.playPraiseThen(false,
+      () => window.appNavEpoch === myNav && dinoQuizEpoch === myEpoch,
+      () => {
+        dinoQuizCurrentIndex++;
+        loadDinoQuizQuestion();
+      }
+    );
   } else {
     cardEl.classList.add('wrong');
     window.soundMgr.playWrong();
+    window.soundMgr.speakTryAgain();
     showToast(`Bảo Long thử chọn chú khủng long khác xem nhé! ❤️`);
   }
 }
@@ -2019,19 +2070,17 @@ function loadQuizQuestion() {
   }
 
   const q = quizQuestions[quizCurrentIndex];
+  const riddleKey = q.target ? `vquiz_${q.target.id}` : '';
   document.getElementById('quizProgressText').innerText = `Câu ${quizCurrentIndex + 1} / ${quizQuestions.length}`;
   document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} sao`;
   document.getElementById('quizQuestionTitle').innerText = q.question;
   document.getElementById('quizQuestionJa').innerText = q.ja;
 
-  document.getElementById('btnHearQuizQuestion').onclick = () => {
-    window.soundMgr.playClick();
-    if (q.target) window.soundMgr.speakWordObj(q.target);
-  };
-
   const optionsGrid = document.getElementById('quizOptionsGrid');
   optionsGrid.innerHTML = '';
   let vehLocked = false;
+  const qBoxEl = document.querySelector('#quizPlayStage .quiz-question-box');
+  const vehTourSteps = [{ key: riddleKey, fallbackText: q.question, el: qBoxEl, pauseAfterMs: 200 }];
 
   const allChoices = [q.target, ...q.distractors].sort(() => Math.random() - 0.5);
   allChoices.forEach(item => {
@@ -2039,23 +2088,40 @@ function loadQuizQuestion() {
     const card = document.createElement('div');
     card.className = 'quiz-option-card';
     card.innerHTML = `
+      <button type="button" class="quiz-opt-speak-btn" aria-label="Nghe tên xe">🔊</button>
       <div class="quiz-opt-icon">${item.icon}</div>
       <div class="quiz-opt-name">${item.word}</div>
       <div class="quiz-opt-ja">${item.ja}</div>
     `;
+    const spkBtn = card.querySelector('.quiz-opt-speak-btn');
+    if (spkBtn) {
+      spkBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.speakWordObj(item);
+      });
+    }
+    vehTourSteps.push({ key: item.audioKey, fallbackText: item.word, el: card, pauseAfterMs: 110 });
+
     card.addEventListener('click', () => {
       if (vehLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      window.soundMgr.stopAll();
       if (item.id === q.target.id) vehLocked = true;
       handleQuizChoice(item, q.target, card, myNav, myEpoch);
     });
     optionsGrid.appendChild(card);
   });
 
-  if (q.target && q.target.audioKey) {
-    setTimeout(() => {
-      if (window.appNavEpoch === myNav && vehQuizEpoch === myEpoch) window.soundMgr.playAudioFile(q.target.audioKey);
-    }, 300);
-  }
+  const playVehTour = () => window.soundMgr.playChoiceTour(vehTourSteps);
+  document.getElementById('btnHearQuizQuestion').onclick = () => {
+    window.soundMgr.playClick();
+    playVehTour();
+  };
+  setTimeout(() => {
+    if (window.appNavEpoch === myNav && vehQuizEpoch === myEpoch) {
+      playVehTour();
+    }
+  }, 60);
 }
 
 function handleQuizChoice(chosen, target, cardEl, myNav, myEpoch) {
@@ -2068,14 +2134,17 @@ function handleQuizChoice(chosen, target, cardEl, myNav, myEpoch) {
     document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} sao`;
     showToast(`🎉 Chính xác! Đó là ${target.word}!`);
 
-    setTimeout(() => {
-      if (window.appNavEpoch !== myNav || vehQuizEpoch !== myEpoch) return;
-      quizCurrentIndex++;
-      loadQuizQuestion();
-    }, 1500);
+    window.soundMgr.playPraiseThen(false,
+      () => window.appNavEpoch === myNav && vehQuizEpoch === myEpoch,
+      () => {
+        quizCurrentIndex++;
+        loadQuizQuestion();
+      }
+    );
   } else {
     cardEl.classList.add('wrong');
     window.soundMgr.playWrong();
+    window.soundMgr.speakTryAgain();
     showToast(`Bảo Long thử lại xem chiếc nào mới đúng nhé! ❤️`);
   }
 }
@@ -2107,21 +2176,25 @@ function showToast(msg) {
   }, 2600);
 }
 
+let confettiPieces = [];
+let confettiRafId = null;
+
 function fireConfetti() {
   const confCanvas = document.getElementById('confettiCanvas');
   if (!confCanvas) return;
   const confCtx = confCanvas.getContext('2d');
-  confCanvas.width = window.innerWidth;
-  confCanvas.height = window.innerHeight;
+  if (confCanvas.width !== window.innerWidth || confCanvas.height !== window.innerHeight) {
+    confCanvas.width = window.innerWidth;
+    confCanvas.height = window.innerHeight;
+  }
 
-  const pieces = [];
   const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
-  for (let i = 0; i < 95; i++) {
-    pieces.push({
-      x: confCanvas.width / 2 + (Math.random() - 0.5) * 220,
+  for (let i = 0; i < 55; i++) {
+    confettiPieces.push({
+      x: confCanvas.width / 2 + (Math.random() - 0.5) * 200,
       y: confCanvas.height / 2,
-      w: Math.random() * 12 + 6,
-      h: Math.random() * 8 + 4,
+      w: Math.random() * 11 + 5,
+      h: Math.random() * 7 + 4,
       vx: (Math.random() - 0.5) * 16,
       vy: Math.random() * -14 - 4,
       color: colors[Math.floor(Math.random() * colors.length)],
@@ -2130,32 +2203,39 @@ function fireConfetti() {
       opacity: 1
     });
   }
+  if (confettiPieces.length > 110) {
+    confettiPieces = confettiPieces.slice(-110);
+  }
+
+  if (confettiRafId !== null) return;
 
   function updateConfetti() {
     confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
-    let alive = false;
-    pieces.forEach(p => {
+    for (let i = confettiPieces.length - 1; i >= 0; i--) {
+      const p = confettiPieces[i];
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.4;
+      p.vy += 0.42;
       p.rotation += p.rotationSpeed;
-      p.opacity -= 0.008;
-      if (p.opacity > 0) {
-        alive = true;
-        confCtx.save();
-        confCtx.translate(p.x, p.y);
-        confCtx.rotate((p.rotation * Math.PI) / 180);
-        confCtx.fillStyle = p.color;
-        confCtx.globalAlpha = Math.max(0, p.opacity);
-        confCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        confCtx.restore();
+      p.opacity -= 0.012;
+      if (p.opacity <= 0) {
+        confettiPieces.splice(i, 1);
+        continue;
       }
-    });
-    if (alive) {
-      requestAnimationFrame(updateConfetti);
+      confCtx.save();
+      confCtx.translate(p.x, p.y);
+      confCtx.rotate((p.rotation * Math.PI) / 180);
+      confCtx.fillStyle = p.color;
+      confCtx.globalAlpha = Math.max(0, p.opacity);
+      confCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      confCtx.restore();
+    }
+    if (confettiPieces.length > 0) {
+      confettiRafId = requestAnimationFrame(updateConfetti);
     } else {
       confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+      confettiRafId = null;
     }
   }
-  updateConfetti();
+  confettiRafId = requestAnimationFrame(updateConfetti);
 }

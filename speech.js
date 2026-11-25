@@ -8,6 +8,10 @@ class SoundManager {
     this.currentAudio = null;
     this.audioCtx = null;
     this.sequenceToken = 0;
+    this.blobCache = new Map();
+    this.inflightFetches = new Map();
+    this.lastPraiseIdx = -1;
+    this.lastTryIdx = -1;
 
     // Khôi phục cài đặt âm thanh đã lưu của Bảo Long
     this.loadPrefs();
@@ -17,6 +21,61 @@ class SoundManager {
     this.voices = [];
     this.selectedVoice = null;
     this.initWebSpeech();
+
+    // Tải trước kho lời khen & hiệu ứng cốt lõi để phản hồi 0ms
+    setTimeout(() => this.prefetchCommon(), 250);
+  }
+
+  getCacheKey(gender, key) {
+    return `${gender}:${key}`;
+  }
+
+  prefetchCommon() {
+    const keys = [
+      'cheer_praise_1', 'cheer_praise_2', 'cheer_praise_3', 'cheer_praise_4', 'cheer_praise_5',
+      'cheer_praise_6', 'cheer_praise_7', 'cheer_praise_8', 'cheer_praise_9', 'cheer_praise_10',
+      'cheer_streak_1', 'cheer_streak_2', 'cheer_streak_3',
+      'cheer_try_1', 'cheer_try_2', 'cheer_try_3', 'cheer_try_4'
+    ];
+    this.prefetchKeys(keys);
+  }
+
+  prefetchKeys(keys) {
+    if (!Array.isArray(keys) || window.location.protocol === 'file:' || typeof fetch !== 'function') return;
+    const g = this.gender;
+    keys.forEach(key => {
+      if (!key) return;
+      const ck = this.getCacheKey(g, key);
+      if (this.blobCache.has(ck) || this.inflightFetches.has(ck)) return;
+      const url = `audio/${g}/${encodeURIComponent(key)}.mp3`;
+      const p = fetch(url)
+        .then(res => (res.ok ? res.blob() : null))
+        .then(blob => {
+          if (blob && blob.size > 500) {
+            if (this.blobCache.size > 240) {
+              const firstKey = this.blobCache.keys().next().value;
+              const oldUrl = this.blobCache.get(firstKey);
+              this.blobCache.delete(firstKey);
+              if (oldUrl) try { URL.revokeObjectURL(oldUrl); } catch (e) {}
+            }
+            this.blobCache.set(ck, URL.createObjectURL(blob));
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          this.inflightFetches.delete(ck);
+        });
+      this.inflightFetches.set(ck, p);
+    });
+  }
+
+  resolveAudioUrl(key) {
+    const ck = this.getCacheKey(this.gender, key);
+    if (this.blobCache.has(ck)) {
+      return this.blobCache.get(ck);
+    }
+    this.prefetchKeys([key]);
+    return `audio/${this.gender}/${encodeURIComponent(key)}.mp3`;
   }
 
   loadPrefs() {
@@ -71,6 +130,7 @@ class SoundManager {
     this.gender = gender;
     this.updateWebVoice();
     this.savePrefs();
+    setTimeout(() => this.prefetchCommon(), 80);
   }
 
   setSpeed(speedVal) {
@@ -91,13 +151,92 @@ class SoundManager {
 
   stopAll() {
     this.sequenceToken++;
+    document.querySelectorAll('.is-reading-option').forEach(el => el.classList.remove('is-reading-option'));
     if (this.currentAudio) {
+      this.currentAudio.onended = null;
+      this.currentAudio.onerror = null;
       this.currentAudio.pause();
       this.currentAudio = null;
     }
     if (this.synth) {
       this.synth.cancel();
     }
+  }
+
+  // Đọc tuần tự Câu hỏi & từng Đáp án kèm tô sáng thẻ đáp án đang đọc (hỗ trợ bé chưa biết chữ!)
+  playChoiceTour(steps, onComplete = null) {
+    if (!Array.isArray(steps) || steps.length === 0) {
+      if (onComplete) onComplete();
+      return;
+    }
+    this.stopAll();
+    const myToken = this.sequenceToken;
+
+    // Tải trước đồng thời tất cả file âm thanh của câu hỏi & đáp án
+    this.prefetchKeys(steps.map(s => s.key).filter(Boolean));
+
+    if (this.isMuted) {
+      if (onComplete) setTimeout(onComplete, 200);
+      return;
+    }
+
+    let idx = 0;
+    const nextStep = () => {
+      if (myToken !== this.sequenceToken) return;
+      document.querySelectorAll('.is-reading-option').forEach(el => el.classList.remove('is-reading-option'));
+      if (idx >= steps.length) {
+        if (onComplete) onComplete();
+        return;
+      }
+      const step = steps[idx++];
+      if (step.el) {
+        step.el.classList.add('is-reading-option');
+      }
+      const url = this.resolveAudioUrl(step.key);
+      const audio = new Audio(url);
+      this.currentAudio = audio;
+      audio.playbackRate = this.speedRate;
+
+      let done = false;
+      const finishOne = () => {
+        if (done || myToken !== this.sequenceToken) return;
+        done = true;
+        this.currentAudio = null;
+        if (step.el) step.el.classList.remove('is-reading-option');
+        setTimeout(nextStep, step.pauseAfterMs !== undefined ? step.pauseAfterMs : 120);
+      };
+
+      audio.onended = finishOne;
+      audio.onerror = () => {
+        if (done || myToken !== this.sequenceToken) return;
+        this.currentAudio = null;
+        if (step.fallbackText) {
+          const lang = (step.key && (step.key.startsWith('en_') || step.key.startsWith('cheer_en')))
+            ? 'en-US'
+            : ((step.key && (step.key.startsWith('ja_') || step.key.startsWith('cheer_ja'))) ? 'ja-JP' : 'vi-VN');
+          this.speakTTS(step.fallbackText, finishOne, lang);
+        } else {
+          finishOne();
+        }
+      };
+
+      const p = audio.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          if (done || myToken !== this.sequenceToken) return;
+          if (step.fallbackText) {
+            const lang = (step.key && (step.key.startsWith('en_') || step.key.startsWith('cheer_en')))
+              ? 'en-US'
+              : ((step.key && (step.key.startsWith('ja_') || step.key.startsWith('cheer_ja'))) ? 'ja-JP' : 'vi-VN');
+            this.speakTTS(step.fallbackText, finishOne, lang);
+          } else {
+            finishOne();
+          }
+        });
+      }
+    };
+
+    nextStep();
   }
 
   // Phát nối tiếp nhiều key audio (dùng ghép đọc phép tính Toán lớp 1 bất kỳ)
@@ -107,6 +246,7 @@ class SoundManager {
       return;
     }
     this.stopAll();
+    this.prefetchKeys(keys);
     const myToken = this.sequenceToken;
 
     if (this.isMuted) {
@@ -122,8 +262,7 @@ class SoundManager {
         return;
       }
       const key = keys[idx++];
-      const audioUrl = `audio/${this.gender}/${encodeURIComponent(key)}.mp3`;
-      const audio = new Audio(audioUrl);
+      const audio = new Audio(this.resolveAudioUrl(key));
       this.currentAudio = audio;
       audio.playbackRate = this.speedRate;
 
@@ -132,7 +271,7 @@ class SoundManager {
         if (finished || myToken !== this.sequenceToken) return;
         finished = true;
         this.currentAudio = null;
-        setTimeout(playStep, 30);
+        playStep();
       };
 
       audio.onended = doneStep;
@@ -166,23 +305,23 @@ class SoundManager {
     playStep();
   }
 
-  // Phát file audio người thật từ thư mục /audio/{gender}/{key}.mp3
+  // Phát file audio người thật từ thư mục /audio/{gender}/{key}.mp3 (dùng cache 0ms!)
   playAudioFile(key, onEndCallback, fallbackText = null) {
     if (this.isMuted) {
-      if (onEndCallback) setTimeout(onEndCallback, 250);
+      if (onEndCallback) setTimeout(onEndCallback, 200);
       return;
     }
 
     this.stopAll();
+    const myToken = this.sequenceToken;
 
-    const audioUrl = `audio/${this.gender}/${encodeURIComponent(key)}.mp3`;
-    const audio = new Audio(audioUrl);
+    const audio = new Audio(this.resolveAudioUrl(key));
     this.currentAudio = audio;
     audio.playbackRate = this.speedRate;
 
     let ended = false;
     const finish = () => {
-      if (ended) return;
+      if (ended || myToken !== this.sequenceToken) return;
       ended = true;
       this.currentAudio = null;
       if (onEndCallback) onEndCallback();
@@ -301,11 +440,55 @@ class SoundManager {
     this.playAudioFile(key, onEndCallback, fallbackText);
   }
 
+  // Kho lời khen ngẫu nhiên phong phú cho Bảo Long (10 câu khen + 3 câu chuỗi thắng + 4 câu động viên)
+  speakPraise(isStreak = false, onEndCallback = null) {
+    if (isStreak) {
+      const n = 1 + Math.floor(Math.random() * 3);
+      this.playAudioFile(`cheer_streak_${n}`, onEndCallback, 'Siêu chuỗi liên tiếp! Bảo Long bất bại!');
+      return;
+    }
+    let idx = Math.floor(Math.random() * 10);
+    if (idx === this.lastPraiseIdx) idx = (idx + 1 + Math.floor(Math.random() * 8)) % 10;
+    this.lastPraiseIdx = idx;
+    this.playAudioFile(`cheer_praise_${idx + 1}`, onEndCallback, 'Hoan hô Bảo Long giỏi quá!');
+  }
+
+  speakTryAgain(onEndCallback = null) {
+    let idx = Math.floor(Math.random() * 4);
+    if (idx === this.lastTryIdx) idx = (idx + 1) % 4;
+    this.lastTryIdx = idx;
+    this.playAudioFile(`cheer_try_${idx + 1}`, onEndCallback, 'Cố lên Bảo Long ơi, thử chọn lại nhé!');
+  }
+
+  // Khen xong (hoặc timeout an toàn nếu tắt tiếng / trình duyệt chặn) rồi mới chuyển câu mượt mà
+  playPraiseThen(isStreak, guardFn, advanceFn, maxFallbackMs = 2600) {
+    let advanced = false;
+    const go = () => {
+      if (advanced) return;
+      advanced = true;
+      if (typeof guardFn === 'function' && !guardFn()) return;
+      if (typeof advanceFn === 'function') advanceFn();
+    };
+    if (this.isMuted) {
+      setTimeout(go, 420);
+      return;
+    }
+    this.speakPraise(isStreak, () => setTimeout(go, 110));
+    setTimeout(go, maxFallbackMs);
+  }
+
   // Lời khen thưởng trò chơi
   speakCheer(type, onEndCallback = null) {
+    if (type === 'correct') {
+      this.speakPraise(false, onEndCallback);
+      return;
+    }
+    if (type === 'wrong') {
+      this.speakTryAgain(onEndCallback);
+      return;
+    }
     const key = `cheer_${type}`;
-    const fb = type === 'correct' ? 'Bảo Long giỏi quá!' : (type === 'wrong' ? 'Bảo Long thử lại nhé!' : '');
-    this.playAudioFile(key, onEndCallback, fb);
+    this.playAudioFile(key, onEndCallback, '');
   }
 
   // Fallback Web Speech API nếu gặp từ chưa sinh file

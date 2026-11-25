@@ -218,7 +218,7 @@ function renderEnAbcTab() {
         const isNew = markWordLearned(`en_alpha_${item.lower}`);
         if (isNew) {
           addEnScore(2);
-          renderEnAbcTab();
+          card.classList.add('is-learned');
         }
       }
       if (typeof showToast === 'function') showToast(`🇬🇧 ${item.upper} is for ${item.word} (${item.vi}) ${item.emoji}`);
@@ -310,7 +310,9 @@ function renderEnVocabTab() {
         const isNew = markWordLearned(w.id);
         if (isNew) {
           addEnScore(2);
-          renderEnVocabTab();
+          card.classList.add('is-learned');
+          const starCorner = card.querySelector('.star-corner');
+          if (starCorner) starCorner.innerText = '⭐';
           if (typeof showToast === 'function') showToast(`⭐ +2 Sao! "${w.en}" nghĩa là "${w.vi}"!`);
         } else if (typeof showToast === 'function') {
           showToast(`🇬🇧 ${w.en} = ${w.vi} (🇯🇵 ${w.ja})`);
@@ -405,29 +407,35 @@ function loadEnQuizQuestion() {
   document.getElementById('enQuizScoreText').innerText = `⭐ ${enQuizScore} điểm`;
   document.getElementById('enQuizHintText').innerText = `💡 Nghe kỹ từ tiếng Anh và chọn hình đúng nhé!`;
 
-  document.getElementById('btnHearEnQuiz').onclick = () => {
-    window.soundMgr.playClick();
-    window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.en);
-  };
-  setTimeout(() => {
-    if ((window.appNavEpoch || 0) === myNav && enEpoch === myEn) {
-      window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.en);
-    }
-  }, 250);
-
   const grid = document.getElementById('enQuizOptionsGrid');
   grid.innerHTML = '';
   let enQuizLocked = false;
+  const qBoxEl = document.querySelector('#enPaneQuiz .quiz-question-box');
+  const enTourSteps = [{ key: q.target.audioKey, fallbackText: q.target.en, el: qBoxEl, pauseAfterMs: 220 }];
+
   q.choices.forEach(item => {
+    const viKey = `vi_${item.id}`;
     const card = document.createElement('div');
     card.className = 'quiz-option-card';
     card.innerHTML = `
+      <button type="button" class="quiz-opt-speak-btn" aria-label="Nghe nghĩa tiếng Việt">🔊</button>
       <div class="quiz-opt-icon">${item.emoji}</div>
       <div class="quiz-opt-name">${item.vi}</div>
       <div class="quiz-opt-ja">🇯🇵 ${item.ja}</div>
     `;
+    const spkBtn = card.querySelector('.quiz-opt-speak-btn');
+    if (spkBtn) {
+      spkBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.playAudioFile(viKey, null, item.vi);
+      });
+    }
+    enTourSteps.push({ key: viKey, fallbackText: item.vi, el: card, pauseAfterMs: 110 });
+
     card.addEventListener('click', () => {
       if (enQuizLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      window.soundMgr.stopAll();
       if (item.id === q.target.id) {
         enQuizLocked = true;
         card.classList.add('correct');
@@ -440,21 +448,35 @@ function loadEnQuizQuestion() {
         window.soundMgr.playCorrect();
         if (typeof fireConfetti === 'function') fireConfetti();
         if (typeof showToast === 'function') showToast(`🎉 Great! "${q.target.en}" = ${q.target.vi}!`);
-        setTimeout(() => {
-          if ((window.appNavEpoch || 0) !== myNav || enEpoch !== myEn) return;
-          enQuizIndex++;
-          loadEnQuizQuestion();
-        }, 1500);
+        window.soundMgr.playPraiseThen(enQuizStreak >= 3,
+          () => (window.appNavEpoch || 0) === myNav && enEpoch === myEn,
+          () => {
+            enQuizIndex++;
+            loadEnQuizQuestion();
+          }
+        );
       } else {
         card.classList.add('wrong');
         enQuizStreak = 0;
         document.getElementById('enQuizStreakBadge').innerText = `🔥 Streak x0`;
         window.soundMgr.playWrong();
-        if (typeof showToast === 'function') showToast(`👂 Bấm "Nghe lại" để đoán xem đó là từ gì nhé Bảo Long!`);
+        window.soundMgr.speakTryAgain();
+        if (typeof showToast === 'function') showToast(`👂 Bấm "Nghe Từ & 4 Đáp Án" hoặc loa 🔊 trên từng thẻ nhé!`);
       }
     });
     grid.appendChild(card);
   });
+
+  const playEnTour = () => window.soundMgr.playChoiceTour(enTourSteps);
+  document.getElementById('btnHearEnQuiz').onclick = () => {
+    window.soundMgr.playClick();
+    playEnTour();
+  };
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && enEpoch === myEn) {
+      playEnTour();
+    }
+  }, 60);
 }
 
 // ========================================================
@@ -560,15 +582,21 @@ function loadEnSpellRound() {
           document.getElementById('enSpellScoreText').innerText = `⭐ ${enSpellScore} điểm`;
           window.soundMgr.playCorrect();
           if (typeof fireConfetti === 'function') fireConfetti();
-          setTimeout(() => {
-            if ((window.appNavEpoch || 0) === myNav && enEpoch === myEn) window.soundMgr.playAudioFile(q.audioKey, null, q.word);
-          }, 300);
           if (typeof showToast === 'function') showToast(`🌟 Excellent! "${q.word}" = ${q.vi}!`);
-          setTimeout(() => {
+          let spellDone = false;
+          const goNextSpell = () => {
+            if (spellDone) return;
+            spellDone = true;
             if ((window.appNavEpoch || 0) !== myNav || enEpoch !== myEn) return;
             enSpellIndex++;
             loadEnSpellRound();
-          }, 1600);
+          };
+          setTimeout(() => {
+            if ((window.appNavEpoch || 0) === myNav && enEpoch === myEn) {
+              window.soundMgr.playAudioFile(q.audioKey, () => setTimeout(goNextSpell, 220), q.word);
+            }
+          }, 180);
+          setTimeout(goNextSpell, window.soundMgr.isMuted ? 450 : 1850);
         } else {
           window.soundMgr.playWrong();
           if (typeof showToast === 'function') showToast(`Chạm vào ô sai để sửa hoặc thử lại nhé Bảo Long! ❤️`);

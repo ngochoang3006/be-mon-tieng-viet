@@ -262,7 +262,7 @@
             <div class="quiz-question-title" id="dragonQuizQuestionTitle" style="color: #7f1d1d;">Câu hỏi về loài Rồng</div>
             <div class="quiz-question-ja" id="dragonQuizHintJa" style="color: #b91c1c;">🇯🇵</div>
             <button class="btn-hear-hint" id="btnHearDragonQuiz" style="margin: 10px auto 0 auto;">
-              <span>🔊</span> Nghe tên Rồng
+              <span>🔊</span> Nghe câu đố &amp; 4 đáp án
             </button>
           </div>
           <div class="quiz-options-grid" id="dragonQuizOptionsGrid"></div>
@@ -476,6 +476,12 @@
             </div>
           </div>
 
+          <div style="text-align: center; margin-bottom: 12px;">
+            <button class="btn-hear-hint" id="btnHearMathCmp" style="margin: 0 auto;">
+              <span>🔊</span> Nghe so sánh &amp; lựa chọn
+            </button>
+          </div>
+
           <div class="cmp-buttons-row">
             <button class="cmp-choice-btn" data-sign=">">&gt;<span class="cmp-choice-label">Lớn hơn</span></button>
             <button class="cmp-choice-btn" data-sign="=">=<span class="cmp-choice-label">Bằng nhau</span></button>
@@ -511,6 +517,12 @@
           <div class="shinkansen-track-scene">
             <div class="math-seq-train-row" id="mathSeqTrainCars"></div>
             <div class="train-rail" style="margin-top: 12px;"></div>
+          </div>
+
+          <div style="text-align: center; margin-bottom: 12px;">
+            <button class="btn-hear-hint" id="btnHearMathSeq" style="margin: 0 auto;">
+              <span>🔊</span> Nghe đọc dãy số
+            </button>
           </div>
 
           <div class="math-options-grid" id="mathSeqOptionsGrid"></div>
@@ -566,6 +578,9 @@
             </div>
             <div class="quiz-question-box">
               <div class="quiz-question-title" id="mathGeoQuizTitle">Câu hỏi Hình học / Đồng hồ</div>
+              <button class="btn-hear-hint" id="btnHearMathGeoQuiz" style="margin: 10px auto 0 auto;">
+                <span>🔊</span> Nghe câu hỏi &amp; đáp án
+              </button>
             </div>
             <div id="mathGeoQuizClockWrap" style="display: none; justify-content: center; margin-bottom: 16px;">
               <svg viewBox="0 0 200 200" class="clock-svg" id="mathQuizClockSvg"></svg>
@@ -678,14 +693,16 @@
           </div>
 
           <div class="ethics-tf-buttons">
-            <button class="tf-choice-btn tf-btn-good" id="btnEthicsShouldDo">
+            <div role="button" tabindex="0" class="tf-choice-btn tf-btn-good" id="btnEthicsShouldDo">
+              <button type="button" class="quiz-opt-speak-btn" id="btnSpeakTfYes" aria-label="Nghe lựa chọn Nên làm">🔊</button>
               <span>👍 NÊN LÀM</span>
               <span style="font-size: 12px; opacity: 0.85;">Hành động đẹp</span>
-            </button>
-            <button class="tf-choice-btn tf-btn-bad" id="btnEthicsShouldNot">
+            </div>
+            <div role="button" tabindex="0" class="tf-choice-btn tf-btn-bad" id="btnEthicsShouldNot">
+              <button type="button" class="quiz-opt-speak-btn" id="btnSpeakTfNo" aria-label="Nghe lựa chọn Không nên làm">🔊</button>
               <span>👎 KHÔNG NÊN</span>
               <span style="font-size: 12px; opacity: 0.85;">Cần tránh nhé</span>
-            </button>
+            </div>
           </div>
         </div>
 
@@ -729,26 +746,34 @@
               <span class="game-stars" id="ecoScoreText">⭐ 0 điểm</span>
             </div>
             <h3 style="font-size: 18px; font-weight: 900; color: #065f46;">♻️ Bảo Long Phân Loại Rác Bảo Vệ Trái Đất Nào!</h3>
-            <div class="eco-trash-target">
+            <div class="eco-trash-target" id="ecoTrashTarget" style="cursor: pointer;" title="Chạm để nghe món đồ và các thùng rác">
               <div style="font-size: 56px;" id="ecoTrashEmoji">🍌</div>
               <div style="font-size: 17px; font-weight: 900; color: #0f172a; margin-top: 4px;" id="ecoTrashName">Vỏ chuối chín</div>
             </div>
+            <div style="text-align: center; margin-bottom: 14px;">
+              <button class="btn-hear-hint" id="btnHearEcoItem" style="margin: 0 auto;">
+                <span>🔊</span> Nghe món đồ &amp; 3 thùng rác
+              </button>
+            </div>
             <div class="eco-bins-grid">
-              <button class="eco-bin-btn eco-bin-organic" data-bin="organic">
+              <div role="button" tabindex="0" class="eco-bin-btn eco-bin-organic" data-bin="organic">
+                <button type="button" class="quiz-opt-speak-btn" data-bin-speak="organic" aria-label="Nghe Rác Hữu Cơ">🔊</button>
                 <span style="font-size: 28px;">🥬</span>
                 <span>Rác Hữu Cơ / Đốt được</span>
                 <span style="font-size: 11px; opacity: 0.8;">Thức ăn thừa, vỏ quả, lá cây</span>
-              </button>
-              <button class="eco-bin-btn eco-bin-recycle" data-bin="recycle">
+              </div>
+              <div role="button" tabindex="0" class="eco-bin-btn eco-bin-recycle" data-bin="recycle">
+                <button type="button" class="quiz-opt-speak-btn" data-bin-speak="recycle" aria-label="Nghe Rác Tái Chế">🔊</button>
                 <span style="font-size: 28px;">♻️</span>
                 <span>Rác Tái Chế</span>
                 <span style="font-size: 11px; opacity: 0.8;">Chai nhựa PET, lon, báo giấy</span>
-              </button>
-              <button class="eco-bin-btn eco-bin-hazard" data-bin="hazard">
+              </div>
+              <div role="button" tabindex="0" class="eco-bin-btn eco-bin-hazard" data-bin="hazard">
+                <button type="button" class="quiz-opt-speak-btn" data-bin-speak="hazard" aria-label="Nghe Pin và Rác Đặc Biệt">🔊</button>
                 <span style="font-size: 28px;">🔋</span>
                 <span>Pin &amp; Rác Đặc Biệt</span>
                 <span style="font-size: 11px; opacity: 0.8;">Pin cũ, bóng đèn hỏng</span>
-              </button>
+              </div>
             </div>
           </div>
 
@@ -830,7 +855,7 @@
             <div class="quiz-question-title" style="color: #1e3a8a;">👂 Nghe tiếng Anh và chọn đúng hình nhé Bảo Long!</div>
             <div class="quiz-question-ja" id="enQuizHintText" style="color: #1d4ed8;">💡 Nghe kỹ từ tiếng Anh và chọn hình đúng nhé!</div>
             <button class="challenge-btn" id="btnHearEnQuiz" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); border-color: #3730a3; border-bottom-color: #1e1b4b;">
-              <span>🔊</span> Nghe Từ Tiếng Anh
+              <span>🔊</span> Nghe Từ &amp; 4 Đáp Án
             </button>
           </div>
 
@@ -988,7 +1013,7 @@
             <div class="quiz-question-title" style="color: #881337;">👂 Nghe tiếng Nhật và chọn đúng nghĩa nhé!</div>
             <div class="quiz-question-ja" id="jaQuizPromptWord" style="font-size: 22px; font-weight: 900; color: #be123c; margin-top: 4px;">おはよう (Ohayou)</div>
             <button class="challenge-btn" id="btnHearJaQuiz" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); border-color: #9f1239; border-bottom-color: #881337;">
-              <span>🔊</span> Nghe Tiếng Nhật
+              <span>🔊</span> Nghe Tiếng Nhật &amp; 4 Đáp Án
             </button>
           </div>
 
@@ -1199,7 +1224,7 @@
             <div class="quiz-question-title" id="dinoQuizQuestionTitle" style="color: #064e3b;">Câu hỏi khủng long</div>
             <div class="quiz-question-ja" id="dinoQuizQuestionHint" style="color: #047857; font-weight: 700;">💡 Gợi ý</div>
             <button class="btn-hear-hint" id="btnHearDinoQuizHint" style="margin: 10px auto 0 auto; background: #10b981; border-color: #059669; border-bottom-color: #047857;">
-              <span>🔊</span> Nghe tên khủng long
+              <span>🔊</span> Nghe câu đố &amp; 4 đáp án
             </button>
           </div>
           <div class="quiz-options-grid" id="dinoQuizOptionsGrid"></div>
@@ -1277,7 +1302,7 @@
             <div class="quiz-question-title" id="quizQuestionTitle">Câu hỏi xe cộ</div>
             <div class="quiz-question-ja" id="quizQuestionJa">🇯🇵</div>
             <button class="btn-hear-hint" id="btnHearQuizQuestion" style="margin: 10px auto 0 auto;">
-              <span>🔊</span> Nghe tên xe
+              <span>🔊</span> Nghe câu đố &amp; 4 đáp án
             </button>
           </div>
           <div class="quiz-options-grid" id="quizOptionsGrid"></div>

@@ -308,7 +308,9 @@ function renderEthicsLessonsTab() {
         const isNew = markWordLearned(item.id);
         if (isNew) {
           addEthicsScore(2);
-          renderEthicsLessonsTab();
+          card.classList.add('is-learned');
+          const starEl = card.querySelector('.ethics-star');
+          if (starEl) starEl.innerText = '⭐';
           if (typeof showToast === 'function') showToast(`⭐ +2 Sao! Bảo Long đã học: "${item.badge}"!`);
         } else if (typeof showToast === 'function') {
           showToast(`💝 ${item.title}`);
@@ -396,27 +398,42 @@ function loadEthicsSituationQuestion() {
 
   const myNav = window.appNavEpoch || 0;
   const myEth = ethicsEpoch;
-  document.getElementById('btnHearEthicsSit').onclick = () => {
-    window.soundMgr.playClick();
-    window.soundMgr.playAudioFile(q.audioKey, null, q.question);
-  };
-  setTimeout(() => {
-    if ((window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth) {
-      window.soundMgr.playAudioFile(q.audioKey, null, q.question);
-    }
-  }, 300);
 
   const optsWrap = document.getElementById('ethicsSitOptionsWrap');
   optsWrap.innerHTML = '';
   const choices = [...q.options].sort(() => Math.random() - 0.5);
   let sitLocked = false;
+  const qCardEl = document.querySelector('#ethicsPaneSituations .ethics-sit-card');
+  const tourSteps = [{ key: q.audioKey, fallbackText: q.question, el: qCardEl, pauseAfterMs: 180 }];
 
   choices.forEach(opt => {
-    const btn = document.createElement('button');
+    const optKey = `ethics_${q.id}_${opt.isGood ? 'good' : 'bad'}`;
+    const btn = document.createElement('div');
     btn.className = 'ethics-sit-option';
-    btn.innerText = opt.text;
+    btn.setAttribute('role', 'button');
+    btn.setAttribute('tabindex', '0');
+
+    const textSpan = document.createElement('span');
+    textSpan.innerText = opt.text;
+    btn.appendChild(textSpan);
+
+    const spkBtn = document.createElement('button');
+    spkBtn.type = 'button';
+    spkBtn.className = 'quiz-opt-speak-btn';
+    spkBtn.setAttribute('aria-label', 'Nghe lựa chọn');
+    spkBtn.innerText = '🔊';
+    spkBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.soundMgr.playClick();
+      window.soundMgr.playAudioFile(optKey, null, opt.text);
+    });
+    btn.appendChild(spkBtn);
+
+    tourSteps.push({ key: optKey, fallbackText: opt.text, el: btn, pauseAfterMs: 140 });
+
     btn.addEventListener('click', () => {
       if (sitLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+      window.soundMgr.stopAll();
       if (opt.isGood) {
         sitLocked = true;
         btn.classList.add('correct');
@@ -425,23 +442,35 @@ function loadEthicsSituationQuestion() {
         document.getElementById('ethicsSitScoreText').innerText = `⭐ ${ethicsSitScore} điểm`;
         window.soundMgr.playCorrect();
         if (typeof fireConfetti === 'function') fireConfetti();
-        window.soundMgr.playAudioFile('ethics_good', null, 'Tuyệt vời!');
         if (typeof showToast === 'function') showToast(`🌟 ${opt.feedback}`);
 
-        setTimeout(() => {
-          if ((window.appNavEpoch || 0) !== myNav || ethicsEpoch !== myEth) return;
-          ethicsSitIndex++;
-          loadEthicsSituationQuestion();
-        }, 2100);
+        window.soundMgr.playPraiseThen(false,
+          () => (window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth,
+          () => {
+            ethicsSitIndex++;
+            loadEthicsSituationQuestion();
+          }
+        );
       } else {
         btn.classList.add('wrong');
         window.soundMgr.playWrong();
-        window.soundMgr.playAudioFile('ethics_try', null, 'Bảo Long chọn lại nhé!');
+        window.soundMgr.speakTryAgain();
         if (typeof showToast === 'function') showToast(`💡 ${opt.feedback}`);
       }
     });
     optsWrap.appendChild(btn);
   });
+
+  const playSitTour = () => window.soundMgr.playChoiceTour(tourSteps);
+  document.getElementById('btnHearEthicsSit').onclick = () => {
+    window.soundMgr.playClick();
+    playSitTour();
+  };
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth) {
+      playSitTour();
+    }
+  }, 60);
 }
 
 // ========================================================
@@ -482,24 +511,46 @@ function loadEthicsTfQuestion() {
 
   const myNav = window.appNavEpoch || 0;
   const myEth = ethicsEpoch;
-  document.getElementById('btnHearEthicsTf').onclick = () => {
-    window.soundMgr.playClick();
-    window.soundMgr.playAudioFile(q.audioKey, null, q.text);
-  };
-  setTimeout(() => {
-    if ((window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth) {
-      window.soundMgr.playAudioFile(q.audioKey, null, q.text);
-    }
-  }, 250);
-
   const btnYes = document.getElementById('btnEthicsShouldDo');
   const btnNo = document.getElementById('btnEthicsShouldNot');
+  const tfCardEl = document.querySelector('#ethicsPaneTrueFalse .ethics-sit-card');
   btnYes.classList.remove('correct', 'wrong');
   btnNo.classList.remove('correct', 'wrong');
   let locked = false;
 
+  const tfTourSteps = [
+    { key: q.audioKey, fallbackText: q.text, el: tfCardEl, pauseAfterMs: 160 },
+    { key: 'ethics_tf_yes', fallbackText: 'Nên làm', el: btnYes, pauseAfterMs: 110 },
+    { key: 'ethics_tf_no', fallbackText: 'Không nên', el: btnNo, pauseAfterMs: 80 }
+  ];
+  const playTfTour = () => window.soundMgr.playChoiceTour(tfTourSteps);
+
+  document.getElementById('btnHearEthicsTf').onclick = () => {
+    window.soundMgr.playClick();
+    playTfTour();
+  };
+  const spkYes = document.getElementById('btnSpeakTfYes');
+  const spkNo = document.getElementById('btnSpeakTfNo');
+  if (spkYes) spkYes.onclick = (e) => {
+    e.stopPropagation();
+    window.soundMgr.playClick();
+    window.soundMgr.playAudioFile('ethics_tf_yes', null, 'Nên làm');
+  };
+  if (spkNo) spkNo.onclick = (e) => {
+    e.stopPropagation();
+    window.soundMgr.playClick();
+    window.soundMgr.playAudioFile('ethics_tf_no', null, 'Không nên');
+  };
+
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth) {
+      playTfTour();
+    }
+  }, 60);
+
   function answer(choiceShouldDo, btnEl) {
-    if (locked) return;
+    if (locked || btnEl.classList.contains('correct') || btnEl.classList.contains('wrong')) return;
+    window.soundMgr.stopAll();
     if (choiceShouldDo === q.shouldDo) {
       locked = true;
       btnEl.classList.add('correct');
@@ -512,20 +563,21 @@ function loadEthicsTfQuestion() {
 
       window.soundMgr.playCorrect();
       if (typeof fireConfetti === 'function') fireConfetti();
-      window.soundMgr.playAudioFile('ethics_good', null, 'Tuyệt vời!');
       if (typeof showToast === 'function') showToast(`✅ Chuẩn xác! ${q.reason}`);
 
-      setTimeout(() => {
-        if ((window.appNavEpoch || 0) !== myNav || ethicsEpoch !== myEth) return;
-        ethicsTfIndex++;
-        loadEthicsTfQuestion();
-      }, 1800);
+      window.soundMgr.playPraiseThen(ethicsTfStreak >= 3,
+        () => (window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth,
+        () => {
+          ethicsTfIndex++;
+          loadEthicsTfQuestion();
+        }
+      );
     } else {
       ethicsTfStreak = 0;
       document.getElementById('ethicsTfStreakBadge').innerText = `🔥 Chuỗi x0`;
       btnEl.classList.add('wrong');
       window.soundMgr.playWrong();
-      window.soundMgr.playAudioFile('ethics_try', null, 'Thử chọn lại nhé!');
+      window.soundMgr.speakTryAgain();
       if (typeof showToast === 'function') showToast(`💡 Nghĩ kỹ nhé: ${q.reason}`);
     }
   }
@@ -609,10 +661,40 @@ function loadNextEcoItem() {
   document.getElementById('ecoTrashName').innerText = item.name;
   let ecoLocked = false;
 
+  const targetEl = document.getElementById('ecoTrashTarget');
+  const orgEl = document.querySelector('.eco-bin-btn[data-bin="organic"]');
+  const recEl = document.querySelector('.eco-bin-btn[data-bin="recycle"]');
+  const hazEl = document.querySelector('.eco-bin-btn[data-bin="hazard"]');
+
+  const ecoTourSteps = [
+    { key: `ethics_${item.id}`, fallbackText: `${item.name}, bỏ vào thùng nào?`, el: targetEl, pauseAfterMs: 160 },
+    { key: 'ethics_bin_organic', fallbackText: 'Rác hữu cơ, rác đốt được', el: orgEl, pauseAfterMs: 100 },
+    { key: 'ethics_bin_recycle', fallbackText: 'Rác tái chế', el: recEl, pauseAfterMs: 100 },
+    { key: 'ethics_bin_hazard', fallbackText: 'Pin và rác đặc biệt', el: hazEl, pauseAfterMs: 80 }
+  ];
+  const playEcoTour = () => window.soundMgr.playChoiceTour(ecoTourSteps);
+
+  const btnHearEco = document.getElementById('btnHearEcoItem');
+  if (btnHearEco) btnHearEco.onclick = () => { window.soundMgr.playClick(); playEcoTour(); };
+  if (targetEl) targetEl.onclick = () => { window.soundMgr.playClick(); playEcoTour(); };
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth) playEcoTour();
+  }, 60);
+
+  document.querySelectorAll('.quiz-opt-speak-btn[data-bin-speak]').forEach(sb => {
+    sb.onclick = (e) => {
+      e.stopPropagation();
+      const b = sb.dataset.binSpeak;
+      window.soundMgr.playClick();
+      window.soundMgr.playAudioFile(`ethics_bin_${b}`, null, b);
+    };
+  });
+
   document.querySelectorAll('.eco-bin-btn').forEach(btn => {
     btn.classList.remove('correct', 'wrong');
     btn.onclick = () => {
-      if (ecoLocked || btn.classList.contains('correct')) return;
+      if (ecoLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+      window.soundMgr.stopAll();
       if (btn.dataset.bin === item.bin) {
         ecoLocked = true;
         btn.classList.add('correct');
@@ -623,14 +705,17 @@ function loadNextEcoItem() {
         if (typeof fireConfetti === 'function') fireConfetti();
         if (typeof showToast === 'function') showToast(`♻️ Tuyệt vời! "${item.name}" bỏ vào ${item.binName}!`);
 
-        setTimeout(() => {
-          if ((window.appNavEpoch || 0) !== myNav || ethicsEpoch !== myEth) return;
-          ecoIndex++;
-          loadNextEcoItem();
-        }, 1200);
+        window.soundMgr.playPraiseThen(false,
+          () => (window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth,
+          () => {
+            ecoIndex++;
+            loadNextEcoItem();
+          }
+        );
       } else {
         btn.classList.add('wrong');
         window.soundMgr.playWrong();
+        window.soundMgr.speakTryAgain();
         if (typeof showToast === 'function') showToast(`💡 Chưa đúng thùng rồi! "${item.name}" cần bỏ vào thùng ${item.binName}!`);
       }
     };
