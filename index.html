@@ -73,6 +73,10 @@
           <span>🧮</span>
           <span>Toán Lớp 1</span>
         </button>
+        <button class="mode-pill mode-pill-ethics" data-mode="ethics">
+          <span>🌱</span>
+          <span>Đạo Đức</span>
+        </button>
         <button class="mode-pill mode-pill-game" data-mode="game">
           <span>🎮</span>
           <span>Khu Trò Chơi</span>
@@ -484,6 +488,181 @@
       </div>
     </section>
 
+    <!-- ========================================================
+         KHU VỰC ĐẠO ĐỨC & GIÁO DỤC CÔNG DÂN LỚP 1 CHO BẢO LONG
+         ======================================================== -->
+    <section id="ethicsContainer" style="display: none;">
+      <div class="ethics-banner-box">
+        <div class="dino-badge">🌱 ĐẠO ĐỨC &amp; GIÁO DỤC CÔNG DÂN • BÉ NGOAN VĂN MINH 🇻🇳🇯🇵</div>
+        <h2 class="dino-banner-title">Vườn Ươm Bé Ngoan &amp; Công Dân Nhí Bảo Long</h2>
+        <p class="dino-banner-desc">Học cách lễ phép chào hỏi, trung thực nhận lỗi, yêu thương ba mẹ bạn bè, tuân thủ Đèn Giao Thông và phân loại rác bảo vệ Trái Đất!</p>
+        <div class="math-session-badge" id="ethicsSessionStars">⭐ Điểm Bé Ngoan: 0</div>
+      </div>
+
+      <!-- 4 Chế độ Đạo Đức & GDCD -->
+      <div class="ethics-subnav">
+        <button class="game-tab-btn active" id="ethicsTabLessons" onclick="switchEthicsSubTab('lessons')">
+          <span>💝</span><span>8 Thói Quen Đẹp</span>
+        </button>
+        <button class="game-tab-btn" id="ethicsTabSituations" onclick="switchEthicsSubTab('situations')">
+          <span>🎭</span><span>Xử Lý Tình Huống</span>
+        </button>
+        <button class="game-tab-btn" id="ethicsTabTrueFalse" onclick="switchEthicsSubTab('truefalse')">
+          <span>👍</span><span>Nên / Không Nên</span>
+        </button>
+        <button class="game-tab-btn" id="ethicsTabTrafficEco" onclick="switchEthicsSubTab('traffic_eco')">
+          <span>🚦</span><span>Đèn GT &amp; Sống Xanh</span>
+        </button>
+      </div>
+
+      <!-- PANE 1: 8 BÀI HỌC THÓI QUEN ĐẸP -->
+      <div class="ethics-sub-pane" id="ethicsPaneLessons">
+        <div class="section-header-flex" style="margin-bottom: 14px;">
+          <div>
+            <h3 class="section-blue-title" style="color: #0f766e;"><span>💝</span> 8 Bài Học Bé Ngoan Lớp 1 (Chạm thẻ để nghe!)</h3>
+            <p class="section-sub-desc" style="margin-bottom: 0;">Mỗi thói quen đẹp giúp Bảo Long trở thành cậu bé tự tin, nhân ái và được mọi người yêu quý.</p>
+          </div>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayEthics">
+            <span>🎧</span> Nghe cả 8 bài
+          </button>
+        </div>
+        <div class="ethics-lessons-grid" id="ethicsLessonsGrid"></div>
+      </div>
+
+      <!-- PANE 2: XỬ LÝ TÌNH HUỐNG NHẬP VAI -->
+      <div class="ethics-sub-pane" id="ethicsPaneSituations" style="display: none;">
+        <div id="ethicsSitPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="ethicsSitProgressText">Tình huống 1 / 8</span>
+            <span class="game-stars" id="ethicsSitScoreText">⭐ 0 điểm</span>
+          </div>
+
+          <div class="ethics-sit-card">
+            <span class="ethics-badge" id="ethicsSitBadge">🛝 Xếp hàng</span>
+            <div class="ethics-sit-icon" id="ethicsSitIcon">🎡</div>
+            <div class="ethics-sit-question" id="ethicsSitQuestion">Câu hỏi tình huống</div>
+            <button class="btn-hear-hint" id="btnHearEthicsSit" style="margin: 12px auto 0 auto;">
+              <span>🔊</span> Nghe tình huống
+            </button>
+          </div>
+
+          <div class="ethics-sit-options" id="ethicsSitOptionsWrap"></div>
+        </div>
+
+        <div id="ethicsSitVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🎭💝🏆🌟</div>
+          <h2 class="victory-title" style="color: #0d9488;">BẢO LONG ỨNG XỬ TUYỆT VỜI QUÁ!</h2>
+          <p class="victory-desc" id="ethicsSitVictoryScore">Bé đã xử lý xuất sắc cả 8 tình huống đời sống!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initEthicsSituationsGame()">🔄 Thử thách ván mới</button>
+            <button class="home-btn" onclick="switchEthicsSubTab('truefalse')">👍 Chơi Nên / Không Nên</button>
+            <button class="home-btn" onclick="switchEthicsSubTab('traffic_eco')">🚦 Thực hành Đèn GT &amp; Rác</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 3: NÊN LÀM HAY KHÔNG NÊN -->
+      <div class="ethics-sub-pane" id="ethicsPaneTrueFalse" style="display: none;">
+        <div id="ethicsTfPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="ethicsTfProgressText">Câu 1 / 10</span>
+            <span class="streak-pill" id="ethicsTfStreakBadge">🔥 Chuỗi x0</span>
+            <span class="game-stars" id="ethicsTfScoreText">⭐ 0 điểm</span>
+          </div>
+
+          <div class="ethics-sit-card" style="background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border-color: #2dd4bf;">
+            <div class="ethics-sit-icon" id="ethicsTfIcon">🪥</div>
+            <div class="ethics-sit-question" id="ethicsTfText" style="color: #0f766e;">Hành động hàng ngày</div>
+            <button class="btn-hear-hint" id="btnHearEthicsTf" style="margin: 12px auto 0 auto;">
+              <span>🔊</span> Nghe lại câu hỏi
+            </button>
+          </div>
+
+          <div class="ethics-tf-buttons">
+            <button class="tf-choice-btn tf-btn-good" id="btnEthicsShouldDo">
+              <span>👍 NÊN LÀM</span>
+              <span style="font-size: 12px; opacity: 0.85;">Hành động đẹp</span>
+            </button>
+            <button class="tf-choice-btn tf-btn-bad" id="btnEthicsShouldNot">
+              <span>👎 KHÔNG NÊN</span>
+              <span style="font-size: 12px; opacity: 0.85;">Cần tránh nhé</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="ethicsTfVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">👍🌟🏆🎉</div>
+          <h2 class="victory-title" style="color: #059669;">CẬU BÉ NGOAN NGOÃN BẢO LONG!</h2>
+          <p class="victory-desc" id="ethicsTfVictoryScore">Bé phân biệt xuất sắc việc nên làm và không nên làm!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initEthicsTfGame()">🔄 Chơi lại 10 câu</button>
+            <button class="home-btn" onclick="switchEthicsSubTab('traffic_eco')">🚦 Chơi Đèn GT &amp; Sống Xanh</button>
+            <button class="home-btn" onclick="switchEthicsSubTab('lessons')">💝 Xem lại 8 Bài học</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 4: ĐÈN GIAO THÔNG & PHÂN LOẠI RÁC XANH -->
+      <div class="ethics-sub-pane" id="ethicsPaneTrafficEco" style="display: none;">
+        <h3 class="section-blue-title" style="color: #0284c7; margin-bottom: 8px;">
+          <span>🚦</span> Đèn Giao Thông Thông Minh (Chạm Đèn Đỏ / Vàng / Xanh!)
+        </h3>
+        <div class="traffic-sim-box">
+          <div class="traffic-top-flex">
+            <div class="tl-pillar">
+              <button class="tl-light-btn tl-red lit" data-color="red">ĐỎ</button>
+              <button class="tl-light-btn tl-yellow" data-color="yellow">VÀNG</button>
+              <button class="tl-light-btn tl-green" data-color="green">XANH</button>
+            </div>
+            <div class="tl-road-area">
+              <div class="tl-status-pill" id="trafficSimStatus">🔴 ĐÈN ĐỎ: TẤT CẢ DỪNG LẠI NGAY TRƯỚC VẠCH TRẮNG!</div>
+              <div class="tl-road-lane">
+                <span class="tl-car stop" id="trafficSimCar">🚗</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="eco-sort-box">
+          <div id="ecoGamePlay">
+            <div class="game-score-row">
+              <span class="game-progress-text" id="ecoProgressText">Món đồ 1 / 6</span>
+              <span class="game-stars" id="ecoScoreText">⭐ 0 điểm</span>
+            </div>
+            <h3 style="font-size: 18px; font-weight: 900; color: #065f46;">♻️ Bảo Long Phân Loại Rác Bảo Vệ Trái Đất Nào!</h3>
+            <div class="eco-trash-target">
+              <div style="font-size: 56px;" id="ecoTrashEmoji">🍌</div>
+              <div style="font-size: 17px; font-weight: 900; color: #0f172a; margin-top: 4px;" id="ecoTrashName">Vỏ chuối chín</div>
+            </div>
+            <div class="eco-bins-grid">
+              <button class="eco-bin-btn eco-bin-organic" data-bin="organic">
+                <span style="font-size: 28px;">🥬</span>
+                <span>Rác Hữu Cơ / Đốt được</span>
+                <span style="font-size: 11px; opacity: 0.8;">Thức ăn thừa, vỏ quả, lá cây</span>
+              </button>
+              <button class="eco-bin-btn eco-bin-recycle" data-bin="recycle">
+                <span style="font-size: 28px;">♻️</span>
+                <span>Rác Tái Chế</span>
+                <span style="font-size: 11px; opacity: 0.8;">Chai nhựa PET, lon, báo giấy</span>
+              </button>
+              <button class="eco-bin-btn eco-bin-hazard" data-bin="hazard">
+                <span style="font-size: 28px;">🔋</span>
+                <span>Pin &amp; Rác Đặc Biệt</span>
+                <span style="font-size: 11px; opacity: 0.8;">Pin cũ, bóng đèn hỏng</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="ecoGameVictory" style="display: none; padding: 16px;">
+            <div class="victory-emojis">🌍♻️🏆✨</div>
+            <h2 class="victory-title" style="color: #059669;">CHIẾN BINH MÔI TRƯỜNG XANH BẢO LONG!</h2>
+            <p class="victory-desc">Con đã phân loại đúng tất cả 6 món rác (+12 ⭐)! Trái Đất cảm ơn Bảo Long nhiều lắm!</p>
+            <button class="challenge-btn" onclick="initEcoSortingGame()">🔄 Phân loại lượt mới</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Khu Vực Khu Trò Chơi (Game Hub - 7 Trò Chơi Cuốn Hút) -->
     <section id="gameViewContainer" style="display: none;">
       <div class="game-hub-nav">
@@ -867,6 +1046,7 @@
   <script src="data.js"></script>
   <script src="speech.js"></script>
   <script src="math.js"></script>
+  <script src="ethics.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -379,6 +379,7 @@ function initEventListeners() {
 function stopAutoPlay() {
   autoPlayRunning = false;
   if (typeof stopMathAutoPlay === 'function') stopMathAutoPlay();
+  if (typeof stopEthicsAutoPlay === 'function') stopEthicsAutoPlay();
   if (autoPlayTimer) {
     clearTimeout(autoPlayTimer);
     autoPlayTimer = null;
@@ -458,6 +459,7 @@ function switchMode(mode) {
     dino: '🦖 Công viên Khủng Long (Ảnh chụp thực tế!)',
     vehicles: '🚗 Ga Xe Cộ & Shinkansen (Ảnh chụp thực tế!)',
     math: '🧮 Chế độ: Học Toán Lớp 1 Kỳ Thú (Số đếm, Cộng Trừ, Đồng Hồ)',
+    ethics: '🌱 Chế độ: Đạo Đức & Giáo Dục Công Dân (Bé Ngoan Văn Minh)',
     game: '🎮 Khu Trò Chơi (7 game cho Bảo Long!)'
   };
   if (msgs[mode]) showToast(msgs[mode]);
@@ -474,6 +476,7 @@ function renderCurrentView() {
   const dinoContainer = document.getElementById('dinoContainer');
   const vehicleContainer = document.getElementById('vehicleContainer');
   const mathContainer = document.getElementById('mathContainer');
+  const ethicsContainer = document.getElementById('ethicsContainer');
   const gameViewContainer = document.getElementById('gameViewContainer');
 
   cardsContainer.style.display = 'none';
@@ -481,6 +484,7 @@ function renderCurrentView() {
   if (dinoContainer) dinoContainer.style.display = 'none';
   if (vehicleContainer) vehicleContainer.style.display = 'none';
   if (mathContainer) mathContainer.style.display = 'none';
+  if (ethicsContainer) ethicsContainer.style.display = 'none';
   gameViewContainer.style.display = 'none';
   roadmapBox.style.display = 'none';
 
@@ -511,6 +515,11 @@ function renderCurrentView() {
     if (mathContainer) {
       mathContainer.style.display = 'block';
       if (typeof renderMathHub === 'function') renderMathHub();
+    }
+  } else if (currentMode === 'ethics') {
+    if (ethicsContainer) {
+      ethicsContainer.style.display = 'block';
+      if (typeof renderEthicsHub === 'function') renderEthicsHub();
     }
   } else if (currentMode === 'game') {
     gameViewContainer.style.display = 'block';
@@ -1174,6 +1183,7 @@ function startMiniGame(source = 'default') {
   document.getElementById('dinoContainer').style.display = 'none';
   document.getElementById('vehicleContainer').style.display = 'none';
   if (document.getElementById('mathContainer')) document.getElementById('mathContainer').style.display = 'none';
+  if (document.getElementById('ethicsContainer')) document.getElementById('ethicsContainer').style.display = 'none';
   document.getElementById('gameViewContainer').style.display = 'block';
 
   // Đảm bảo bật đúng SubGame Puzzle
