@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc & Đánh Vần</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc &amp; Đánh Vần</title>
   <link rel="stylesheet" href="style.css">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,28 +19,29 @@
   <header class="top-nav">
     <div class="top-nav-inner">
       <div class="nav-brand-group">
-        <button class="home-btn" onclick="switchMode('vocab')">
+        <button class="home-btn" id="btnHome" title="Về trang học từ mới">
           <span>🏠</span>
-          <span>Trang chủ</span>
+          <span class="hide-xs">Trang chủ</span>
         </button>
-        <div class="long-avatar-pill">
-          <span>🦖</span>
-          <span>Bảo Long (6 tuổi) 🇯🇵</span>
-        </div>
+        <button class="long-avatar-pill" id="btnOpenProfile" title="Mở Kho Báu Sao &amp; Sticker của Bảo Long">
+          <span id="profileAvatarEmoji">🦖</span>
+          <span>Bảo Long</span>
+          <span class="nav-star-chip" id="navTotalStars">⭐ 0</span>
+        </button>
       </div>
 
       <div class="nav-controls-group">
         <button class="control-pill" id="btnVoiceGender" title="Nhấn để đổi giữa giọng Cô giáo và giọng Ba">
           <span>👩</span>
-          <span>Giọng: Nữ (Cô)</span>
+          <span>Nữ (Cô)</span>
         </button>
         <button class="control-pill" id="btnSpeed" title="Nhấn để đổi tốc độ đọc">
           <span>⚡</span>
           <span>Chuẩn</span>
         </button>
-        <button class="control-pill" id="btnMute">
+        <button class="control-pill" id="btnMute" title="Bật / Tắt âm thanh">
           <span>🔊</span>
-          <span>Bật</span>
+          <span class="hide-xs">Bật</span>
         </button>
       </div>
     </div>
@@ -50,7 +51,7 @@
       <div class="mode-pills-row">
         <button class="mode-pill" data-mode="alphabet">
           <span>🔠</span>
-          <span>Bảng chữ cái ABC</span>
+          <span>Chữ cái &amp; Ghép âm</span>
         </button>
         <button class="mode-pill active" data-mode="vocab">
           <span>📖</span>
@@ -78,14 +79,20 @@
 
   <!-- Vùng nội dung chính -->
   <main class="main-content">
-    <!-- Tiêu đề lớn: Bản Đồ Thám Hiểm Của Bảo Long -->
+    <!-- Tiêu đề lớn & Thanh Danh Hiệu Nhà Thám Hiểm Bảo Long -->
     <section class="expedition-header">
       <div class="expedition-title-badge">
         <span class="compass-icon">🧭</span>
-        <span>Bản Đồ Thám Hiểm</span>
+        <span>Bản Đồ Thám Hiểm Của Bảo Long</span>
       </div>
-      <div class="expedition-subtitle">
-        Bé Bảo Long hãy chọn Bài học và chạm vào các trạm từ vựng để phiêu lưu nhé! 🚀
+      <div class="explorer-status-strip">
+        <div class="explorer-rank-pill" id="btnOpenStickersBanner" title="Nhấn để mở Kho Sticker">
+          <span id="rankBadge">🌱</span>
+          <span id="rankTitle">Khám Phá Nhí</span>
+          <span class="rank-sep">•</span>
+          <span>📚 Đã thuộc: <strong id="learnedWordsCount">0</strong> từ</span>
+          <span class="rank-cta">🏆 Xem Sticker</span>
+        </div>
       </div>
     </section>
 
@@ -94,49 +101,71 @@
       <div class="roadmap-top-row">
         <div class="roadmap-tag-group">
           <span class="roadmap-label" id="roadmapTag">LỘ TRÌNH HỌC TẬP</span>
-          <span class="roadmap-current-title" id="roadmapTitle">Bài 1: Từ 1 tiếng, 2 chữ cái – Nhóm 1 – Rất dễ</span>
+          <span class="roadmap-current-title" id="roadmapTitle">Bài 1: Từ 1 tiếng, 2 chữ cái – Rất dễ</span>
         </div>
         <div class="roadmap-tools">
-          <span class="tool-chip">🪄 Tự do: BẬT</span>
-          <span class="tool-chip" onclick="currentLessonIdx = 0; renderCurrentView();">🔄 Đặt lại</span>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayLesson" title="Tự động đọc lần lượt từng từ trong bài">
+            🎧 Nghe cả bài
+          </button>
+          <button class="tool-chip" id="btnResetLesson" title="Quay về Bài 1">
+            🔄 Về Bài 1
+          </button>
         </div>
       </div>
 
       <!-- Danh sách trạm bài học (Tabs) -->
-      <div class="lesson-tabs-track" id="lessonTabsTrack">
-        <!-- Render động từ JS -->
+      <div class="lesson-tabs-track" id="lessonTabsTrack"></div>
+
+      <!-- Thanh tiến độ học từng bài -->
+      <div class="lesson-progress-row">
+        <div class="lesson-progress-bar-bg">
+          <div class="lesson-progress-bar-fill" id="lessonProgressBar" style="width: 0%;"></div>
+        </div>
+        <span class="lesson-progress-label" id="lessonProgressText">0 / 10 từ đã khám phá</span>
       </div>
 
-      <!-- Nút Thử thách ghép hình nổi bật ở giữa -->
+      <!-- Nút Thử thách ghép hình nổi bật ở giữa (Chơi ngay chính bài đang học!) -->
       <div class="challenge-btn-wrapper">
         <button class="challenge-btn" id="bigChallengeBtn">
           <span>🎯</span>
-          <span id="bigChallengeBtnText">Thử thách ghép hình Bài 1 (10 câu)</span>
+          <span id="bigChallengeBtnText">Thử thách ghép chữ Bài 1 (10 câu)</span>
         </button>
       </div>
     </section>
 
     <!-- Khu vực hiển thị thẻ từ vựng (Chế độ Học từ mới & Tập đánh vần) -->
-    <section class="cards-grid" id="cardsContainer">
-      <!-- Thẻ từ render từ app.js -->
-    </section>
+    <section class="cards-grid" id="cardsContainer"></section>
 
-    <!-- Khu vực Bảng chữ cái ABC & 5 Dấu Thanh (Chế độ Alphabet) -->
+    <!-- Khu vực Bảng chữ cái ABC, 11 Phụ Âm Ghép & 6 Thanh Điệu -->
     <section id="alphabetContainer" style="display: none;">
-      <div style="background: #ffffff; border-radius: 28px; padding: 20px; box-shadow: 0 10px 30px rgba(0, 75, 140, 0.12); margin-bottom: 22px; border: 2px solid #e2e8f0; border-bottom: 5px solid #cbd5e1;">
-        <h3 style="font-size: 20px; font-weight: 900; color: #0284c7; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
-          <span>🎨</span> 29 Chữ Cái Tiếng Việt (Bảo Long chạm vào chữ để nghe đọc nhé)
-        </h3>
-        <p style="color: #64748b; font-size: 13px; margin-bottom: 16px;">Dành riêng cho Bảo Long ở Nhật làm quen với các chữ cái đặc trưng: Ă, Â, Đ, Ê, Ô, Ơ, Ư</p>
+      <div class="alpha-section-card">
+        <div class="section-header-flex">
+          <div>
+            <h3 class="section-blue-title">
+              <span>🎨</span> 29 Chữ Cái Tiếng Việt
+            </h3>
+            <p class="section-sub-desc">Chạm vào chữ cái để nghe phát âm chuẩn, hoặc chạm vào hình minh họa bên dưới chữ để nghe đọc từ ví dụ nhé! Đặc biệt chú ý: <strong>Ă, Â, Đ, Ê, Ô, Ơ, Ư, K (ca), S (uốn lưỡi), X (nhẹ)</strong>.</p>
+          </div>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayAlphabet">🎧 Nghe lần lượt</button>
+        </div>
         <div class="alphabet-grid" id="alphabetGrid"></div>
       </div>
 
-      <!-- 5 Dấu Thanh Tiếng Việt -->
+      <!-- MỚI: 11 Phụ Âm Ghép Tiếng Việt Lớp 1 -->
+      <div class="alpha-section-card" style="border-color: #c4b5fd; border-bottom-color: #8b5cf6;">
+        <h3 class="section-blue-title" style="color: #6d28d9;">
+          <span>✨</span> 11 Phụ Âm Ghép Thần Kỳ (Đứng đầu tiếng)
+        </h3>
+        <p class="section-sub-desc">Mẹo nhớ siêu đỉnh cho Bảo Long: <strong>GH</strong> và <strong>NGH</strong> chỉ kết bạn với 3 chữ cái <strong>E, Ê, I</strong> thôi nhé!</p>
+        <div class="digraph-grid" id="digraphGrid"></div>
+      </div>
+
+      <!-- 6 Thanh Điệu Tiếng Việt -->
       <div class="tones-section">
         <div class="tones-title">
-          <span>🎵</span> 5 Dấu Thanh Tiếng Việt (Thanh điệu kỳ diệu)
+          <span>🎵</span> 6 Thanh Điệu Tiếng Việt (Thanh Ngang &amp; 5 Dấu Thanh)
         </div>
-        <p style="color: #64748b; font-size: 13px; margin-bottom: 14px;">Tiếng Việt có dấu thanh giúp từ có giai điệu như hát!</p>
+        <p class="section-sub-desc">Tiếng Việt có 6 thanh điệu giúp lời nói có giai điệu như hát! Chạm từng thẻ để nghe cô/ba thị phạm nhé:</p>
         <div class="tones-grid" id="tonesGrid"></div>
       </div>
     </section>
@@ -145,246 +174,422 @@
     <section id="dinoContainer" style="display: none;">
       <div class="dino-banner-box">
         <div class="dino-banner-content">
-          <div class="dino-badge">🦕 KỶ JURA HUYỀN BÍ • DINOSAUR WORLD 🦖</div>
+          <div class="dino-badge">🦕 KỶ JURA HUYỀN BÍ • ẢNH CHỤP THỰC TẾ 🦖</div>
           <h2 class="dino-banner-title">Công Viên Khủng Long Của Bảo Long</h2>
-          <p class="dino-banner-desc">Bảo Long hãy chạm vào chú khủng long để nghe tiếng gầm Roar, học tên tiếng Việt, tiếng Nhật và tập đánh vần siêu ngầu nhé!</p>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+          <p class="dino-banner-desc">Bảo Long chạm vào từng chú khủng long để xem ảnh thật, nghe tiếng gầm Roar, học tên tiếng Việt - Nhật và tập đánh vần siêu ngầu!</p>
+          <div class="banner-action-row">
             <button class="dino-roar-btn" id="btnDinoRoar">
               <span>🌋</span> Gầm to nào: ROAR!
             </button>
+            <button class="dino-roar-btn" id="btnAutoPlayDinos" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #064e3b;">
+              <span>🎧</span> Nghe cả 10 loài
+            </button>
             <button class="dino-roar-btn" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-bottom-color: #0c4a6e;" onclick="switchMode('game'); switchSubGame('dino_memory');">
-              <span>🃏</span> Game 1: Lật Thẻ Khủng Long
+              <span>🃏</span> Lật Thẻ
             </button>
             <button class="dino-roar-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-bottom-color: #4c1d95;" onclick="switchMode('game'); switchSubGame('dino_quiz');">
-              <span>🎯</span> Game 2: Đố Vui Khủng Long
+              <span>🎯</span> Đố Vui
             </button>
             <button class="dino-roar-btn" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); border-bottom-color: #7c2d12;" onclick="switchMode('game'); switchSubGame('dino_dig');">
-              <span>⛏️</span> Game 3: Khai Quật Hóa Thạch
+              <span>⛏️</span> Khai Quật
             </button>
           </div>
         </div>
       </div>
-      <div class="cards-grid dino-cards-grid" id="dinoCardsContainer">
-        <!-- Render từ app.js -->
-      </div>
+      <div class="cards-grid dino-cards-grid" id="dinoCardsContainer"></div>
     </section>
 
     <!-- Khu vực Thế Giới Xe Cộ Dành Cho Bé Bảo Long (Vehicle World) -->
     <section id="vehicleContainer" style="display: none;">
       <div class="veh-banner-box">
         <div class="veh-banner-content">
-          <div class="veh-badge">🚗 THẾ GIỚI XE CỘ & SHINKANSEN • VEHICLE EXPEDITION 🚅</div>
+          <div class="veh-badge">🚗 THẾ GIỚI XE CỘ &amp; SHINKANSEN • ẢNH CHỤP THỰC TẾ 🚅</div>
           <h2 class="veh-banner-title">Ga Xe Cộ Kỳ Thú Của Bảo Long</h2>
-          <p class="veh-banner-desc">Bảo Long khám phá 12 loại phương tiện giao thông quen thuộc: Tàu Shinkansen, Máy bay, Trực thăng, Xe cứu hỏa, Xe cảnh sát... Chạm vào xe để nghe phát âm, tên tiếng Nhật và đánh vần nhé!</p>
-          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <button class="challenge-btn" style="padding: 10px 22px; font-size: 14px;" onclick="switchMode('game'); switchSubGame('quiz');">
-              <span>🎯</span> Thử thách đố vui Xe Cộ
+          <p class="veh-banner-desc">Khám phá 12 phương tiện thật quen thuộc tại Nhật Bản và Việt Nam: Tàu Shinkansen, Xe Cảnh Sát Nhật, Máy Bay, Máy Xúc... Chạm vào xe để nghe phát âm &amp; đánh vần nhé!</p>
+          <div class="banner-action-row">
+            <button class="challenge-btn" style="padding: 10px 20px; font-size: 14px;" onclick="switchMode('game'); switchSubGame('quiz');">
+              <span>🎯</span> Đố vui 12 Xe Cộ
+            </button>
+            <button class="dino-roar-btn" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-bottom-color: #075985;" onclick="switchMode('game'); switchSubGame('shinkansen');">
+              <span>🚅</span> Lắp Tàu Shinkansen Đánh Vần
+            </button>
+            <button class="dino-roar-btn" id="btnAutoPlayVehicles" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #047857;">
+              <span>🎧</span> Nghe cả 12 xe
             </button>
           </div>
         </div>
       </div>
-      <div class="cards-grid veh-cards-grid" id="vehicleCardsContainer">
-        <!-- Render từ app.js -->
-      </div>
+      <div class="cards-grid veh-cards-grid" id="vehicleCardsContainer"></div>
     </section>
 
-    <!-- Khu Vực Khu Trò Chơi (Game Hub) -->
+    <!-- Khu Vực Khu Trò Chơi (Game Hub - 7 Trò Chơi Cuốn Hút) -->
     <section id="gameViewContainer" style="display: none;">
-      <!-- Thanh điều hướng các Game trong Game Hub -->
       <div class="game-hub-nav">
         <button class="game-tab-btn active" id="tabBtnPuzzle" onclick="switchSubGame('puzzle')">
-          <span>🧩</span>
-          <span>Ghép Chữ Vui</span>
+          <span>🧩</span><span>Ghép Chữ Vui</span>
+        </button>
+        <button class="game-tab-btn" id="tabBtnListenCatch" onclick="switchSubGame('listen_catch')">
+          <span>👂</span><span>Nghe Âm Bắt Chữ</span>
+        </button>
+        <button class="game-tab-btn" id="tabBtnShinkansen" onclick="switchSubGame('shinkansen')">
+          <span>🚅</span><span>Tàu Shinkansen</span>
         </button>
         <button class="game-tab-btn" id="tabBtnMemory" onclick="switchSubGame('dino_memory')">
-          <span>🃏</span>
-          <span>Lật Thẻ Khủng Long</span>
+          <span>🃏</span><span>Lật Thẻ Khủng Long</span>
         </button>
         <button class="game-tab-btn" id="tabBtnDinoQuiz" onclick="switchSubGame('dino_quiz')">
-          <span>🎯</span>
-          <span>Đố Vui Khủng Long</span>
+          <span>🎯</span><span>Đố Vui Khủng Long</span>
         </button>
         <button class="game-tab-btn" id="tabBtnDinoDig" onclick="switchSubGame('dino_dig')">
-          <span>⛏️</span>
-          <span>Khai Quật Hóa Thạch</span>
+          <span>⛏️</span><span>Khai Quật Hóa Thạch</span>
         </button>
         <button class="game-tab-btn" id="tabBtnQuiz" onclick="switchSubGame('quiz')">
-          <span>🚗</span>
-          <span>Đố Vui Xe Cộ</span>
+          <span>🚗</span><span>Đố Vui Xe Cộ</span>
         </button>
       </div>
 
-      <!-- Subgame 1: Ghép chữ (Spelling Puzzle) -->
+      <!-- SUBGAME 1: GHÉP CHỮ VUI (PUZZLE) -->
       <div class="game-view" id="subgamePuzzlePane">
-        <div class="game-score-row">
-          <span class="game-progress-text" id="gameProgressText">Câu 1 / 10</span>
-          <span class="game-stars" id="gameStarsCount">⭐ 0 sao</span>
+        <div id="puzzlePlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="gameProgressText">Câu 1 / 10</span>
+            <span class="tool-chip" id="puzzleModePill" style="background:#fff7ed; color:#c2410c; border-color:#fdba74;">📚 Tổng hợp quen thuộc</span>
+            <span class="game-stars" id="gameStarsCount">⭐ 0 sao</span>
+          </div>
+
+          <div class="game-card-target">
+            <div class="game-target-icon" id="gameTargetIcon">🐮</div>
+            <div class="game-target-hint" id="gameTargetHint">Ghép chữ: "bò" (Con bò)</div>
+            <div class="game-target-ja" id="gameTargetJa">🇯🇵 うし (Ushi)</div>
+          </div>
+
+          <p class="slot-tip-text">💡 Mẹo: Nếu chọn nhầm chữ, chạm trực tiếp vào ô chữ bên dưới để lấy lại nhé!</p>
+          <div class="puzzle-slots-container" id="puzzleSlots"></div>
+          <div class="options-letters-row" id="optionsLettersRow"></div>
+
+          <div class="game-controls-row">
+            <button class="btn-hear-hint" id="btnHearHint"><span>🔊</span> Nghe lại</button>
+            <button class="btn-reset-puzzle" id="btnResetPuzzle"><span>🔄</span> Xếp lại</button>
+            <button class="btn-reset-puzzle" id="btnTogglePuzzleSource">🔀 Đổi bộ câu hỏi</button>
+          </div>
         </div>
-
-        <div class="game-card-target">
-          <div class="game-target-icon" id="gameTargetIcon">🐮</div>
-          <div class="game-target-hint" id="gameTargetHint">Ghép chữ: "bò" (Con bò)</div>
-          <div class="game-target-ja" id="gameTargetJa">🇯🇵 うし (Ushi)</div>
-        </div>
-
-        <!-- Các ô chờ bé điền chữ -->
-        <div class="puzzle-slots-container" id="puzzleSlots"></div>
-
-        <!-- Các nút chữ cái để bé chọn -->
-        <div class="options-letters-row" id="optionsLettersRow"></div>
-
-        <div class="game-controls-row">
-          <button class="btn-hear-hint" id="btnHearHint">
-            <span>🔊</span> Nghe lại
-          </button>
-          <button class="btn-reset-puzzle" id="btnResetPuzzle">
-            <span>🔄</span> Xếp lại
-          </button>
+        <div id="puzzleVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🏆👑🦖🎉</div>
+          <h2 class="victory-title">XUẤT SẮC QUÁ BẢO LONG ƠI!</h2>
+          <p class="victory-desc" id="puzzleVictoryScore">Bảo Long đã hoàn thành thử thách ghép chữ!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="startMiniGame(lastPuzzleSource)">🔄 Ghép chữ ván mới</button>
+            <button class="home-btn" onclick="switchSubGame('shinkansen')">🚅 Chơi Tàu Shinkansen</button>
+            <button class="home-btn" onclick="switchMode('vocab')">📖 Về học từ mới</button>
+          </div>
         </div>
       </div>
 
-      <!-- Subgame 2: Lật thẻ Khủng Long (Dino Memory Card Game) -->
+      <!-- SUBGAME 2 (MỚI): NGHE ÂM BẮT CHỮ (AUDIO-FIRST PHONICS GAME) -->
+      <div class="game-view" id="subgameListenCatchPane" style="display: none;">
+        <div id="listenCatchPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="listenProgressText">Câu 1 / 10</span>
+            <span class="streak-pill" id="listenStreakBadge">🔥 Chuỗi x0</span>
+            <span class="game-stars" id="listenScoreText">⭐ 0 sao</span>
+          </div>
+
+          <div class="listen-filter-row">
+            <button class="tool-chip active-filter" id="btnListenTricky">⚡ Âm dễ nhầm (s/x, c/k, ă/â, đ/d...)</button>
+            <button class="tool-chip" id="btnListenWords">📖 Nghe từ vựng &amp; Khủng long &amp; Xe</button>
+          </div>
+
+          <div class="quiz-question-box" style="background: linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%); border-color: #c4b5fd; border-bottom-color: #8b5cf6;">
+            <div class="quiz-question-title" style="color: #5b21b6;">👂 Bảo Long lắng nghe và chọn đúng chữ vừa đọc nhé!</div>
+            <div class="quiz-question-ja" id="listenPromptSub" style="color: #6d28d9;">💡 Gợi ý: Chạm nút Loa để nghe lại bất cứ lúc nào</div>
+            <button class="challenge-btn" id="btnHearListenCatch" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #5b21b6; border-bottom-color: #4c1d95;">
+              <span>🔊</span> Nghe Âm Thanh
+            </button>
+          </div>
+
+          <div class="listen-options-grid" id="listenOptionsGrid"></div>
+        </div>
+        <div id="listenCatchVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">👂🏆🌟🎉</div>
+          <h2 class="victory-title" style="color: #6d28d9;">ĐÔI TAI THẦN KỲ CỦA BẢO LONG!</h2>
+          <p class="victory-desc" id="listenVictoryScore">Bé nghe chuẩn xác 100%!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initListenCatchGame()">🔄 Chơi lại Nghe Âm</button>
+            <button class="home-btn" onclick="switchSubGame('shinkansen')">🚅 Lắp Tàu Shinkansen</button>
+            <button class="home-btn" onclick="switchMode('alphabet')">🔠 Xem lại Bảng Chữ Cái</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBGAME 3 (MỚI): LẮP TÀU SHINKANSEN ĐÁNH VẦN -->
+      <div class="game-view" id="subgameShinkansenPane" style="display: none;">
+        <div id="shinkansenPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="shinkansenProgressText">Chuyến tàu 1 / 10</span>
+            <span class="game-stars" id="shinkansenScoreText">⭐ 0 sao</span>
+          </div>
+
+          <div class="shinkansen-target-card">
+            <div class="shinkansen-target-icon" id="shinkansenTargetIcon">🐟</div>
+            <div>
+              <div class="shinkansen-target-hint" id="shinkansenTargetHint">Lắp tàu chở chữ: Con cá</div>
+              <div class="shinkansen-target-ja" id="shinkansenTargetJa">🇯🇵 さかな (Sakana)</div>
+            </div>
+            <button class="btn-hear-hint" id="btnHearShinkansen"><span>🔊</span> Nghe mẫu</button>
+          </div>
+
+          <!-- Đường ray tàu Shinkansen -->
+          <div class="shinkansen-track-scene">
+            <div class="train-unit" id="trainTrainUnit">
+              <div class="train-nose" id="trainNoseSlot">?</div>
+              <div class="train-coupler">🔗</div>
+              <div class="train-car" id="trainBodySlot">?</div>
+              <div class="train-result-badge" id="trainPreviewWord">= ...</div>
+            </div>
+            <div class="train-rail"></div>
+          </div>
+
+          <!-- Bảng chọn Đầu tàu (Âm đầu) và Toa tàu (Vần) -->
+          <div class="train-choices-columns">
+            <div class="train-choice-col">
+              <div class="train-col-title">1️⃣ Chọn Đầu Tàu (Âm đầu)</div>
+              <div class="train-buttons-grid" id="shinkansenHeadChoices"></div>
+            </div>
+            <div class="train-choice-col">
+              <div class="train-col-title">2️⃣ Chọn Toa Tàu (Vần &amp; Dấu)</div>
+              <div class="train-buttons-grid" id="shinkansenTailChoices"></div>
+            </div>
+          </div>
+        </div>
+        <div id="shinkansenVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🚅💨🏆🇯🇵</div>
+          <h2 class="victory-title" style="color: #0369a1;">TRƯỞNG TÀU SHINKANSEN BẢO LONG!</h2>
+          <p class="victory-desc" id="shinkansenVictoryScore">Bé đã ghép tàu siêu tốc hoàn hảo!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initShinkansenGame()">🔄 Chuyến tàu mới</button>
+            <button class="home-btn" onclick="switchSubGame('quiz')">🚗 Đố vui Xe Cộ</button>
+            <button class="home-btn" onclick="switchMode('vehicles')">🚅 Về Ga Xe Cộ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBGAME 4: LẬT THẺ KHỦNG LONG (DINO MEMORY) -->
       <div class="game-view" id="subgameMemoryPane" style="display: none;">
-        <div class="memory-board-header">
-          <div class="memory-stats-group">
-            <span class="memory-stat-pill" id="memoryFlipsText">👀 Lượt lật: 0</span>
-            <span class="memory-stat-pill" id="memoryPairsText">⭐ Đã ghép: 0 / 6 cặp</span>
+        <div id="memoryPlayStage">
+          <div class="memory-board-header">
+            <div class="memory-stats-group">
+              <span class="memory-stat-pill" id="memoryFlipsText">👀 Lượt lật: 0</span>
+              <span class="memory-stat-pill" id="memoryPairsText">⭐ Đã ghép: 0 / 6 cặp</span>
+            </div>
+            <button class="tool-chip" id="btnRestartMemory" style="background:#fef08a; color:#854d0e; border-color:#eab308;">
+              🔄 Đổi bộ khủng long mới
+            </button>
           </div>
-          <button class="tool-chip" id="btnRestartMemory" style="background:#fef08a; color:#854d0e; border-color:#eab308; cursor:pointer;">
-            🔄 Xáo thẻ chơi lại
-          </button>
+          <p class="slot-tip-text">
+            Bảo Long chạm vào 2 thẻ giống nhau để mở khóa ảnh thật các chú khủng long nhé! (Mỗi ván chọn ngẫu nhiên 6 loài từ bộ 10 loài!) 🦖
+          </p>
+          <div class="memory-grid" id="memoryGrid"></div>
         </div>
-        <p style="text-align: center; font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 12px;">
-          Bảo Long hãy chạm vào 2 thẻ giống nhau để mở khóa các chú khủng long nhé! 🦖
-        </p>
-        <div class="memory-grid" id="memoryGrid">
-          <!-- Render động các thẻ 3D lật từ app.js -->
-        </div>
-      </div>
-
-      <!-- Subgame 3: Đố Vui Xe Cộ (Vehicle Quiz) -->
-      <div class="game-view" id="subgameQuizPane" style="display: none;">
-        <div class="game-score-row">
-          <span class="game-progress-text" id="quizProgressText">Câu 1 / 6</span>
-          <span class="game-stars" id="quizScoreText">⭐ 0 điểm</span>
-        </div>
-        <div class="quiz-question-box">
-          <div class="quiz-question-title" id="quizQuestionTitle">Bảo Long ơi, đâu là chiếc Xe Cứu Hỏa?</div>
-          <div class="quiz-question-ja" id="quizQuestionJa">🇯🇵 しょうぼうしゃ (Shoubousha) はどれ？</div>
-        </div>
-        <div class="quiz-options-grid" id="quizOptionsGrid">
-          <!-- Render các lựa chọn xe từ app.js -->
+        <div id="memoryVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🃏🦖🦕🏆</div>
+          <h2 class="victory-title" style="color: #15803d;">TRÍ NHỚ SIÊU PHÀM BẢO LONG!</h2>
+          <p class="victory-desc" id="memoryVictoryFlips">Bé đã ghép đúng tất cả 6 cặp khủng long!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initDinoMemoryGame()">🔄 Chơi bộ khủng long khác</button>
+            <button class="home-btn" onclick="switchSubGame('dino_quiz')">🎯 Đố Vui Khủng Long</button>
+            <button class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
+          </div>
         </div>
       </div>
 
-      <!-- Subgame 4: Đố Vui Khủng Long (Dino Quiz) -->
+      <!-- SUBGAME 5: ĐỐ VUI KHỦNG LONG (DINO QUIZ) -->
       <div class="game-view" id="subgameDinoQuizPane" style="display: none;">
-        <div class="game-score-row">
-          <span class="game-progress-text" id="dinoQuizProgressText">Câu 1 / 8</span>
-          <span class="game-stars" id="dinoQuizScoreText">⭐ 0 sao</span>
+        <div id="dinoQuizPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="dinoQuizProgressText">Câu 1 / 10</span>
+            <span class="game-stars" id="dinoQuizScoreText">⭐ 0 sao</span>
+          </div>
+          <div class="quiz-question-box" style="border-color: #34d399; border-bottom-color: #10b981; background: #f0fdf4;">
+            <div class="quiz-question-title" id="dinoQuizQuestionTitle" style="color: #064e3b;">Câu hỏi khủng long</div>
+            <div class="quiz-question-ja" id="dinoQuizQuestionHint" style="color: #047857; font-weight: 700;">💡 Gợi ý</div>
+            <button class="btn-hear-hint" id="btnHearDinoQuizHint" style="margin: 10px auto 0 auto; background: #10b981; border-color: #059669; border-bottom-color: #047857;">
+              <span>🔊</span> Nghe tên khủng long
+            </button>
+          </div>
+          <div class="quiz-options-grid" id="dinoQuizOptionsGrid"></div>
         </div>
-        <div class="quiz-question-box" style="border-left-color: #10b981; background: #f0fdf4;">
-          <div class="quiz-question-title" id="dinoQuizQuestionTitle" style="color: #064e3b;">Bảo Long ơi, đâu là chú Khủng Long Bọc Giáp?</div>
-          <div class="quiz-question-ja" id="dinoQuizQuestionHint" style="color: #047857; font-weight: 700;">💡 Chú ý chiếc đuôi gắn quả chùy sắt nhé!</div>
-          <button class="btn-hear-hint" id="btnHearDinoQuizHint" style="margin-top: 10px; background: #10b981; border-color: #059669;">
-            <span>🔊</span> Nghe lại câu đố
-          </button>
-        </div>
-        <div class="quiz-options-grid" id="dinoQuizOptionsGrid">
-          <!-- Render các lựa chọn khủng long từ app.js -->
+        <div id="dinoQuizVictoryStage" class="game-victory-box" style="display: none; background: linear-gradient(135deg, #dcfce7 0%, #fef08a 100%); border-color: #16a34a;">
+          <div class="victory-emojis">🦖🦕🏆🌟</div>
+          <h2 class="victory-title" style="color: #15803d;">BẢO LONG LÀ CHUYÊN GIA KHỦNG LONG!</h2>
+          <p class="victory-desc" id="dinoQuizVictoryScore">Bé đã trả lời xuất sắc các câu đố về kỷ Jura!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initDinoQuiz()">🔄 Chơi lại Đố Vui</button>
+            <button class="home-btn" onclick="switchSubGame('dino_dig')">⛏️ Khai Quật Hóa Thạch</button>
+            <button class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
+          </div>
         </div>
       </div>
 
-      <!-- Subgame 5: Khai Quật Hóa Thạch Khủng Long (Dino Dig) -->
+      <!-- SUBGAME 6: KHAI QUẬT HÓA THẠCH KHỦNG LONG (DINO DIG) -->
       <div class="game-view" id="subgameDinoDigPane" style="display: none;">
-        <div class="game-score-row">
-          <span class="game-progress-text" id="dinoDigProgressText">Hóa thạch 1 / 5</span>
-          <span class="game-stars" id="dinoDigStarsText">🏆 0 huy hiệu</span>
+        <div id="dinoDigPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="dinoDigProgressText">Hóa thạch 1 / 5</span>
+            <span class="game-stars" id="dinoDigStarsText">🏆 0 huy hiệu</span>
+          </div>
+          <div class="dig-site-box">
+            <div class="dig-site-header">
+              <h3 class="dig-site-title" id="dinoDigTargetTitle">Khu Khảo Cổ Tiền Sử Của Bảo Long</h3>
+              <p class="dig-site-subtitle">Chạm tay liên tục 5 lần vào tảng đá để dùng búa đập vỡ lớp đất cổ đại!</p>
+            </div>
+            <div class="dig-progress-container">
+              <div class="dig-progress-bar" id="dinoDigProgressBar" style="width: 0%;"></div>
+              <span class="dig-progress-label" id="dinoDigProgressLabel">Tiến độ đào: 0%</span>
+            </div>
+            <div class="dig-rock-area" id="dinoDigRockArea">
+              <div class="dig-fossil-underlay" id="dinoDigFossilUnderlay"></div>
+              <div class="dig-rock-overlay" id="dinoDigRockOverlay">
+                <div class="dig-crack-layer" id="dinoDigCrackLayer"></div>
+                <div class="dig-rock-prompt">
+                  <span class="hammer-bounce-icon">🔨</span>
+                  <span class="dig-prompt-text" id="digPromptText">Chạm vào tảng đá (0/5)</span>
+                </div>
+              </div>
+              <div class="dig-revived-dino" id="dinoDigRevivedDino" style="display: none;">
+                <div class="revived-icon" id="dinoDigRevivedIcon"></div>
+                <div class="revived-title" id="dinoDigRevivedTitle">T-Rex Bạo Chúa</div>
+                <div class="revived-ja" id="dinoDigRevivedJa">ティラノサウルス</div>
+                <div class="revived-action">
+                  <button class="dino-roar-btn" id="btnNextFossil" style="font-size: 14px; padding: 10px 20px;">
+                    ⛏️ Khai quật chú tiếp theo ➡️
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        
-        <div class="dig-site-box">
-          <div class="dig-site-header">
-            <h3 class="dig-site-title" id="dinoDigTargetTitle">Khu Khảo Cổ Tiền Sử Của Bảo Long</h3>
-            <p class="dig-site-subtitle">Chạm tay liên tục vào tảng đá để dùng búa đập vỡ lớp đất đá cổ đại, hồi sinh chú khủng long!</p>
+        <div id="dinoDigVictoryStage" class="game-victory-box" style="display: none; background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); border-color: #ea580c;">
+          <div class="victory-emojis">⛏️🦕🦖🏆✨</div>
+          <h2 class="victory-title" style="color: #9a3412;">NHÀ KHẢO CỔ VĨ ĐẠI BẢO LONG!</h2>
+          <p class="victory-desc">Bé đã khai quật và đánh thức toàn bộ các loài khủng long tiền sử từ lòng đất!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" style="background: #ea580c; border-color: #c2410c;" onclick="initDinoDig()">🔄 Khai quật lại từ đầu</button>
+            <button class="home-btn" onclick="switchSubGame('dino_quiz')">🎯 Đố Vui Khủng Long</button>
+            <button class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
           </div>
+        </div>
+      </div>
 
-          <!-- Thanh tiến độ khai quật -->
-          <div class="dig-progress-container">
-            <div class="dig-progress-bar" id="dinoDigProgressBar" style="width: 0%;"></div>
-            <span class="dig-progress-label" id="dinoDigProgressLabel">Tiến độ đào: 0%</span>
+      <!-- SUBGAME 7: ĐỐ VUI XE CỘ (VEHICLE QUIZ - ĐẦY ĐỦ 12 XE) -->
+      <div class="game-view" id="subgameQuizPane" style="display: none;">
+        <div id="quizPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="quizProgressText">Câu 1 / 8</span>
+            <span class="game-stars" id="quizScoreText">⭐ 0 sao</span>
           </div>
-
-          <!-- Khu vực tảng đá tương tác -->
-          <div class="dig-rock-area" id="dinoDigRockArea">
-            <div class="dig-fossil-underlay" id="dinoDigFossilUnderlay"></div>
-            <div class="dig-rock-overlay" id="dinoDigRockOverlay">
-              <div class="dig-crack-layer" id="dinoDigCrackLayer"></div>
-              <div class="dig-rock-prompt">
-                <span class="hammer-bounce-icon">🔨</span>
-                <span class="dig-prompt-text">Chạm vào tảng đá để đập!</span>
-              </div>
-            </div>
-            <!-- Hiển thị khi khủng long sống lại -->
-            <div class="dig-revived-dino" id="dinoDigRevivedDino" style="display: none;">
-              <div class="revived-icon" id="dinoDigRevivedIcon"></div>
-              <div class="revived-title" id="dinoDigRevivedTitle">T-Rex Bạo Chúa</div>
-              <div class="revived-ja" id="dinoDigRevivedJa">ティラノサウルス</div>
-              <div class="revived-action">
-                <button class="dino-roar-btn" id="btnNextFossil" style="font-size: 15px; padding: 12px 24px;">
-                  ⛏️ Khai quật chú khủng long tiếp theo ➡️
-                </button>
-              </div>
-            </div>
+          <div class="quiz-question-box">
+            <div class="quiz-question-title" id="quizQuestionTitle">Câu hỏi xe cộ</div>
+            <div class="quiz-question-ja" id="quizQuestionJa">🇯🇵</div>
+            <button class="btn-hear-hint" id="btnHearQuizQuestion" style="margin: 10px auto 0 auto;">
+              <span>🔊</span> Nghe tên xe
+            </button>
+          </div>
+          <div class="quiz-options-grid" id="quizOptionsGrid"></div>
+        </div>
+        <div id="quizVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🚗🚅🏆🎉</div>
+          <h2 class="victory-title" style="color: #0284c7;">BẢO LONG LÀ BÁC TÀI XUẤT SẮC!</h2>
+          <p class="victory-desc" id="quizVictoryScore">Bé đã hoàn thành xuất sắc thử thách Đố vui Xe Cộ!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initVehicleQuiz()">🔄 Chơi lại Đố Vui Xe</button>
+            <button class="home-btn" onclick="switchSubGame('shinkansen')">🚅 Chơi Tàu Shinkansen</button>
+            <button class="home-btn" onclick="switchMode('vehicles')">🚗 Về Ga Xe Cộ</button>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Modal Chi Tiết Từ Vựng & Đánh Vần Khi Chạm Thẻ -->
+  <!-- Modal Chi Tiết Từ Vựng & Đánh Vần & Tập Viết Ô Ly -->
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal-content">
-      <button class="modal-close-btn" id="modalCloseBtn">✕</button>
-      
+      <div class="modal-nav-header">
+        <button class="modal-step-btn" id="modalPrevBtn" title="Từ trước (Phím mũi tên trái)">◀ Trước</button>
+        <span class="modal-step-info" id="modalStepInfo">1 / 10</span>
+        <button class="modal-step-btn" id="modalNextBtn" title="Từ tiếp theo (Phím mũi tên phải)">Sau ▶</button>
+        <button class="modal-close-btn" id="modalCloseBtn" title="Đóng (ESC)">✕</button>
+      </div>
+
       <div class="modal-icon" id="modalIcon">👨</div>
       <div class="modal-word" id="modalWord">ba</div>
-      
-      <!-- Phân tích vần -->
-      <div class="modal-breakdown-box" id="modalBreakdownBox">
-        <div class="breakdown-item">b</div>
-        <div class="breakdown-item">a</div>
-      </div>
+      <div class="modal-learned-badge" id="modalLearnedBadge">⭐ Đã khám phá!</div>
+
+      <!-- Phân tích vần (Chạm từng chữ/vần/dấu để nghe chuẩn xác) -->
+      <p style="font-size: 11px; color: #64748b; font-weight: 800; margin-top: 6px;">👇 Chạm từng mảnh để nghe âm:</p>
+      <div class="modal-breakdown-box" id="modalBreakdownBox"></div>
 
       <div class="modal-ja-box" id="modalJaText">🇯🇵 お父さん (Otousan)</div>
       <div class="modal-example" id="modalExample">Ví dụ: "Ba yêu Bảo Long"</div>
 
       <div class="modal-btn-row">
-        <button class="modal-act-btn btn-sound-main" id="modalBtnSpeakWord">
-          <span>🔊</span> Nghe đọc
-        </button>
-        <button class="modal-act-btn btn-sound-spell" id="modalBtnSpell">
-          <span>🔤</span> Đánh vần chậm
-        </button>
-        <button class="modal-act-btn btn-drawing" id="modalBtnToggleDrawing">
-          <span>✍️</span> Tập viết nét
-        </button>
+        <button class="modal-act-btn btn-sound-main" id="modalBtnSpeakWord"><span>🔊</span> Nghe đọc</button>
+        <button class="modal-act-btn btn-sound-spell" id="modalBtnSpell"><span>🔤</span> Đánh vần chậm</button>
+        <button class="modal-act-btn btn-drawing" id="modalBtnToggleDrawing"><span>✍️</span> Tập viết ô ly</button>
       </div>
 
-      <!-- Khung vẽ Canvas cho bé tập đồ nét chữ -->
+      <!-- Khung vẽ Canvas 4 ô ly cho bé tập đồ nét chữ -->
       <div class="canvas-container" id="canvasDrawingBox">
-        <p style="font-size: 13px; font-weight: 700; color: #64748b; margin-bottom: 6px;">Bảo Long hãy dùng ngón tay hoặc chuột để tô theo nét chữ nhé:</p>
+        <p style="font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 6px;">Bảo Long dùng ngón tay hoặc chuột để tô theo nét mờ trên bảng ô ly nhé:</p>
         <canvas id="drawingCanvas"></canvas>
         <div class="canvas-controls">
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <span style="font-size: 12px; font-weight: 700; color: #475569;">Cọ vẽ:</span>
-            <span class="color-picker-dot" data-color="#0284c7" style="background: #0284c7;"></span>
+          <div style="display: flex; gap: 7px; align-items: center;">
+            <span style="font-size: 12px; font-weight: 700; color: #475569;">Màu:</span>
+            <span class="color-picker-dot active-dot" data-color="#0284c7" style="background: #0284c7;"></span>
             <span class="color-picker-dot" data-color="#f43f5e" style="background: #f43f5e;"></span>
             <span class="color-picker-dot" data-color="#10b981" style="background: #10b981;"></span>
             <span class="color-picker-dot" data-color="#f59e0b" style="background: #f59e0b;"></span>
           </div>
-          <button class="tool-chip" id="btnCanvasClear">🧹 Xóa vẽ lại</button>
+          <div style="display: flex; gap: 6px;">
+            <button class="tool-chip" id="btnCanvasClear">🧹 Xóa</button>
+            <button class="tool-chip" id="btnCanvasFinish" style="background:#dcfce7; color:#15803d; border-color:#22c55e;">⭐ Viết xong!</button>
+          </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- MỚI: Modal Kho Sticker & Thành Tích Của Bảo Long -->
+  <div class="modal-overlay" id="stickerModalOverlay">
+    <div class="modal-content" style="max-width: 560px; border-color: #fde047;">
+      <div class="modal-nav-header" style="justify-content: space-between;">
+        <span style="font-size: 18px; font-weight: 900; color: #b45309;">🏆 Kho Báu Sao &amp; Sticker Của Bảo Long</span>
+        <button class="modal-close-btn" id="stickerModalCloseBtn">✕</button>
+      </div>
+
+      <div class="profile-summary-card">
+        <div class="profile-rank-big">
+          <span id="stickerRankBadge" style="font-size: 42px;">🌱</span>
+          <div style="text-align: left;">
+            <div style="font-size: 12px; font-weight: 800; color: #92400e;">DANH HIỆU HIỆN TẠI</div>
+            <div id="stickerRankTitle" style="font-size: 20px; font-weight: 900; color: #78350f;">Khám Phá Nhí</div>
+          </div>
+        </div>
+        <div class="profile-stats-mini">
+          <div class="p-stat-item">⭐ <strong id="stickerTotalStars">0</strong> Sao</div>
+          <div class="p-stat-item">📚 <strong id="stickerTotalWords">0</strong> Từ đã thuộc</div>
+        </div>
+        <div class="lesson-progress-row" style="margin-top: 10px;">
+          <div class="lesson-progress-bar-bg">
+            <div class="lesson-progress-bar-fill" id="stickerNextRankBar" style="width: 10%; background: linear-gradient(90deg, #f59e0b, #ea580c);"></div>
+          </div>
+          <span class="lesson-progress-label" id="stickerNextRankText">Cần thêm 25⭐ để lên cấp!</span>
+        </div>
+      </div>
+
+      <p style="font-size: 13px; font-weight: 800; color: #475569; margin: 12px 0 8px 0;">
+        Chạm vào Sticker đã mở khóa để đeo làm <strong>Avatar trên góc màn hình</strong> nhé! 👇
+      </p>
+      <div class="stickers-grid" id="stickersGrid"></div>
     </div>
   </div>
 

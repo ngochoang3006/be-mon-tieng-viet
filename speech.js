@@ -1,18 +1,44 @@
-// Module phát âm Audio Người Thật (Nam & Nữ) + Fallback Web Speech API cho Bé Mon
+// Module phát âm Audio Người Thật (Nam & Nữ) + Fallback Web Speech API cho Bé Bảo Long
 
 class SoundManager {
   constructor() {
-    this.gender = 'female'; // 'female' (Cô giáo Hoài My) | 'male' (Thầy giáo / Ba Nam Minh)
+    this.gender = 'female'; // 'female' (Cô giáo Hoài My) | 'male' (Ba Nam Minh)
     this.speedRate = 1.0;   // 1.0 (Chuẩn) | 0.8 (Chậm)
     this.isMuted = false;
     this.currentAudio = null;
     this.audioCtx = null;
+
+    // Khôi phục cài đặt âm thanh đã lưu của Bảo Long
+    this.loadPrefs();
 
     // Web Speech API fallback
     this.synth = window.speechSynthesis;
     this.voices = [];
     this.selectedVoice = null;
     this.initWebSpeech();
+  }
+
+  loadPrefs() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('baolong_audio_prefs_v1') || '{}');
+      if (saved.gender === 'male' || saved.gender === 'female') this.gender = saved.gender;
+      if (saved.speedRate === 0.8 || saved.speedRate === 1.0) this.speedRate = saved.speedRate;
+      if (typeof saved.isMuted === 'boolean') this.isMuted = saved.isMuted;
+    } catch (e) {
+      // Ignore storage error
+    }
+  }
+
+  savePrefs() {
+    try {
+      localStorage.setItem('baolong_audio_prefs_v1', JSON.stringify({
+        gender: this.gender,
+        speedRate: this.speedRate,
+        isMuted: this.isMuted
+      }));
+    } catch (e) {
+      // Ignore storage error
+    }
   }
 
   initWebSpeech() {
@@ -43,24 +69,26 @@ class SoundManager {
   setGender(gender) {
     this.gender = gender;
     this.updateWebVoice();
+    this.savePrefs();
   }
 
   setSpeed(speedVal) {
-    if (speedVal === 'slow') {
-      this.speedRate = 0.8;
-    } else {
-      this.speedRate = 1.0;
-    }
+    this.speedRate = speedVal === 'slow' ? 0.8 : 1.0;
     if (this.currentAudio) {
       this.currentAudio.playbackRate = this.speedRate;
     }
+    this.savePrefs();
   }
 
-  // Phát file audio người thật từ thư mục /audio/{gender}/{key}.mp3
-  playAudioFile(key, onEndCallback, fallbackText = null) {
-    if (this.isMuted) return;
+  setMuted(muted) {
+    this.isMuted = !!muted;
+    if (this.isMuted) {
+      this.stopAll();
+    }
+    this.savePrefs();
+  }
 
-    // Dừng audio cũ nếu đang phát
+  stopAll() {
     if (this.currentAudio) {
       this.currentAudio.pause();
       this.currentAudio = null;
@@ -68,19 +96,33 @@ class SoundManager {
     if (this.synth) {
       this.synth.cancel();
     }
+  }
+
+  // Phát file audio người thật từ thư mục /audio/{gender}/{key}.mp3
+  playAudioFile(key, onEndCallback, fallbackText = null) {
+    if (this.isMuted) {
+      if (onEndCallback) setTimeout(onEndCallback, 250);
+      return;
+    }
+
+    this.stopAll();
 
     const audioUrl = `audio/${this.gender}/${encodeURIComponent(key)}.mp3`;
     const audio = new Audio(audioUrl);
     this.currentAudio = audio;
     audio.playbackRate = this.speedRate;
 
-    audio.onended = () => {
+    let ended = false;
+    const finish = () => {
+      if (ended) return;
+      ended = true;
       this.currentAudio = null;
       if (onEndCallback) onEndCallback();
     };
 
-    audio.onerror = (e) => {
-      console.warn(`Không tải được file âm thanh: ${audioUrl}, thử fallback alias hoặc TTS.`, e);
+    audio.onended = finish;
+
+    audio.onerror = () => {
       if (key === 'alpha_â') {
         this.playAudioFile('alpha_aa', onEndCallback, fallbackText);
         return;
@@ -96,61 +138,110 @@ class SoundManager {
 
       this.currentAudio = null;
       if (fallbackText) {
-        this.speakTTS(fallbackText, onEndCallback);
-      } else if (onEndCallback) {
-        onEndCallback();
+        this.speakTTS(fallbackText, finish);
+      } else {
+        finish();
       }
     };
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
-      playPromise.catch(err => {
-        console.warn('Autoplay bị chặn hoặc lỗi phát:', err);
+      playPromise.catch(() => {
         if (fallbackText) {
-          this.speakTTS(fallbackText, onEndCallback);
+          this.speakTTS(fallbackText, finish);
+        } else {
+          finish();
         }
       });
     }
   }
 
-  // Phát âm chữ cái bảng chữ cái
-  speakAlphabet(char, phonetic) {
-    const key = `alpha_${char.toLowerCase()}`;
-    this.playAudioFile(key, null, phonetic || char);
+  // Phát âm chữ cái bảng chữ cái hoặc phụ âm ghép
+  speakAlphabet(char, phonetic, onEndCallback = null) {
+    const clean = (char || '').trim().toLowerCase();
+    const key = `alpha_${clean}`;
+    this.playAudioFile(key, onEndCallback, phonetic || clean);
+  }
+
+  // Phát âm thông minh cho từng mẩu chữ cái / vần / thanh điệu (hết hoàn toàn 404 khi bấm breakdown hay ô ghép chữ!)
+  speakPart(partText, onEndCallback = null) {
+    const clean = (partText || '').trim().toLowerCase();
+    if (!clean) return;
+
+    // 1. Kiểm tra nếu là tên thanh điệu
+    const toneMap = {
+      'ngang': 'ngang',
+      'sắc': 'sac',
+      'huyền': 'huyen',
+      'hỏi': 'hoi',
+      'ngã': 'nga',
+      'nặng': 'nang'
+    };
+    if (toneMap[clean]) {
+      this.speakTone(toneMap[clean], `dấu ${clean}`, onEndCallback);
+      return;
+    }
+
+    // 2. Kiểm tra nếu là 29 chữ cái hoặc 11 phụ âm ghép
+    const alphaLetters = new Set([
+      'a', 'ă', 'â', 'b', 'c', 'd', 'đ', 'e', 'ê', 'g', 'h', 'i', 'k', 'l',
+      'm', 'n', 'o', 'ô', 'ơ', 'p', 'q', 'r', 's', 't', 'u', 'ư', 'v', 'x', 'y',
+      'ch', 'gh', 'gi', 'kh', 'ng', 'ngh', 'nh', 'ph', 'qu', 'th', 'tr'
+    ]);
+    if (alphaLetters.has(clean)) {
+      this.speakAlphabet(clean, clean, onEndCallback);
+      return;
+    }
+
+    // 3. Nếu là vần hoặc chữ có dấu trong game ghép chữ / tách vần -> dùng syl_{clean}
+    this.playAudioFile(`syl_${clean}`, onEndCallback, clean);
+  }
+
+  // Phát âm từ vựng trọn vẹn (hỗ trợ audioKey cho Khủng Long & Xe Cộ)
+  speakWordObj(wordObj, onEndCallback = null) {
+    if (!wordObj) return;
+    if (wordObj.audioKey) {
+      this.playAudioFile(wordObj.audioKey, onEndCallback, wordObj.word || wordObj.dinoName || wordObj.vehName);
+    } else if (wordObj.word) {
+      this.speakWord(wordObj.word, onEndCallback);
+    }
   }
 
   // Phát âm từ vựng trọn vẹn
-  speakWord(word, onEndCallback) {
-    const cleanWord = word.trim().toLowerCase();
+  speakWord(word, onEndCallback = null) {
+    const cleanWord = (word || '').trim().toLowerCase();
     const key = `word_${cleanWord}`;
     this.playAudioFile(key, onEndCallback, word);
   }
 
   // Đánh vần chi tiết từng chữ cái và dấu thanh
-  spellWord(word, fallbackSpellText, onEndCallback) {
-    const cleanWord = word.trim().toLowerCase();
+  spellWord(word, fallbackSpellText, onEndCallback = null) {
+    const cleanWord = (word || '').trim().toLowerCase();
     const key = `spell_${cleanWord}`;
     this.playAudioFile(key, onEndCallback, fallbackSpellText || word);
   }
 
   // Phát âm dấu thanh
-  speakTone(toneKey, fallbackText) {
+  speakTone(toneKey, fallbackText, onEndCallback = null) {
     const key = `tone_${toneKey}`;
-    this.playAudioFile(key, null, fallbackText);
+    this.playAudioFile(key, onEndCallback, fallbackText);
   }
 
   // Lời khen thưởng trò chơi
-  speakCheer(type) {
+  speakCheer(type, onEndCallback = null) {
     const key = `cheer_${type}`;
-    this.playAudioFile(key, null, type === 'correct' ? 'Bảo Long giỏi quá!' : 'Bảo Long thử lại nhé!');
+    const fb = type === 'correct' ? 'Bảo Long giỏi quá!' : (type === 'wrong' ? 'Bảo Long thử lại nhé!' : '');
+    this.playAudioFile(key, onEndCallback, fb);
   }
 
   // Fallback Web Speech API nếu gặp từ chưa sinh file
   speakTTS(text, onEndCallback) {
-    if (this.isMuted || !this.synth) return;
+    if (this.isMuted || !this.synth) {
+      if (onEndCallback) setTimeout(onEndCallback, 250);
+      return;
+    }
     this.synth.cancel();
 
-    // Chuẩn hóa dấu gạch ngang thành dấu phẩy để Web Speech đọc ngắt âm chuẩn ngữ âm
     const cleanText = (text || '').replace(/\s*-\s*/g, ', ');
     const utter = new SpeechSynthesisUtterance(cleanText);
     utter.rate = this.speedRate === 0.8 ? 0.75 : 0.95;
@@ -160,11 +251,12 @@ class SoundManager {
     }
     if (onEndCallback) {
       utter.onend = onEndCallback;
+      utter.onerror = onEndCallback;
     }
     this.synth.speak(utter);
   }
 
-  // Web Audio Context cho hiệu ứng game (ting, pop, còi pháo hoa)
+  // Web Audio Context cho hiệu ứng game
   getAudioContext() {
     if (!this.audioCtx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
@@ -176,7 +268,7 @@ class SoundManager {
     return this.audioCtx;
   }
 
-  playToneFreq(freq, type, duration, delay = 0) {
+  playToneFreq(freq, type, duration, delay = 0, vol = 0.12) {
     if (this.isMuted) return;
     try {
       const ctx = this.getAudioContext();
@@ -186,7 +278,7 @@ class SoundManager {
 
       osc.type = type;
       osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-      gain.gain.setValueAtTime(0.12, ctx.currentTime + delay);
+      gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
 
       osc.connect(gain);
@@ -194,24 +286,29 @@ class SoundManager {
       osc.start(ctx.currentTime + delay);
       osc.stop(ctx.currentTime + delay + duration);
     } catch (e) {
-      console.warn(e);
+      // Ignore Web Audio errors
     }
   }
 
   playClick() {
-    this.playToneFreq(600, 'sine', 0.08);
+    this.playToneFreq(620, 'sine', 0.07, 0, 0.08);
+  }
+
+  playPop() {
+    this.playToneFreq(480, 'sine', 0.06, 0, 0.08);
+    this.playToneFreq(720, 'sine', 0.08, 0.03, 0.08);
   }
 
   playCorrect() {
-    this.playToneFreq(523.25, 'triangle', 0.12, 0);     // C5
-    this.playToneFreq(659.25, 'triangle', 0.12, 0.08);  // E5
-    this.playToneFreq(783.99, 'triangle', 0.15, 0.16);  // G5
-    this.playToneFreq(1046.50, 'triangle', 0.25, 0.24); // C6
+    this.playToneFreq(523.25, 'triangle', 0.12, 0);
+    this.playToneFreq(659.25, 'triangle', 0.12, 0.08);
+    this.playToneFreq(783.99, 'triangle', 0.15, 0.16);
+    this.playToneFreq(1046.50, 'triangle', 0.25, 0.24);
   }
 
   playWrong() {
-    this.playToneFreq(330, 'sawtooth', 0.15, 0);
-    this.playToneFreq(280, 'sawtooth', 0.2, 0.12);
+    this.playToneFreq(310, 'triangle', 0.14, 0, 0.09);
+    this.playToneFreq(250, 'triangle', 0.18, 0.12, 0.09);
   }
 
   playVictory() {
@@ -221,18 +318,24 @@ class SoundManager {
     });
   }
 
-  // Âm thanh búa đập đá khảo cổ (Excavation hammer hit)
   playHammerHit() {
     this.playToneFreq(750, 'square', 0.05, 0);
     this.playToneFreq(350, 'triangle', 0.08, 0.02);
   }
 
-  // Âm thanh hồi sinh khủng long hóa thạch huyền bí (Magical revive)
   playMagicalRevive() {
     const notes = [440, 554.37, 659.25, 880, 1108.73, 1318.51];
     notes.forEach((freq, idx) => {
       this.playToneFreq(freq, 'sine', 0.3, idx * 0.08);
     });
+  }
+
+  // Còi tàu Shinkansen siêu tốc
+  playShinkansenWhistle() {
+    this.playToneFreq(587.33, 'triangle', 0.18, 0, 0.14);
+    this.playToneFreq(740.0, 'triangle', 0.18, 0, 0.10);
+    this.playToneFreq(587.33, 'triangle', 0.38, 0.22, 0.14);
+    this.playToneFreq(740.0, 'triangle', 0.38, 0.22, 0.10);
   }
 }
 

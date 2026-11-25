@@ -1,27 +1,72 @@
-// Ứng dụng Học Tiếng Việt cho Bé Bảo Long (6 tuổi)
-// Tích hợp lộ trình Từ mới, Tập đánh vần, Bảng chữ cái, Khủng Long, Xe Cộ và Khu Trò Chơi
+// Ứng dụng Học Tiếng Việt cho Bé Bảo Long (6 tuổi - sống tại Nhật Bản)
+// Hệ thống hoàn chỉnh: Kho Sao & Sticker, Nghe cả bài, Ghép chữ thông minh, Nghe Âm Bắt Chữ, Tàu Shinkansen,
+// Công viên Khủng Long & Xe Cộ ảnh chụp thật + Tập viết 4 ô ly chuẩn lớp 1.
 
-let currentMode = 'vocab'; // 'vocab' | 'phonics' | 'alphabet' | 'dino' | 'vehicles' | 'game'
+let currentMode = 'vocab'; // 'alphabet' | 'vocab' | 'phonics' | 'dino' | 'vehicles' | 'game'
 let currentLessonIdx = 0;
 let currentWordModal = null;
+let modalPlaylist = [];
+let modalPlaylistIdx = 0;
+
+// Explorer Progress State (lưu tự động vào localStorage)
+const PROGRESS_KEY = 'baolong_progress_v2';
+let explorerState = {
+  stars: 0,
+  learnedIds: [],
+  equippedStickerId: 'stk_trex',
+  completedGames: 0
+};
+
+// Auto-play audio tour state
+let autoPlayTimer = null;
+let autoPlayRunning = false;
+let autoPlayActiveBtn = null;
 
 // Game Hub State
-let currentSubGame = 'puzzle'; // 'puzzle' | 'dino_memory' | 'quiz'
+let currentSubGame = 'puzzle';
 
-// Puzzle Game State
+// Game 1: Puzzle State
 let gameCurrentIndex = 0;
 let gameQuestions = [];
-let gameSlots = [];
+let gameSlots = []; // array of { char, btnId } or null
 let gameScore = 0;
+let lastPuzzleSource = 'default'; // 'default' | 'lesson'
+let activeLessonContext = null;
 
-// Dino Memory Game State
+// Game 2: Listen & Catch State
+let listenMode = 'tricky'; // 'tricky' | 'words'
+let listenQuestions = [];
+let listenIndex = 0;
+let listenScore = 0;
+let listenStreak = 0;
+let listenBestStreak = 0;
+
+// Game 3: Shinkansen Train State
+let shinkansenQuestions = [];
+let shinkansenIndex = 0;
+let shinkansenScore = 0;
+let selectedTrainHead = '';
+let selectedTrainTail = '';
+let shinkansenLocked = false;
+
+// Game 4: Dino Memory State
 let memoryCards = [];
 let memoryFlippedCards = [];
 let memoryMatchedCount = 0;
 let memoryFlips = 0;
 let memoryIsLocked = false;
 
-// Vehicle Quiz State
+// Game 5: Dino Quiz State
+let dinoQuizQuestions = [];
+let dinoQuizCurrentIndex = 0;
+let dinoQuizScore = 0;
+
+// Game 6: Dino Dig State
+let dinoDigCurrentIndex = 0;
+let dinoDigHits = 0;
+let dinoDigBadges = 0;
+
+// Game 7: Vehicle Quiz State
 let quizQuestions = [];
 let quizCurrentIndex = 0;
 let quizScore = 0;
@@ -30,91 +75,272 @@ let quizScore = 0;
 let canvas, ctx;
 let isDrawing = false;
 let drawColor = '#0284c7';
+let writingAwardedThisOpen = false;
 
 document.addEventListener('DOMContentLoaded', () => {
+  loadProgress();
   initEventListeners();
+  syncTopControlsUI();
+  updateProfileHUD();
   renderCurrentView();
   initCanvas();
 });
 
-function initEventListeners() {
-  // Chuyển Tab chế độ
-  document.querySelectorAll('.mode-pill').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const mode = btn.dataset.mode;
-      switchMode(mode);
-    });
+// ========================================================
+// KHO SAO, TIẾN ĐỘ & STICKER (PERSISTENT GAMIFICATION)
+// ========================================================
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(PROGRESS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (typeof parsed.stars === 'number') explorerState.stars = parsed.stars;
+      if (Array.isArray(parsed.learnedIds)) explorerState.learnedIds = parsed.learnedIds;
+      if (parsed.equippedStickerId) explorerState.equippedStickerId = parsed.equippedStickerId;
+      if (typeof parsed.completedGames === 'number') explorerState.completedGames = parsed.completedGames;
+    }
+  } catch (e) {
+    // Ignore storage error
+  }
+}
+
+function saveProgress() {
+  try {
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify(explorerState));
+  } catch (e) {
+    // Ignore storage error
+  }
+}
+
+function awardStars(amount, reasonText = '') {
+  const prevRank = getCurrentRank(explorerState.stars);
+  explorerState.stars += amount;
+  saveProgress();
+  updateProfileHUD();
+  const nextRank = getCurrentRank(explorerState.stars);
+
+  if (nextRank.title !== prevRank.title) {
+    fireConfetti();
+    showToast(`🎊 THĂNG HẠNG! Bảo Long đạt danh hiệu mới: ${nextRank.badge} ${nextRank.title}!`);
+  } else if (reasonText) {
+    showToast(`⭐ +${amount} Sao: ${reasonText}`);
+  }
+}
+
+function markWordLearned(wordId) {
+  if (!wordId) return false;
+  if (!explorerState.learnedIds.includes(wordId)) {
+    explorerState.learnedIds.push(wordId);
+    explorerState.stars += 2;
+    saveProgress();
+    updateProfileHUD();
+    return true;
+  }
+  return false;
+}
+
+function getCurrentRank(stars) {
+  let rank = EXPLORER_RANKS[0];
+  for (const r of EXPLORER_RANKS) {
+    if (stars >= r.minStars) rank = r;
+  }
+  return rank;
+}
+
+function updateProfileHUD() {
+  const sticker = STICKERS_DATA.find(s => s.id === explorerState.equippedStickerId) || STICKERS_DATA[0];
+  const rank = getCurrentRank(explorerState.stars);
+
+  const avEl = document.getElementById('profileAvatarEmoji');
+  const navStars = document.getElementById('navTotalStars');
+  const rankBadge = document.getElementById('rankBadge');
+  const rankTitle = document.getElementById('rankTitle');
+  const learnedCount = document.getElementById('learnedWordsCount');
+
+  if (avEl) avEl.innerText = sticker.emoji;
+  if (navStars) navStars.innerText = `⭐ ${explorerState.stars}`;
+  if (rankBadge) rankBadge.innerText = rank.badge;
+  if (rankTitle) rankTitle.innerText = rank.title;
+  if (learnedCount) learnedCount.innerText = explorerState.learnedIds.length;
+}
+
+function openStickerModal() {
+  window.soundMgr.playClick();
+  const rank = getCurrentRank(explorerState.stars);
+  const nextRank = EXPLORER_RANKS.find(r => r.minStars > explorerState.stars);
+
+  document.getElementById('stickerRankBadge').innerText = rank.badge;
+  document.getElementById('stickerRankTitle').innerText = rank.title;
+  document.getElementById('stickerTotalStars').innerText = explorerState.stars;
+  document.getElementById('stickerTotalWords').innerText = explorerState.learnedIds.length;
+
+  const barEl = document.getElementById('stickerNextRankBar');
+  const txtEl = document.getElementById('stickerNextRankText');
+  if (nextRank) {
+    const span = nextRank.minStars - rank.minStars;
+    const cur = explorerState.stars - rank.minStars;
+    const pct = Math.min(100, Math.max(8, Math.round((cur / span) * 100)));
+    barEl.style.width = `${pct}%`;
+    txtEl.innerText = `Cần thêm ${nextRank.minStars - explorerState.stars}⭐ để lên ${nextRank.badge} ${nextRank.title}`;
+  } else {
+    barEl.style.width = '100%';
+    txtEl.innerText = '👑 Đã đạt cấp bậc Huyền Thoại cao nhất!';
+  }
+
+  const grid = document.getElementById('stickersGrid');
+  grid.innerHTML = '';
+  STICKERS_DATA.forEach(stk => {
+    const unlocked = explorerState.stars >= stk.unlockStars;
+    const isEquipped = explorerState.equippedStickerId === stk.id;
+
+    const card = document.createElement('div');
+    card.className = `sticker-card ${unlocked ? (isEquipped ? 'equipped' : '') : 'locked'}`;
+    card.innerHTML = `
+      <div class="sticker-emoji">${unlocked ? stk.emoji : '🔒'}</div>
+      <div class="sticker-name">${stk.name}</div>
+      <div class="sticker-status">
+        ${isEquipped ? '✅ Đang đeo Avatar' : (unlocked ? '👆 Chạm để đeo' : `Cần ${stk.unlockStars} ⭐`)}
+      </div>
+    `;
+
+    if (unlocked) {
+      card.addEventListener('click', () => {
+        explorerState.equippedStickerId = stk.id;
+        saveProgress();
+        updateProfileHUD();
+        window.soundMgr.playAudioFile('cheer_sticker', null, 'Chúc mừng Bảo Long!');
+        openStickerModal(); // refresh grid
+        showToast(`${stk.emoji} Đã đổi Avatar thành "${stk.name}"!`);
+      });
+    } else {
+      card.addEventListener('click', () => {
+        window.soundMgr.playClick();
+        showToast(`🔒 Cần ${stk.unlockStars}⭐ để mở khóa ${stk.name} (${stk.desc})`);
+      });
+    }
+    grid.appendChild(card);
   });
 
-  // Tùy chỉnh giọng đọc Người thật: Nữ (Cô giáo) hoặc Nam (Ba)
-  const btnVoiceGender = document.getElementById('btnVoiceGender');
-  if (btnVoiceGender) {
-    btnVoiceGender.addEventListener('click', () => {
-      if (window.soundMgr.gender === 'female') {
-        window.soundMgr.setGender('male');
-        btnVoiceGender.innerHTML = '<span>👨</span> <span>Giọng: Nam (Ba)</span>';
-        showToast('Đã đổi sang Giọng Nam (Nam Minh) người thật ấm áp!');
-        window.soundMgr.playClick();
-        window.soundMgr.speakWord('bố');
-      } else {
-        window.soundMgr.setGender('female');
-        btnVoiceGender.innerHTML = '<span>👩</span> <span>Giọng: Nữ (Cô)</span>';
-        showToast('Đã đổi sang Giọng Nữ (Hoài My) người thật truyền cảm!');
-        window.soundMgr.playClick();
-        window.soundMgr.speakWord('mẹ');
-      }
-    });
-  }
+  document.getElementById('stickerModalOverlay').classList.add('active');
+}
 
+// ========================================================
+// EVENT LISTENERS & TOP CONTROLS
+// ========================================================
+function syncTopControlsUI() {
+  const btnGender = document.getElementById('btnVoiceGender');
   const btnSpeed = document.getElementById('btnSpeed');
-  if (btnSpeed) {
-    btnSpeed.addEventListener('click', () => {
-      if (window.soundMgr.speedRate > 0.9) {
-        window.soundMgr.setSpeed('slow');
-        btnSpeed.innerHTML = '<span>🐢</span> <span>Chậm</span>';
-        showToast('Đã chuyển sang Tốc độ Đọc Chậm cho Bảo Long');
-      } else {
-        window.soundMgr.setSpeed('normal');
-        btnSpeed.innerHTML = '<span>⚡</span> <span>Chuẩn</span>';
-        showToast('Đã chuyển sang Tốc độ Chuẩn');
-      }
-    });
-  }
-
   const btnMute = document.getElementById('btnMute');
+
+  if (btnGender) {
+    btnGender.innerHTML = window.soundMgr.gender === 'male'
+      ? '<span>👨</span> <span>Nam (Ba)</span>'
+      : '<span>👩</span> <span>Nữ (Cô)</span>';
+  }
+  if (btnSpeed) {
+    btnSpeed.innerHTML = window.soundMgr.speedRate < 0.95
+      ? '<span>🐢</span> <span>Chậm</span>'
+      : '<span>⚡</span> <span>Chuẩn</span>';
+  }
   if (btnMute) {
-    btnMute.addEventListener('click', () => {
-      window.soundMgr.isMuted = !window.soundMgr.isMuted;
-      btnMute.innerHTML = window.soundMgr.isMuted ? '<span>🔇</span> <span>Tắt</span>' : '<span>🔊</span> <span>Bật</span>';
-      showToast(window.soundMgr.isMuted ? 'Đã tắt âm thanh' : 'Đã bật âm thanh');
-    });
+    btnMute.innerHTML = window.soundMgr.isMuted
+      ? '<span>🔇</span> <span class="hide-xs">Tắt</span>'
+      : '<span>🔊</span> <span class="hide-xs">Bật</span>';
   }
+}
 
-  // Nút Thử thách ghép hình cam
-  const bigChallengeBtn = document.getElementById('bigChallengeBtn');
-  if (bigChallengeBtn) {
-    bigChallengeBtn.addEventListener('click', () => {
-      startMiniGame();
-    });
-  }
-
-  // Modal đóng
-  document.getElementById('modalOverlay').addEventListener('click', (e) => {
-    if (e.target.id === 'modalOverlay') {
-      closeModal();
+function initEventListeners() {
+  document.getElementById('btnHome')?.addEventListener('click', () => switchMode('vocab'));
+  document.getElementById('btnOpenProfile')?.addEventListener('click', openStickerModal);
+  document.getElementById('btnOpenStickersBanner')?.addEventListener('click', openStickerModal);
+  document.getElementById('stickerModalCloseBtn')?.addEventListener('click', () => {
+    window.soundMgr.playClick();
+    document.getElementById('stickerModalOverlay').classList.remove('active');
+  });
+  document.getElementById('stickerModalOverlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'stickerModalOverlay') {
+      document.getElementById('stickerModalOverlay').classList.remove('active');
     }
   });
-  document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
 
-  // Modal Audio Buttons
-  document.getElementById('modalBtnSpeakWord').addEventListener('click', () => {
+  document.querySelectorAll('.mode-pill').forEach(btn => {
+    btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+  });
+
+  document.getElementById('btnVoiceGender')?.addEventListener('click', () => {
+    if (window.soundMgr.gender === 'female') {
+      window.soundMgr.setGender('male');
+      showToast('Đã đổi sang Giọng Nam (Ba Nam Minh) ấm áp!');
+      window.soundMgr.playClick();
+      window.soundMgr.speakWord('bố');
+    } else {
+      window.soundMgr.setGender('female');
+      showToast('Đã đổi sang Giọng Nữ (Cô Hoài My) truyền cảm!');
+      window.soundMgr.playClick();
+      window.soundMgr.speakWord('mẹ');
+    }
+    syncTopControlsUI();
+  });
+
+  document.getElementById('btnSpeed')?.addEventListener('click', () => {
+    if (window.soundMgr.speedRate > 0.9) {
+      window.soundMgr.setSpeed('slow');
+      showToast('🐢 Tốc độ Đọc Chậm để Bảo Long dễ nghe vần');
+    } else {
+      window.soundMgr.setSpeed('normal');
+      showToast('⚡ Tốc độ Chuẩn tự nhiên');
+    }
+    window.soundMgr.playClick();
+    syncTopControlsUI();
+  });
+
+  document.getElementById('btnMute')?.addEventListener('click', () => {
+    window.soundMgr.setMuted(!window.soundMgr.isMuted);
+    syncTopControlsUI();
+    showToast(window.soundMgr.isMuted ? '🔇 Đã tắt âm thanh' : '🔊 Đã bật âm thanh');
+  });
+
+  document.getElementById('btnResetLesson')?.addEventListener('click', () => {
+    stopAutoPlay();
+    currentLessonIdx = 0;
+    window.soundMgr.playClick();
+    renderCurrentView();
+    showToast('Đã quay về Bài 1!');
+  });
+
+  document.getElementById('bigChallengeBtn')?.addEventListener('click', () => {
+    startMiniGame('lesson');
+  });
+
+  // Modal close & nav
+  document.getElementById('modalOverlay')?.addEventListener('click', (e) => {
+    if (e.target.id === 'modalOverlay') closeModal();
+  });
+  document.getElementById('modalCloseBtn')?.addEventListener('click', closeModal);
+  document.getElementById('modalPrevBtn')?.addEventListener('click', () => navigateModal(-1));
+  document.getElementById('modalNextBtn')?.addEventListener('click', () => navigateModal(1));
+
+  document.addEventListener('keydown', (e) => {
+    const modalOpen = document.getElementById('modalOverlay')?.classList.contains('active');
+    const stkOpen = document.getElementById('stickerModalOverlay')?.classList.contains('active');
+    if (e.key === 'Escape') {
+      if (modalOpen) closeModal();
+      if (stkOpen) document.getElementById('stickerModalOverlay').classList.remove('active');
+    } else if (modalOpen) {
+      if (e.key === 'ArrowLeft') navigateModal(-1);
+      if (e.key === 'ArrowRight') navigateModal(1);
+    }
+  });
+
+  // Modal Audio Buttons - FIXED: supports Dino/Vehicle audioKey + Vocab/Phonics!
+  document.getElementById('modalBtnSpeakWord')?.addEventListener('click', () => {
     if (currentWordModal) {
       window.soundMgr.playClick();
-      window.soundMgr.speakWord(currentWordModal.word);
+      window.soundMgr.speakWordObj(currentWordModal);
     }
   });
 
-  document.getElementById('modalBtnSpell').addEventListener('click', () => {
+  document.getElementById('modalBtnSpell')?.addEventListener('click', () => {
     if (currentWordModal) {
       window.soundMgr.playClick();
       if (currentWordModal.spellKey) {
@@ -125,17 +351,98 @@ function initEventListeners() {
     }
   });
 
-  document.getElementById('modalBtnToggleDrawing').addEventListener('click', () => {
+  document.getElementById('modalBtnToggleDrawing')?.addEventListener('click', () => {
     const box = document.getElementById('canvasDrawingBox');
     box.classList.toggle('active');
     if (box.classList.contains('active')) {
+      requestAnimationFrame(() => {
+        resizeCanvasToFit();
+        clearCanvas();
+        drawLetterGuide(currentWordModal ? currentWordModal.word : '');
+      });
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    const box = document.getElementById('canvasDrawingBox');
+    if (box && box.classList.contains('active')) {
+      resizeCanvasToFit();
       clearCanvas();
-      drawLetterGuide(currentWordModal.word);
+      if (currentWordModal) drawLetterGuide(currentWordModal.word);
     }
   });
 }
 
+// ========================================================
+// CHẾ ĐỘ NGHE TỰ ĐỘNG CẢ BÀI (AUTO-PLAY AUDIO TOUR)
+// ========================================================
+function stopAutoPlay() {
+  autoPlayRunning = false;
+  if (autoPlayTimer) {
+    clearTimeout(autoPlayTimer);
+    autoPlayTimer = null;
+  }
+  document.querySelectorAll('.is-speaking-active').forEach(el => el.classList.remove('is-speaking-active'));
+  if (autoPlayActiveBtn) {
+    autoPlayActiveBtn.classList.remove('playing');
+    if (autoPlayActiveBtn.dataset.origLabel) {
+      autoPlayActiveBtn.innerHTML = autoPlayActiveBtn.dataset.origLabel;
+    }
+    autoPlayActiveBtn = null;
+  }
+}
+
+function toggleAutoPlayList(btnEl, items, cardSelector, playFn) {
+  if (autoPlayRunning && autoPlayActiveBtn === btnEl) {
+    stopAutoPlay();
+    window.soundMgr.stopAll();
+    showToast('⏹️ Đã dừng chế độ tự động đọc');
+    return;
+  }
+
+  stopAutoPlay();
+  if (!items || items.length === 0) return;
+
+  autoPlayRunning = true;
+  autoPlayActiveBtn = btnEl;
+  if (!btnEl.dataset.origLabel) btnEl.dataset.origLabel = btnEl.innerHTML;
+  btnEl.classList.add('playing');
+  btnEl.innerHTML = '<span>⏹️</span> Dừng đọc';
+
+  const cards = document.querySelectorAll(cardSelector);
+  let idx = 0;
+
+  function playNext() {
+    if (!autoPlayRunning || idx >= items.length) {
+      if (idx >= items.length && autoPlayRunning) {
+        showToast('🎉 Đã nghe xong cả bài! Bảo Long giỏi quá!');
+      }
+      stopAutoPlay();
+      return;
+    }
+
+    document.querySelectorAll('.is-speaking-active').forEach(el => el.classList.remove('is-speaking-active'));
+    const card = cards[idx];
+    if (card) {
+      card.classList.add('is-speaking-active');
+      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    playFn(items[idx], () => {
+      if (!autoPlayRunning) return;
+      idx++;
+      autoPlayTimer = setTimeout(playNext, 550);
+    });
+  }
+
+  playNext();
+}
+
+// ========================================================
+// CHUYỂN CHẾ ĐỘ & RENDER CÁC MÀN HÌNH HỌC TẬP
+// ========================================================
 function switchMode(mode) {
+  stopAutoPlay();
   currentMode = mode;
   currentLessonIdx = 0;
 
@@ -143,25 +450,22 @@ function switchMode(mode) {
     btn.classList.toggle('active', btn.dataset.mode === mode);
   });
 
-  if (mode === 'vocab') {
-    showToast('Đã chuyển sang: 📖 Học từ mới');
-  } else if (mode === 'phonics') {
-    showToast('Đã chuyển sang: 🔤 Tập ĐÁNH VẦN');
-  } else if (mode === 'alphabet') {
-    showToast('Đã chuyển sang: 🔠 Bảng chữ cái ABC');
-  } else if (mode === 'dino') {
-    showToast('Đã chuyển sang: 🦖 Thế giới Khủng Long của Bảo Long!');
-  } else if (mode === 'vehicles') {
-    showToast('Đã chuyển sang: 🚗 Thế giới Xe Cộ & Shinkansen!');
-  } else if (mode === 'game') {
-    showToast('Đã chuyển sang: 🎮 Khu Trò Chơi (Game Hub)');
-  }
+  const msgs = {
+    vocab: '📖 Chế độ: Học từ mới (8 bài học)',
+    phonics: '🔤 Chế độ: Tập đánh vần (5 bài chuẩn Lớp 1)',
+    alphabet: '🔠 Bảng chữ cái, 11 Phụ âm ghép & 6 Thanh điệu',
+    dino: '🦖 Công viên Khủng Long (Ảnh chụp thực tế!)',
+    vehicles: '🚗 Ga Xe Cộ & Shinkansen (Ảnh chụp thực tế!)',
+    game: '🎮 Khu Trò Chơi (7 game cho Bảo Long!)'
+  };
+  if (msgs[mode]) showToast(msgs[mode]);
 
   window.soundMgr.playClick();
   renderCurrentView();
 }
 
 function renderCurrentView() {
+  stopAutoPlay();
   const roadmapBox = document.getElementById('roadmapBox');
   const cardsContainer = document.getElementById('cardsContainer');
   const alphabetContainer = document.getElementById('alphabetContainer');
@@ -169,7 +473,6 @@ function renderCurrentView() {
   const vehicleContainer = document.getElementById('vehicleContainer');
   const gameViewContainer = document.getElementById('gameViewContainer');
 
-  // Ẩn tất cả trước
   cardsContainer.style.display = 'none';
   alphabetContainer.style.display = 'none';
   if (dinoContainer) dinoContainer.style.display = 'none';
@@ -180,13 +483,13 @@ function renderCurrentView() {
   if (currentMode === 'vocab') {
     roadmapBox.style.display = 'block';
     cardsContainer.style.display = 'grid';
-    renderRoadmapHeader(VOCAB_LESSONS, 'LỘ TRÌNH HỌC TẬP', '⭐ Thử thách ghép hình');
-    renderVocabCards();
+    renderRoadmapHeader(VOCAB_LESSONS, 'LỘ TRÌNH TỪ MỚI', 'Thử thách ghép chữ');
+    renderLessonCards(VOCAB_LESSONS[currentLessonIdx].words, 'vocab');
   } else if (currentMode === 'phonics') {
     roadmapBox.style.display = 'block';
     cardsContainer.style.display = 'grid';
-    renderRoadmapHeader(PHONICS_LESSONS, 'TẬP ĐÁNH VẦN', '⭐ Thử thách ghép vần');
-    renderPhonicsCards();
+    renderRoadmapHeader(PHONICS_LESSONS, 'TẬP ĐÁNH VẦN', 'Thử thách ghép vần');
+    renderLessonCards(PHONICS_LESSONS[currentLessonIdx].words, 'phonics');
   } else if (currentMode === 'alphabet') {
     alphabetContainer.style.display = 'block';
     renderAlphabetView();
@@ -208,17 +511,49 @@ function renderCurrentView() {
 
 function renderRoadmapHeader(lessonsList, tagLabel, challengeLabel) {
   const currentLesson = lessonsList[currentLessonIdx];
+  activeLessonContext = { mode: currentMode, lesson: currentLesson };
+
   document.getElementById('roadmapTag').innerText = tagLabel;
   document.getElementById('roadmapTitle').innerText = currentLesson.title;
-  document.getElementById('bigChallengeBtnText').innerText = `${challengeLabel} (10 câu)`;
+  document.getElementById('bigChallengeBtnText').innerText =
+    `${challengeLabel} Bài ${currentLesson.id} (${currentLesson.words.length} câu)`;
+
+  // Progress bar của bài học hiện tại
+  const learnedInLesson = currentLesson.words.filter(w => explorerState.learnedIds.includes(w.id)).length;
+  const totalInLesson = currentLesson.words.length;
+  const pct = Math.round((learnedInLesson / totalInLesson) * 100);
+  document.getElementById('lessonProgressBar').style.width = `${pct}%`;
+  document.getElementById('lessonProgressText').innerText =
+    `${learnedInLesson} / ${totalInLesson} từ đã khám phá${pct === 100 ? ' 🎉' : ''}`;
+
+  // Nút nghe cả bài
+  const btnAuto = document.getElementById('btnAutoPlayLesson');
+  if (btnAuto) {
+    btnAuto.onclick = () => {
+      toggleAutoPlayList(
+        btnAuto,
+        currentLesson.words,
+        '#cardsContainer .word-card',
+        (w, done) => {
+          const isNew = markWordLearned(w.id);
+          if (isNew) {
+            // refresh star indicator lightly without re-rendering full grid mid-tour
+          }
+          window.soundMgr.speakWord(w.word, done);
+        }
+      );
+    };
+  }
 
   const tabsTrack = document.getElementById('lessonTabsTrack');
   tabsTrack.innerHTML = '';
 
   lessonsList.forEach((les, idx) => {
+    const doneCount = les.words.filter(w => explorerState.learnedIds.includes(w.id)).length;
+    const isComplete = doneCount === les.words.length;
     const tab = document.createElement('button');
     tab.className = `lesson-tab ${idx === currentLessonIdx ? 'active' : ''}`;
-    tab.innerHTML = `<span>Bài ${les.id}</span> <span style="font-size:12px; opacity:0.8">(${les.words.length} từ)</span>`;
+    tab.innerHTML = `<span>Bài ${les.id}</span> <span style="font-size:11px; opacity:0.88">${isComplete ? '✅' : `${doneCount}/${les.words.length}`}</span>`;
     tab.addEventListener('click', () => {
       currentLessonIdx = idx;
       window.soundMgr.playClick();
@@ -228,47 +563,28 @@ function renderRoadmapHeader(lessonsList, tagLabel, challengeLabel) {
   });
 }
 
-function renderVocabCards() {
+function renderLessonCards(wordsList, modeType) {
   const cardsContainer = document.getElementById('cardsContainer');
   cardsContainer.innerHTML = '';
-  const currentLesson = VOCAB_LESSONS[currentLessonIdx];
 
-  currentLesson.words.forEach(w => {
+  wordsList.forEach((w, index) => {
+    const learned = explorerState.learnedIds.includes(w.id);
     const card = document.createElement('div');
-    card.className = 'word-card';
+    card.className = `word-card ${learned ? 'is-learned' : ''}`;
+    const tagHtml = modeType === 'phonics'
+      ? `<div class="word-rhyme-tag">${w.rhyme}</div>`
+      : `<div class="word-action-tag">${learned ? 'Đã thuộc ✓' : 'Chạm để học'}</div>`;
+
     card.innerHTML = `
-      <div class="star-corner">★</div>
+      <div class="star-corner" title="${learned ? 'Đã khám phá' : 'Chưa học'}">${learned ? '⭐' : '☆'}</div>
       <div class="word-icon-img">${w.icon}</div>
       <div class="word-text">${w.word}</div>
-      <div class="word-action-tag">Chơi ngay</div>
+      ${tagHtml}
       <div class="word-ja-sub">${w.ja}</div>
     `;
 
     card.addEventListener('click', () => {
-      openModal(w);
-    });
-    cardsContainer.appendChild(card);
-  });
-}
-
-function renderPhonicsCards() {
-  const cardsContainer = document.getElementById('cardsContainer');
-  cardsContainer.innerHTML = '';
-  const currentLesson = PHONICS_LESSONS[currentLessonIdx];
-
-  currentLesson.words.forEach(w => {
-    const card = document.createElement('div');
-    card.className = 'word-card';
-    card.innerHTML = `
-      <div class="star-corner">★</div>
-      <div class="word-icon-img">${w.icon}</div>
-      <div class="word-text">${w.word}</div>
-      <div class="word-rhyme-tag">${w.rhyme}</div>
-      <div class="word-ja-sub">${w.ja}</div>
-    `;
-
-    card.addEventListener('click', () => {
-      openModal(w);
+      openModal(w, wordsList, index);
     });
     cardsContainer.appendChild(card);
   });
@@ -283,29 +599,91 @@ function renderAlphabetView() {
     card.className = 'alpha-card';
     card.innerHTML = `
       <div class="alpha-letter">${item.char} ${item.lower}</div>
-      <div style="font-size: 13px; font-weight: 800; color: #15803d; background: #dcfce7; border-radius: 10px; padding: 2px 8px; display: inline-block; margin: 2px 0 6px 0;">Phát âm: "${item.phonetic}"</div>
+      <div class="alpha-phonetic-pill">"${item.phonetic}"</div>
       <div class="alpha-icon">${item.icon}</div>
-      <div class="alpha-word">${item.word}</div>
-      <div class="alpha-ja">${item.ja}</div>
+      <button class="alpha-example-btn" title="Chạm để nghe từ ví dụ: ${item.example}">
+        <div class="alpha-word">🔊 ${item.word}</div>
+        <div class="alpha-ja">${item.ja}</div>
+      </button>
     `;
+
     card.addEventListener('click', () => {
       window.soundMgr.playClick();
-      // Đọc đúng chuẩn ngữ âm của chữ cái bằng audio người thật: A -> "a", Đ -> "đờ", H -> "hờ", B -> "bờ"...
       window.soundMgr.speakAlphabet(item.lower, item.phonetic);
       if (item.lower === 's') {
         showToast('Chữ S: "sờ" (uốn cong lưỡi như trong "quyển sách") 📚');
       } else if (item.lower === 'x') {
-        showToast('Chữ X: "xờ" (thẳng lưỡi nhẹ như trong "xe cộ") 🚗');
+        showToast('Chữ X: "xờ" (thẳng lưỡi nhẹ như trong "xe ô tô") 🚗');
       } else if (item.lower === 'â') {
         showToast('Chữ Â: "ớ" (như trong "cái cây") 🌳');
+      } else if (item.lower === 'k') {
+        showToast('Chữ K: phát âm là "ca" (đi với i, e, ê: kéo, kem) ✂️');
       } else {
         showToast(`Chữ ${item.char} ${item.lower}: phát âm là "${item.phonetic}"`);
       }
     });
+
+    const exBtn = card.querySelector('.alpha-example-btn');
+    exBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.soundMgr.playClick();
+      window.soundMgr.speakWord(item.word);
+      showToast(`📖 Ví dụ chữ ${item.char}: "${item.example}"`);
+    });
+
     alphaGrid.appendChild(card);
   });
 
-  // Dấu thanh
+  // Nút nghe lần lượt 29 chữ cái
+  const btnAutoAlpha = document.getElementById('btnAutoPlayAlphabet');
+  if (btnAutoAlpha) {
+    btnAutoAlpha.onclick = () => {
+      toggleAutoPlayList(
+        btnAutoAlpha,
+        ALPHABET_DATA,
+        '#alphabetGrid .alpha-card',
+        (item, done) => window.soundMgr.speakAlphabet(item.lower, item.phonetic, done)
+      );
+    };
+  }
+
+  // Render 11 Phụ Âm Ghép (DIGRAPH_DATA)
+  const digraphGrid = document.getElementById('digraphGrid');
+  if (digraphGrid) {
+    digraphGrid.innerHTML = '';
+    DIGRAPH_DATA.forEach(dg => {
+      const card = document.createElement('div');
+      card.className = 'digraph-card';
+      card.innerHTML = `
+        <div class="alpha-letter" style="color: #6d28d9; font-size: 28px;">${dg.char} <span style="font-size:20px; opacity:0.8">(${dg.lower})</span></div>
+        <div class="alpha-phonetic-pill" style="background:#ede9fe; color:#5b21b6;">Đọc: "${dg.phonetic}"</div>
+        <div style="font-size: 26px; margin: 4px 0;">${dg.icon}</div>
+        <button class="alpha-example-btn" style="background:#f5f3ff; border-color:#ddd6fe;">
+          <div class="alpha-word" style="color:#6d28d9;">🔊 ${dg.word}</div>
+          <div class="alpha-ja">${dg.ja}</div>
+        </button>
+        <div class="digraph-rule-tip">💡 ${dg.rule}</div>
+      `;
+
+      card.addEventListener('click', () => {
+        window.soundMgr.playClick();
+        window.soundMgr.speakAlphabet(dg.lower, dg.phonetic);
+        showToast(`Phụ âm ghép ${dg.char}: đọc là "${dg.phonetic}" (${dg.rule})`);
+      });
+
+      const exBtn = card.querySelector('.alpha-example-btn');
+      exBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.speakWord(dg.word);
+        showToast(`📖 Ví dụ ${dg.char}: "${dg.word}"`);
+      });
+
+      digraphGrid.appendChild(card);
+    });
+  }
+
+  // 6 Thanh điệu
   const tonesGrid = document.getElementById('tonesGrid');
   tonesGrid.innerHTML = '';
   TONES_DATA.forEach(tone => {
@@ -341,21 +719,34 @@ function renderDinoView() {
     };
   }
 
-  DINO_LESSONS.forEach(dino => {
+  const btnAutoDinos = document.getElementById('btnAutoPlayDinos');
+  if (btnAutoDinos) {
+    btnAutoDinos.onclick = () => {
+      toggleAutoPlayList(
+        btnAutoDinos,
+        DINO_LESSONS,
+        '#dinoCardsContainer .dino-card',
+        (d, done) => window.soundMgr.speakWordObj(d, done)
+      );
+    };
+  }
+
+  DINO_LESSONS.forEach((dino, idx) => {
+    const learned = explorerState.learnedIds.includes(dino.id);
     const card = document.createElement('div');
-    card.className = 'word-card dino-card';
+    card.className = `word-card dino-card ${learned ? 'is-learned' : ''}`;
     card.innerHTML = `
-      <div class="star-corner">🦖</div>
+      <div class="star-corner">${learned ? '⭐' : '🦖'}</div>
       <div class="word-icon-img">${dino.icon}</div>
       <div class="word-dino-title">${dino.dinoName}</div>
       <div class="word-text" style="color: #047857;">${dino.word}</div>
-      <div class="word-action-tag" style="background:#dcfce7; color:#15803d;">Khám phá ngay</div>
+      <div class="word-action-tag" style="background:#dcfce7; color:#15803d;">${learned ? 'Đã thuộc ✓' : 'Khám phá ngay'}</div>
       <div class="word-ja-sub">${dino.ja}</div>
       <div class="word-fact-tag">💡 ${dino.funFact}</div>
     `;
 
     card.addEventListener('click', () => {
-      openModal(dino);
+      openModal(dino, DINO_LESSONS, idx);
     });
     container.appendChild(card);
   });
@@ -366,98 +757,132 @@ function renderVehicleView() {
   if (!container) return;
   container.innerHTML = '';
 
-  VEHICLE_LESSONS.forEach(veh => {
+  const btnAutoVeh = document.getElementById('btnAutoPlayVehicles');
+  if (btnAutoVeh) {
+    btnAutoVeh.onclick = () => {
+      toggleAutoPlayList(
+        btnAutoVeh,
+        VEHICLE_LESSONS,
+        '#vehicleCardsContainer .veh-card',
+        (v, done) => window.soundMgr.speakWordObj(v, done)
+      );
+    };
+  }
+
+  VEHICLE_LESSONS.forEach((veh, idx) => {
+    const learned = explorerState.learnedIds.includes(veh.id);
     const card = document.createElement('div');
-    card.className = 'word-card veh-card';
+    card.className = `word-card veh-card ${learned ? 'is-learned' : ''}`;
     card.innerHTML = `
-      <div class="star-corner">🚗</div>
+      <div class="star-corner">${learned ? '⭐' : '🚗'}</div>
       <div class="word-icon-img">${veh.icon}</div>
       <div class="word-dino-title" style="color: #0369a1;">${veh.vehName}</div>
       <div class="word-text" style="color: #0284c7;">${veh.word}</div>
-      <div class="word-action-tag" style="background:#e0f2fe; color:#0369a1;">Chạm để nghe còi</div>
+      <div class="word-action-tag" style="background:#e0f2fe; color:#0369a1;">${learned ? 'Đã thuộc ✓' : 'Chạm để học'}</div>
       <div class="word-ja-sub">${veh.ja}</div>
       <div class="word-fact-tag" style="background:#f0f9ff; border-left:3px solid #0284c7;">💡 ${veh.funFact}</div>
     `;
 
     card.addEventListener('click', () => {
-      openModal(veh);
+      openModal(veh, VEHICLE_LESSONS, idx);
     });
     container.appendChild(card);
   });
 }
 
-// MODAL
-function openModal(wordObj) {
-  currentWordModal = wordObj;
-  window.soundMgr.playClick();
-  if (wordObj.audioKey) {
-    window.soundMgr.playAudioFile(wordObj.audioKey, null, wordObj.word);
-  } else {
-    window.soundMgr.speakWord(wordObj.word);
+// ========================================================
+// MODAL FLASHCARD LIÊN HOÀN (◀ / ▶) & TẬP VIẾT 4 Ô LY
+// ========================================================
+function openModal(wordObj, list = null, index = 0) {
+  stopAutoPlay();
+  if (list && Array.isArray(list)) {
+    modalPlaylist = list;
+    modalPlaylistIdx = index;
+  } else if (modalPlaylist.length === 0) {
+    modalPlaylist = [wordObj];
+    modalPlaylistIdx = 0;
   }
+
+  currentWordModal = wordObj;
+  writingAwardedThisOpen = false;
+
+  const isNewlyLearned = markWordLearned(wordObj.id);
+  window.soundMgr.playClick();
+  window.soundMgr.speakWordObj(wordObj);
+
+  if (isNewlyLearned) {
+    // Re-render background cards silently so star badge & progress bar update!
+    refreshCurrentGridStarsOnly();
+    showToast(`⭐ +2 Sao! Bảo Long đã khám phá từ "${wordObj.word}"!`);
+  }
+
+  // Nav header inside Modal
+  const prevBtn = document.getElementById('modalPrevBtn');
+  const nextBtn = document.getElementById('modalNextBtn');
+  const stepInfo = document.getElementById('modalStepInfo');
+  if (prevBtn) prevBtn.disabled = modalPlaylistIdx <= 0;
+  if (nextBtn) nextBtn.disabled = modalPlaylistIdx >= modalPlaylist.length - 1;
+  if (stepInfo) stepInfo.innerText = `${modalPlaylistIdx + 1} / ${modalPlaylist.length}`;
 
   document.getElementById('modalIcon').innerHTML = wordObj.icon;
   document.getElementById('modalWord').innerText = wordObj.word;
 
-  // Breakdown items
+  const learnedBadge = document.getElementById('modalLearnedBadge');
+  if (learnedBadge) {
+    learnedBadge.innerText = isNewlyLearned ? '🎉 Mới khám phá! (+2 ⭐)' : '⭐ Đã có trong Kho Báu';
+  }
+
+  // Breakdown clickable parts -> dùng soundMgr.speakPart(trimmed) chuẩn 100%, không 404!
   const breakdownBox = document.getElementById('modalBreakdownBox');
   breakdownBox.innerHTML = '';
   const parts = (wordObj.breakdown || wordObj.word).split(/[-+,]/);
   parts.forEach(part => {
     const trimmed = part.trim();
-    if (trimmed) {
-      const span = document.createElement('div');
-      span.className = 'breakdown-item';
-      span.innerText = trimmed;
-      span.title = `Chạm để nghe âm "${trimmed}"`;
-      span.style.cursor = 'pointer';
-      span.addEventListener('click', (e) => {
-        e.stopPropagation();
-        window.soundMgr.playClick();
-        const clean = trimmed.toLowerCase();
-        if (clean === 'c') {
-          window.soundMgr.speakAlphabet('c', 'cờ');
-          showToast('Chữ c: phát âm là "cờ"');
-        } else if (clean === 'k') {
-          window.soundMgr.speakAlphabet('k', 'ca');
-          showToast('Chữ k: phát âm là "ca"');
-        } else if (clean === 'b') {
-          window.soundMgr.speakAlphabet('b', 'bờ');
-          showToast('Chữ b: phát âm là "bờ"');
-        } else if (clean === 'd') {
-          window.soundMgr.speakAlphabet('d', 'dờ');
-          showToast('Chữ d: phát âm là "dờ"');
-        } else if (clean === 'đ') {
-          window.soundMgr.speakAlphabet('đ', 'đờ');
-          showToast('Chữ đ: phát âm là "đờ"');
-        } else if (clean === 't') {
-          window.soundMgr.speakAlphabet('t', 'tờ');
-          showToast('Chữ t: phát âm là "tờ"');
-        } else if (clean === 's') {
-          window.soundMgr.speakAlphabet('s', 'sờ');
-          showToast('Chữ s: phát âm là "sờ" (uốn cong lưỡi như trong "quyển sách") 📚');
-        } else if (clean === 'x') {
-          window.soundMgr.speakAlphabet('x', 'xờ');
-          showToast('Chữ x: phát âm là "xờ" (thẳng lưỡi nhẹ như trong "xe cộ") 🚗');
-        } else if (clean === 'â') {
-          window.soundMgr.speakAlphabet('â', 'ớ');
-          showToast('Chữ â: phát âm là "ớ" (như trong "cái cây") 🌳');
-        } else {
-          window.soundMgr.speakWord(clean);
-        }
-      });
-      breakdownBox.appendChild(span);
-    }
+    if (!trimmed) return;
+    const span = document.createElement('div');
+    span.className = 'breakdown-item';
+    span.innerText = trimmed;
+    span.title = `Chạm để nghe âm "${trimmed}"`;
+    span.style.cursor = 'pointer';
+    span.addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.soundMgr.playClick();
+      window.soundMgr.speakPart(trimmed);
+      const clean = trimmed.toLowerCase();
+      if (clean === 's') showToast('Chữ s: "sờ" (uốn cong lưỡi như "quyển sách") 📚');
+      else if (clean === 'x') showToast('Chữ x: "xờ" (thẳng lưỡi nhẹ như "xe ô tô") 🚗');
+      else if (clean === 'k') showToast('Chữ k: phát âm là "ca"');
+      else if (clean === 'c') showToast('Chữ c: phát âm là "cờ"');
+      else if (clean === 'â') showToast('Chữ â: phát âm là "ớ"');
+    });
+    breakdownBox.appendChild(span);
   });
 
   document.getElementById('modalJaText').innerText = wordObj.ja ? `🇯🇵 ${wordObj.ja}` : '';
   document.getElementById('modalExample').innerText = `Ví dụ: "${wordObj.example}"`;
 
-  // Ẩn bảng vẽ nếu đang mở
   document.getElementById('canvasDrawingBox').classList.remove('active');
+  document.getElementById('modalOverlay').classList.add('active');
+}
 
-  const overlay = document.getElementById('modalOverlay');
-  overlay.classList.add('active');
+function navigateModal(delta) {
+  const newIdx = modalPlaylistIdx + delta;
+  if (newIdx < 0 || newIdx >= modalPlaylist.length) return;
+  openModal(modalPlaylist[newIdx], modalPlaylist, newIdx);
+}
+
+function refreshCurrentGridStarsOnly() {
+  if (currentMode === 'vocab' && VOCAB_LESSONS[currentLessonIdx]) {
+    renderRoadmapHeader(VOCAB_LESSONS, 'LỘ TRÌNH TỪ MỚI', 'Thử thách ghép chữ');
+    renderLessonCards(VOCAB_LESSONS[currentLessonIdx].words, 'vocab');
+  } else if (currentMode === 'phonics' && PHONICS_LESSONS[currentLessonIdx]) {
+    renderRoadmapHeader(PHONICS_LESSONS, 'TẬP ĐÁNH VẦN', 'Thử thách ghép vần');
+    renderLessonCards(PHONICS_LESSONS[currentLessonIdx].words, 'phonics');
+  } else if (currentMode === 'dino') {
+    renderDinoView();
+  } else if (currentMode === 'vehicles') {
+    renderVehicleView();
+  }
 }
 
 function closeModal() {
@@ -465,64 +890,75 @@ function closeModal() {
   window.soundMgr.playClick();
 }
 
-// CANVAS DRAWING (TẬP VIẾT CHỮ)
+// ========================================================
+// CANVAS TẬP VIẾT 4 Ô LY CHUẨN TIỂU HỌC & CHẤM SAO
+// ========================================================
 function initCanvas() {
   canvas = document.getElementById('drawingCanvas');
   if (!canvas) return;
   ctx = canvas.getContext('2d');
-
-  const modalBox = document.querySelector('.modal-content');
-  const w = modalBox ? Math.min(360, modalBox.clientWidth - 40) : 340;
-  canvas.width = Math.max(280, w);
-  canvas.height = 160;
+  resizeCanvasToFit();
 
   canvas.addEventListener('mousedown', startDraw);
   canvas.addEventListener('mousemove', draw);
   canvas.addEventListener('mouseup', stopDraw);
   canvas.addEventListener('mouseleave', stopDraw);
 
-  // Touch support for iPad / smartphone
   canvas.addEventListener('touchstart', (e) => {
     e.preventDefault();
     const touch = e.touches[0];
-    const mouseEvent = new MouseEvent('mousedown', {
-      clientX: touch.clientX,
-      clientY: touch.clientY
-    });
-    canvas.dispatchEvent(mouseEvent);
+    canvas.dispatchEvent(new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY }));
   });
   canvas.addEventListener('touchmove', (e) => {
     e.preventDefault();
     const touch = e.touches[0];
-    const mouseEvent = new MouseEvent('mousemove', {
-      clientX: touch.clientX,
-      clientY: touch.clientY
-    });
-    canvas.dispatchEvent(mouseEvent);
+    canvas.dispatchEvent(new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY }));
   });
-  canvas.addEventListener('touchend', (e) => {
-    const mouseEvent = new MouseEvent('mouseup', {});
-    canvas.dispatchEvent(mouseEvent);
+  canvas.addEventListener('touchend', () => {
+    canvas.dispatchEvent(new MouseEvent('mouseup', {}));
   });
 
-  document.getElementById('btnCanvasClear').addEventListener('click', () => {
+  document.getElementById('btnCanvasClear')?.addEventListener('click', () => {
+    window.soundMgr.playClick();
     clearCanvas();
     if (currentWordModal) drawLetterGuide(currentWordModal.word);
   });
 
+  document.getElementById('btnCanvasFinish')?.addEventListener('click', () => {
+    window.soundMgr.playCorrect();
+    fireConfetti();
+    window.soundMgr.playAudioFile('cheer_write', null, 'Bảo Long viết chữ đẹp quá!');
+    if (!writingAwardedThisOpen) {
+      writingAwardedThisOpen = true;
+      awardStars(2, 'Tập viết chữ đẹp!');
+    } else {
+      showToast('✍️ Chữ Bảo Long viết thật nắn nót! Tuyệt vời!');
+    }
+  });
+
   document.querySelectorAll('.color-picker-dot').forEach(dot => {
     dot.addEventListener('click', () => {
+      document.querySelectorAll('.color-picker-dot').forEach(d => d.classList.remove('active-dot'));
+      dot.classList.add('active-dot');
       drawColor = dot.dataset.color;
-      showToast('Đã đổi màu cọ vẽ!');
+      window.soundMgr.playClick();
     });
   });
+}
+
+function resizeCanvasToFit() {
+  if (!canvas) return;
+  const box = document.getElementById('canvasDrawingBox');
+  const w = box && box.clientWidth > 100 ? Math.min(400, box.clientWidth - 20) : 340;
+  canvas.width = Math.max(260, w);
+  canvas.height = 165;
 }
 
 function getCanvasCoords(e) {
   const rect = canvas.getBoundingClientRect();
   return {
-    x: e.clientX - rect.left,
-    y: e.clientY - rect.top
+    x: (e.clientX - rect.left) * (canvas.width / rect.width),
+    y: (e.clientY - rect.top) * (canvas.height / rect.height)
   };
 }
 
@@ -550,203 +986,95 @@ function stopDraw() {
 }
 
 function clearCanvas() {
+  if (!ctx || !canvas) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawPrimaryGridLines();
 }
 
-function drawLetterGuide(word) {
+function drawPrimaryGridLines() {
+  if (!ctx || !canvas) return;
+  const w = canvas.width;
+  const h = canvas.height;
   ctx.save();
-  ctx.font = 'bold 90px Nunito, sans-serif';
-  ctx.fillStyle = '#e2e8f0';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(word, canvas.width / 2, canvas.height / 2);
+  // Đường kẻ 4 ô ly chuẩn tiểu học nhẹ nhàng
+  ctx.strokeStyle = '#bae6fd';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4, 4]);
+  const rows = 4;
+  for (let i = 1; i < rows; i++) {
+    const y = (h / rows) * i;
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(w, y);
+    ctx.stroke();
+  }
+  for (let x = 40; x < w; x += 40) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, h);
+    ctx.stroke();
+  }
+  // Đường cơ sở đậm hơn nhẹ
+  ctx.setLineDash([]);
+  ctx.strokeStyle = '#7dd3fc';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, h * 0.75);
+  ctx.lineTo(w, h * 0.75);
+  ctx.stroke();
   ctx.restore();
 }
 
-// MINI GAME: THỬ THÁCH GHÉP CHỮ (10 CÂU)
-function startMiniGame() {
-  currentMode = 'game';
-  switchMode('game');
-  gameQuestions = [...SPELL_BUILDER_DATA];
-  // Xáo trộn câu hỏi
-  gameQuestions.sort(() => Math.random() - 0.5);
-  gameCurrentIndex = 0;
-  gameScore = 0;
-  loadGameQuestion();
-}
-
-function renderGameView() {
-  if (gameQuestions.length === 0) {
-    gameQuestions = [...SPELL_BUILDER_DATA];
+function drawLetterGuide(word) {
+  if (!ctx || !canvas || !word) return;
+  ctx.save();
+  let fontSize = 86;
+  ctx.font = `bold ${fontSize}px Nunito, sans-serif`;
+  // Tự động thu nhỏ chữ để không bao giờ tràn viền dù là "khủng long bay" hay "xe cứu thương"
+  while (ctx.measureText(word).width > canvas.width - 28 && fontSize > 26) {
+    fontSize -= 4;
+    ctx.font = `bold ${fontSize}px Nunito, sans-serif`;
   }
-  loadGameQuestion();
-}
-
-function loadGameQuestion() {
-  if (gameCurrentIndex >= gameQuestions.length) {
-    showGameVictory();
-    return;
-  }
-
-  const q = gameQuestions[gameCurrentIndex];
-  document.getElementById('gameProgressText').innerText = `Câu ${gameCurrentIndex + 1} / ${gameQuestions.length}`;
-  document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
-
-  document.getElementById('gameTargetIcon').innerText = q.icon;
-  document.getElementById('gameTargetHint').innerText = `Ghép chữ: "${q.target}" (${q.meaning})`;
-  document.getElementById('gameTargetJa').innerText = `🇯🇵 Nghĩa tiếng Nhật: ${q.meaning}`;
-
-  // Tạo Slots
-  const slotsContainer = document.getElementById('puzzleSlots');
-  slotsContainer.innerHTML = '';
-  gameSlots = new Array(q.puzzle.length).fill('');
-
-  q.puzzle.forEach((_, idx) => {
-    const slot = document.createElement('div');
-    slot.className = 'puzzle-slot';
-    slot.id = `slot-${idx}`;
-    slot.innerText = '';
-    slotsContainer.appendChild(slot);
-  });
-
-  // Tạo lựa chọn các chữ cái
-  const optionsContainer = document.getElementById('optionsLettersRow');
-  optionsContainer.innerHTML = '';
-
-  // Xáo trộn chữ cái gợi ý
-  const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
-  shuffledOptions.forEach((char, idx) => {
-    const btn = document.createElement('button');
-    btn.className = 'letter-option-btn';
-    btn.innerText = char;
-    btn.id = `opt-btn-${idx}`;
-    btn.addEventListener('click', () => {
-      window.soundMgr.speakAlphabet(char);
-      handleLetterChoose(char, btn);
-    });
-    optionsContainer.appendChild(btn);
-  });
-
-  // Tự động phát âm từ gợi ý bằng audio người thật
-  window.soundMgr.speakWord(q.target);
-
-  // Nút nghe lại
-  document.getElementById('btnHearHint').onclick = () => {
-    window.soundMgr.playClick();
-    window.soundMgr.speakWord(q.target);
-  };
-
-  // Nút xóa làm lại
-  document.getElementById('btnResetPuzzle').onclick = () => {
-    window.soundMgr.playClick();
-    loadGameQuestion();
-  };
-}
-
-function handleLetterChoose(char, btnElement) {
-  // Tìm ô slot trống đầu tiên
-  const emptyIdx = gameSlots.findIndex(s => s === '');
-  if (emptyIdx === -1) return;
-
-  window.soundMgr.playClick();
-  btnElement.classList.add('used');
-  gameSlots[emptyIdx] = char;
-
-  const slotElement = document.getElementById(`slot-${emptyIdx}`);
-  slotElement.innerText = char;
-  slotElement.classList.add('filled');
-
-  // Nếu đã điền hết các ô slot thì kiểm tra
-  if (gameSlots.every(s => s !== '')) {
-    checkPuzzleResult();
-  }
-}
-
-function checkPuzzleResult() {
-  const q = gameQuestions[gameCurrentIndex];
-  const currentWord = gameSlots.join('');
-
-  if (currentWord === q.target) {
-    // Bảo Long làm đúng!
-    window.soundMgr.playCorrect();
-    fireConfetti();
-    gameScore += 10;
-    document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
-    showToast(`🎉 Hoan hô Bảo Long! Đã ghép đúng chữ "${q.target}"!`);
-    window.soundMgr.speakCheer('correct');
-
-    setTimeout(() => {
-      gameCurrentIndex++;
-      loadGameQuestion();
-    }, 1800);
-  } else {
-    // Chưa đúng, thử lại
-    window.soundMgr.playWrong();
-    showToast(`Bảo Long ơi chưa chính xác rồi, cùng thử lại nhé! ❤️`);
-    window.soundMgr.speakCheer('wrong');
-
-    setTimeout(() => {
-      // Reset slots
-      loadGameQuestion();
-    }, 1200);
-  }
-}
-
-function showGameVictory() {
-  window.soundMgr.playVictory();
-  window.soundMgr.speakCheer('win');
-  fireConfetti();
-
-  const puzzlePane = document.getElementById('subgamePuzzlePane');
-  if (puzzlePane) {
-    puzzlePane.innerHTML = `
-      <div style="padding: 30px 16px; text-align: center;">
-        <div style="font-size: 72px; margin-bottom: 14px;">🏆👑🦖🎉</div>
-        <h2 style="font-size: 28px; color: #0284c7; font-weight: 900; margin-bottom: 8px;">XUẤT SẮC QUÁ BẢO LONG ƠI!</h2>
-        <p style="font-size: 16px; color: #475569; margin-bottom: 20px;">Bảo Long đã hoàn thành trọn vẹn thử thách ghép chữ và đạt được <strong>${gameScore} Sao Vàng</strong>!</p>
-        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-          <button class="challenge-btn" onclick="startMiniGame()">🔄 Ghép chữ ván mới</button>
-          <button class="home-btn" onclick="switchSubGame('dino_memory')">🦖 Thử thách Lật Thẻ Khủng Long</button>
-          <button class="home-btn" onclick="switchMode('vocab')">📖 Về học từ mới</button>
-        </div>
-      </div>
-    `;
-  }
+  ctx.fillStyle = '#cbd5e1';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(word, canvas.width / 2, canvas.height / 2 + 2);
+  ctx.restore();
 }
 
 // ========================================================
-// SUBGAME SWITCHER & DINO MEMORY & VEHICLE QUIZ
+// KHU TRÒ CHƠI (GAME HUB - 7 TRÒ CHƠI KHÔNG BAO GIỜ LỖI DOM)
 // ========================================================
 function switchSubGame(subgame) {
+  stopAutoPlay();
   currentSubGame = subgame;
-  const puzPane = document.getElementById('subgamePuzzlePane');
-  const memPane = document.getElementById('subgameMemoryPane');
-  const dQuizPane = document.getElementById('subgameDinoQuizPane');
-  const dDigPane = document.getElementById('subgameDinoDigPane');
-  const quizPane = document.getElementById('subgameQuizPane');
 
-  const tabPuz = document.getElementById('tabBtnPuzzle');
-  const tabMem = document.getElementById('tabBtnMemory');
-  const tabDQuiz = document.getElementById('tabBtnDinoQuiz');
-  const tabDDig = document.getElementById('tabBtnDinoDig');
-  const tabQuiz = document.getElementById('tabBtnQuiz');
+  const paneMap = {
+    puzzle: ['subgamePuzzlePane', 'tabBtnPuzzle'],
+    listen_catch: ['subgameListenCatchPane', 'tabBtnListenCatch'],
+    shinkansen: ['subgameShinkansenPane', 'tabBtnShinkansen'],
+    dino_memory: ['subgameMemoryPane', 'tabBtnMemory'],
+    dino_quiz: ['subgameDinoQuizPane', 'tabBtnDinoQuiz'],
+    dino_dig: ['subgameDinoDigPane', 'tabBtnDinoDig'],
+    quiz: ['subgameQuizPane', 'tabBtnQuiz']
+  };
 
-  if (puzPane) puzPane.style.display = subgame === 'puzzle' ? 'block' : 'none';
-  if (memPane) memPane.style.display = subgame === 'dino_memory' ? 'block' : 'none';
-  if (dQuizPane) dQuizPane.style.display = subgame === 'dino_quiz' ? 'block' : 'none';
-  if (dDigPane) dDigPane.style.display = subgame === 'dino_dig' ? 'block' : 'none';
-  if (quizPane) quizPane.style.display = subgame === 'quiz' ? 'block' : 'none';
-
-  if (tabPuz) tabPuz.classList.toggle('active', subgame === 'puzzle');
-  if (tabMem) tabMem.classList.toggle('active', subgame === 'dino_memory');
-  if (tabDQuiz) tabDQuiz.classList.toggle('active', subgame === 'dino_quiz');
-  if (tabDDig) tabDDig.classList.toggle('active', subgame === 'dino_dig');
-  if (tabQuiz) tabQuiz.classList.toggle('active', subgame === 'quiz');
+  Object.entries(paneMap).forEach(([key, [paneId, tabId]]) => {
+    const pEl = document.getElementById(paneId);
+    const tEl = document.getElementById(tabId);
+    if (pEl) pEl.style.display = key === subgame ? 'block' : 'none';
+    if (tEl) tEl.classList.toggle('active', key === subgame);
+  });
 
   window.soundMgr.playClick();
 
   if (subgame === 'puzzle') {
-    renderGameView();
+    if (gameQuestions.length === 0) startMiniGame(lastPuzzleSource);
+    else loadGameQuestion();
+  } else if (subgame === 'listen_catch') {
+    initListenCatchGame();
+  } else if (subgame === 'shinkansen') {
+    initShinkansenGame();
   } else if (subgame === 'dino_memory') {
     initDinoMemoryGame();
   } else if (subgame === 'dino_quiz') {
@@ -758,19 +1086,497 @@ function switchSubGame(subgame) {
   }
 }
 
-// 🦖 GAME LẬT THẺ KHỦNG LONG (DINO MEMORY)
+// ========================================================
+// GAME 1: GHÉP CHỮ VUI (ĐỘNG THEO BÀI HỌC HOẶC TỔNG HỢP + UNDO SLOT)
+// ========================================================
+function splitVietnameseWordToPuzzle(word) {
+  const lower = (word || '').trim().toLowerCase();
+  if (lower.includes(' ')) {
+    return lower.split(/\s+/);
+  }
+  const digraphs = ['ngh', 'ng', 'gh', 'gi', 'ch', 'kh', 'nh', 'ph', 'qu', 'th', 'tr'];
+  for (const dg of digraphs) {
+    if (lower.startsWith(dg) && lower.length > dg.length) {
+      return [dg, lower.slice(dg.length)];
+    }
+  }
+  const singleCons = new Set(['b', 'c', 'd', 'đ', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'x']);
+  if (singleCons.has(lower[0]) && lower.length > 1) {
+    return [lower[0], lower.slice(1)];
+  }
+  for (const coda of ['ng', 'nh', 'ch']) {
+    if (lower.endsWith(coda) && lower.length > coda.length) {
+      return [lower.slice(0, lower.length - coda.length), coda];
+    }
+  }
+  if (lower.length >= 2) {
+    return [lower.slice(0, lower.length - 1), lower.slice(-1)];
+  }
+  return [lower];
+}
+
+function buildDynamicPuzzlesForLesson(lesson) {
+  if (!lesson || !lesson.words) return [...SPELL_BUILDER_DATA];
+
+  const poolHeads = ['b', 'c', 'd', 'đ', 'g', 'h', 'k', 'l', 'm', 'n', 's', 't', 'v', 'x', 'ch', 'nh', 'tr'];
+  const allLessonWords = lesson.words.map(w => w.word.toLowerCase());
+  const allTails = lesson.words.map(w => splitVietnameseWordToPuzzle(w.word)[1]).filter(Boolean);
+
+  return lesson.words.map(w => {
+    const puzzle = splitVietnameseWordToPuzzle(w.word);
+    const distractors = new Set(puzzle);
+    // Add contrasting heads & tails from the lesson
+    let guard = 0;
+    while (distractors.size < Math.min(5, puzzle.length + 3) && guard < 40) {
+      guard++;
+      if (puzzle.length === 2 && Math.random() < 0.5 && allTails.length > 1) {
+        distractors.add(allTails[Math.floor(Math.random() * allTails.length)]);
+      } else if (w.word.includes(' ') && allLessonWords.length > 2) {
+        const randOther = allLessonWords[Math.floor(Math.random() * allLessonWords.length)].split(' ')[0];
+        if (randOther) distractors.add(randOther);
+      } else {
+        distractors.add(poolHeads[Math.floor(Math.random() * poolHeads.length)]);
+      }
+    }
+    return {
+      target: w.word,
+      meaning: `${w.example} (${w.ja})`,
+      ja: w.ja,
+      icon: w.icon,
+      puzzle,
+      options: Array.from(distractors)
+    };
+  });
+}
+
+function startMiniGame(source = 'default') {
+  lastPuzzleSource = source;
+  currentMode = 'game';
+  currentSubGame = 'puzzle';
+
+  document.querySelectorAll('.mode-pill').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === 'game');
+  });
+
+  // Ẩn các view học, bật Game Hub
+  document.getElementById('roadmapBox').style.display = 'none';
+  document.getElementById('cardsContainer').style.display = 'none';
+  document.getElementById('alphabetContainer').style.display = 'none';
+  document.getElementById('dinoContainer').style.display = 'none';
+  document.getElementById('vehicleContainer').style.display = 'none';
+  document.getElementById('gameViewContainer').style.display = 'block';
+
+  // Đảm bảo bật đúng SubGame Puzzle
+  document.querySelectorAll('#gameViewContainer .game-view').forEach(p => { p.style.display = 'none'; });
+  document.querySelectorAll('#gameViewContainer .game-tab-btn').forEach(t => { t.classList.remove('active'); });
+  document.getElementById('subgamePuzzlePane').style.display = 'block';
+  document.getElementById('tabBtnPuzzle').classList.add('active');
+
+  if (source === 'lesson' && activeLessonContext && activeLessonContext.lesson) {
+    gameQuestions = buildDynamicPuzzlesForLesson(activeLessonContext.lesson);
+  } else {
+    lastPuzzleSource = 'default';
+    gameQuestions = [...SPELL_BUILDER_DATA];
+  }
+
+  gameQuestions.sort(() => Math.random() - 0.5);
+  gameCurrentIndex = 0;
+  gameScore = 0;
+
+  document.getElementById('puzzlePlayStage').style.display = 'block';
+  document.getElementById('puzzleVictoryStage').style.display = 'none';
+
+  loadGameQuestion();
+}
+
+function loadGameQuestion() {
+  if (gameCurrentIndex >= gameQuestions.length) {
+    showGameVictory();
+    return;
+  }
+
+  document.getElementById('puzzlePlayStage').style.display = 'block';
+  document.getElementById('puzzleVictoryStage').style.display = 'none';
+
+  const q = gameQuestions[gameCurrentIndex];
+  document.getElementById('gameProgressText').innerText = `Câu ${gameCurrentIndex + 1} / ${gameQuestions.length}`;
+  document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
+
+  const modePill = document.getElementById('puzzleModePill');
+  if (modePill) {
+    modePill.innerText = lastPuzzleSource === 'lesson' && activeLessonContext
+      ? `📖 Bài ${activeLessonContext.lesson.id}`
+      : '📚 Tổng hợp 12 từ';
+  }
+
+  document.getElementById('gameTargetIcon').innerHTML = q.icon;
+  document.getElementById('gameTargetHint').innerText = `Ghép chữ: "${q.target}"`;
+  document.getElementById('gameTargetJa').innerText = q.ja ? `🇯🇵 ${q.ja}` : `🇯🇵 ${q.meaning}`;
+
+  // Tạo Slots - bấm vào ô đã điền để gỡ lại chữ!
+  const slotsContainer = document.getElementById('puzzleSlots');
+  slotsContainer.innerHTML = '';
+  gameSlots = new Array(q.puzzle.length).fill(null);
+
+  q.puzzle.forEach((_, idx) => {
+    const slot = document.createElement('div');
+    slot.className = 'puzzle-slot';
+    slot.id = `slot-${idx}`;
+    slot.innerText = '';
+    slot.addEventListener('click', () => {
+      if (gameSlots[idx]) {
+        const removed = gameSlots[idx];
+        const origBtn = document.getElementById(removed.btnId);
+        if (origBtn) origBtn.classList.remove('used');
+        gameSlots[idx] = null;
+        slot.innerText = '';
+        slot.classList.remove('filled');
+        window.soundMgr.playPop();
+      }
+    });
+    slotsContainer.appendChild(slot);
+  });
+
+  // Tạo lựa chọn chữ cái (cùng audio speakPart chuẩn 100% không 404)
+  const optionsContainer = document.getElementById('optionsLettersRow');
+  optionsContainer.innerHTML = '';
+  const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+  shuffledOptions.forEach((char, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'letter-option-btn';
+    btn.style.width = char.length > 2 ? 'auto' : '56px';
+    btn.style.padding = char.length > 2 ? '0 14px' : '0';
+    btn.innerText = char;
+    btn.id = `opt-btn-${idx}`;
+    btn.addEventListener('click', () => {
+      window.soundMgr.speakPart(char);
+      handleLetterChoose(char, btn);
+    });
+    optionsContainer.appendChild(btn);
+  });
+
+  window.soundMgr.speakWord(q.target);
+
+  document.getElementById('btnHearHint').onclick = () => {
+    window.soundMgr.playClick();
+    window.soundMgr.speakWord(q.target);
+  };
+  document.getElementById('btnResetPuzzle').onclick = () => {
+    window.soundMgr.playClick();
+    loadGameQuestion();
+  };
+  document.getElementById('btnTogglePuzzleSource').onclick = () => {
+    const nextSrc = (lastPuzzleSource === 'default' && activeLessonContext) ? 'lesson' : 'default';
+    startMiniGame(nextSrc);
+  };
+}
+
+function handleLetterChoose(char, btnElement) {
+  const emptyIdx = gameSlots.findIndex(s => s === null);
+  if (emptyIdx === -1) return;
+
+  btnElement.classList.add('used');
+  gameSlots[emptyIdx] = { char, btnId: btnElement.id };
+
+  const slotElement = document.getElementById(`slot-${emptyIdx}`);
+  slotElement.innerText = char;
+  slotElement.classList.add('filled');
+
+  if (gameSlots.every(s => s !== null)) {
+    checkPuzzleResult();
+  }
+}
+
+function checkPuzzleResult() {
+  const q = gameQuestions[gameCurrentIndex];
+  const currentWord = gameSlots.map(s => s.char).join(q.target.includes(' ') ? ' ' : '');
+
+  if (currentWord === q.target) {
+    window.soundMgr.playCorrect();
+    fireConfetti();
+    gameScore += 10;
+    document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
+    showToast(`🎉 Hoan hô Bảo Long! Ghép đúng "${q.target}"!`);
+    window.soundMgr.speakCheer('correct');
+
+    setTimeout(() => {
+      gameCurrentIndex++;
+      loadGameQuestion();
+    }, 1700);
+  } else {
+    window.soundMgr.playWrong();
+    showToast(`Bảo Long chạm vào ô sai để đổi lại hoặc thử lại nhé! ❤️`);
+    window.soundMgr.speakCheer('wrong');
+    setTimeout(() => loadGameQuestion(), 1200);
+  }
+}
+
+function showGameVictory() {
+  window.soundMgr.playVictory();
+  window.soundMgr.speakCheer('win');
+  fireConfetti();
+  awardStars(15, 'Hoàn thành Ghép Chữ Vui!');
+
+  document.getElementById('puzzlePlayStage').style.display = 'none';
+  document.getElementById('puzzleVictoryStage').style.display = 'block';
+  document.getElementById('puzzleVictoryScore').innerText =
+    `Bảo Long đã hoàn thành xuất sắc với ${gameScore} điểm (+15 ⭐ vào Kho Báu)!`;
+}
+
+// ========================================================
+// GAME 2 MỚI: 👂 NGHE ÂM BẮT CHỮ (AUDIO-FIRST PHONICS)
+// ========================================================
+function initListenCatchGame(mode = listenMode) {
+  listenMode = mode;
+  document.getElementById('btnListenTricky')?.classList.toggle('active-filter', mode === 'tricky');
+  document.getElementById('btnListenWords')?.classList.toggle('active-filter', mode === 'words');
+
+  document.getElementById('btnListenTricky').onclick = () => {
+    window.soundMgr.playClick();
+    initListenCatchGame('tricky');
+  };
+  document.getElementById('btnListenWords').onclick = () => {
+    window.soundMgr.playClick();
+    initListenCatchGame('words');
+  };
+
+  const pool = [...LISTEN_CATCH_POOLS[mode]].sort(() => Math.random() - 0.5);
+  listenQuestions = pool.slice(0, Math.min(10, pool.length));
+  listenIndex = 0;
+  listenScore = 0;
+  listenStreak = 0;
+  listenBestStreak = 0;
+
+  document.getElementById('listenCatchPlayStage').style.display = 'block';
+  document.getElementById('listenCatchVictoryStage').style.display = 'none';
+  loadListenCatchQuestion();
+}
+
+function loadListenCatchQuestion() {
+  if (listenIndex >= listenQuestions.length) {
+    showListenCatchVictory();
+    return;
+  }
+
+  const q = listenQuestions[listenIndex];
+  document.getElementById('listenProgressText').innerText = `Câu ${listenIndex + 1} / ${listenQuestions.length}`;
+  document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x${listenStreak}`;
+  document.getElementById('listenScoreText').innerText = `⭐ ${listenScore} sao`;
+  document.getElementById('listenPromptSub').innerText = `💡 Gợi ý: ${q.hint}`;
+
+  const btnHear = document.getElementById('btnHearListenCatch');
+  btnHear.onclick = () => {
+    window.soundMgr.playClick();
+    window.soundMgr.playAudioFile(q.audioKey, null, q.prompt);
+  };
+
+  setTimeout(() => {
+    window.soundMgr.playAudioFile(q.audioKey, null, q.prompt);
+  }, 300);
+
+  const grid = document.getElementById('listenOptionsGrid');
+  grid.innerHTML = '';
+  const choices = [...q.choices].sort(() => Math.random() - 0.5);
+
+  choices.forEach(ch => {
+    const card = document.createElement('button');
+    card.className = `listen-choice-card ${ch.length > 2 ? 'long-word' : ''}`;
+    card.innerText = ch;
+    card.addEventListener('click', () => {
+      if (card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      if (ch === q.target) {
+        card.classList.add('correct');
+        listenStreak++;
+        if (listenStreak > listenBestStreak) listenBestStreak = listenStreak;
+        const pts = listenStreak >= 3 ? 15 : 10;
+        listenScore += pts;
+        document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x${listenStreak}`;
+        document.getElementById('listenScoreText').innerText = `⭐ ${listenScore} sao`;
+
+        window.soundMgr.playCorrect();
+        fireConfetti();
+        if (listenStreak >= 3) {
+          window.soundMgr.playAudioFile('cheer_streak', null, 'Tuyệt vời quá Bảo Long ơi!');
+          showToast(`🔥 COMBO x${listenStreak}! Siêu đỉnh +${pts} điểm!`);
+        } else {
+          showToast(`🎉 Chuẩn xác! Đó chính là "${q.target}"!`);
+        }
+
+        setTimeout(() => {
+          listenIndex++;
+          loadListenCatchQuestion();
+        }, 1500);
+      } else {
+        card.classList.add('wrong');
+        listenStreak = 0;
+        document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x0`;
+        window.soundMgr.playWrong();
+        showToast(`👂 Nghe kỹ lại gợi ý: ${q.hint}`);
+        setTimeout(() => window.soundMgr.playAudioFile(q.audioKey), 450);
+      }
+    });
+    grid.appendChild(card);
+  });
+}
+
+function showListenCatchVictory() {
+  fireConfetti();
+  window.soundMgr.playVictory();
+  window.soundMgr.speakCheer('win');
+  awardStars(15, 'Siêu thính giác Nghe Âm Bắt Chữ!');
+
+  document.getElementById('listenCatchPlayStage').style.display = 'none';
+  document.getElementById('listenCatchVictoryStage').style.display = 'block';
+  document.getElementById('listenVictoryScore').innerText =
+    `Bảo Long ghi được ${listenScore} điểm (Chuỗi đúng dài nhất: x${listenBestStreak})! (+15 ⭐ vào Kho Báu)`;
+}
+
+// ========================================================
+// GAME 3 MỚI: 🚅 TÀU SHINKANSEN ĐÁNH VẦN
+// ========================================================
+function initShinkansenGame() {
+  shinkansenQuestions = [...SHINKANSEN_WORDS_DATA].sort(() => Math.random() - 0.5).slice(0, 10);
+  shinkansenIndex = 0;
+  shinkansenScore = 0;
+
+  document.getElementById('shinkansenPlayStage').style.display = 'block';
+  document.getElementById('shinkansenVictoryStage').style.display = 'none';
+  loadShinkansenRound();
+}
+
+function loadShinkansenRound() {
+  if (shinkansenIndex >= shinkansenQuestions.length) {
+    showShinkansenVictory();
+    return;
+  }
+
+  const q = shinkansenQuestions[shinkansenIndex];
+  selectedTrainHead = '';
+  selectedTrainTail = '';
+  shinkansenLocked = false;
+
+  const trainEl = document.getElementById('trainTrainUnit');
+  trainEl.classList.remove('zooming');
+
+  document.getElementById('shinkansenProgressText').innerText = `Chuyến tàu ${shinkansenIndex + 1} / ${shinkansenQuestions.length}`;
+  document.getElementById('shinkansenScoreText').innerText = `⭐ ${shinkansenScore} sao`;
+  document.getElementById('shinkansenTargetIcon').innerText = q.icon;
+  document.getElementById('shinkansenTargetHint').innerText = `Lắp tàu chở chữ: "${q.meaning}"`;
+  document.getElementById('shinkansenTargetJa').innerText = `🇯🇵 ${q.ja}`;
+
+  document.getElementById('trainNoseSlot').innerText = '?';
+  document.getElementById('trainBodySlot').innerText = '?';
+  document.getElementById('trainPreviewWord').innerText = '= ...';
+
+  document.getElementById('btnHearShinkansen').onclick = () => {
+    window.soundMgr.playClick();
+    window.soundMgr.speakWord(q.word);
+  };
+  setTimeout(() => window.soundMgr.speakWord(q.word), 300);
+
+  // Đầu tàu (âm đầu)
+  const headGrid = document.getElementById('shinkansenHeadChoices');
+  headGrid.innerHTML = '';
+  [...q.headOptions].sort(() => Math.random() - 0.5).forEach(h => {
+    const btn = document.createElement('button');
+    btn.className = 'train-part-btn';
+    btn.innerText = h;
+    btn.addEventListener('click', () => {
+      if (shinkansenLocked) return;
+      headGrid.querySelectorAll('.train-part-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedTrainHead = h;
+      window.soundMgr.speakPart(h);
+      updateTrainAssembly(q);
+    });
+    headGrid.appendChild(btn);
+  });
+
+  // Toa tàu (vần & thanh)
+  const tailGrid = document.getElementById('shinkansenTailChoices');
+  tailGrid.innerHTML = '';
+  [...q.tailOptions].sort(() => Math.random() - 0.5).forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'train-part-btn';
+    btn.innerText = t;
+    btn.addEventListener('click', () => {
+      if (shinkansenLocked) return;
+      tailGrid.querySelectorAll('.train-part-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedTrainTail = t;
+      window.soundMgr.speakPart(t);
+      updateTrainAssembly(q);
+    });
+    tailGrid.appendChild(btn);
+  });
+}
+
+function updateTrainAssembly(q) {
+  document.getElementById('trainNoseSlot').innerText = selectedTrainHead || '?';
+  document.getElementById('trainBodySlot').innerText = selectedTrainTail || '?';
+  const combined = (selectedTrainHead || '') + (selectedTrainTail || '');
+  document.getElementById('trainPreviewWord').innerText = combined ? `= ${combined}` : '= ...';
+
+  if (selectedTrainHead && selectedTrainTail) {
+    shinkansenLocked = true;
+    if (combined === q.word) {
+      // Đúng! Tàu Shinkansen hú còi phóng vút!
+      shinkansenScore += 10;
+      document.getElementById('shinkansenScoreText').innerText = `⭐ ${shinkansenScore} sao`;
+      window.soundMgr.playShinkansenWhistle();
+      fireConfetti();
+      document.getElementById('trainTrainUnit').classList.add('zooming');
+      showToast(`🚅 TU TUU! Ghép chuẩn tàu "${q.word}" (${q.meaning})!`);
+
+      setTimeout(() => window.soundMgr.speakWord(q.word), 450);
+      setTimeout(() => {
+        shinkansenIndex++;
+        loadShinkansenRound();
+      }, 1700);
+    } else {
+      window.soundMgr.playWrong();
+      showToast(`Chưa khớp toa tàu "${q.word}" rồi, chọn lại nhé Bảo Long! ❤️`);
+      setTimeout(() => {
+        shinkansenLocked = false;
+        selectedTrainHead = '';
+        selectedTrainTail = '';
+        document.querySelectorAll('#shinkansenHeadChoices .train-part-btn, #shinkansenTailChoices .train-part-btn')
+          .forEach(b => b.classList.remove('selected'));
+        document.getElementById('trainNoseSlot').innerText = '?';
+        document.getElementById('trainBodySlot').innerText = '?';
+        document.getElementById('trainPreviewWord').innerText = '= ...';
+      }, 950);
+    }
+  }
+}
+
+function showShinkansenVictory() {
+  fireConfetti();
+  window.soundMgr.playShinkansenWhistle();
+  window.soundMgr.speakCheer('win');
+  awardStars(20, 'Trưởng tàu Shinkansen siêu tốc!');
+
+  document.getElementById('shinkansenPlayStage').style.display = 'none';
+  document.getElementById('shinkansenVictoryStage').style.display = 'block';
+  document.getElementById('shinkansenVictoryScore').innerText =
+    `Bảo Long đã lắp thành công 10 chuyến tàu Shinkansen đạt ${shinkansenScore} điểm (+20 ⭐ vào Kho Báu)!`;
+}
+
+// ========================================================
+// GAME 4: LẬT THẺ KHỦNG LONG (RÚT NGẪU NHIÊN 6 TỪ TỪ 10 LOÀI ẢNH THẬT)
+// ========================================================
 function initDinoMemoryGame() {
   const grid = document.getElementById('memoryGrid');
   if (!grid) return;
   grid.innerHTML = '';
 
-  const btnRestart = document.getElementById('btnRestartMemory');
-  if (btnRestart) {
-    btnRestart.onclick = () => {
-      window.soundMgr.playClick();
-      initDinoMemoryGame();
-    };
-  }
+  document.getElementById('memoryPlayStage').style.display = 'block';
+  document.getElementById('memoryVictoryStage').style.display = 'none';
+
+  document.getElementById('btnRestartMemory').onclick = () => {
+    window.soundMgr.playClick();
+    initDinoMemoryGame();
+  };
 
   memoryFlips = 0;
   memoryMatchedCount = 0;
@@ -778,14 +1584,14 @@ function initDinoMemoryGame() {
   memoryIsLocked = false;
   updateMemoryStats();
 
-  // Tạo 6 cặp từ DINO_MEMORY_PAIRS (12 thẻ)
+  // Lấy ngẫu nhiên 6 loài từ cả 10 loài khủng long trong DINO_MEMORY_POOL
+  const chosenSix = [...DINO_MEMORY_POOL].sort(() => Math.random() - 0.5).slice(0, 6);
   const pairDeck = [];
-  DINO_MEMORY_PAIRS.forEach((dino) => {
+  chosenSix.forEach(dino => {
     pairDeck.push({ ...dino, instanceId: `${dino.id}_a` });
     pairDeck.push({ ...dino, instanceId: `${dino.id}_b` });
   });
 
-  // Xáo trộn ngẫu nhiên
   pairDeck.sort(() => Math.random() - 0.5);
   memoryCards = pairDeck;
 
@@ -809,10 +1615,7 @@ function initDinoMemoryGame() {
       </div>
     `;
 
-    cardEl.addEventListener('click', () => {
-      handleMemoryCardClick(cardData, cardEl);
-    });
-
+    cardEl.addEventListener('click', () => handleMemoryCardClick(cardData, cardEl));
     grid.appendChild(cardEl);
   });
 }
@@ -839,7 +1642,6 @@ function handleMemoryCardClick(cardData, cardEl) {
 
     const [first, second] = memoryFlippedCards;
     if (first.data.id === second.data.id) {
-      // ĐOÁN ĐÚNG CẶP
       setTimeout(() => {
         first.el.classList.add('is-matched');
         second.el.classList.add('is-matched');
@@ -847,215 +1649,78 @@ function handleMemoryCardClick(cardData, cardEl) {
         updateMemoryStats();
 
         window.soundMgr.playCorrect();
-        window.soundMgr.playAudioFile('cheer_flip_match');
-        showToast(`🎉 Giỏi quá! Bảo Long đã tìm thấy cặp ${first.data.name}!`);
-
-        // Đọc tên chú khủng long
-        setTimeout(() => {
-          if (first.data.audioKey) {
-            window.soundMgr.playAudioFile(first.data.audioKey);
-          }
-        }, 1100);
+        showToast(`🎉 Giỏi quá! Đã tìm thấy cặp ${first.data.name}!`);
+        if (first.data.audioKey) {
+          window.soundMgr.playAudioFile(first.data.audioKey);
+        }
 
         memoryFlippedCards = [];
         memoryIsLocked = false;
 
-        // Hoàn thành cả 6 cặp!
         if (memoryMatchedCount === 6) {
           setTimeout(() => {
             fireConfetti();
             window.soundMgr.playVictory();
             window.soundMgr.playAudioFile('cheer_flip_win');
-            showToast(`🏆 SIÊU ĐỈNH! Bảo Long đã chiến thắng Game Lật Thẻ Khủng Long!`);
-          }, 800);
+            awardStars(15, 'Chiến thắng Lật Thẻ Khủng Long!');
+            document.getElementById('memoryPlayStage').style.display = 'none';
+            document.getElementById('memoryVictoryStage').style.display = 'block';
+            document.getElementById('memoryVictoryFlips').innerText =
+              `Bảo Long đã mở khóa 6 loài khủng long chỉ trong ${memoryFlips} lượt lật (+15 ⭐)!`;
+          }, 900);
         }
-      }, 500);
+      }, 450);
     } else {
-      // KHÔNG KHỚP -> ÚP LẠI
       setTimeout(() => {
         first.el.classList.remove('is-flipped');
         second.el.classList.remove('is-flipped');
         memoryFlippedCards = [];
         memoryIsLocked = false;
-      }, 950);
+      }, 900);
     }
   }
 }
 
-// 🚗 GAME ĐỐ VUI XE CỘ (VEHICLE QUIZ)
-function initVehicleQuiz() {
-  quizQuestions = [
-    {
-      target: VEHICLE_LESSONS.find(v => v.id === 'veh1'), // Cứu hỏa
-      question: 'Bảo Long ơi, đâu là chiếc Xe Cứu Hỏa chữa cháy?',
-      ja: '🇯🇵 しょうぼうしゃ (Shoubousha) はどれ？',
-      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh2'), VEHICLE_LESSONS.find(v => v.id === 'veh3'), VEHICLE_LESSONS.find(v => v.id === 'veh7')]
-    },
-    {
-      target: VEHICLE_LESSONS.find(v => v.id === 'veh7'), // Shinkansen
-      question: 'Đâu là Tàu Hỏa / Shinkansen siêu tốc chạy bon bon?',
-      ja: '🇯🇵 しんかんせん (Shinkansen) はどれ？',
-      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh8'), VEHICLE_LESSONS.find(v => v.id === 'veh5'), VEHICLE_LESSONS.find(v => v.id === 'veh6')]
-    },
-    {
-      target: VEHICLE_LESSONS.find(v => v.id === 'veh2'), // Cảnh sát
-      question: 'Bảo Long tìm giúp chú Xe Cảnh Sát tuần tra nào!',
-      ja: '🇯🇵 パトカー (Patokaa) はどれ？',
-      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh4'), VEHICLE_LESSONS.find(v => v.id === 'veh1'), VEHICLE_LESSONS.find(v => v.id === 'veh11')]
-    },
-    {
-      target: VEHICLE_LESSONS.find(v => v.id === 'veh8'), // Máy bay
-      question: 'Phương tiện nào có cánh bay vút trên bầu trời xanh?',
-      ja: '🇯🇵 ひこうき (Hikouki) はどれ？',
-      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh10'), VEHICLE_LESSONS.find(v => v.id === 'veh9'), VEHICLE_LESSONS.find(v => v.id === 'veh12')]
-    },
-    {
-      target: VEHICLE_LESSONS.find(v => v.id === 'veh3'), // Cứu thương
-      question: 'Xe nào đưa bệnh nhân đến bệnh viện cấp cứu kêu eng éc?',
-      ja: '🇯🇵 きゅうきゅうしゃ (Kyuukyuusha) はどれ？',
-      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh5'), VEHICLE_LESSONS.find(v => v.id === 'veh6'), VEHICLE_LESSONS.find(v => v.id === 'veh4')]
-    },
-    {
-      target: VEHICLE_LESSONS.find(v => v.id === 'veh4'), // Máy xúc
-      question: 'Xe nào có gầu xúc đất khỏe mạnh ở công trường?',
-      ja: '🇯🇵 ショベルカー (Shoberukaa) はどれ？',
-      distractors: [VEHICLE_LESSONS.find(v => v.id === 'veh11'), VEHICLE_LESSONS.find(v => v.id === 'veh12'), VEHICLE_LESSONS.find(v => v.id === 'veh10')]
-    }
-  ];
-
-  quizCurrentIndex = 0;
-  quizScore = 0;
-  loadQuizQuestion();
-}
-
-function loadQuizQuestion() {
-  if (quizCurrentIndex >= quizQuestions.length) {
-    showQuizVictory();
-    return;
-  }
-
-  const q = quizQuestions[quizCurrentIndex];
-  document.getElementById('quizProgressText').innerText = `Câu ${quizCurrentIndex + 1} / ${quizQuestions.length}`;
-  document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} điểm`;
-  document.getElementById('quizQuestionTitle').innerText = q.question;
-  document.getElementById('quizQuestionJa').innerText = q.ja;
-
-  const optionsGrid = document.getElementById('quizOptionsGrid');
-  optionsGrid.innerHTML = '';
-
-  const allChoices = [q.target, ...q.distractors].sort(() => Math.random() - 0.5);
-
-  allChoices.forEach(item => {
-    if (!item) return;
-    const card = document.createElement('div');
-    card.className = 'quiz-option-card';
-    card.innerHTML = `
-      <div class="quiz-opt-icon">${item.icon}</div>
-      <div class="quiz-opt-name">${item.word}</div>
-      <div class="quiz-opt-ja">${item.ja}</div>
-    `;
-
-    card.addEventListener('click', () => {
-      handleQuizChoice(item, q.target, card);
-    });
-
-    optionsGrid.appendChild(card);
-  });
-
-  // Tự động phát âm câu hỏi xe
-  if (q.target && q.target.audioKey) {
-    window.soundMgr.playAudioFile(q.target.audioKey);
-  }
-}
-
-function handleQuizChoice(chosen, target, cardEl) {
-  if (chosen.id === target.id) {
-    cardEl.classList.add('correct');
-    window.soundMgr.playCorrect();
-    fireConfetti();
-    quizScore += 10;
-    document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} điểm`;
-    showToast(`🎉 Chính xác! Đó là ${target.word}!`);
-
-    setTimeout(() => {
-      quizCurrentIndex++;
-      loadQuizQuestion();
-    }, 1500);
-  } else {
-    cardEl.classList.add('wrong');
-    window.soundMgr.playWrong();
-    showToast(`Bảo Long thử lại xem chiếc nào mới đúng nhé! ❤️`);
-  }
-}
-
-function showQuizVictory() {
-  fireConfetti();
-  window.soundMgr.playVictory();
-  const quizPane = document.getElementById('subgameQuizPane');
-  if (quizPane) {
-    quizPane.innerHTML = `
-      <div style="padding: 30px 16px; text-align: center;">
-        <div style="font-size: 72px; margin-bottom: 14px;">🚗🚅🏆🎉</div>
-        <h2 style="font-size: 26px; color: #0284c7; font-weight: 900; margin-bottom: 8px;">BẢO LONG LÀ BÁC TÀI XUẤT SẮC!</h2>
-        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bé đã hoàn thành xuất sắc thử thách Đố vui Xe Cộ với <strong>${quizScore} điểm</strong>!</p>
-        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-          <button class="challenge-btn" onclick="initVehicleQuiz()">🔄 Chơi lại Đố Vui</button>
-          <button class="home-btn" onclick="switchSubGame('dino_memory')">🦖 Thử thách Lật Thẻ Khủng Long</button>
-        </div>
-      </div>
-    `;
-  }
-}
-
 // ========================================================
-// 🎯 GAME 2: ĐỐ VUI KHỦNG LONG CHO BẢO LONG (DINO QUIZ)
+// GAME 5: ĐỐ VUI KHỦNG LONG (DINO QUIZ - ĐẦY ĐỦ 10 LOÀI & AN TOÀN DOM)
 // ========================================================
-let dinoQuizCurrentIndex = 0;
-let dinoQuizScore = 0;
-
 function initDinoQuiz() {
+  dinoQuizQuestions = [...DINO_QUIZ_DATA].sort(() => Math.random() - 0.5);
   dinoQuizCurrentIndex = 0;
   dinoQuizScore = 0;
-  const scoreEl = document.getElementById('dinoQuizScoreText');
-  if (scoreEl) scoreEl.innerText = `⭐ 0 sao`;
+
+  document.getElementById('dinoQuizPlayStage').style.display = 'block';
+  document.getElementById('dinoQuizVictoryStage').style.display = 'none';
+  document.getElementById('dinoQuizScoreText').innerText = `⭐ 0 sao`;
   loadDinoQuizQuestion();
 }
 
 function loadDinoQuizQuestion() {
-  const total = DINO_QUIZ_DATA.length;
+  const total = dinoQuizQuestions.length;
   if (dinoQuizCurrentIndex >= total) {
     showDinoQuizVictory();
     return;
   }
 
-  const q = DINO_QUIZ_DATA[dinoQuizCurrentIndex];
+  const q = dinoQuizQuestions[dinoQuizCurrentIndex];
   document.getElementById('dinoQuizProgressText').innerText = `Câu ${dinoQuizCurrentIndex + 1} / ${total}`;
   document.getElementById('dinoQuizQuestionTitle').innerText = q.question;
   document.getElementById('dinoQuizQuestionHint').innerText = `💡 ${q.hint}`;
 
-  const btnHear = document.getElementById('btnHearDinoQuizHint');
-  if (btnHear) {
-    btnHear.onclick = () => {
-      window.soundMgr.playClick();
-      if (q.audioKey) {
-        window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
-      } else {
-        window.soundMgr.speakWord(q.hint);
-      }
-    };
-  }
+  document.getElementById('btnHearDinoQuizHint').onclick = () => {
+    window.soundMgr.playClick();
+    window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
+  };
 
-  // Tự động phát âm gợi ý khi vào câu hỏi mới
   setTimeout(() => {
-    if (q.audioKey) {
-      window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
-    }
-  }, 400);
+    window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
+  }, 350);
 
   const container = document.getElementById('dinoQuizOptionsGrid');
   container.innerHTML = '';
+  const shuffledOpts = [...q.options].sort(() => Math.random() - 0.5);
 
-  q.options.forEach(optId => {
+  shuffledOpts.forEach(optId => {
     const item = DINO_LESSONS.find(d => d.id === optId);
     if (!item) return;
 
@@ -1066,11 +1731,7 @@ function loadDinoQuizQuestion() {
       <div class="quiz-opt-name">${item.dinoName}</div>
       <div class="quiz-opt-ja">🇯🇵 ${item.ja}</div>
     `;
-
-    card.addEventListener('click', () => {
-      checkDinoQuizAnswer(optId, card, q, item);
-    });
-
+    card.addEventListener('click', () => checkDinoQuizAnswer(optId, card, q, item));
     container.appendChild(card);
   });
 }
@@ -1085,54 +1746,41 @@ function checkDinoQuizAnswer(chosenId, cardEl, q, item) {
     dinoQuizScore += 10;
     document.getElementById('dinoQuizScoreText').innerText = `⭐ ${dinoQuizScore} sao`;
     showToast(`🎉 Giỏi quá Bảo Long ơi! Chính là ${item.dinoName}! 🦖`);
-
-    if (item.audioKey) {
-      window.soundMgr.playAudioFile(item.audioKey);
-    }
+    if (item.audioKey) window.soundMgr.playAudioFile(item.audioKey);
 
     setTimeout(() => {
       dinoQuizCurrentIndex++;
       loadDinoQuizQuestion();
-    }, 1800);
+    }, 1650);
   } else {
     cardEl.classList.add('wrong');
     window.soundMgr.playWrong();
-    showToast(`Bảo Long thử lại xem chú nào mới đúng nhé! ❤️`);
+    showToast(`Bảo Long thử chọn chú khủng long khác xem nhé! ❤️`);
   }
 }
 
 function showDinoQuizVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
-  const container = document.getElementById('subgameDinoQuizPane');
-  if (container) {
-    container.innerHTML = `
-      <div style="background: linear-gradient(135deg, #dcfce7 0%, #fef08a 100%); border: 3px solid #16a34a; border-radius: 28px; padding: 36px 20px; text-align: center; max-width: 540px; margin: 0 auto; box-shadow: 0 12px 30px rgba(22, 163, 74, 0.2);">
-        <div style="font-size: 72px; margin-bottom: 14px;">🦖🦕🏆🌟</div>
-        <h2 style="font-size: 26px; color: #15803d; font-weight: 900; margin-bottom: 8px;">BẢO LONG LÀ CHUYÊN GIA KHỦNG LONG!</h2>
-        <p style="font-size: 15px; color: #334155; margin-bottom: 20px;">Bé đã trả lời chính xác tất cả câu đố về kỷ Jura và đạt <strong>${dinoQuizScore} sao</strong>!</p>
-        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-          <button class="challenge-btn" onclick="initDinoQuiz()">🔄 Chơi lại Đố Vui</button>
-          <button class="home-btn" style="background: #ea580c; border-color: #c2410c;" onclick="switchSubGame('dino_dig')">⛏️ Thử tài Khai Quật Hóa Thạch</button>
-          <button class="home-btn" onclick="switchSubGame('dino_memory')">🃏 Lật thẻ Khủng Long</button>
-        </div>
-      </div>
-    `;
-  }
+  window.soundMgr.speakCheer('win');
+  awardStars(15, 'Chuyên gia Đố Vui Khủng Long!');
+
+  document.getElementById('dinoQuizPlayStage').style.display = 'none';
+  document.getElementById('dinoQuizVictoryStage').style.display = 'block';
+  document.getElementById('dinoQuizVictoryScore').innerText =
+    `Bé đã hoàn thành cả 10 câu hỏi kỷ Jura và đạt ${dinoQuizScore} điểm (+15 ⭐)!`;
 }
 
 // ========================================================
-// ⛏️ GAME 3: KHAI QUẬT HÓA THẠCH KỲ BÍ (DINO FOSSIL DIG)
+// GAME 6: KHAI QUẬT HÓA THẠCH KỲ BÍ (DINO DIG - AN TOÀN DOM)
 // ========================================================
-let dinoDigCurrentIndex = 0;
-let dinoDigHits = 0;
-let dinoDigBadges = 0;
-
 function initDinoDig() {
   dinoDigCurrentIndex = 0;
   dinoDigBadges = 0;
-  const badgeEl = document.getElementById('dinoDigStarsText');
-  if (badgeEl) badgeEl.innerText = `🏆 0 huy hiệu`;
+
+  document.getElementById('dinoDigPlayStage').style.display = 'block';
+  document.getElementById('dinoDigVictoryStage').style.display = 'none';
+  document.getElementById('dinoDigStarsText').innerText = `🏆 0 huy hiệu`;
   loadDinoDigStage();
 }
 
@@ -1150,35 +1798,22 @@ function loadDinoDigStage() {
   document.getElementById('dinoDigTargetTitle').innerText = `Khai quật: ${stage.name}`;
   document.getElementById('dinoDigProgressBar').style.width = '0%';
   document.getElementById('dinoDigProgressLabel').innerText = 'Tiến độ đào: 0%';
+  document.getElementById('digPromptText').innerText = `Chạm vào tảng đá (0/${stage.hitsRequired})`;
 
-  const underlay = document.getElementById('dinoDigFossilUnderlay');
-  if (underlay) underlay.innerHTML = stage.fossilSilhouette;
-
+  document.getElementById('dinoDigFossilUnderlay').innerHTML = stage.fossilSilhouette;
   const overlay = document.getElementById('dinoDigRockOverlay');
-  if (overlay) {
-    overlay.style.opacity = '1';
-    overlay.style.display = 'flex';
-  }
+  overlay.style.opacity = '1';
+  overlay.style.display = 'flex';
+  document.getElementById('dinoDigRevivedDino').style.display = 'none';
 
-  const revivedBox = document.getElementById('dinoDigRevivedDino');
-  if (revivedBox) revivedBox.style.display = 'none';
+  document.getElementById('dinoDigRockArea').onclick = () => hitExcavationRock(stage);
 
-  const rockArea = document.getElementById('dinoDigRockArea');
-  if (rockArea) {
-    rockArea.onclick = () => {
-      hitExcavationRock(stage);
-    };
-  }
-
-  const btnNext = document.getElementById('btnNextFossil');
-  if (btnNext) {
-    btnNext.onclick = (e) => {
-      e.stopPropagation();
-      window.soundMgr.playClick();
-      dinoDigCurrentIndex++;
-      loadDinoDigStage();
-    };
-  }
+  document.getElementById('btnNextFossil').onclick = (e) => {
+    e.stopPropagation();
+    window.soundMgr.playClick();
+    dinoDigCurrentIndex++;
+    loadDinoDigStage();
+  };
 }
 
 function hitExcavationRock(stage) {
@@ -1188,42 +1823,31 @@ function hitExcavationRock(stage) {
   window.soundMgr.playHammerHit();
 
   const rockArea = document.getElementById('dinoDigRockArea');
-  if (rockArea) {
-    rockArea.classList.remove('wobble');
-    void rockArea.offsetWidth; // trigger reflow
-    rockArea.classList.add('wobble');
-  }
+  rockArea.classList.remove('wobble');
+  void rockArea.offsetWidth;
+  rockArea.classList.add('wobble');
 
   const pct = Math.min(100, Math.round((dinoDigHits / stage.hitsRequired) * 100));
-  const pBar = document.getElementById('dinoDigProgressBar');
-  const pLabel = document.getElementById('dinoDigProgressLabel');
-  if (pBar) pBar.style.width = `${pct}%`;
-  if (pLabel) pLabel.innerText = `Tiến độ đào: ${pct}%`;
+  document.getElementById('dinoDigProgressBar').style.width = `${pct}%`;
+  document.getElementById('dinoDigProgressLabel').innerText = `Tiến độ đào: ${pct}%`;
+  document.getElementById('digPromptText').innerText = `Đập đá! (${dinoDigHits}/${stage.hitsRequired})`;
 
   const overlay = document.getElementById('dinoDigRockOverlay');
-  if (overlay) {
-    overlay.style.opacity = `${(stage.hitsRequired - dinoDigHits) / stage.hitsRequired}`;
-  }
+  overlay.style.opacity = `${(stage.hitsRequired - dinoDigHits) / stage.hitsRequired}`;
 
   if (dinoDigHits >= stage.hitsRequired) {
-    // Hoàn thành khai quật! Khủng long hồi sinh!
     setTimeout(() => {
-      if (overlay) overlay.style.display = 'none';
-
-      const revivedBox = document.getElementById('dinoDigRevivedDino');
+      overlay.style.display = 'none';
       document.getElementById('dinoDigRevivedIcon').innerHTML = stage.revivedIcon;
       document.getElementById('dinoDigRevivedTitle').innerText = stage.name;
       document.getElementById('dinoDigRevivedJa').innerText = `🇯🇵 ${stage.ja}`;
-      if (revivedBox) revivedBox.style.display = 'flex';
+      document.getElementById('dinoDigRevivedDino').style.display = 'flex';
 
       window.soundMgr.playMagicalRevive();
       fireConfetti();
-
       setTimeout(() => {
-        if (stage.audioKey) {
-          window.soundMgr.playAudioFile(stage.audioKey, null, stage.name);
-        }
-      }, 500);
+        if (stage.audioKey) window.soundMgr.playAudioFile(stage.audioKey, null, stage.name);
+      }, 450);
 
       dinoDigBadges++;
       document.getElementById('dinoDigStarsText').innerText = `🏆 ${dinoDigBadges} huy hiệu`;
@@ -1235,27 +1859,112 @@ function hitExcavationRock(stage) {
 function showDinoDigVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
-  const container = document.getElementById('subgameDinoDigPane');
-  if (container) {
-    container.innerHTML = `
-      <div style="background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); border: 3px solid #ea580c; border-radius: 28px; padding: 36px 20px; text-align: center; max-width: 540px; margin: 0 auto; box-shadow: 0 12px 30px rgba(234, 88, 12, 0.25);">
-        <div style="font-size: 72px; margin-bottom: 14px;">⛏️🦕🦖🏆✨</div>
-        <h2 style="font-size: 26px; color: #9a3412; font-weight: 900; margin-bottom: 8px;">NHÀ KHẢO CỔ VĨ ĐẠI BẢO LONG!</h2>
-        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bé đã khai quật và đánh thức toàn bộ các loài khủng long tiền sử từ lòng đất!</p>
-        <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-          <button class="challenge-btn" style="background: #ea580c; border-color: #c2410c;" onclick="initDinoDig()">🔄 Khai quật lại từ đầu</button>
-          <button class="home-btn" onclick="switchSubGame('dino_quiz')">🎯 Chơi Đố Vui Khủng Long</button>
-          <button class="home-btn" onclick="switchSubGame('dino_memory')">🃏 Lật thẻ Khủng Long</button>
-        </div>
-      </div>
+  window.soundMgr.speakCheer('win');
+  awardStars(20, 'Nhà Khảo Cổ Vĩ Đại Bảo Long!');
+
+  document.getElementById('dinoDigPlayStage').style.display = 'none';
+  document.getElementById('dinoDigVictoryStage').style.display = 'block';
+}
+
+// ========================================================
+// GAME 7: ĐỐ VUI XE CỘ (FIXED ID MAPPING + 12 XE + AN TOÀN DOM)
+// ========================================================
+function initVehicleQuiz() {
+  const pool = [...VEHICLE_QUIZ_DATA].sort(() => Math.random() - 0.5).slice(0, 8);
+  quizQuestions = pool.map(item => ({
+    target: VEHICLE_LESSONS.find(v => v.id === item.targetId),
+    question: item.question,
+    ja: item.ja,
+    distractors: item.distractors.map(did => VEHICLE_LESSONS.find(v => v.id === did)).filter(Boolean)
+  }));
+
+  quizCurrentIndex = 0;
+  quizScore = 0;
+
+  document.getElementById('quizPlayStage').style.display = 'block';
+  document.getElementById('quizVictoryStage').style.display = 'none';
+  loadQuizQuestion();
+}
+
+function loadQuizQuestion() {
+  if (quizCurrentIndex >= quizQuestions.length) {
+    showQuizVictory();
+    return;
+  }
+
+  const q = quizQuestions[quizCurrentIndex];
+  document.getElementById('quizProgressText').innerText = `Câu ${quizCurrentIndex + 1} / ${quizQuestions.length}`;
+  document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} sao`;
+  document.getElementById('quizQuestionTitle').innerText = q.question;
+  document.getElementById('quizQuestionJa').innerText = q.ja;
+
+  document.getElementById('btnHearQuizQuestion').onclick = () => {
+    window.soundMgr.playClick();
+    if (q.target) window.soundMgr.speakWordObj(q.target);
+  };
+
+  const optionsGrid = document.getElementById('quizOptionsGrid');
+  optionsGrid.innerHTML = '';
+
+  const allChoices = [q.target, ...q.distractors].sort(() => Math.random() - 0.5);
+  allChoices.forEach(item => {
+    if (!item) return;
+    const card = document.createElement('div');
+    card.className = 'quiz-option-card';
+    card.innerHTML = `
+      <div class="quiz-opt-icon">${item.icon}</div>
+      <div class="quiz-opt-name">${item.word}</div>
+      <div class="quiz-opt-ja">${item.ja}</div>
     `;
+    card.addEventListener('click', () => handleQuizChoice(item, q.target, card));
+    optionsGrid.appendChild(card);
+  });
+
+  if (q.target && q.target.audioKey) {
+    setTimeout(() => window.soundMgr.playAudioFile(q.target.audioKey), 300);
   }
 }
 
-// TOAST
+function handleQuizChoice(chosen, target, cardEl) {
+  if (cardEl.classList.contains('correct') || cardEl.classList.contains('wrong')) return;
+  if (chosen.id === target.id) {
+    cardEl.classList.add('correct');
+    window.soundMgr.playCorrect();
+    fireConfetti();
+    quizScore += 10;
+    document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} sao`;
+    showToast(`🎉 Chính xác! Đó là ${target.word}!`);
+
+    setTimeout(() => {
+      quizCurrentIndex++;
+      loadQuizQuestion();
+    }, 1500);
+  } else {
+    cardEl.classList.add('wrong');
+    window.soundMgr.playWrong();
+    showToast(`Bảo Long thử lại xem chiếc nào mới đúng nhé! ❤️`);
+  }
+}
+
+function showQuizVictory() {
+  fireConfetti();
+  window.soundMgr.playVictory();
+  window.soundMgr.speakCheer('win');
+  awardStars(15, 'Bác tài xuất sắc Đố Vui Xe Cộ!');
+
+  document.getElementById('quizPlayStage').style.display = 'none';
+  document.getElementById('quizVictoryStage').style.display = 'block';
+  document.getElementById('quizVictoryScore').innerText =
+    `Bé đã hoàn thành xuất sắc 8 câu hỏi Xe Cộ với ${quizScore} điểm (+15 ⭐)!`;
+}
+
+// ========================================================
+// TOAST & CONFETTI
+// ========================================================
 let toastTimer = null;
 function showToast(msg) {
   const toast = document.getElementById('toastNotice');
+  if (!toast) return;
   toast.innerText = msg;
   toast.classList.add('show');
   if (toastTimer) clearTimeout(toastTimer);
@@ -1264,21 +1973,19 @@ function showToast(msg) {
   }, 2600);
 }
 
-// CONFETTI EFFECT
 function fireConfetti() {
-  const canvas = document.getElementById('confettiCanvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  const confCanvas = document.getElementById('confettiCanvas');
+  if (!confCanvas) return;
+  const confCtx = confCanvas.getContext('2d');
+  confCanvas.width = window.innerWidth;
+  confCanvas.height = window.innerHeight;
 
   const pieces = [];
-  const numberOfPieces = 100;
   const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
-
-  for (let i = 0; i < numberOfPieces; i++) {
+  for (let i = 0; i < 95; i++) {
     pieces.push({
-      x: canvas.width / 2 + (Math.random() - 0.5) * 200,
-      y: canvas.height / 2,
+      x: confCanvas.width / 2 + (Math.random() - 0.5) * 220,
+      y: confCanvas.height / 2,
       w: Math.random() * 12 + 6,
       h: Math.random() * 8 + 4,
       vx: (Math.random() - 0.5) * 16,
@@ -1290,37 +1997,31 @@ function fireConfetti() {
     });
   }
 
-  let animationId;
   function updateConfetti() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
     let alive = false;
-
     pieces.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.4; // Trọng lực
+      p.vy += 0.4;
       p.rotation += p.rotationSpeed;
       p.opacity -= 0.008;
-
       if (p.opacity > 0) {
         alive = true;
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate((p.rotation * Math.PI) / 180);
-        ctx.fillStyle = p.color;
-        ctx.globalAlpha = Math.max(0, p.opacity);
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-        ctx.restore();
+        confCtx.save();
+        confCtx.translate(p.x, p.y);
+        confCtx.rotate((p.rotation * Math.PI) / 180);
+        confCtx.fillStyle = p.color;
+        confCtx.globalAlpha = Math.max(0, p.opacity);
+        confCtx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        confCtx.restore();
       }
     });
-
     if (alive) {
-      animationId = requestAnimationFrame(updateConfetti);
+      requestAnimationFrame(updateConfetti);
     } else {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      cancelAnimationFrame(animationId);
+      confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
     }
   }
-
   updateConfetti();
 }
