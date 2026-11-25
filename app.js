@@ -1855,7 +1855,7 @@ function loadDinoQuizQuestion() {
   const riddleKey = q.id || q.audioKey;
   document.getElementById('dinoQuizProgressText').innerText = `Câu ${dinoQuizCurrentIndex + 1} / ${total}`;
   document.getElementById('dinoQuizQuestionTitle').innerText = q.question;
-  document.getElementById('dinoQuizQuestionHint').innerText = `💡 ${q.hint}`;
+  document.getElementById('dinoQuizQuestionHint').innerText = '🔍 Nghe kỹ mô tả rồi chạm đúng chú Khủng Long nhé!';
 
   const container = document.getElementById('dinoQuizOptionsGrid');
   container.innerHTML = '';

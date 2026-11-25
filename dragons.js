@@ -302,7 +302,8 @@ function loadDragonQuizQuestion() {
   document.getElementById('dragonQuizProgressText').innerText = `Câu ${dragonQuizIdx + 1} / ${dragonQuizList.length}`;
   document.getElementById('dragonQuizScoreText').innerText = `⭐ ${dragonQuizScore} điểm`;
   document.getElementById('dragonQuizQuestionTitle').innerText = q.question;
-  document.getElementById('dragonQuizHintJa').innerText = targetObj ? `🇯🇵 ${targetObj.ja}` : '';
+  const jaOnly = targetObj ? targetObj.ja.replace(/\s*\([^)]*\)/g, '').trim() : '';
+  document.getElementById('dragonQuizHintJa').innerText = jaOnly ? `🇯🇵 ${jaOnly}` : '';
 
   const grid = document.getElementById('dragonQuizOptionsGrid');
   grid.innerHTML = '';
