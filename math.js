@@ -100,10 +100,12 @@ const MATH_CLOCK_SCHEDULE = {
 // State Toán Lớp 1
 let currentMathTab = 'numbers'; // 'numbers' | 'calc' | 'compare' | 'sequence' | 'geometry'
 let mathSessionScore = 0;
+let mathEpoch = 0;
 
 // Tab 1: Số đếm
 let mathSpotlightNum = 5;
 let mathNumbersAutoTimer = null;
+let mathNumbersAutoRunning = false;
 
 // Tab 2: Cộng & Trừ
 let mathCalcMode = 'max10'; // 'max10' | 'max20' | 'onlyPlus' | 'onlyMinus'
@@ -146,6 +148,7 @@ function renderMathHub() {
 
 function switchMathSubTab(subtab) {
   stopMathAutoPlay();
+  mathEpoch++;
   currentMathTab = subtab;
 
   const tabs = {
@@ -171,6 +174,7 @@ function switchMathSubTab(subtab) {
 }
 
 function stopMathAutoPlay() {
+  mathNumbersAutoRunning = false;
   if (mathNumbersAutoTimer) {
     clearTimeout(mathNumbersAutoTimer);
     mathNumbersAutoTimer = null;
@@ -245,17 +249,20 @@ function renderMathNumbersTab() {
   const btnAuto = document.getElementById('btnAutoPlayMathNumbers');
   if (btnAuto) {
     btnAuto.onclick = () => {
-      if (mathNumbersAutoTimer) {
+      if (mathNumbersAutoRunning || btnAuto.classList.contains('playing')) {
         stopMathAutoPlay();
         window.soundMgr.stopAll();
         return;
       }
+      stopMathAutoPlay();
+      mathNumbersAutoRunning = true;
       btnAuto.classList.add('playing');
       btnAuto.innerHTML = '<span>⏹️</span> Dừng đếm';
       let idx = 0;
       const cards = document.querySelectorAll('#mathNumbersGrid .math-num-card');
 
       function nextNum() {
+        if (!mathNumbersAutoRunning) return;
         if (idx >= MATH_NUMBERS_DATA.length) {
           stopMathAutoPlay();
           if (typeof showToast === 'function') showToast('🎉 Tuyệt vời! Bảo Long đã đếm từ 0 đến 20!');
@@ -271,6 +278,7 @@ function renderMathNumbersTab() {
         updateMathNumberSpotlight();
 
         window.soundMgr.playAudioFile(`math_num_${cur.num}`, () => {
+          if (!mathNumbersAutoRunning) return;
           idx++;
           mathNumbersAutoTimer = setTimeout(nextNum, 450);
         }, `Số ${cur.word}`);
@@ -492,21 +500,27 @@ function loadMathCalcQuestion() {
 
   renderCalcVisualBox(q);
 
+  const myNav = window.appNavEpoch || 0;
+  const myMathEpoch = mathEpoch;
   document.getElementById('btnHearCalc').onclick = () => {
     window.soundMgr.playClick();
     speakCalcEquation(q, false);
   };
-  setTimeout(() => speakCalcEquation(q, false), 250);
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) speakCalcEquation(q, false);
+  }, 250);
 
   const optsGrid = document.getElementById('mathCalcOptionsGrid');
   optsGrid.innerHTML = '';
+  let calcLocked = false;
   q.choices.forEach(num => {
     const btn = document.createElement('button');
     btn.className = 'math-ans-btn';
     btn.innerText = num;
     btn.addEventListener('click', () => {
-      if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+      if (calcLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
       if (num === q.ans) {
+        calcLocked = true;
         btn.classList.add('correct');
         ansSlot.innerText = q.ans;
         ansSlot.classList.add('solved');
@@ -520,12 +534,15 @@ function loadMathCalcQuestion() {
 
         window.soundMgr.playCorrect();
         fireConfetti();
-        setTimeout(() => speakCalcEquation(q, true), 350);
+        setTimeout(() => {
+          if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) speakCalcEquation(q, true);
+        }, 350);
         if (typeof showToast === 'function') {
           showToast(`🎉 Chuẩn luôn! ${q.a} ${q.op} ${q.b} = ${q.ans}!`);
         }
 
         setTimeout(() => {
+          if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
           mathCalcIndex++;
           loadMathCalcQuestion();
         }, 2100);
@@ -610,6 +627,8 @@ function loadMathCompareQuestion() {
   }
 
   const q = mathCmpQuestions[mathCmpIndex];
+  const myNav = window.appNavEpoch || 0;
+  const myMathEpoch = mathEpoch;
   document.getElementById('mathCmpProgressText').innerText = `Câu ${mathCmpIndex + 1} / ${mathCmpQuestions.length}`;
   document.getElementById('mathCmpScoreText').innerText = `⭐ ${mathCmpScore} điểm`;
 
@@ -645,6 +664,7 @@ function loadMathCompareQuestion() {
         }
 
         setTimeout(() => {
+          if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
           mathCmpIndex++;
           loadMathCompareQuestion();
         }, 1700);
@@ -767,17 +787,21 @@ function loadMathSequenceQuestion() {
     });
   }
 
+  const myNav = window.appNavEpoch || 0;
+  const myMathEpoch = mathEpoch;
   window.soundMgr.playAudioFile('math_q_missing', null, 'Tìm số còn thiếu nhé');
 
   const grid = document.getElementById('mathSeqOptionsGrid');
   grid.innerHTML = '';
+  let seqLocked = false;
   q.choices.forEach(num => {
     const btn = document.createElement('button');
     btn.className = 'math-ans-btn';
     btn.innerText = num;
     btn.addEventListener('click', () => {
-      if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+      if (seqLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
       if (num === q.ans) {
+        seqLocked = true;
         btn.classList.add('correct');
         if (targetSlotEl) {
           targetSlotEl.innerText = num;
@@ -790,10 +814,15 @@ function loadMathSequenceQuestion() {
         window.soundMgr.playShinkansenWhistle();
         fireConfetti();
         trackEl.classList.add('zooming');
-        setTimeout(() => window.soundMgr.playAudioFile(`math_num_${num}`, null, `Số ${num}`), 450);
+        setTimeout(() => {
+          if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) {
+            window.soundMgr.playAudioFile(`math_num_${num}`, null, `Số ${num}`);
+          }
+        }, 450);
 
         if (typeof showToast === 'function') showToast(`🚅 TU TUU! Số chính xác là ${num}!`);
         setTimeout(() => {
+          if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
           mathSeqIndex++;
           loadMathSequenceQuestion();
         }, 1700);
@@ -983,9 +1012,12 @@ function loadGeoClockQuestion() {
   document.getElementById('mathGeoScoreText').innerText = `⭐ ${mathGeoQuizScore} điểm`;
   document.getElementById('mathGeoQuizTitle').innerText = q.question;
 
+  const myNav = window.appNavEpoch || 0;
+  const myMathEpoch = mathEpoch;
   const clockWrap = document.getElementById('mathGeoQuizClockWrap');
   const optsGrid = document.getElementById('mathGeoQuizOptionsGrid');
   optsGrid.innerHTML = '';
+  let geoLocked = false;
 
   window.soundMgr.playAudioFile(q.audioKey, null, q.question);
 
@@ -998,8 +1030,9 @@ function loadGeoClockQuestion() {
       btn.style.fontSize = '24px';
       btn.innerText = `${h} giờ`;
       btn.onclick = () => {
-        if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+        if (geoLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
         if (h === q.targetHour) {
+          geoLocked = true;
           btn.classList.add('correct');
           mathGeoQuizScore += 10;
           addMathSessionScore(10);
@@ -1009,6 +1042,7 @@ function loadGeoClockQuestion() {
           window.soundMgr.playAudioFile(`math_clock_${h}`, null, `${h} giờ đúng`);
           if (typeof showToast === 'function') showToast(`🕒 Chính xác! Đồng hồ chỉ ${h} giờ đúng!`);
           setTimeout(() => {
+            if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
             mathGeoQuizIndex++;
             loadGeoClockQuestion();
           }, 1500);
@@ -1030,8 +1064,9 @@ function loadGeoClockQuestion() {
         <div class="quiz-opt-name">${sh.name}</div>
       `;
       card.onclick = () => {
-        if (card.classList.contains('correct') || card.classList.contains('wrong')) return;
+        if (geoLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
         if (sh.id === q.target) {
+          geoLocked = true;
           card.classList.add('correct');
           mathGeoQuizScore += 10;
           addMathSessionScore(10);
@@ -1041,6 +1076,7 @@ function loadGeoClockQuestion() {
           window.soundMgr.playAudioFile(sh.audioKey, null, sh.name);
           if (typeof showToast === 'function') showToast(`📐 Tuyệt vời! Chính là ${sh.name}!`);
           setTimeout(() => {
+            if ((window.appNavEpoch || 0) !== myNav || mathEpoch !== myMathEpoch) return;
             mathGeoQuizIndex++;
             loadGeoClockQuestion();
           }, 1500);

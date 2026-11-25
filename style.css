@@ -3634,3 +3634,87 @@ html, body {
   border-color: #9f1239;
 }
 
+/* ========================================================
+   NÂNG CẤP HIỂN THỊ ẢNH THẬT RÕ NÉT TO ĐẸP CHO KHỦNG LONG & XE
+   ======================================================== */
+.dino-card .word-icon-img,
+.veh-card .word-icon-img {
+  width: 100%;
+  margin-top: 16px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+}
+.dino-card .real-photo,
+.veh-card .real-photo {
+  width: 100%;
+  max-width: 196px;
+  height: 144px;
+  object-fit: cover;
+  border-radius: 18px;
+}
+.quiz-opt-icon .real-photo {
+  width: 144px;
+  max-width: 100%;
+  height: 108px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+#modalIcon .real-photo {
+  width: 240px;
+  max-width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 22px;
+}
+.revived-icon .real-photo,
+#dinoDigRevivedIcon .real-photo {
+  width: 192px;
+  max-width: 100%;
+  height: 144px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+.game-target-icon .real-photo {
+  width: 128px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+.card-dino-icon .real-photo {
+  width: 92px;
+  max-width: 100%;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+@media (max-width: 540px) {
+  .dino-card .real-photo,
+  .veh-card .real-photo {
+    max-width: 164px;
+    height: 120px;
+  }
+  .memory-card {
+    aspect-ratio: 1 / 1.28;
+  }
+  .memory-card-face {
+    padding: 5px;
+  }
+  .card-dino-icon .real-photo {
+    width: 72px;
+    height: 48px;
+  }
+  .memory-card-front .card-dino-name {
+    font-size: 10.5px;
+    line-height: 1.15;
+  }
+  .memory-card-front .card-dino-ja {
+    font-size: 8.5px;
+    line-height: 1.1;
+  }
+  .quiz-opt-icon .real-photo {
+    width: 124px;
+    height: 92px;
+  }
+}
+

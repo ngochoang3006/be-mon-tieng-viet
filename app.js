@@ -21,6 +21,7 @@ let explorerState = {
 let autoPlayTimer = null;
 let autoPlayRunning = false;
 let autoPlayActiveBtn = null;
+window.appNavEpoch = 0;
 
 // Game Hub State
 let currentSubGame = 'puzzle';
@@ -32,6 +33,8 @@ let gameSlots = []; // array of { char, btnId } or null
 let gameScore = 0;
 let lastPuzzleSource = 'default'; // 'default' | 'lesson'
 let activeLessonContext = null;
+let puzzleLocked = false;
+let puzzleEpoch = 0;
 
 // Game 2: Listen & Catch State
 let listenMode = 'tricky'; // 'tricky' | 'words'
@@ -40,6 +43,7 @@ let listenIndex = 0;
 let listenScore = 0;
 let listenStreak = 0;
 let listenBestStreak = 0;
+let listenEpoch = 0;
 
 // Game 3: Shinkansen Train State
 let shinkansenQuestions = [];
@@ -48,6 +52,7 @@ let shinkansenScore = 0;
 let selectedTrainHead = '';
 let selectedTrainTail = '';
 let shinkansenLocked = false;
+let shinkansenEpoch = 0;
 
 // Game 4: Dino Memory State
 let memoryCards = [];
@@ -55,11 +60,13 @@ let memoryFlippedCards = [];
 let memoryMatchedCount = 0;
 let memoryFlips = 0;
 let memoryIsLocked = false;
+let memoryEpoch = 0;
 
 // Game 5: Dino Quiz State
 let dinoQuizQuestions = [];
 let dinoQuizCurrentIndex = 0;
 let dinoQuizScore = 0;
+let dinoQuizEpoch = 0;
 
 // Game 6: Dino Dig State
 let dinoDigCurrentIndex = 0;
@@ -70,6 +77,7 @@ let dinoDigBadges = 0;
 let quizQuestions = [];
 let quizCurrentIndex = 0;
 let quizScore = 0;
+let vehQuizEpoch = 0;
 
 // Canvas Drawing State
 let canvas, ctx;
@@ -436,7 +444,7 @@ function toggleAutoPlayList(btnEl, items, cardSelector, playFn) {
       if (!autoPlayRunning) return;
       idx++;
       autoPlayTimer = setTimeout(playNext, 550);
-    });
+    }, card);
   }
 
   playNext();
@@ -447,6 +455,8 @@ function toggleAutoPlayList(btnEl, items, cardSelector, playFn) {
 // ========================================================
 function switchMode(mode) {
   stopAutoPlay();
+  window.soundMgr.stopAll();
+  window.appNavEpoch++;
   currentMode = mode;
   currentLessonIdx = 0;
 
@@ -570,10 +580,21 @@ function renderRoadmapHeader(lessonsList, tagLabel, challengeLabel) {
         btnAuto,
         currentLesson.words,
         '#cardsContainer .word-card',
-        (w, done) => {
+        (w, done, card) => {
           const isNew = markWordLearned(w.id);
-          if (isNew) {
-            // refresh star indicator lightly without re-rendering full grid mid-tour
+          if (isNew && card) {
+            card.classList.add('is-learned');
+            const starEl = card.querySelector('.star-corner');
+            if (starEl) starEl.innerText = '⭐';
+            const tagEl = card.querySelector('.word-action-tag');
+            if (tagEl) tagEl.innerText = 'Đã thuộc ✓';
+            const learnedInLesson = currentLesson.words.filter(x => explorerState.learnedIds.includes(x.id)).length;
+            const totalInLesson = currentLesson.words.length;
+            const pct = Math.round((learnedInLesson / totalInLesson) * 100);
+            const bar = document.getElementById('lessonProgressBar');
+            const txt = document.getElementById('lessonProgressText');
+            if (bar) bar.style.width = `${pct}%`;
+            if (txt) txt.innerText = `${learnedInLesson} / ${totalInLesson} từ đã khám phá${pct === 100 ? ' 🎉' : ''}`;
           }
           window.soundMgr.speakWord(w.word, done);
         }
@@ -1083,6 +1104,8 @@ function drawLetterGuide(word) {
 // ========================================================
 function switchSubGame(subgame) {
   stopAutoPlay();
+  window.soundMgr.stopAll();
+  window.appNavEpoch++;
   currentSubGame = subgame;
 
   const paneMap = {
@@ -1186,6 +1209,9 @@ function buildDynamicPuzzlesForLesson(lesson) {
 }
 
 function startMiniGame(source = 'default') {
+  stopAutoPlay();
+  window.soundMgr.stopAll();
+  window.appNavEpoch++;
   lastPuzzleSource = source;
   currentMode = 'game';
   currentSubGame = 'puzzle';
@@ -1230,6 +1256,8 @@ function startMiniGame(source = 'default') {
 }
 
 function loadGameQuestion() {
+  puzzleEpoch++;
+  puzzleLocked = false;
   if (gameCurrentIndex >= gameQuestions.length) {
     showGameVictory();
     return;
@@ -1264,6 +1292,7 @@ function loadGameQuestion() {
     slot.id = `slot-${idx}`;
     slot.innerText = '';
     slot.addEventListener('click', () => {
+      if (puzzleLocked) return;
       if (gameSlots[idx]) {
         const removed = gameSlots[idx];
         const origBtn = document.getElementById(removed.btnId);
@@ -1312,6 +1341,7 @@ function loadGameQuestion() {
 }
 
 function handleLetterChoose(char, btnElement) {
+  if (puzzleLocked || btnElement.classList.contains('used')) return;
   const emptyIdx = gameSlots.findIndex(s => s === null);
   if (emptyIdx === -1) return;
 
@@ -1328,6 +1358,9 @@ function handleLetterChoose(char, btnElement) {
 }
 
 function checkPuzzleResult() {
+  puzzleLocked = true;
+  const myNav = window.appNavEpoch;
+  const myPuz = puzzleEpoch;
   const q = gameQuestions[gameCurrentIndex];
   const currentWord = gameSlots.map(s => s.char).join(q.target.includes(' ') ? ' ' : '');
 
@@ -1340,6 +1373,7 @@ function checkPuzzleResult() {
     window.soundMgr.speakCheer('correct');
 
     setTimeout(() => {
+      if (window.appNavEpoch !== myNav || puzzleEpoch !== myPuz) return;
       gameCurrentIndex++;
       loadGameQuestion();
     }, 1700);
@@ -1347,7 +1381,10 @@ function checkPuzzleResult() {
     window.soundMgr.playWrong();
     showToast(`Bảo Long chạm vào ô sai để đổi lại hoặc thử lại nhé! ❤️`);
     window.soundMgr.speakCheer('wrong');
-    setTimeout(() => loadGameQuestion(), 1200);
+    setTimeout(() => {
+      if (window.appNavEpoch !== myNav || puzzleEpoch !== myPuz) return;
+      loadGameQuestion();
+    }, 1200);
   }
 }
 
@@ -1393,6 +1430,9 @@ function initListenCatchGame(mode = listenMode) {
 }
 
 function loadListenCatchQuestion() {
+  listenEpoch++;
+  const myNav = window.appNavEpoch;
+  const myEpoch = listenEpoch;
   if (listenIndex >= listenQuestions.length) {
     showListenCatchVictory();
     return;
@@ -1411,20 +1451,24 @@ function loadListenCatchQuestion() {
   };
 
   setTimeout(() => {
-    window.soundMgr.playAudioFile(q.audioKey, null, q.prompt);
+    if (window.appNavEpoch === myNav && listenEpoch === myEpoch) {
+      window.soundMgr.playAudioFile(q.audioKey, null, q.prompt);
+    }
   }, 300);
 
   const grid = document.getElementById('listenOptionsGrid');
   grid.innerHTML = '';
   const choices = [...q.choices].sort(() => Math.random() - 0.5);
+  let listenLocked = false;
 
   choices.forEach(ch => {
     const card = document.createElement('button');
     card.className = `listen-choice-card ${ch.length > 2 ? 'long-word' : ''}`;
     card.innerText = ch;
     card.addEventListener('click', () => {
-      if (card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      if (listenLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
       if (ch === q.target) {
+        listenLocked = true;
         card.classList.add('correct');
         listenStreak++;
         if (listenStreak > listenBestStreak) listenBestStreak = listenStreak;
@@ -1443,6 +1487,7 @@ function loadListenCatchQuestion() {
         }
 
         setTimeout(() => {
+          if (window.appNavEpoch !== myNav || listenEpoch !== myEpoch) return;
           listenIndex++;
           loadListenCatchQuestion();
         }, 1500);
@@ -1452,7 +1497,11 @@ function loadListenCatchQuestion() {
         document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x0`;
         window.soundMgr.playWrong();
         showToast(`👂 Nghe kỹ lại gợi ý: ${q.hint}`);
-        setTimeout(() => window.soundMgr.playAudioFile(q.audioKey), 450);
+        setTimeout(() => {
+          if (window.appNavEpoch === myNav && listenEpoch === myEpoch) {
+            window.soundMgr.playAudioFile(q.audioKey);
+          }
+        }, 450);
       }
     });
     grid.appendChild(card);
@@ -1485,6 +1534,9 @@ function initShinkansenGame() {
 }
 
 function loadShinkansenRound() {
+  shinkansenEpoch++;
+  const myNav = window.appNavEpoch;
+  const myEpoch = shinkansenEpoch;
   if (shinkansenIndex >= shinkansenQuestions.length) {
     showShinkansenVictory();
     return;
@@ -1512,7 +1564,9 @@ function loadShinkansenRound() {
     window.soundMgr.playClick();
     window.soundMgr.speakWord(q.word);
   };
-  setTimeout(() => window.soundMgr.speakWord(q.word), 300);
+  setTimeout(() => {
+    if (window.appNavEpoch === myNav && shinkansenEpoch === myEpoch) window.soundMgr.speakWord(q.word);
+  }, 300);
 
   // Đầu tàu (âm đầu)
   const headGrid = document.getElementById('shinkansenHeadChoices');
@@ -1558,6 +1612,8 @@ function updateTrainAssembly(q) {
   document.getElementById('trainPreviewWord').innerText = combined ? `= ${combined}` : '= ...';
 
   if (selectedTrainHead && selectedTrainTail) {
+    const myNav = window.appNavEpoch;
+    const myEpoch = shinkansenEpoch;
     shinkansenLocked = true;
     if (combined === q.word) {
       // Đúng! Tàu Shinkansen hú còi phóng vút!
@@ -1568,8 +1624,11 @@ function updateTrainAssembly(q) {
       document.getElementById('trainTrainUnit').classList.add('zooming');
       showToast(`🚅 TU TUU! Ghép chuẩn tàu "${q.word}" (${q.meaning})!`);
 
-      setTimeout(() => window.soundMgr.speakWord(q.word), 450);
       setTimeout(() => {
+        if (window.appNavEpoch === myNav && shinkansenEpoch === myEpoch) window.soundMgr.speakWord(q.word);
+      }, 450);
+      setTimeout(() => {
+        if (window.appNavEpoch !== myNav || shinkansenEpoch !== myEpoch) return;
         shinkansenIndex++;
         loadShinkansenRound();
       }, 1700);
@@ -1577,6 +1636,7 @@ function updateTrainAssembly(q) {
       window.soundMgr.playWrong();
       showToast(`Chưa khớp toa tàu "${q.word}" rồi, chọn lại nhé Bảo Long! ❤️`);
       setTimeout(() => {
+        if (window.appNavEpoch !== myNav || shinkansenEpoch !== myEpoch) return;
         shinkansenLocked = false;
         selectedTrainHead = '';
         selectedTrainTail = '';
@@ -1736,6 +1796,9 @@ function initDinoQuiz() {
 }
 
 function loadDinoQuizQuestion() {
+  dinoQuizEpoch++;
+  const myNav = window.appNavEpoch;
+  const myEpoch = dinoQuizEpoch;
   const total = dinoQuizQuestions.length;
   if (dinoQuizCurrentIndex >= total) {
     showDinoQuizVictory();
@@ -1753,12 +1816,15 @@ function loadDinoQuizQuestion() {
   };
 
   setTimeout(() => {
-    window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
+    if (window.appNavEpoch === myNav && dinoQuizEpoch === myEpoch) {
+      window.soundMgr.playAudioFile(q.audioKey, null, q.hint);
+    }
   }, 350);
 
   const container = document.getElementById('dinoQuizOptionsGrid');
   container.innerHTML = '';
   const shuffledOpts = [...q.options].sort(() => Math.random() - 0.5);
+  let dinoQuizLocked = false;
 
   shuffledOpts.forEach(optId => {
     const item = DINO_LESSONS.find(d => d.id === optId);
@@ -1771,12 +1837,16 @@ function loadDinoQuizQuestion() {
       <div class="quiz-opt-name">${item.dinoName}</div>
       <div class="quiz-opt-ja">🇯🇵 ${item.ja}</div>
     `;
-    card.addEventListener('click', () => checkDinoQuizAnswer(optId, card, q, item));
+    card.addEventListener('click', () => {
+      if (dinoQuizLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      if (optId === q.correctId) dinoQuizLocked = true;
+      checkDinoQuizAnswer(optId, card, q, item, myNav, myEpoch);
+    });
     container.appendChild(card);
   });
 }
 
-function checkDinoQuizAnswer(chosenId, cardEl, q, item) {
+function checkDinoQuizAnswer(chosenId, cardEl, q, item, myNav, myEpoch) {
   if (cardEl.classList.contains('correct') || cardEl.classList.contains('wrong')) return;
 
   if (chosenId === q.correctId) {
@@ -1789,6 +1859,7 @@ function checkDinoQuizAnswer(chosenId, cardEl, q, item) {
     if (item.audioKey) window.soundMgr.playAudioFile(item.audioKey);
 
     setTimeout(() => {
+      if (window.appNavEpoch !== myNav || dinoQuizEpoch !== myEpoch) return;
       dinoQuizCurrentIndex++;
       loadDinoQuizQuestion();
     }, 1650);
@@ -1927,6 +1998,9 @@ function initVehicleQuiz() {
 }
 
 function loadQuizQuestion() {
+  vehQuizEpoch++;
+  const myNav = window.appNavEpoch;
+  const myEpoch = vehQuizEpoch;
   if (quizCurrentIndex >= quizQuestions.length) {
     showQuizVictory();
     return;
@@ -1945,6 +2019,7 @@ function loadQuizQuestion() {
 
   const optionsGrid = document.getElementById('quizOptionsGrid');
   optionsGrid.innerHTML = '';
+  let vehLocked = false;
 
   const allChoices = [q.target, ...q.distractors].sort(() => Math.random() - 0.5);
   allChoices.forEach(item => {
@@ -1956,16 +2031,22 @@ function loadQuizQuestion() {
       <div class="quiz-opt-name">${item.word}</div>
       <div class="quiz-opt-ja">${item.ja}</div>
     `;
-    card.addEventListener('click', () => handleQuizChoice(item, q.target, card));
+    card.addEventListener('click', () => {
+      if (vehLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      if (item.id === q.target.id) vehLocked = true;
+      handleQuizChoice(item, q.target, card, myNav, myEpoch);
+    });
     optionsGrid.appendChild(card);
   });
 
   if (q.target && q.target.audioKey) {
-    setTimeout(() => window.soundMgr.playAudioFile(q.target.audioKey), 300);
+    setTimeout(() => {
+      if (window.appNavEpoch === myNav && vehQuizEpoch === myEpoch) window.soundMgr.playAudioFile(q.target.audioKey);
+    }, 300);
   }
 }
 
-function handleQuizChoice(chosen, target, cardEl) {
+function handleQuizChoice(chosen, target, cardEl, myNav, myEpoch) {
   if (cardEl.classList.contains('correct') || cardEl.classList.contains('wrong')) return;
   if (chosen.id === target.id) {
     cardEl.classList.add('correct');
@@ -1976,6 +2057,7 @@ function handleQuizChoice(chosen, target, cardEl) {
     showToast(`🎉 Chính xác! Đó là ${target.word}!`);
 
     setTimeout(() => {
+      if (window.appNavEpoch !== myNav || vehQuizEpoch !== myEpoch) return;
       quizCurrentIndex++;
       loadQuizQuestion();
     }, 1500);

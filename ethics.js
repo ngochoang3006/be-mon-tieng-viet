@@ -205,6 +205,8 @@ const ECO_TRASH_ITEMS = [
 let currentEthicsTab = 'lessons'; // 'lessons' | 'situations' | 'truefalse' | 'traffic_eco'
 let ethicsSessionScore = 0;
 let ethicsAutoTimer = null;
+let ethicsAutoRunning = false;
+let ethicsEpoch = 0;
 
 // Situations state
 let ethicsSitQuestions = [];
@@ -235,6 +237,7 @@ function renderEthicsHub() {
 }
 
 function stopEthicsAutoPlay() {
+  ethicsAutoRunning = false;
   if (ethicsAutoTimer) {
     clearTimeout(ethicsAutoTimer);
     ethicsAutoTimer = null;
@@ -249,6 +252,7 @@ function stopEthicsAutoPlay() {
 
 function switchEthicsSubTab(subtab) {
   stopEthicsAutoPlay();
+  ethicsEpoch++;
   currentEthicsTab = subtab;
 
   const tabs = {
@@ -303,7 +307,7 @@ function renderEthicsLessonsTab() {
       if (typeof markWordLearned === 'function') {
         const isNew = markWordLearned(item.id);
         if (isNew) {
-          addEthicsScore(5);
+          addEthicsScore(2);
           renderEthicsLessonsTab();
           if (typeof showToast === 'function') showToast(`⭐ +2 Sao! Bảo Long đã học: "${item.badge}"!`);
         } else if (typeof showToast === 'function') {
@@ -318,17 +322,20 @@ function renderEthicsLessonsTab() {
   const btnAuto = document.getElementById('btnAutoPlayEthics');
   if (btnAuto) {
     btnAuto.onclick = () => {
-      if (ethicsAutoTimer) {
+      if (ethicsAutoRunning || btnAuto.classList.contains('playing')) {
         stopEthicsAutoPlay();
         window.soundMgr.stopAll();
         return;
       }
+      stopEthicsAutoPlay();
+      ethicsAutoRunning = true;
       btnAuto.classList.add('playing');
       btnAuto.innerHTML = '<span>⏹️</span> Dừng nghe';
       let idx = 0;
       const cards = document.querySelectorAll('#ethicsLessonsGrid .ethics-lesson-card');
 
       function playNext() {
+        if (!ethicsAutoRunning) return;
         if (idx >= ETHICS_LESSONS_DATA.length) {
           stopEthicsAutoPlay();
           if (typeof showToast === 'function') showToast('🎉 Bảo Long đã nghe hết 8 bài học Đạo Đức rồi!');
@@ -342,6 +349,7 @@ function renderEthicsLessonsTab() {
         const cur = ETHICS_LESSONS_DATA[idx];
         if (typeof markWordLearned === 'function') markWordLearned(cur.id);
         window.soundMgr.playAudioFile(cur.audioKey, () => {
+          if (!ethicsAutoRunning) return;
           idx++;
           ethicsAutoTimer = setTimeout(playNext, 650);
         }, cur.title);
@@ -386,23 +394,31 @@ function loadEthicsSituationQuestion() {
   document.getElementById('ethicsSitIcon').innerText = q.icon;
   document.getElementById('ethicsSitQuestion').innerText = q.question;
 
+  const myNav = window.appNavEpoch || 0;
+  const myEth = ethicsEpoch;
   document.getElementById('btnHearEthicsSit').onclick = () => {
     window.soundMgr.playClick();
     window.soundMgr.playAudioFile(q.audioKey, null, q.question);
   };
-  setTimeout(() => window.soundMgr.playAudioFile(q.audioKey, null, q.question), 300);
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth) {
+      window.soundMgr.playAudioFile(q.audioKey, null, q.question);
+    }
+  }, 300);
 
   const optsWrap = document.getElementById('ethicsSitOptionsWrap');
   optsWrap.innerHTML = '';
   const choices = [...q.options].sort(() => Math.random() - 0.5);
+  let sitLocked = false;
 
   choices.forEach(opt => {
     const btn = document.createElement('button');
     btn.className = 'ethics-sit-option';
     btn.innerText = opt.text;
     btn.addEventListener('click', () => {
-      if (btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+      if (sitLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
       if (opt.isGood) {
+        sitLocked = true;
         btn.classList.add('correct');
         ethicsSitScore += 10;
         addEthicsScore(10);
@@ -413,6 +429,7 @@ function loadEthicsSituationQuestion() {
         if (typeof showToast === 'function') showToast(`🌟 ${opt.feedback}`);
 
         setTimeout(() => {
+          if ((window.appNavEpoch || 0) !== myNav || ethicsEpoch !== myEth) return;
           ethicsSitIndex++;
           loadEthicsSituationQuestion();
         }, 2100);
@@ -463,11 +480,17 @@ function loadEthicsTfQuestion() {
   document.getElementById('ethicsTfIcon').innerText = q.icon;
   document.getElementById('ethicsTfText').innerText = q.text;
 
+  const myNav = window.appNavEpoch || 0;
+  const myEth = ethicsEpoch;
   document.getElementById('btnHearEthicsTf').onclick = () => {
     window.soundMgr.playClick();
     window.soundMgr.playAudioFile(q.audioKey, null, q.text);
   };
-  setTimeout(() => window.soundMgr.playAudioFile(q.audioKey, null, q.text), 250);
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth) {
+      window.soundMgr.playAudioFile(q.audioKey, null, q.text);
+    }
+  }, 250);
 
   const btnYes = document.getElementById('btnEthicsShouldDo');
   const btnNo = document.getElementById('btnEthicsShouldNot');
@@ -493,6 +516,7 @@ function loadEthicsTfQuestion() {
       if (typeof showToast === 'function') showToast(`✅ Chuẩn xác! ${q.reason}`);
 
       setTimeout(() => {
+        if ((window.appNavEpoch || 0) !== myNav || ethicsEpoch !== myEth) return;
         ethicsTfIndex++;
         loadEthicsTfQuestion();
       }, 1800);
@@ -577,16 +601,20 @@ function loadNextEcoItem() {
   }
 
   const item = ecoQueue[ecoIndex];
+  const myNav = window.appNavEpoch || 0;
+  const myEth = ethicsEpoch;
   document.getElementById('ecoProgressText').innerText = `Món đồ ${ecoIndex + 1} / ${ecoQueue.length}`;
   document.getElementById('ecoScoreText').innerText = `⭐ ${ecoScore} điểm`;
   document.getElementById('ecoTrashEmoji').innerText = item.emoji;
   document.getElementById('ecoTrashName').innerText = item.name;
+  let ecoLocked = false;
 
   document.querySelectorAll('.eco-bin-btn').forEach(btn => {
     btn.classList.remove('correct', 'wrong');
     btn.onclick = () => {
-      if (btn.classList.contains('correct')) return;
+      if (ecoLocked || btn.classList.contains('correct')) return;
       if (btn.dataset.bin === item.bin) {
+        ecoLocked = true;
         btn.classList.add('correct');
         ecoScore += 10;
         addEthicsScore(10);
@@ -596,6 +624,7 @@ function loadNextEcoItem() {
         if (typeof showToast === 'function') showToast(`♻️ Tuyệt vời! "${item.name}" bỏ vào ${item.binName}!`);
 
         setTimeout(() => {
+          if ((window.appNavEpoch || 0) !== myNav || ethicsEpoch !== myEth) return;
           ecoIndex++;
           loadNextEcoItem();
         }, 1200);

@@ -119,6 +119,8 @@ let currentEnTopicIdx = 0;
 let enSessionScore = 0;
 let enAutoTimer = null;
 let enAutoRunning = false;
+let enEpoch = 0;
+let enSpellLocked = false;
 
 // Quiz State
 let enQuizQuestions = [];
@@ -165,6 +167,8 @@ function renderEnglishHub() {
 
 function switchEnglishSubTab(subtab) {
   stopEnAutoPlay();
+  window.soundMgr.stopAll();
+  enEpoch++;
   currentEnTab = subtab;
 
   const tabs = {
@@ -379,6 +383,9 @@ function initEnQuizGame() {
 }
 
 function loadEnQuizQuestion() {
+  enEpoch++;
+  const myNav = window.appNavEpoch || 0;
+  const myEn = enEpoch;
   if (enQuizIndex >= enQuizQuestions.length) {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
@@ -402,10 +409,15 @@ function loadEnQuizQuestion() {
     window.soundMgr.playClick();
     window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.en);
   };
-  setTimeout(() => window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.en), 250);
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && enEpoch === myEn) {
+      window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.en);
+    }
+  }, 250);
 
   const grid = document.getElementById('enQuizOptionsGrid');
   grid.innerHTML = '';
+  let enQuizLocked = false;
   q.choices.forEach(item => {
     const card = document.createElement('div');
     card.className = 'quiz-option-card';
@@ -415,8 +427,9 @@ function loadEnQuizQuestion() {
       <div class="quiz-opt-ja">🇯🇵 ${item.ja}</div>
     `;
     card.addEventListener('click', () => {
-      if (card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      if (enQuizLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
       if (item.id === q.target.id) {
+        enQuizLocked = true;
         card.classList.add('correct');
         enQuizStreak++;
         const pts = enQuizStreak >= 3 ? 15 : 10;
@@ -428,6 +441,7 @@ function loadEnQuizQuestion() {
         if (typeof fireConfetti === 'function') fireConfetti();
         if (typeof showToast === 'function') showToast(`🎉 Great! "${q.target.en}" = ${q.target.vi}!`);
         setTimeout(() => {
+          if ((window.appNavEpoch || 0) !== myNav || enEpoch !== myEn) return;
           enQuizIndex++;
           loadEnQuizQuestion();
         }, 1500);
@@ -456,6 +470,10 @@ function initEnSpellingGame() {
 }
 
 function loadEnSpellRound() {
+  enEpoch++;
+  enSpellLocked = false;
+  const myNav = window.appNavEpoch || 0;
+  const myEn = enEpoch;
   if (enSpellIndex >= enSpellQuestions.length) {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
@@ -484,7 +502,11 @@ function loadEnSpellRound() {
     window.soundMgr.playClick();
     loadEnSpellRound();
   };
-  setTimeout(() => window.soundMgr.playAudioFile(q.audioKey, null, q.word), 250);
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && enEpoch === myEn) {
+      window.soundMgr.playAudioFile(q.audioKey, null, q.word);
+    }
+  }, 250);
 
   const letters = q.word.split('');
   enSpellSlots = new Array(letters.length).fill(null);
@@ -496,6 +518,7 @@ function loadEnSpellRound() {
     slot.className = 'puzzle-slot';
     slot.id = `en-slot-${idx}`;
     slot.addEventListener('click', () => {
+      if (enSpellLocked) return;
       if (enSpellSlots[idx]) {
         const removed = enSpellSlots[idx];
         const b = document.getElementById(removed.btnId);
@@ -518,6 +541,7 @@ function loadEnSpellRound() {
     btn.innerText = ch;
     btn.id = `en-opt-${idx}`;
     btn.addEventListener('click', () => {
+      if (enSpellLocked || btn.classList.contains('used')) return;
       window.soundMgr.playAudioFile(`en_letter_${ch.toLowerCase()}`, null, ch);
       const emptyIdx = enSpellSlots.findIndex(s => s === null);
       if (emptyIdx === -1) return;
@@ -528,6 +552,7 @@ function loadEnSpellRound() {
       sEl.classList.add('filled');
 
       if (enSpellSlots.every(s => s !== null)) {
+        enSpellLocked = true;
         const built = enSpellSlots.map(s => s.ch).join('');
         if (built === q.word) {
           enSpellScore += 10;
@@ -535,16 +560,22 @@ function loadEnSpellRound() {
           document.getElementById('enSpellScoreText').innerText = `⭐ ${enSpellScore} điểm`;
           window.soundMgr.playCorrect();
           if (typeof fireConfetti === 'function') fireConfetti();
-          setTimeout(() => window.soundMgr.playAudioFile(q.audioKey, null, q.word), 300);
+          setTimeout(() => {
+            if ((window.appNavEpoch || 0) === myNav && enEpoch === myEn) window.soundMgr.playAudioFile(q.audioKey, null, q.word);
+          }, 300);
           if (typeof showToast === 'function') showToast(`🌟 Excellent! "${q.word}" = ${q.vi}!`);
           setTimeout(() => {
+            if ((window.appNavEpoch || 0) !== myNav || enEpoch !== myEn) return;
             enSpellIndex++;
             loadEnSpellRound();
           }, 1600);
         } else {
           window.soundMgr.playWrong();
           if (typeof showToast === 'function') showToast(`Chạm vào ô sai để sửa hoặc thử lại nhé Bảo Long! ❤️`);
-          setTimeout(() => loadEnSpellRound(), 1100);
+          setTimeout(() => {
+            if ((window.appNavEpoch || 0) !== myNav || enEpoch !== myEn) return;
+            loadEnSpellRound();
+          }, 1100);
         }
       }
     });

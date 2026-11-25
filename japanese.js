@@ -133,6 +133,7 @@ let currentJaTopicIdx = 0;
 let jaSessionScore = 0;
 let jaAutoTimer = null;
 let jaAutoRunning = false;
+let jaEpoch = 0;
 
 // Writing State
 let jaWriteChar = 'あ';
@@ -180,6 +181,8 @@ function renderJapaneseHub() {
 
 function switchJapaneseSubTab(subtab) {
   stopJaAutoPlay();
+  window.soundMgr.stopAll();
+  jaEpoch++;
   currentJaTab = subtab;
 
   const tabs = {
@@ -531,6 +534,9 @@ function initJaQuizGame() {
 }
 
 function loadJaQuizQuestion() {
+  jaEpoch++;
+  const myNav = window.appNavEpoch || 0;
+  const myJa = jaEpoch;
   if (jaQuizIndex >= jaQuizQuestions.length) {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
@@ -554,10 +560,15 @@ function loadJaQuizQuestion() {
     window.soundMgr.playClick();
     window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.ja);
   };
-  setTimeout(() => window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.ja), 250);
+  setTimeout(() => {
+    if ((window.appNavEpoch || 0) === myNav && jaEpoch === myJa) {
+      window.soundMgr.playAudioFile(q.target.audioKey, null, q.target.ja);
+    }
+  }, 250);
 
   const grid = document.getElementById('jaQuizOptionsGrid');
   grid.innerHTML = '';
+  let jaQuizLocked = false;
   q.choices.forEach(item => {
     const card = document.createElement('div');
     card.className = 'quiz-option-card';
@@ -566,8 +577,9 @@ function loadJaQuizQuestion() {
       <div class="quiz-opt-name">${item.vi}</div>
     `;
     card.addEventListener('click', () => {
-      if (card.classList.contains('correct') || card.classList.contains('wrong')) return;
+      if (jaQuizLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
       if (item.id === q.target.id) {
+        jaQuizLocked = true;
         card.classList.add('correct');
         jaQuizStreak++;
         const pts = jaQuizStreak >= 3 ? 15 : 10;
@@ -579,6 +591,7 @@ function loadJaQuizQuestion() {
         if (typeof fireConfetti === 'function') fireConfetti();
         if (typeof showToast === 'function') showToast(`🌸 すごい! "${q.target.ja}" = ${q.target.vi}!`);
         setTimeout(() => {
+          if ((window.appNavEpoch || 0) !== myNav || jaEpoch !== myJa) return;
           jaQuizIndex++;
           loadJaQuizQuestion();
         }, 1500);
