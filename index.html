@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc &amp; Đánh Vần</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦖</text></svg>">
-  <link rel="stylesheet" href="style.css?v=20261125v3">
+  <link rel="stylesheet" href="style.css?v=20261125v4">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -64,23 +64,51 @@
 
       <div class="side-nav-groups">
         <div class="side-nav-group">
-          <div class="side-group-label">🇻🇳 Tiếng Việt</div>
-          <button class="mode-pill" data-mode="alphabet" title="Chữ cái &amp; Ghép âm">
+          <div class="side-group-label">🇻🇳 Lớp 1 Việt Nam</div>
+          <button class="mode-pill" data-mode="alphabet" title="Chữ cái &amp; Chính tả">
             <span class="mode-ico">🔠</span>
-            <span class="mode-label">Chữ cái &amp; Ghép âm</span>
+            <span class="mode-label">Chữ cái &amp; Chính tả</span>
           </button>
           <button class="mode-pill active" data-mode="vocab" title="Học từ mới">
             <span class="mode-ico">📖</span>
-            <span class="mode-label">Học từ mới</span>
+            <span class="mode-label">Học từ mới (12 Bài)</span>
           </button>
-          <button class="mode-pill" data-mode="phonics" title="Tập đánh vần">
+          <button class="mode-pill" data-mode="phonics" title="Đánh vần &amp; Đọc hiểu">
             <span class="mode-ico">🔤</span>
-            <span class="mode-label">Tập đánh vần</span>
+            <span class="mode-label">Đánh vần &amp; Đọc hiểu</span>
+          </button>
+          <button class="mode-pill mode-pill-math" data-mode="math" title="Toán Lớp 1">
+            <span class="mode-ico">🧮</span>
+            <span class="mode-label">Toán Lớp 1</span>
+          </button>
+          <button class="mode-pill mode-pill-science" data-mode="science_life" title="Tự nhiên &amp; Đời sống">
+            <span class="mode-ico">🌿</span>
+            <span class="mode-label">Tự nhiên &amp; Đời sống</span>
+          </button>
+          <button class="mode-pill mode-pill-ethics" data-mode="ethics" title="Đạo Đức Lớp 1">
+            <span class="mode-ico">🌱</span>
+            <span class="mode-label">Đạo Đức Lớp 1</span>
+          </button>
+          <button class="mode-pill mode-pill-arts" data-mode="arts_pe" title="Nhạc, Họa &amp; Thể dục">
+            <span class="mode-ico">🎨</span>
+            <span class="mode-label">Nhạc, Họa &amp; Thể dục</span>
           </button>
         </div>
 
         <div class="side-nav-group">
-          <div class="side-group-label">🌍 Thế Giới Quanh Bé</div>
+          <div class="side-group-label">🇯🇵 Song Ngữ Nhật – Anh</div>
+          <button class="mode-pill mode-pill-japanese" data-mode="japanese" title="Tiếng Nhật 小1 (80 Kanji)">
+            <span class="mode-ico">🇯🇵</span>
+            <span class="mode-label">Tiếng Nhật 小1</span>
+          </button>
+          <button class="mode-pill mode-pill-english" data-mode="english" title="Tiếng Anh (8 Chủ đề)">
+            <span class="mode-ico">🇬🇧</span>
+            <span class="mode-label">Tiếng Anh</span>
+          </button>
+        </div>
+
+        <div class="side-nav-group">
+          <div class="side-group-label">🌍 Khám Phá &amp; Chơi</div>
           <button class="mode-pill mode-pill-dino" data-mode="dino" title="Khủng Long">
             <span class="mode-ico">🦖</span>
             <span class="mode-label">Khủng Long</span>
@@ -92,26 +120,6 @@
           <button class="mode-pill mode-pill-veh" data-mode="vehicles" title="Xe Cộ">
             <span class="mode-ico">🚗</span>
             <span class="mode-label">Xe Cộ</span>
-          </button>
-        </div>
-
-        <div class="side-nav-group">
-          <div class="side-group-label">🚀 Môn Học &amp; Chơi</div>
-          <button class="mode-pill mode-pill-math" data-mode="math" title="Toán Lớp 1">
-            <span class="mode-ico">🧮</span>
-            <span class="mode-label">Toán Lớp 1</span>
-          </button>
-          <button class="mode-pill mode-pill-ethics" data-mode="ethics" title="Đạo Đức">
-            <span class="mode-ico">🌱</span>
-            <span class="mode-label">Đạo Đức</span>
-          </button>
-          <button class="mode-pill mode-pill-english" data-mode="english" title="Tiếng Anh">
-            <span class="mode-ico">🇬🇧</span>
-            <span class="mode-label">Tiếng Anh</span>
-          </button>
-          <button class="mode-pill mode-pill-japanese" data-mode="japanese" title="Tiếng Nhật">
-            <span class="mode-ico">🇯🇵</span>
-            <span class="mode-label">Tiếng Nhật</span>
           </button>
           <button class="mode-pill mode-pill-game" data-mode="game" title="Khu Trò Chơi">
             <span class="mode-ico">🎮</span>
@@ -169,13 +177,19 @@
       </div>
 
       <!-- Nút Thử thách ghép hình nổi bật ở giữa (Chơi ngay chính bài đang học!) -->
-      <div class="challenge-btn-wrapper">
+      <div class="challenge-btn-wrapper" style="gap: 10px; flex-wrap: wrap;">
         <button class="challenge-btn" id="bigChallengeBtn">
           <span>🎯</span>
           <span id="bigChallengeBtnText">Thử thách ghép chữ Bài 1 (10 câu)</span>
         </button>
+        <button class="tool-chip" id="btnToggleVnStories" style="display: none; padding: 10px 16px; font-size: 14px; background: #fff1f2; color: #be123c; border-color: #fda4af;">
+          <span>📖</span> 6 Bài Đọc Hiểu HK2
+        </button>
       </div>
     </section>
+
+    <!-- Khu vực 6 Bài Đọc Hiểu HK2 (hiện khi chọn trong chế độ Đánh vần / Đọc hiểu) -->
+    <section id="vnStoriesContainer" style="display: none;"></section>
 
     <!-- Khu vực hiển thị thẻ từ vựng (Chế độ Học từ mới & Tập đánh vần) -->
     <section class="cards-grid" id="cardsContainer"></section>
@@ -211,6 +225,37 @@
         </div>
         <p class="section-sub-desc">Tiếng Việt có 6 thanh điệu giúp lời nói có giai điệu như hát! Chạm từng thẻ để nghe cô/ba thị phạm nhé:</p>
         <div class="tones-grid" id="tonesGrid"></div>
+      </div>
+
+      <!-- MỚI: 6 Quy Tắc Chính Tả Vàng & Trò Chơi Chính Tả (C/K, G/GH, NG/NGH, S/X, CH/TR, L/N) -->
+      <div class="alpha-section-card" style="margin-top: 20px; border-color: #fda4af; border-bottom-color: #f43f5e;">
+        <div class="section-header-flex">
+          <div>
+            <h3 class="section-blue-title" style="color: #be123c;">
+              <span>✍️</span> 6 Quy Tắc Chính Tả Vàng Lớp 1 (Không bao giờ viết sai!)
+            </h3>
+            <p class="section-sub-desc">Chạm từng thẻ quy tắc để nghe cô đọc bí kíp phân biệt <strong>c / k, g / gh, ng / ngh, ch / tr, s / x, l / n</strong> nhé!</p>
+          </div>
+          <button class="challenge-btn" id="btnStartOrthoQuiz" style="padding: 9px 18px; font-size: 14px;">
+            🎯 Chơi Đố Chính Tả (12 câu)
+          </button>
+        </div>
+        <div class="orthography-rules-grid" id="orthographyRulesGrid"></div>
+
+        <div id="orthoQuizStage" class="ortho-quiz-box" style="display: none;">
+          <div class="game-score-row" style="margin-bottom: 10px;">
+            <span class="game-progress-text" id="orthoQuizProgress">Câu 1 / 12</span>
+            <span class="game-stars" id="orthoQuizScore">⭐ 0 điểm</span>
+            <button class="tool-chip" id="btnCloseOrthoQuiz">✖️ Đóng bài đố</button>
+          </div>
+          <div class="quiz-question-box" style="margin-bottom: 12px;">
+            <div class="quiz-question-title" id="orthoQuizPrompt">Chọn chữ đúng chính tả nhé!</div>
+            <button class="btn-hear-hint" id="btnHearOrthoQuiz" style="margin: 8px auto 0 auto;">
+              <span>🔊</span> Nghe câu hỏi &amp; 2 đáp án
+            </button>
+          </div>
+          <div class="quiz-options-grid" id="orthoQuizOptionsGrid" style="grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 520px; margin: 0 auto;"></div>
+        </div>
       </div>
     </section>
 
@@ -389,9 +434,14 @@
           <div>
             <h3 class="section-blue-title" style="color: #a21caf;"><span>🦖</span> Chạm vào Số hoặc chạm từng Khủng Long để tập đếm!</h3>
           </div>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayMathNumbers">
-            <span>🎧</span> Nghe đếm 0 → 20
-          </button>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="tool-chip tool-chip-listen" id="btnAutoPlayMathNumbers">
+              <span>🎧</span> Nghe đếm 0 → 20
+            </button>
+            <button class="tool-chip" id="btnToggleHundredBoard" style="background: #f0fdf4; color: #15803d; border-color: #86efac;">
+              <span>🔢</span> Bảng 0–100 (HK2)
+            </button>
+          </div>
         </div>
 
         <!-- Khung phóng to Số đang chọn + Đếm 1-1 -->
@@ -411,19 +461,62 @@
           <div class="math-spot-count-row" id="mathSpotCountIcons"></div>
         </div>
 
+        <!-- Bảng số 0 - 100 tương tác (HK2) -->
+        <div id="mathHundredBoardBox" class="math-hundred-box" style="display: none;">
+          <div class="section-header-flex" style="margin-bottom: 10px;">
+            <div>
+              <h4 style="font-size: 15px; font-weight: 900; color: #15803d; margin: 0;">🔢 Bảng Số Từ 1 → 100 (Chạm số bất kỳ để nghe đọc!)</h4>
+              <p style="font-size: 12px; font-weight: 700; color: #475569; margin: 2px 0 0 0;">Thử chọn chế độ đếm nhảy (+2, +5, +10) để khám phá quy luật số nhé!</p>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="mathSkipStepRow">
+              <button class="tool-chip active-filter math-skip-btn" data-step="1">+1 Tất cả</button>
+              <button class="tool-chip math-skip-btn" data-step="2">+2 Số chẵn</button>
+              <button class="tool-chip math-skip-btn" data-step="5">+5 Nhảy 5</button>
+              <button class="tool-chip math-skip-btn" data-step="10">+10 Tròn chục</button>
+            </div>
+          </div>
+          <div class="math-hundred-grid" id="mathHundredGrid"></div>
+        </div>
+
         <!-- Bảng số 0 - 20 -->
         <div class="math-numbers-grid" id="mathNumbersGrid"></div>
 
         <!-- Chục tròn 30 - 100 -->
-        <div style="background: #f0f9ff; border: 2px solid #bae6fd; border-radius: 20px; padding: 14px;">
+        <div style="background: #f0f9ff; border: 2px solid #bae6fd; border-radius: 20px; padding: 14px; margin-bottom: 16px;">
           <h4 style="font-size: 15px; font-weight: 900; color: #0369a1; margin-bottom: 10px; text-align: center;">
             🚀 Các Số Tròn Chục (30 → 100) — Chạm để nghe đọc!
           </h4>
           <div class="math-tens-grid" id="mathTensGrid"></div>
         </div>
+
+        <!-- Cấu tạo số: Tách / Gộp (いくつといくつ) -->
+        <div id="mathBondsSection" class="math-bonds-box">
+          <div class="section-header-flex" style="margin-bottom: 10px;">
+            <div>
+              <h4 style="font-size: 15px; font-weight: 900; color: #9d174d; margin: 0;">
+                🌸 Tách &amp; Gộp Số (Cấu tạo số • いくつといくつ)
+              </h4>
+              <p style="font-size: 12px; font-weight: 700; color: #64748b; margin: 2px 0 0 0;">
+                Chọn một số rồi chạm từng cặp tách để nhớ nhanh phép cộng qua 10 của Nhật &amp; Việt Nam!
+              </p>
+            </div>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="mathBondTargetBtns">
+              <button class="tool-chip math-bond-target-btn" data-target="5">Số 5</button>
+              <button class="tool-chip math-bond-target-btn" data-target="6">Số 6</button>
+              <button class="tool-chip math-bond-target-btn" data-target="7">Số 7</button>
+              <button class="tool-chip math-bond-target-btn active-filter" data-target="8">Số 8</button>
+              <button class="tool-chip math-bond-target-btn" data-target="9">Số 9</button>
+              <button class="tool-chip math-bond-target-btn" data-target="10">Số 10</button>
+            </div>
+          </div>
+          <div class="math-bond-layout">
+            <div class="math-bond-diagram" id="mathBondDiagram"></div>
+            <div class="math-bond-pairs-grid" id="mathBondPairsGrid"></div>
+          </div>
+        </div>
       </div>
 
-      <!-- PANE 2: CỘNG & TRỪ PHẠM VI 10 / 20 -->
+      <!-- PANE 2: CỘNG & TRỪ PHẠM VI 10 / 20 / SAKURA / 100 -->
       <div class="math-sub-pane" id="mathPaneCalc" style="display: none;">
         <div id="mathCalcPlayStage">
           <div class="game-score-row">
@@ -435,8 +528,10 @@
           <div class="listen-filter-row">
             <button class="tool-chip math-calc-filter active-filter" data-mode="max10">🌟 Phạm vi 10</button>
             <button class="tool-chip math-calc-filter" data-mode="max20">🚀 Phạm vi 20</button>
-            <button class="tool-chip math-calc-filter" data-mode="onlyPlus">➕ Chỉ Phép Cộng</button>
-            <button class="tool-chip math-calc-filter" data-mode="onlyMinus">➖ Chỉ Phép Trừ</button>
+            <button class="tool-chip math-calc-filter" data-mode="sakura">🌸 Qua 10 (Sakura)</button>
+            <button class="tool-chip math-calc-filter" data-mode="max100">💯 Phạm vi 100 (HK2)</button>
+            <button class="tool-chip math-calc-filter" data-mode="onlyPlus">➕ Chỉ Cộng</button>
+            <button class="tool-chip math-calc-filter" data-mode="onlyMinus">➖ Chỉ Trừ</button>
             <button class="tool-chip" id="btnToggleCalcVisual" style="background:#fef9c3; color:#854d0e; border-color:#facc15;">👁️ Hình đếm: BẬT</button>
           </div>
 
@@ -480,8 +575,9 @@
           </div>
 
           <div class="listen-filter-row">
-            <button class="tool-chip active-filter" id="btnCmpSimple">🔢 So sánh Số (0–20)</button>
-            <button class="tool-chip" id="btnCmpExpr">🧮 Tính rồi So sánh (vd: 3+2 ? 4)</button>
+            <button class="tool-chip active-filter" id="btnCmpSimple">🔢 Số 0–20</button>
+            <button class="tool-chip" id="btnCmp100">🚀 Số 0–100 (HK2)</button>
+            <button class="tool-chip" id="btnCmpExpr">🧮 Tính rồi So sánh</button>
           </div>
 
           <p class="slot-tip-text" style="color: #15803d; font-size: 13px;">
@@ -564,25 +660,50 @@
         </div>
       </div>
 
-      <!-- PANE 5: HÌNH HỌC LỚP 1 & ĐỒNG HỒ GIỜ ĐÚNG -->
+      <!-- PANE 5: HÌNH HỌC 2D/3D, ĐO ĐỘ DÀI CM, ĐỒNG HỒ & XEM LỊCH -->
       <div class="math-sub-pane" id="mathPaneGeometry" style="display: none;">
         <div class="listen-filter-row" style="margin-bottom: 16px;">
-          <button class="tool-chip active-filter" id="btnGeoLearnMode">📖 Khám phá Hình &amp; Đồng Hồ</button>
-          <button class="tool-chip" id="btnGeoQuizMode">🎯 Đố Vui Hình &amp; Xem Giờ (8 câu)</button>
+          <button class="tool-chip active-filter" id="btnGeoLearnMode">📖 Khám phá Hình, Đo cm &amp; Đồng Hồ</button>
+          <button class="tool-chip" id="btnGeoQuizMode">🎯 Đố Vui Hình, cm, Giờ &amp; Thứ (10 câu)</button>
         </div>
 
         <div id="mathGeoLearnStage">
           <h3 class="section-blue-title" style="color: #0284c7; margin-bottom: 10px;">
-            <span>📐</span> 4 Hình Học Cơ Bản Lớp 1 (Chạm vào từng hình để nghe!)
+            <span>📐</span> 4 Hình Phẳng Cơ Bản Lớp 1 (Chạm vào từng hình để nghe!)
           </h3>
           <div class="math-shapes-grid" id="mathShapesGrid"></div>
 
-          <h3 class="section-blue-title" style="color: #e11d48; margin-bottom: 10px;">
-            <span>🕒</span> Thực Hành Xem Đồng Hồ Giờ Đúng (1 giờ – 12 giờ)
+          <h3 class="section-blue-title" style="color: #7c3aed; margin: 18px 0 10px 0;">
+            <span>🧊</span> 4 Khối Hình Không Gian 3D (Lập phương • Hộp chữ nhật • Cầu • Trụ)
+          </h3>
+          <div class="math-shapes-grid" id="mathSolidsGrid"></div>
+
+          <h3 class="section-blue-title" style="color: #059669; margin: 18px 0 10px 0;">
+            <span>📏</span> Tập Đo Độ Dài Bằng Thước Xăng-ti-mét (cm)
+          </h3>
+          <div class="math-ruler-box" id="mathRulerSection">
+            <div class="listen-filter-row" id="mathRulerItemBtns" style="margin-bottom: 12px;"></div>
+            <div class="math-ruler-stage">
+              <svg viewBox="0 0 560 150" class="math-ruler-svg" id="mathRulerSvg"></svg>
+            </div>
+            <div style="text-align: center; margin-top: 10px;">
+              <div id="mathRulerReadout" style="font-size: 17px; font-weight: 900; color: #065f46;">📏 Chiếc bút chì dài 7 xăng-ti-mét (7 cm)</div>
+              <button class="btn-hear-hint" id="btnHearRuler" style="margin: 8px auto 0 auto;">
+                <span>🔊</span> Nghe kết quả đo
+              </button>
+            </div>
+          </div>
+
+          <h3 class="section-blue-title" style="color: #e11d48; margin: 18px 0 10px 0;">
+            <span>🕒</span> Thực Hành Xem Đồng Hồ Giờ Đúng (:00) &amp; Giờ Rưỡi (:30 / 何時半)
           </h3>
           <div class="math-clock-box">
             <svg viewBox="0 0 200 200" class="clock-svg" id="mathClockSvg"></svg>
-            <div style="max-width: 340px; width: 100%; text-align: center;">
+            <div style="max-width: 360px; width: 100%; text-align: center;">
+              <div class="listen-filter-row" style="justify-content: center; margin-bottom: 8px;">
+                <button class="tool-chip active-filter" id="btnClockExact">🕒 Giờ đúng (:00)</button>
+                <button class="tool-chip" id="btnClockHalf">🕡 Giờ rưỡi (:30 • 半)</button>
+              </div>
               <div style="font-size: 20px; font-weight: 900; color: #0369a1;" id="mathClockReadout">🕒 Đồng hồ chỉ: 3 giờ đúng</div>
               <div style="font-size: 13px; font-weight: 700; color: #475569; margin: 6px 0;" id="mathClockScheduleTip"></div>
               <button class="btn-hear-hint" id="btnHearClock" style="margin: 6px auto 10px auto;">
@@ -592,12 +713,20 @@
               <div class="clock-hours-grid" id="mathClockHourBtns"></div>
             </div>
           </div>
+
+          <h3 class="section-blue-title" style="color: #ea580c; margin: 18px 0 10px 0;">
+            <span>📅</span> Xem Lịch &amp; 7 Thứ Trong Tuần (Thứ Hai → Chủ Nhật • 月〜日曜日)
+          </h3>
+          <div class="math-days-box">
+            <div class="math-days-grid" id="mathDaysGrid"></div>
+            <div id="mathDayTipBox" style="text-align: center; margin-top: 10px; font-size: 14px; font-weight: 800; color: #9a3412;"></div>
+          </div>
         </div>
 
         <div id="mathGeoQuizStage" style="display: none;">
           <div id="mathGeoQuizActive">
             <div class="game-score-row">
-              <span class="game-progress-text" id="mathGeoProgressText">Câu 1 / 8</span>
+              <span class="game-progress-text" id="mathGeoProgressText">Câu 1 / 10</span>
               <span class="game-stars" id="mathGeoScoreText">⭐ 0 điểm</span>
             </div>
             <div class="quiz-question-box">
@@ -609,6 +738,7 @@
             <div id="mathGeoQuizClockWrap" style="display: none; justify-content: center; margin-bottom: 16px;">
               <svg viewBox="0 0 200 200" class="clock-svg" id="mathQuizClockSvg"></svg>
             </div>
+            <div id="mathGeoQuizVisualWrap" style="display: none; justify-content: center; margin-bottom: 16px;"></div>
             <div class="quiz-options-grid" id="mathGeoQuizOptionsGrid"></div>
           </div>
 
@@ -940,28 +1070,37 @@
          ======================================================== -->
     <section id="japaneseContainer" style="display: none;">
       <div class="ja-banner-box">
-        <div class="dino-badge">🇯🇵 NIHONGO KIDS • TIẾNG NHẬT SONG NGỮ 🌸</div>
-        <h2 class="dino-banner-title">Ngôi Trường Tiếng Nhật Của Bảo Long</h2>
-        <p class="dino-banner-desc">Khám phá 46 chữ Hiragana (あ → ん), từ vựng &amp; giao tiếp hàng ngày, bảng tập viết ô vuông Nhật Bản Masume và đố vui cùng giọng đọc Nanami &amp; Keita!</p>
+        <div class="dino-badge" style="background: #e11d48; color: #fff;">🇯🇵 TIẾNG NHẬT LỚP 1 (MEXT 小学1年生) • QUỐC NGỮ NHẬT BẢN</div>
+        <h2 class="dino-banner-title">Ngôi Trường Tiếng Nhật Của Bảo Long (小学1年生)</h2>
+        <p class="dino-banner-desc">Trọn bộ lớp 1 Nhật Bản cho Bảo Long: 46+25 chữ Hiragana, 46 chữ Katakana (đọc tên Khủng Long!), 80 chữ Kanji chuẩn Bộ GD Nhật, 8 chủ đề Từ vựng, 4 Truyện đọc 小1, Tập viết ô vuông Masume và Đố vui giọng Nam/Nữ chuẩn!</p>
         <div class="math-session-badge" id="jaSessionStars">⭐ Điểm Tiếng Nhật: 0</div>
       </div>
 
       <div class="lang-subnav">
         <button class="game-tab-btn active" id="jaTabHira" onclick="switchJapaneseSubTab('hiragana')">
-          <span>🌸</span><span>46 Chữ Hiragana</span>
+          <span>🌸</span><span>Hiragana (71)</span>
+        </button>
+        <button class="game-tab-btn" id="jaTabKata" onclick="switchJapaneseSubTab('katakana')">
+          <span>⚡</span><span>Katakana (46)</span>
+        </button>
+        <button class="game-tab-btn" id="jaTabKanji" onclick="switchJapaneseSubTab('kanji')">
+          <span>⛩️</span><span>80 Kanji Lớp 1</span>
         </button>
         <button class="game-tab-btn" id="jaTabVocab" onclick="switchJapaneseSubTab('vocab')">
-          <span>🍱</span><span>Từ Vựng &amp; Số 1–10</span>
+          <span>🍱</span><span>Từ Vựng (8 Bài)</span>
+        </button>
+        <button class="game-tab-btn" id="jaTabStories" onclick="switchJapaneseSubTab('stories')">
+          <span>📖</span><span>Truyện Đọc 小1</span>
         </button>
         <button class="game-tab-btn" id="jaTabWriting" onclick="switchJapaneseSubTab('writing')">
-          <span>✍️</span><span>Tập Viết Masume</span>
+          <span>✍️</span><span>Viết Masume</span>
         </button>
         <button class="game-tab-btn" id="jaTabQuiz" onclick="switchJapaneseSubTab('quiz')">
-          <span>🎯</span><span>Đố Vui Tiếng Nhật</span>
+          <span>🎯</span><span>Đố Vui Nhật</span>
         </button>
       </div>
 
-      <!-- PANE 1: 46 CHỮ HIRAGANA -->
+      <!-- PANE 1: 46 HIRAGANA + 25 ÂM ĐỤC/TRÒN -->
       <div class="ja-sub-pane" id="jaPaneHira">
         <div class="section-header-flex" style="margin-bottom: 14px;">
           <div>
@@ -973,9 +1112,43 @@
           </button>
         </div>
         <div class="ja-hira-grid" id="jaHiraGrid"></div>
+
+        <h3 class="section-blue-title" style="color: #9f1239; margin: 20px 0 10px 0;">
+          <span>🔔</span> 25 Âm Đục &amp; Âm Tròn Hiragana (Dakuten ゛ / Handakuten ゜: が → ぱ)
+        </h3>
+        <div class="ja-hira-grid" id="jaDakuonGrid"></div>
       </div>
 
-      <!-- PANE 2: TỪ VỰNG & GIAO TIẾP + SỐ 1–10 -->
+      <!-- PANE 2: 46 CHỮ KATAKANA -->
+      <div class="ja-sub-pane" id="jaPaneKata" style="display: none;">
+        <div class="section-header-flex" style="margin-bottom: 14px;">
+          <div>
+            <h3 class="section-blue-title" style="color: #be123c;"><span>⚡</span> Bảng 46 Chữ Cứng Katakana (ア → ン)</h3>
+            <p class="section-sub-desc" style="margin-bottom: 0;">Ở Nhật, tên <strong>Khủng Long (ティラノサウルス)</strong>, <strong>Rồng (ファイヤードラゴン)</strong> và <strong>Shinkansen</strong> đều viết bằng Katakana đấy!</p>
+          </div>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayJaKata">
+            <span>🎧</span> Nghe ア → ン
+          </button>
+        </div>
+        <div class="ja-hira-grid" id="jaKataGrid"></div>
+      </div>
+
+      <!-- PANE 3: 80 KANJI LỚP 1 CHUẨN MEXT -->
+      <div class="ja-sub-pane" id="jaPaneKanji" style="display: none;">
+        <div class="section-header-flex" style="margin-bottom: 12px;">
+          <div>
+            <h3 class="section-blue-title" style="color: #be123c;"><span>⛩️</span> Trọn Bộ 80 Chữ Kanji Lớp 1 (一年生の漢字 • Chuẩn MEXT Nhật Bản)</h3>
+            <p class="section-sub-desc" style="margin-bottom: 0;">Chạm từng chữ Hán để nghe phát âm &amp; từ ghép, hoặc nhấn <strong>✍️ Viết chữ này</strong> để tập viết trên ô vuông Masume!</p>
+          </div>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayJaKanji">
+            <span>🎧</span> Nghe 20 chữ bài này
+          </button>
+        </div>
+        <div class="lesson-tabs-track" id="jaKanjiUnitTrack" style="margin-bottom: 14px;"></div>
+        <div class="ja-kanji-grid" id="jaKanjiGrid"></div>
+      </div>
+
+      <!-- PANE 4: TỪ VỰNG & GIAO TIẾP (8 CHỦ ĐỀ) -->
       <div class="ja-sub-pane" id="jaPaneVocab" style="display: none;">
         <div class="lesson-tabs-track" id="jaTopicsTrack"></div>
         <div class="section-header-flex" style="margin: 14px 0;">
@@ -990,11 +1163,30 @@
         <div class="cards-grid" id="jaVocabGrid"></div>
       </div>
 
-      <!-- PANE 3: TẬP VIẾT HIRAGANA Ô VUÔNG NHẬT (MASUME) -->
+      <!-- PANE 5: ĐỌC TRUYỆN QUỐC NGỮ NHẬT LỚP 1 (小1 国語) -->
+      <div class="ja-sub-pane" id="jaPaneStories" style="display: none;">
+        <div class="section-header-flex" style="margin-bottom: 14px;">
+          <div>
+            <h3 class="section-blue-title" style="color: #be123c;"><span>📖</span> 4 Truyện Kinh Điển Sách Quốc Ngữ Nhật Lớp 1 (光村図書・東京書籍)</h3>
+            <p class="section-sub-desc" style="margin-bottom: 0;">Chọn câu chuyện để nghe giọng người Nhật kể chậm rãi, đọc bản dịch tiếng Việt và trả lời câu hỏi hiểu bài nhé!</p>
+          </div>
+        </div>
+        <div class="ja-stories-tabs" id="jaStoriesTabs"></div>
+        <div class="story-reader-card" id="jaStoryReaderBox"></div>
+      </div>
+
+      <!-- PANE 6: TẬP VIẾT Ô VUÔNG NHẬT (MASUME) - HIRA / KATA / KANJI -->
       <div class="ja-sub-pane" id="jaPaneWriting" style="display: none;">
-        <h3 class="section-blue-title" style="color: #be123c; margin-bottom: 10px;">
-          <span>✍️</span> Tập Viết Chữ Hiragana Trên Ô Vuông Nhật Bản (マス目)
-        </h3>
+        <div class="section-header-flex" style="margin-bottom: 10px;">
+          <h3 class="section-blue-title" style="color: #be123c; margin: 0;">
+            <span>✍️</span> Tập Viết Trên Ô Vuông Nhật Bản (マス目)
+          </h3>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="jaWriteSetBtns">
+            <button class="tool-chip active-filter ja-write-set-btn" data-set="hira">🌸 Hiragana</button>
+            <button class="tool-chip ja-write-set-btn" data-set="kata">⚡ Katakana</button>
+            <button class="tool-chip ja-write-set-btn" data-set="kanji">⛩️ 80 Kanji</button>
+          </div>
+        </div>
         <div class="ja-write-layout">
           <div class="ja-write-board">
             <div style="font-size: 16px; font-weight: 900; color: #9f1239; margin-bottom: 6px;" id="jaWriteCurrentTitle">Tập viết chữ: あ (a)</div>
@@ -1018,19 +1210,27 @@
           </div>
 
           <div class="ja-write-picker-box">
-            <div style="font-size: 14px; font-weight: 900; color: #881337;">👇 Chọn chữ cái muốn tập viết:</div>
+            <div style="font-size: 14px; font-weight: 900; color: #881337;">👇 Chọn chữ muốn tập viết:</div>
             <div class="ja-picker-grid" id="jaWritePicker"></div>
           </div>
         </div>
       </div>
 
-      <!-- PANE 4: ĐỐ VUI TIẾNG NHẬT (10 CÂU) -->
+      <!-- PANE 7: ĐỐ VUI TIẾNG NHẬT (CÓ LỌC HIRAGANA / KATAKANA / KANJI / TỪ VỰNG) -->
       <div class="ja-sub-pane" id="jaPaneQuiz" style="display: none;">
         <div id="jaQuizPlayStage">
           <div class="game-score-row">
             <span class="game-progress-text" id="jaQuizProgressText">Câu 1 / 10</span>
             <span class="streak-pill" id="jaQuizStreakBadge">🔥 Chuỗi x0</span>
             <span class="game-stars" id="jaQuizScoreText">⭐ 0 điểm</span>
+          </div>
+
+          <div class="listen-filter-row" id="jaQuizFilterRow" style="margin-bottom: 12px;">
+            <button class="tool-chip ja-quiz-filter active-filter" data-mode="all">🌟 Tổng hợp</button>
+            <button class="tool-chip ja-quiz-filter" data-mode="hira">🌸 Hiragana</button>
+            <button class="tool-chip ja-quiz-filter" data-mode="kata">⚡ Katakana</button>
+            <button class="tool-chip ja-quiz-filter" data-mode="kanji">⛩️ 80 Kanji</button>
+            <button class="tool-chip ja-quiz-filter" data-mode="vocab">🍱 Từ vựng</button>
           </div>
 
           <div class="quiz-question-box" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border-color: #fda4af; border-bottom-color: #e11d48;">
@@ -1050,8 +1250,172 @@
           <p class="victory-desc" id="jaQuizVictoryScore">Bảo Long giỏi tiếng Nhật quá đi thôi!</p>
           <div class="victory-actions">
             <button class="challenge-btn" onclick="initJaQuizGame()">🔄 Chơi ván mới</button>
-            <button class="home-btn" onclick="switchJapaneseSubTab('writing')">✍️ Tập viết Hiragana</button>
-            <button class="home-btn" onclick="switchJapaneseSubTab('hiragana')">🌸 Về bảng Hiragana</button>
+            <button class="home-btn" onclick="switchJapaneseSubTab('kanji')">⛩️ Ôn 80 Kanji</button>
+            <button class="home-btn" onclick="switchJapaneseSubTab('writing')">✍️ Tập viết Masume</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         KHU VỰC TỰ NHIÊN & XÃ HỘI (VN) + SEIKATSUKA (JP 小1)
+         ======================================================== -->
+    <section id="scienceContainer" style="display: none;">
+      <div class="science-banner-box">
+        <div class="dino-badge" style="background: #059669; color: #fff;">🌿 TỰ NHIÊN &amp; XÃ HỘI (VN) • SEIKATSUKA 生活科 (JP)</div>
+        <h2 class="dino-banner-title" style="color: #065f46;">Vườn Khoa Học &amp; Đời Sống Quanh Bảo Long</h2>
+        <p class="dino-banner-desc">Khám phá Gia đình, Trường lớp, Nghề nghiệp, 5 Giác quan, 4 Mùa Xuân Hạ Thu Đông và tự tay trồng hoa Bìm Bìm Nhật Bản (あさがお)!</p>
+        <div class="math-session-badge" id="scienceSessionStars">⭐ Điểm Khám Phá Khoa Học: 0</div>
+      </div>
+
+      <div class="lang-subnav">
+        <button class="game-tab-btn active" id="scienceTabTopics" onclick="switchScienceSubTab('topics')">
+          <span>🌱</span><span>6 Chủ Đề Lớp 1</span>
+        </button>
+        <button class="game-tab-btn" id="scienceTabLab" onclick="switchScienceSubTab('lab')">
+          <span>🌺</span><span>Trồng Asagao &amp; 5 Giác Quan</span>
+        </button>
+        <button class="game-tab-btn" id="scienceTabQuiz" onclick="switchScienceSubTab('quiz')">
+          <span>🎯</span><span>Đố Vui Khoa Học (8 câu)</span>
+        </button>
+      </div>
+
+      <div class="science-sub-pane" id="sciencePaneTopics">
+        <div class="lesson-tabs-track" id="scienceTopicsTrack"></div>
+        <div class="section-header-flex" style="margin: 14px 0;">
+          <h3 class="section-blue-title" id="scienceTopicTitle" style="color: #065f46; margin: 0;">Gia Đình &amp; Ngôi Nhà An Toàn</h3>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayScienceTopic"><span>🎧</span> Nghe cả chủ đề</button>
+        </div>
+        <div class="cards-grid" id="scienceCardsGrid"></div>
+      </div>
+
+      <div class="science-sub-pane" id="sciencePaneLab" style="display: none;">
+        <div class="alpha-section-card" style="border-color: #86efac; border-bottom-color: #16a34a;">
+          <h3 class="section-blue-title" style="color: #15803d;"><span>🌺</span> Thực Hành Trồng Cây Hoa Bìm Bìm (あさがお育て • MEXT Lớp 1)</h3>
+          <p class="section-sub-desc">Bấm từng bước từ 1 → 5 để chăm sóc cây Bìm Bìm từ hạt giống tới lúc nở hoa rực rỡ nhé!</p>
+          <div class="listen-filter-row" id="scienceAsagaoSteps" style="margin-bottom: 14px;"></div>
+          <div class="asagao-stage-card" id="scienceAsagaoStageCard"></div>
+        </div>
+
+        <div class="alpha-section-card" style="margin-top: 18px; border-color: #7dd3fc; border-bottom-color: #0284c7;">
+          <h3 class="section-blue-title" style="color: #0369a1;"><span>👀</span> Khám Phá 5 Giác Quan Kỳ Diệu Của Cơ Thể</h3>
+          <p class="section-sub-desc">Chạm vào từng giác quan để nghe chức năng diệu kỳ của Mắt, Tai, Mũi, Lưỡi và Bàn tay!</p>
+          <div class="cards-grid" id="scienceSensesGrid"></div>
+        </div>
+      </div>
+
+      <div class="science-sub-pane" id="sciencePaneQuiz" style="display: none;">
+        <div id="scienceQuizPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="scienceQuizProgress">Câu 1 / 8</span>
+            <span class="game-stars" id="scienceQuizScore">⭐ 0 điểm</span>
+          </div>
+          <div class="quiz-question-box" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-color: #6ee7b7; border-bottom-color: #059669;">
+            <div class="quiz-question-title" id="scienceQuizPrompt" style="color: #065f46;">Câu hỏi Khoa học</div>
+            <button class="btn-hear-hint" id="btnHearScienceQuiz" style="margin: 10px auto 0 auto;"><span>🔊</span> Nghe câu hỏi &amp; 4 đáp án</button>
+          </div>
+          <div class="quiz-options-grid" id="scienceQuizOptionsGrid"></div>
+        </div>
+        <div id="scienceQuizVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🌿🌻🏆🌟</div>
+          <h2 class="victory-title" style="color: #059669;">NHÀ KHOA HỌC NHÍ BẢO LONG!</h2>
+          <p class="victory-desc" id="scienceQuizVictoryScore">Bảo Long giỏi quá đi thôi!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initScienceQuizGame()">🔄 Chơi lại 8 câu mới</button>
+            <button class="home-btn" onclick="switchScienceSubTab('lab')">🌺 Trồng hoa Bìm Bìm</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         KHU VỰC ÂM NHẠC, MỸ THUẬT & THỂ DỤC (音楽・図工・体育)
+         ======================================================== -->
+    <section id="artsContainer" style="display: none;">
+      <div class="arts-banner-box">
+        <div class="dino-badge" style="background: #9333ea; color: #fff;">🎨 ÂM NHẠC • MỸ THUẬT • THỂ DỤC (音楽・図工・体育)</div>
+        <h2 class="dino-banner-title" style="color: #6b21a8;">Sân Khấu Nghệ Thuật &amp; Vận Động Bảo Long</h2>
+        <p class="dino-banner-desc">Thổi đàn Pianica Nhật Bản (けんばんハーモニカ), pha màu sắc cầu vồng, vẽ tranh dán Sticker và rèn luyện thể chất an toàn!</p>
+        <div class="math-session-badge" id="artsSessionStars">⭐ Điểm Nghệ Thuật &amp; Thể Chất: 0</div>
+      </div>
+
+      <div class="lang-subnav">
+        <button class="game-tab-btn active" id="artsTabMusic" onclick="switchArtsSubTab('music')">
+          <span>🎹</span><span>Đàn Pianica &amp; Nhạc</span>
+        </button>
+        <button class="game-tab-btn" id="artsTabPaint" onclick="switchArtsSubTab('paint')">
+          <span>🎨</span><span>Pha Màu &amp; Vẽ Tranh</span>
+        </button>
+        <button class="game-tab-btn" id="artsTabPe" onclick="switchArtsSubTab('pe')">
+          <span>🤸</span><span>Thể Dục &amp; An Toàn</span>
+        </button>
+        <button class="game-tab-btn" id="artsTabQuiz" onclick="switchArtsSubTab('quiz')">
+          <span>🎯</span><span>Đố Vui Nghệ Thuật</span>
+        </button>
+      </div>
+
+      <div class="arts-sub-pane" id="artsPaneMusic">
+        <div class="alpha-section-card" style="border-color: #d8b4fe; border-bottom-color: #9333ea;">
+          <h3 class="section-blue-title" style="color: #7e22ce;"><span>🎹</span> Bàn Phím Đàn Pianica Lớp 1 (Đô → Đố • ド〜ド)</h3>
+          <p class="section-sub-desc">Chạm từng phím đàn để nghe âm thanh trong trẻo, hoặc bấm nghe các bài hát thiếu nhi quen thuộc!</p>
+          <div class="pianica-keys-row" id="pianicaKeysRow"></div>
+          <h4 style="font-size: 15px; font-weight: 900; color: #6b21a8; margin: 18px 0 10px 0;">🎶 4 Giai Điệu Lớp 1 Việt – Nhật:</h4>
+          <div class="art-songs-grid" id="artSongsList"></div>
+        </div>
+      </div>
+
+      <div class="arts-sub-pane" id="artsPanePaint" style="display: none;">
+        <div class="alpha-section-card" style="border-color: #fbcfe8; border-bottom-color: #db2777;">
+          <h3 class="section-blue-title" style="color: #be185d;"><span>🌈</span> Phòng Thí Nghiệm Pha Màu Sắc</h3>
+          <p class="section-sub-desc">Chạm từng phép trộn màu để xem hai màu gốc hòa quyện ra màu mới gì nhé!</p>
+          <div class="art-mix-grid" id="artColorMixGrid"></div>
+
+          <h3 class="section-blue-title" style="color: #be185d; margin: 20px 0 8px 0;"><span>🖌️</span> Bảng Vẽ Tự Do &amp; Dán Sticker Bảo Long</h3>
+          <div class="listen-filter-row" style="justify-content: flex-start; margin-bottom: 10px;">
+            <span class="color-picker-dot art-color-dot active-dot" data-color="#e11d48" style="background: #e11d48;"></span>
+            <span class="color-picker-dot art-color-dot" data-color="#0284c7" style="background: #0284c7;"></span>
+            <span class="color-picker-dot art-color-dot" data-color="#16a34a" style="background: #16a34a;"></span>
+            <span class="color-picker-dot art-color-dot" data-color="#eab308" style="background: #eab308;"></span>
+            <span class="color-picker-dot art-color-dot" data-color="#7c3aed" style="background: #7c3aed;"></span>
+            <span style="margin-left: 8px; font-size: 12px; font-weight: 800; color: #475569;">Hoặc chạm Sticker để đóng dấu:</span>
+            <button class="tool-chip art-sticker-btn" data-sticker="🦖">🦖</button>
+            <button class="tool-chip art-sticker-btn" data-sticker="🐉">🐉</button>
+            <button class="tool-chip art-sticker-btn" data-sticker="🌸">🌸</button>
+            <button class="tool-chip art-sticker-btn" data-sticker="🚅">🚅</button>
+            <button class="tool-chip art-sticker-btn" data-sticker="⭐">⭐</button>
+          </div>
+          <canvas id="artDrawCanvas" class="art-draw-canvas"></canvas>
+          <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center; flex-wrap: wrap;">
+            <button class="tool-chip" id="btnArtCanvasClear">🧹 Xóa bảng vẽ</button>
+            <button class="tool-chip" id="btnArtCanvasSave" style="background:#dcfce7; color:#15803d; border-color:#22c55e;">⭐ Hoàn thành tác phẩm!</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="arts-sub-pane" id="artsPanePe" style="display: none;">
+        <h3 class="section-blue-title" style="color: #c2410c; margin-bottom: 12px;"><span>🤸</span> Giáo Dục Thể Chất &amp; Vận Động An Toàn (体育)</h3>
+        <div class="cards-grid" id="artsPeGrid"></div>
+      </div>
+
+      <div class="arts-sub-pane" id="artsPaneQuiz" style="display: none;">
+        <div id="artsQuizPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="artsQuizProgress">Câu 1 / 8</span>
+            <span class="game-stars" id="artsQuizScore">⭐ 0 điểm</span>
+          </div>
+          <div class="quiz-question-box" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-color: #d8b4fe; border-bottom-color: #9333ea;">
+            <div class="quiz-question-title" id="artsQuizPrompt" style="color: #6b21a8;">Câu hỏi Nghệ thuật &amp; Thể dục</div>
+            <button class="btn-hear-hint" id="btnHearArtsQuiz" style="margin: 10px auto 0 auto;"><span>🔊</span> Nghe câu hỏi &amp; 4 đáp án</button>
+          </div>
+          <div class="quiz-options-grid" id="artsQuizOptionsGrid"></div>
+        </div>
+        <div id="artsQuizVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🎨🎹🤸🏆</div>
+          <h2 class="victory-title" style="color: #9333ea;">NGHỆ SĨ &amp; VẬN ĐỘNG VIÊN NHÍ!</h2>
+          <p class="victory-desc" id="artsQuizVictoryScore">Bảo Long thật tài năng!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initArtsQuizGame()">🔄 Chơi lại 8 câu mới</button>
+            <button class="home-btn" onclick="switchArtsSubTab('music')">🎹 Về đàn Pianica</button>
           </div>
         </div>
       </div>
@@ -1438,13 +1802,15 @@
   <canvas id="confettiCanvas"></canvas>
 
   <!-- Scripts -->
-  <script src="data.js?v=20261125v3"></script>
-  <script src="speech.js?v=20261125v3"></script>
-  <script src="math.js?v=20261125v3"></script>
-  <script src="ethics.js?v=20261125v3"></script>
-  <script src="english.js?v=20261125v3"></script>
-  <script src="japanese.js?v=20261125v3"></script>
-  <script src="dragons.js?v=20261125v3"></script>
-  <script src="app.js?v=20261125v3"></script>
+  <script src="data.js?v=20261125v4"></script>
+  <script src="speech.js?v=20261125v4"></script>
+  <script src="math.js?v=20261125v4"></script>
+  <script src="ethics.js?v=20261125v4"></script>
+  <script src="english.js?v=20261125v4"></script>
+  <script src="japanese.js?v=20261125v4"></script>
+  <script src="science_life.js?v=20261125v4"></script>
+  <script src="arts_pe.js?v=20261125v4"></script>
+  <script src="dragons.js?v=20261125v4"></script>
+  <script src="app.js?v=20261125v4"></script>
 </body>
 </html>

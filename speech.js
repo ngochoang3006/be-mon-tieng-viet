@@ -52,7 +52,7 @@ class SoundManager {
         .then(res => (res.ok ? res.blob() : null))
         .then(blob => {
           if (blob && blob.size > 500) {
-            if (this.blobCache.size > 240) {
+            if (this.blobCache.size > 650) {
               const firstKey = this.blobCache.keys().next().value;
               const oldUrl = this.blobCache.get(firstKey);
               this.blobCache.delete(firstKey);

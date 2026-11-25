@@ -85,6 +85,46 @@ const ETHICS_LESSONS_DATA = [
     summary: 'Chăm học tiếng Việt và Toán lớp 1 để đọc sách, nói chuyện thân thương với gia đình hai quê hương Việt - Nhật.',
     practice: 'Hoàn thành bài học mỗi ngày trước khi xem tivi hay chơi game.',
     audioKey: 'ethics_lesson_8'
+  },
+  {
+    id: 'eth_9',
+    badge: '⏱️ ĐÚNG GIỜ',
+    title: 'Đi ngủ đúng giờ & Giữ lời hứa (HĐTN Lớp 1)',
+    icon: '⏰',
+    ja: 'やくそく・じかんをまもる',
+    summary: 'Đã hứa với ba mẹ, thầy cô hay bạn bè thì cố gắng làm đúng hẹn, không để người khác chờ lâu.',
+    practice: '9 giờ tối đánh răng lên giường ngủ đúng giờ để sáng dậy khỏe mạnh!',
+    audioKey: 'ethics_lesson_9'
+  },
+  {
+    id: 'eth_10',
+    badge: '🛡️ AN TOÀN',
+    title: 'Phòng tránh nguy hiểm & Tự bảo vệ bản thân',
+    icon: '🆘',
+    ja: 'あんぜん・じぶんをまもる',
+    summary: 'Không chạm tay ướt vào ổ điện, không tự nghịch dao kéo nước nóng, không đi theo người lạ mặt.',
+    practice: 'Thuộc số điện thoại của ba mẹ và biết gọi người lớn giúp đỡ khi cần.',
+    audioKey: 'ethics_lesson_10'
+  },
+  {
+    id: 'eth_11',
+    badge: '🎒 TỰ PHỤC VỤ',
+    title: 'Tự chuẩn bị cặp sách & Giữ gìn đồ dùng (ランドセル)',
+    icon: '🎒',
+    ja: 'じぶんのことはじぶんで',
+    summary: 'Buổi tối tự kiểm tra sách vở, bút chì, hộp màu cho gọn vào cặp sách trước khi đi ngủ.',
+    practice: 'Chuẩn bị xong xuôi cặp sách từ tối hôm trước.',
+    audioKey: 'ethics_lesson_11'
+  },
+  {
+    id: 'eth_12',
+    badge: '🍚 TIẾT KIỆM',
+    title: 'Quý trọng thức ăn & Tiết kiệm điện nước',
+    icon: '🍙',
+    ja: 'もったいない・かんしゃ',
+    summary: 'Ăn hết cơm trong bát không bỏ thừa, luôn nói Itadakimasu / Con mời ba mẹ và khóa vòi nước sau khi dùng.',
+    practice: 'Lấy lượng cơm thức ăn vừa đủ ăn hết sạch sẽ mỗi bữa.',
+    audioKey: 'ethics_lesson_12'
   }
 ];
 
@@ -176,6 +216,50 @@ const ETHICS_SITUATIONS_DATA = [
       { text: 'Cầm theo hoặc bỏ vào túi ba lô, tìm đúng thùng rác để phân loại bỏ vào', isGood: true, feedback: 'Đúng chuẩn công dân xanh yêu thiên nhiên rồi Bảo Long ơi!' },
       { text: 'Ném đại hộp sữa vào bụi cây công viên để đỡ mỏi tay', isGood: false, feedback: 'Vứt rác bừa bãi làm bẩn công viên và hại các chú chim đấy, giữ tìm thùng rác nhé!' }
     ]
+  },
+  {
+    id: 'sit9',
+    badge: '🆘 An toàn với người lạ',
+    audioKey: 'ethics_sit_9',
+    icon: '🚪',
+    question: 'Ở cổng trường có người lạ mặt đưa kẹo ngon rủ Bảo Long đi theo ra chỗ khác chơi, con làm gì?',
+    options: [
+      { text: 'Lắc đầu từ chối ngay, chạy vào gặp cô giáo hoặc chú bảo vệ trường', isGood: true, feedback: 'Cực kỳ cảnh giác và thông minh! Tuyệt đối không theo người lạ!' },
+      { text: 'Nhận kẹo rồi đi theo xem có đồ chơi gì vui không', isGood: false, feedback: 'Nguy hiểm lắm Bảo Long ơi! Không nhận quà hay đi theo người lạ mặt nhé!' }
+    ]
+  },
+  {
+    id: 'sit10',
+    badge: '🎒 Tự chuẩn bị đi học',
+    audioKey: 'ethics_sit_10',
+    icon: '🎒',
+    question: 'Tối nay ăn cơm và học bài xong rồi, ngày mai đi học lớp 1 thì tối nay Bảo Long nên làm gì?',
+    options: [
+      { text: 'Tự xếp sách vở, hộp bút gọn vào cặp sách rồi đi ngủ sớm lúc 9 giờ', isGood: true, feedback: 'Hoan hô tính tự lập! Sáng mai sẽ không bị quên đồ dùng nữa!' },
+      { text: 'Chơi điện tử khuya muộn rồi sáng mai để mẹ soạn cặp giúp', isGood: false, feedback: 'Học sinh lớp 1 tự soạn cặp từ tối và ngủ sớm mới khỏe mạnh và giỏi giang!' }
+    ]
+  },
+  {
+    id: 'sit11',
+    badge: '⚡ An toàn điện nước ở nhà',
+    audioKey: 'ethics_sit_11',
+    icon: '🔌',
+    question: 'Vừa rửa tay xong còn ướt sũng nước, Bảo Long muốn bật quạt điện trong phòng. Con làm sao cho an toàn?',
+    options: [
+      { text: 'Lau tay thật khô bằng khăn sạch rồi mới bấm công tắc hoặc nhờ ba mẹ bật', isGood: true, feedback: 'Rất an toàn! Tay ướt chạm ổ điện cực kỳ nguy hiểm đấy!' },
+      { text: 'Để nguyên tay ướt ròng ròng cắm thẳng phích điện vào ổ tường', isGood: false, feedback: 'Nước dẫn điện rất nguy hiểm! Phải lau thật khô tay mới chạm công tắc nhé!' }
+    ]
+  },
+  {
+    id: 'sit12',
+    badge: '💎 Trả lại đồ nhặt được',
+    audioKey: 'ethics_sit_12',
+    icon: '👛',
+    question: 'Trong sân trường Bảo Long nhặt được một cục tẩy hình khủng long rất đẹp mà bạn nào làm rơi. Con làm gì?',
+    options: [
+      { text: 'Đưa cho cô giáo chủ nhiệm để tìm trả lại cho bạn bị mất', isGood: true, feedback: 'Trái tim thật thà trung thực quá! Bạn mất đồ chắc sẽ vui lắm!' },
+      { text: 'Giấu nhanh vào túi quần mang về nhà làm của riêng mình', isGood: false, feedback: 'Nhặt được của rơi trả lại người mất mới là bé ngoan trung thực nhé!' }
+    ]
   }
 ];
 
@@ -189,7 +273,13 @@ const ETHICS_TF_DATA = [
   { id: 'tf7', icon: '🧼', text: 'Rửa tay sạch bằng xà phòng trước khi ăn cơm', shouldDo: true, reason: 'Rửa tay diệt vi khuẩn giúp Bảo Long bụng khỏe mạnh!', audioKey: 'ethics_tf_7' },
   { id: 'tf8', icon: '🚌', text: 'Xô đẩy chen lấn khi bước lên xe buýt đông người', shouldDo: false, reason: 'Xếp hàng nhường người già và lên từng người mới an toàn.', audioKey: 'ethics_tf_8' },
   { id: 'tf9', icon: '💡', text: 'Tắt đèn và khóa vòi nước cẩn thận sau khi sử dụng', shouldDo: true, reason: 'Tiết kiệm điện nước giúp bảo vệ tài nguyên Trái Đất!', audioKey: 'ethics_tf_9' },
-  { id: 'tf10', icon: '🗑️', text: 'Ném rác bừa bãi ra đường phố khi không ai nhìn thấy', shouldDo: false, reason: 'Giữ đường phố sạch đẹp là trách nhiệm của mỗi công dân nhí!', audioKey: 'ethics_tf_10' }
+  { id: 'tf10', icon: '🗑️', text: 'Ném rác bừa bãi ra đường phố khi không ai nhìn thấy', shouldDo: false, reason: 'Giữ đường phố sạch đẹp là trách nhiệm của mỗi công dân nhí!', audioKey: 'ethics_tf_10' },
+  { id: 'tf11', icon: '🎒', text: 'Tự gấp quần áo và soạn sách vở vào cặp trước khi ngủ', shouldDo: true, reason: 'Tập tính tự lập gọn gàng chuẩn học sinh lớp 1!', audioKey: 'ethics_tf_11' },
+  { id: 'tf12', icon: '🏃', text: 'Chạy giỡn xô đẩy bạn trên cầu thang trường học', shouldDo: false, reason: 'Đi chậm bám tay vịn cầu thang mới không bị trượt ngã!', audioKey: 'ethics_tf_12' },
+  { id: 'tf13', icon: '🍚', text: 'Ăn hết thức ăn trong bát và không kén chọn bỏ mứa', shouldDo: true, reason: 'Quý trọng công sức của ba mẹ và bác nông dân!', audioKey: 'ethics_tf_13' },
+  { id: 'tf14', icon: '🔌', text: 'Cầm kéo sắt hoặc que chọc vào lỗ ổ cắm điện', shouldDo: false, reason: 'Vô cùng nguy hiểm! Tuyệt đối không nghịch ổ điện!', audioKey: 'ethics_tf_14' },
+  { id: 'tf15', icon: '👂', text: 'Giơ tay xin phép cô giáo rồi mới phát biểu trong lớp', shouldDo: true, reason: 'Giữ nề nếp trật tự lắng nghe khi cô và bạn nói.', audioKey: 'ethics_tf_15' },
+  { id: 'tf16', icon: '🐕', text: 'Chọc phá kéo đuôi con chó hoặc con mèo lạ ngoài đường', shouldDo: false, reason: 'Con vật hoảng sợ có thể cắn gây thương tích nguy hiểm!', audioKey: 'ethics_tf_16' }
 ];
 
 const ECO_TRASH_ITEMS = [
@@ -198,7 +288,11 @@ const ECO_TRASH_ITEMS = [
   { id: 'eco3', emoji: '🔋', name: 'Cục pin đã hết', bin: 'hazard', binName: 'Pin & Rác Đặc Biệt (Đỏ)' },
   { id: 'eco4', emoji: '📰', name: 'Tờ báo giấy cũ', bin: 'recycle', binName: 'Rác Tái Chế (Vàng - Chai/Giấy/Lon)' },
   { id: 'eco5', emoji: '🍏', name: 'Lõi quả táo thừa', bin: 'organic', binName: 'Rác Hữu Cơ / Đốt được (Xanh lá)' },
-  { id: 'eco6', emoji: '🥫', name: 'Vỏ lon nước ngọt', bin: 'recycle', binName: 'Rác Tái Chế (Vàng - Chai/Giấy/Lon)' }
+  { id: 'eco6', emoji: '🥫', name: 'Vỏ lon nước ngọt', bin: 'recycle', binName: 'Rác Tái Chế (Vàng - Chai/Giấy/Lon)' },
+  { id: 'eco7', emoji: '🍂', name: 'Lá cây rụng khô', bin: 'organic', binName: 'Rác Hữu Cơ / Đốt được (Xanh lá)' },
+  { id: 'eco8', emoji: '💡', name: 'Bóng đèn hỏng', bin: 'hazard', binName: 'Pin & Rác Đặc Biệt (Đỏ)' },
+  { id: 'eco9', emoji: '📦', name: 'Thùng giấy các-tông', bin: 'recycle', binName: 'Rác Tái Chế (Vàng - Chai/Giấy/Lon)' },
+  { id: 'eco10', emoji: '🍉', name: 'Vỏ dưa hấu ăn xong', bin: 'organic', binName: 'Rác Hữu Cơ / Đốt được (Xanh lá)' }
 ];
 
 // State Đạo Đức & GDCD
@@ -365,7 +459,7 @@ function renderEthicsLessonsTab() {
 // TAB 2: XỬ LÝ TÌNH HUỐNG NHẬP VAI (8 TÌNH HUỐNG)
 // ========================================================
 function initEthicsSituationsGame() {
-  ethicsSitQuestions = [...ETHICS_SITUATIONS_DATA].sort(() => Math.random() - 0.5);
+  ethicsSitQuestions = [...ETHICS_SITUATIONS_DATA].sort(() => Math.random() - 0.5).slice(0, 8);
   ethicsSitIndex = 0;
   ethicsSitScore = 0;
 
@@ -477,7 +571,7 @@ function loadEthicsSituationQuestion() {
 // TAB 3: GAME NÊN LÀM HAY KHÔNG NÊN LÀM (10 CÂU)
 // ========================================================
 function initEthicsTfGame() {
-  ethicsTfQuestions = [...ETHICS_TF_DATA].sort(() => Math.random() - 0.5);
+  ethicsTfQuestions = [...ETHICS_TF_DATA].sort(() => Math.random() - 0.5).slice(0, 10);
   ethicsTfIndex = 0;
   ethicsTfScore = 0;
   ethicsTfStreak = 0;
@@ -631,7 +725,7 @@ function renderTrafficEcoTab() {
 }
 
 function initEcoSortingGame() {
-  ecoQueue = [...ECO_TRASH_ITEMS].sort(() => Math.random() - 0.5);
+  ecoQueue = [...ECO_TRASH_ITEMS].sort(() => Math.random() - 0.5).slice(0, 8);
   ecoIndex = 0;
   ecoScore = 0;
 

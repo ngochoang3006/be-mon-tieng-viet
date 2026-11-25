@@ -84,7 +84,7 @@ const EN_VOCAB_TOPICS = [
     ]
   },
   {
-    id: 'greetings',
+    id: 'en_greetings',
     title: '👋 Daily English',
     label: 'Giao Tiếp Hàng Ngày',
     words: [
@@ -96,6 +96,66 @@ const EN_VOCAB_TOPICS = [
       { id: 'en_v30', en: 'I love Dad!', vi: 'Con yêu Ba!', ja: 'パパだいすき', emoji: '👨', audioKey: 'en_w_ilovedad' },
       { id: 'en_v31', en: 'I love Mom!', vi: 'Con yêu Mẹ!', ja: 'ママだいすき', emoji: '👩', audioKey: 'en_w_ilovemom' },
       { id: 'en_v32', en: 'Good job!', vi: 'Làm tốt lắm!', ja: 'よくできました', emoji: '👍', audioKey: 'en_w_goodjob' }
+    ]
+  },
+  {
+    id: 'en_school',
+    title: '🏫 School & Classroom',
+    label: 'Trường Lớp & Đồ Dùng',
+    words: [
+      { id: 'en_v33', en: 'School', vi: 'Trường học', ja: 'がっこう', emoji: '🏫', audioKey: 'en_w_school' },
+      { id: 'en_v34', en: 'Teacher', vi: 'Cô giáo / Thầy giáo', ja: 'せんせい', emoji: '👩‍🏫', audioKey: 'en_w_teacher' },
+      { id: 'en_v35', en: 'Friend', vi: 'Bạn bè', ja: 'ともだち', emoji: '🧑‍🤝‍🧑', audioKey: 'en_w_friend' },
+      { id: 'en_v36', en: 'Book', vi: 'Quyển sách', ja: 'ほん', emoji: '📚', audioKey: 'en_w_book' },
+      { id: 'en_v37', en: 'Pen', vi: 'Cây bút', ja: 'ペン', emoji: '🖊️', audioKey: 'en_w_pen' },
+      { id: 'en_v38', en: 'Bag', vi: 'Cặp sách', ja: 'かばん', emoji: '🎒', audioKey: 'en_w_bag' },
+      { id: 'en_v39', en: 'Desk', vi: 'Cái bàn học', ja: 'つくえ', emoji: '🪑', audioKey: 'en_w_desk' },
+      { id: 'en_v40', en: 'Ruler', vi: 'Thước kẻ', ja: 'じょうぎ', emoji: '📏', audioKey: 'en_w_ruler' }
+    ]
+  },
+  {
+    id: 'en_family_body',
+    title: '👨‍👩‍👦 Family & Body',
+    label: 'Gia Đình & Cơ Thể',
+    words: [
+      { id: 'en_v41', en: 'Family', vi: 'Gia đình', ja: 'かぞく', emoji: '👨‍👩‍👦', audioKey: 'en_w_family' },
+      { id: 'en_v42', en: 'Grandpa', vi: 'Ông nội / Ông ngoại', ja: 'おじいさん', emoji: '👴', audioKey: 'en_w_grandpa' },
+      { id: 'en_v43', en: 'Grandma', vi: 'Bà nội / Bà ngoại', ja: 'おばあさん', emoji: '👵', audioKey: 'en_w_grandma' },
+      { id: 'en_v44', en: 'Eyes', vi: 'Đôi mắt', ja: 'め', emoji: '👀', audioKey: 'en_w_eyes' },
+      { id: 'en_v45', en: 'Ears', vi: 'Đôi tai', ja: 'みみ', emoji: '👂', audioKey: 'en_w_ears' },
+      { id: 'en_v46', en: 'Mouth', vi: 'Cái miệng', ja: 'くち', emoji: '👄', audioKey: 'en_w_mouth' },
+      { id: 'en_v47', en: 'Hand', vi: 'Bàn tay', ja: 'て', emoji: '🖐️', audioKey: 'en_w_hand' },
+      { id: 'en_v48', en: 'Foot', vi: 'Bàn chân', ja: 'あし', emoji: '🦶', audioKey: 'en_w_foot' }
+    ]
+  },
+  {
+    id: 'en_nature_seasons',
+    title: '🌸 Nature & Weather',
+    label: 'Thiên Nhiên & Thời Tiết',
+    words: [
+      { id: 'en_v49', en: 'Sun', vi: 'Mặt trời', ja: 'たいよう', emoji: '☀️', audioKey: 'en_w_sun' },
+      { id: 'en_v50', en: 'Moon', vi: 'Mặt trăng', ja: 'つき', emoji: '🌙', audioKey: 'en_w_moon' },
+      { id: 'en_v51', en: 'Star', vi: 'Ngôi sao', ja: 'ほし', emoji: '⭐', audioKey: 'en_w_star' },
+      { id: 'en_v52', en: 'Cloud', vi: 'Đám mây', ja: 'くも', emoji: '☁️', audioKey: 'en_w_cloud' },
+      { id: 'en_v53', en: 'Rain', vi: 'Cơn mưa', ja: 'あめ', emoji: '🌧️', audioKey: 'en_w_rain' },
+      { id: 'en_v54', en: 'Rainbow', vi: 'Cầu vồng', ja: 'にじ', emoji: '🌈', audioKey: 'en_w_rainbow' },
+      { id: 'en_v55', en: 'Tree', vi: 'Cái cây', ja: 'き', emoji: '🌳', audioKey: 'en_w_tree' },
+      { id: 'en_v56', en: 'Flower', vi: 'Bông hoa', ja: 'はな', emoji: '🌸', audioKey: 'en_w_flower' }
+    ]
+  },
+  {
+    id: 'en_numbers_shapes',
+    title: '🔢 Numbers & Toys',
+    label: 'Số Đếm & Đồ Chơi',
+    words: [
+      { id: 'en_v57', en: 'One', vi: 'Số một', ja: 'いち', emoji: '1️⃣', audioKey: 'en_w_one' },
+      { id: 'en_v58', en: 'Two', vi: 'Số hai', ja: 'に', emoji: '2️⃣', audioKey: 'en_w_two' },
+      { id: 'en_v59', en: 'Three', vi: 'Số ba', ja: 'さん', emoji: '3️⃣', audioKey: 'en_w_three' },
+      { id: 'en_v60', en: 'Five', vi: 'Số năm', ja: 'ご', emoji: '5️⃣', audioKey: 'en_w_five' },
+      { id: 'en_v61', en: 'Ten', vi: 'Số mười', ja: 'じゅう', emoji: '🔟', audioKey: 'en_w_ten' },
+      { id: 'en_v62', en: 'Ball', vi: 'Quả bóng', ja: 'ボール', emoji: '⚽', audioKey: 'en_w_ball' },
+      { id: 'en_v63', en: 'Kite', vi: 'Cái diều', ja: 'たこ', emoji: '🪁', audioKey: 'en_w_kite' },
+      { id: 'en_v64', en: 'Robot', vi: 'Người máy', ja: 'ロボット', emoji: '🤖', audioKey: 'en_w_robot' }
     ]
   }
 ];
@@ -110,7 +170,13 @@ const EN_SPELLING_DATA = [
   { word: 'EGG', vi: 'Quả trứng', ja: 'たまご', emoji: '🥚', audioKey: 'en_w_egg', distractors: ['A', 'K'] },
   { word: 'MILK', vi: 'Sữa tươi', ja: 'ぎゅうにゅう', emoji: '🥛', audioKey: 'en_w_milk', distractors: ['S', 'A'] },
   { word: 'STAR', vi: 'Ngôi sao', ja: 'ほし', emoji: '⭐', audioKey: 'en_w_star', distractors: ['C', 'N'] },
-  { word: 'LION', vi: 'Sư tử', ja: 'ライオン', emoji: '🦁', audioKey: 'en_w_lion', distractors: ['M', 'E'] }
+  { word: 'LION', vi: 'Sư tử', ja: 'ライオン', emoji: '🦁', audioKey: 'en_w_lion', distractors: ['M', 'E'] },
+  { word: 'BOOK', vi: 'Quyển sách', ja: 'ほん', emoji: '📚', audioKey: 'en_w_book', distractors: ['C', 'A'] },
+  { word: 'BAG', vi: 'Cặp sách', ja: 'かばん', emoji: '🎒', audioKey: 'en_w_bag', distractors: ['D', 'E'] },
+  { word: 'PEN', vi: 'Cây bút', ja: 'ペン', emoji: '🖊️', audioKey: 'en_w_pen', distractors: ['B', 'O'] },
+  { word: 'BALL', vi: 'Quả bóng', ja: 'ボール', emoji: '⚽', audioKey: 'en_w_ball', distractors: ['T', 'K'] },
+  { word: 'TREE', vi: 'Cái cây', ja: 'き', emoji: '🌳', audioKey: 'en_w_tree', distractors: ['B', 'A'] },
+  { word: 'MOON', vi: 'Mặt trăng', ja: 'つき', emoji: '🌙', audioKey: 'en_w_moon', distractors: ['S', 'T'] }
 ];
 
 // State Tiếng Anh
@@ -483,7 +549,7 @@ function loadEnQuizQuestion() {
 // TAB 4: GHÉP CHỮ TIẾNG ANH VUI (10 TỪ)
 // ========================================================
 function initEnSpellingGame() {
-  enSpellQuestions = [...EN_SPELLING_DATA].sort(() => Math.random() - 0.5);
+  enSpellQuestions = [...EN_SPELLING_DATA].sort(() => Math.random() - 0.5).slice(0, 10);
   enSpellIndex = 0;
   enSpellScore = 0;
   document.getElementById('enSpellPlayStage').style.display = 'block';

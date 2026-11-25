@@ -99,16 +99,93 @@ const MATH_CLOCK_SCHEDULE = {
 
 // State Toán Lớp 1
 let currentMathTab = 'numbers'; // 'numbers' | 'calc' | 'compare' | 'sequence' | 'geometry'
+// 4 Khối hình 3D Lớp 1 (GDPT 2018 & MEXT 1年生)
+const MATH_SOLIDS_DATA = [
+  {
+    id: 'cube',
+    name: 'Khối lập phương',
+    ja: 'りっぽうたい (Rippoutai)',
+    audioKey: 'math_solid_cube',
+    quizQKey: 'math_q_solid_cube',
+    desc: '6 mặt đều là hình vuông bằng nhau — giống khối Rubik & cục xúc xắc!',
+    svg: `<svg viewBox="0 0 120 120" class="shape-svg"><polygon points="30,38 72,22 102,38 60,54" fill="#a78bfa" stroke="#5b21b6" stroke-width="3"/><polygon points="30,38 60,54 60,100 30,84" fill="#8b5cf6" stroke="#5b21b6" stroke-width="3"/><polygon points="60,54 102,38 102,84 60,100" fill="#7c3aed" stroke="#5b21b6" stroke-width="3"/></svg>`
+  },
+  {
+    id: 'box',
+    name: 'Khối hộp chữ nhật',
+    ja: 'ちょくほうたい (Chokuhoutai)',
+    audioKey: 'math_solid_box',
+    quizQKey: 'math_q_solid_box',
+    desc: 'Dài hơn khối lập phương — giống hộp sữa tươi & hộp bút của Bảo Long!',
+    svg: `<svg viewBox="0 0 120 120" class="shape-svg"><polygon points="18,48 82,28 106,42 42,62" fill="#7dd3fc" stroke="#0369a1" stroke-width="3"/><polygon points="18,48 42,62 42,96 18,82" fill="#38bdf8" stroke="#0369a1" stroke-width="3"/><polygon points="42,62 106,42 106,76 42,96" fill="#0284c7" stroke="#0369a1" stroke-width="3"/></svg>`
+  },
+  {
+    id: 'sphere',
+    name: 'Khối cầu',
+    ja: 'きゅう (Kyuu)',
+    audioKey: 'math_solid_sphere',
+    quizQKey: 'math_q_solid_sphere',
+    desc: 'Tròn xoay và lăn đi được mọi hướng — giống quả bóng đá & Trái Đất!',
+    svg: `<svg viewBox="0 0 120 120" class="shape-svg"><defs><radialGradient id="sphG" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#fef08a"/><stop offset="55%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#b45309"/></radialGradient></defs><circle cx="60" cy="60" r="40" fill="url(#sphG)" stroke="#92400e" stroke-width="3"/><ellipse cx="60" cy="60" rx="40" ry="13" fill="none" stroke="#fff7ed" stroke-width="2" stroke-dasharray="5 4"/></svg>`
+  },
+  {
+    id: 'cylinder',
+    name: 'Khối trụ',
+    ja: 'えんちゅう (Enchuu)',
+    audioKey: 'math_solid_cylinder',
+    quizQKey: 'math_q_solid_cylinder',
+    desc: 'Hai mặt đáy hình tròn, đặt nằm ngang lăn được — giống lon sữa & cái trống!',
+    svg: `<svg viewBox="0 0 120 120" class="shape-svg"><path d="M32,34 L32,86 A28,12 0 0,0 88,86 L88,34 Z" fill="#34d399" stroke="#047857" stroke-width="3"/><ellipse cx="60" cy="34" rx="28" ry="12" fill="#a7f3d0" stroke="#047857" stroke-width="3"/></svg>`
+  }
+];
+
+const MATH_RULER_ITEMS = [
+  { id: 'eraser', label: '🧼 Cục tẩy', name: 'Cục tẩy', cm: 3, color: '#f472b6', icon: '🧼' },
+  { id: 'crayon', label: '🖍️ Bút sáp màu', name: 'Cây bút sáp', cm: 5, color: '#fb923c', icon: '🖍️' },
+  { id: 'pencil', label: '✏️ Bút chì gỗ', name: 'Chiếc bút chì', cm: 7, color: '#facc15', icon: '✏️' },
+  { id: 'dino_toy', label: '🦕 Khủng long nhỏ', name: 'Chú khủng long đồ chơi', cm: 9, color: '#22c55e', icon: '🦕' },
+  { id: 'train', label: '🚅 Tàu Shinkansen', name: 'Mô hình Shinkansen', cm: 11, color: '#38bdf8', icon: '🚅' }
+];
+
+const MATH_WEEKDAYS_DATA = [
+  { id: 2, short: 'T2', name: 'Thứ Hai', ja: '月曜日 (Getsuyoubi)', desc: 'Chào cờ đầu tuần vui vẻ ở trường!', isWeekend: false },
+  { id: 3, short: 'T3', name: 'Thứ Ba', ja: '火曜日 (Kayoubi)', desc: 'Học đọc Tiếng Việt & làm Toán!', isWeekend: false },
+  { id: 4, short: 'T4', name: 'Thứ Tư', ja: '水曜日 (Suiyoubi)', desc: 'Giữa tuần năng động cùng bạn bè!', isWeekend: false },
+  { id: 5, short: 'T5', name: 'Thứ Năm', ja: '木曜日 (Mokuyoubi)', desc: 'Tập vẽ Mỹ thuật & hát Nhạc!', isWeekend: false },
+  { id: 6, short: 'T6', name: 'Thứ Sáu', ja: '金曜日 (Kinyoubi)', desc: 'Ngày học cuối tuần — nhận phiếu bé ngoan!', isWeekend: false },
+  { id: 7, short: 'T7', name: 'Thứ Bảy', ja: '土曜日 (Doyoubi)', desc: 'Cuối tuần đi công viên cùng ba mẹ!', isWeekend: true },
+  { id: 8, short: 'CN', name: 'Chủ Nhật', ja: '日曜日 (Nichiyoubi)', desc: 'Ngày nghỉ sum họp gia đình yêu thương!', isWeekend: true }
+];
+
+function mathNumberToViText(n) {
+  if (n <= 20 && typeof MATH_NUMBERS_DATA !== 'undefined') {
+    const found = MATH_NUMBERS_DATA.find(x => x.num === n);
+    if (found) return found.word;
+  }
+  if (n === 100) return 'một trăm';
+  const tensNames = ['', 'mười', 'hai mươi', 'ba mươi', 'bốn mươi', 'năm mươi', 'sáu mươi', 'bảy mươi', 'tám mươi', 'chín mươi'];
+  const units = ['', 'một', 'hai', 'ba', 'bốn', 'lăm', 'sáu', 'bảy', 'tám', 'chín'];
+  const t = Math.floor(n / 10);
+  const u = n % 10;
+  if (u === 0) return tensNames[t];
+  if (u === 1 && t > 1) return `${tensNames[t]} mốt`;
+  if (u === 4 && t > 1) return `${tensNames[t]} tư`;
+  return `${tensNames[t]} ${units[u]}`;
+}
+
 let mathSessionScore = 0;
 let mathEpoch = 0;
 
-// Tab 1: Số đếm
+// Tab 1: Số đếm & Cấu tạo số
 let mathSpotlightNum = 5;
 let mathNumbersAutoTimer = null;
 let mathNumbersAutoRunning = false;
+let mathHundredSkipStep = 1;
+let mathBondTarget = 8;
+let mathBondSelectedA = 5;
 
 // Tab 2: Cộng & Trừ
-let mathCalcMode = 'max10'; // 'max10' | 'max20' | 'onlyPlus' | 'onlyMinus'
+let mathCalcMode = 'max10'; // 'max10' | 'max20' | 'sakura' | 'max100' | 'onlyPlus' | 'onlyMinus'
 let mathCalcShowVisual = true;
 let mathCalcQuestions = [];
 let mathCalcIndex = 0;
@@ -116,7 +193,7 @@ let mathCalcScore = 0;
 let mathCalcStreak = 0;
 
 // Tab 3: So sánh
-let mathCmpMode = 'simple'; // 'simple' | 'expr'
+let mathCmpMode = 'simple'; // 'simple' | 'max100' | 'expr'
 let mathCmpQuestions = [];
 let mathCmpIndex = 0;
 let mathCmpScore = 0;
@@ -126,8 +203,10 @@ let mathSeqQuestions = [];
 let mathSeqIndex = 0;
 let mathSeqScore = 0;
 
-// Tab 5: Hình học & Đồng hồ
+// Tab 5: Hình học, Đo cm, Đồng hồ & Thứ trong tuần
 let mathCurrentHour = 3;
+let mathCurrentMinute = 0; // 0 | 30
+let mathRulerSelectedIdx = 0;
 let mathGeoQuizQuestions = [];
 let mathGeoQuizIndex = 0;
 let mathGeoQuizScore = 0;
@@ -166,11 +245,20 @@ function switchMathSubTab(subtab) {
     if (b) b.classList.toggle('active', k === subtab);
   });
 
-  if (subtab === 'numbers') renderMathNumbersTab();
+  if (subtab === 'numbers') {
+    renderMathNumbersTab();
+    renderMathHundredBoard();
+    renderMathBondsWidget();
+  }
   else if (subtab === 'calc') initMathCalcGame();
   else if (subtab === 'compare') initMathCompareGame();
   else if (subtab === 'sequence') initMathSequenceGame();
-  else if (subtab === 'geometry') renderMathGeometryTab();
+  else if (subtab === 'geometry') {
+    renderMathGeometryTab();
+    renderMathSolids();
+    renderMathRuler();
+    renderMathDays();
+  }
 }
 
 function stopMathAutoPlay() {
@@ -347,47 +435,82 @@ function initMathCalcGame(mode = mathCalcMode) {
     };
   }
 
-  // Generate 10 clean, age-appropriate math questions
+  // Generate 10 clean, age-appropriate math questions (Sakura qua 10 & phạm vi 100 HK2)
   mathCalcQuestions = [];
   const usedPairs = new Set();
+  const sakuraAdd = [[9,2],[9,3],[9,4],[9,5],[9,6],[9,7],[8,3],[8,4],[8,5],[8,6],[7,4],[7,5],[7,6],[6,5]];
+  const sakuraSub = [[11,2],[11,3],[11,4],[12,3],[12,5],[13,4],[13,6],[14,5],[14,7],[15,7],[16,8]];
   let guard = 0;
-  while (mathCalcQuestions.length < 10 && guard < 200) {
+  while (mathCalcQuestions.length < 10 && guard < 260) {
     guard++;
-    const isPlus = mode === 'onlyPlus' ? true : (mode === 'onlyMinus' ? false : Math.random() < 0.55);
-    const maxLim = mode === 'max20' ? 20 : 10;
+    let a, b, ans, op, sakura = null;
+    const maxLim = mode === 'max100' ? 99 : (mode === 'max20' || mode === 'sakura' ? 20 : 10);
 
-    let a, b, ans, op;
-    if (isPlus) {
-      op = '+';
-      if (maxLim === 20) {
-        ans = 6 + Math.floor(Math.random() * 15); // 6..20
-        a = 1 + Math.floor(Math.random() * (ans - 1));
+    if (mode === 'sakura') {
+      op = Math.random() < 0.55 ? '+' : '-';
+      if (op === '+') {
+        const pair = sakuraAdd[Math.floor(Math.random() * sakuraAdd.length)];
+        a = pair[0]; b = pair[1]; ans = a + b;
+        const need = 10 - a;
+        sakura = { type: 'add', need, rest: b - need };
       } else {
-        ans = 2 + Math.floor(Math.random() * 9); // 2..10
-        a = 1 + Math.floor(Math.random() * (ans - 1));
+        const pair = sakuraSub[Math.floor(Math.random() * sakuraSub.length)];
+        a = pair[0]; b = pair[1]; ans = a - b;
+        sakura = { type: 'sub', tensLeft: 10 - b, units: a - 10 };
       }
-      b = ans - a;
+    } else if (mode === 'max100') {
+      op = Math.random() < 0.5 ? '+' : '-';
+      if (op === '+') {
+        const t1 = 1 + Math.floor(Math.random() * 6);
+        const u1 = Math.floor(Math.random() * 6);
+        const t2 = 1 + Math.floor(Math.random() * (8 - t1));
+        const u2 = Math.floor(Math.random() * (9 - u1));
+        a = t1 * 10 + u1;
+        b = t2 * 10 + u2;
+        ans = a + b;
+      } else {
+        const t1 = 3 + Math.floor(Math.random() * 6);
+        const u1 = 3 + Math.floor(Math.random() * 6);
+        const t2 = 1 + Math.floor(Math.random() * (t1 - 1));
+        const u2 = Math.floor(Math.random() * (u1 + 1));
+        a = t1 * 10 + u1;
+        b = t2 * 10 + u2;
+        ans = a - b;
+      }
     } else {
-      op = '-';
-      a = maxLim === 20 ? (6 + Math.floor(Math.random() * 15)) : (2 + Math.floor(Math.random() * 9));
-      b = 1 + Math.floor(Math.random() * a); // allow 0 result sometimes
-      ans = a - b;
+      const isPlus = mode === 'onlyPlus' ? true : (mode === 'onlyMinus' ? false : Math.random() < 0.55);
+      if (isPlus) {
+        op = '+';
+        if (maxLim === 20) {
+          ans = 6 + Math.floor(Math.random() * 15);
+          a = 1 + Math.floor(Math.random() * (ans - 1));
+        } else {
+          ans = 2 + Math.floor(Math.random() * 9);
+          a = 1 + Math.floor(Math.random() * (ans - 1));
+        }
+        b = ans - a;
+      } else {
+        op = '-';
+        a = maxLim === 20 ? (6 + Math.floor(Math.random() * 15)) : (2 + Math.floor(Math.random() * 9));
+        b = 1 + Math.floor(Math.random() * a);
+        ans = a - b;
+      }
     }
 
     const sig = `${a}${op}${b}`;
     if (usedPairs.has(sig)) continue;
     usedPairs.add(sig);
 
-    // 3 plausible close distractors in [0..maxLim]
     const choices = new Set([ans]);
     while (choices.size < 4) {
-      const delta = [-3, -2, -1, 1, 2, 3, 4][Math.floor(Math.random() * 7)];
+      const deltas = mode === 'max100' ? [-10, -2, -1, 1, 2, 10, 11] : [-3, -2, -1, 1, 2, 3, 4];
+      const delta = deltas[Math.floor(Math.random() * deltas.length)];
       const cand = ans + delta;
       if (cand >= 0 && cand <= maxLim) choices.add(cand);
     }
 
     mathCalcQuestions.push({
-      a, b, op, ans,
+      a, b, op, ans, sakura,
       choices: Array.from(choices).sort(() => Math.random() - 0.5),
       emoji: ['🦖', '🦕', '🚗', '🚅', '🍎', '⭐'][Math.floor(Math.random() * 6)]
     });
@@ -422,6 +545,67 @@ function renderCalcVisualBox(q) {
   }
   box.style.display = 'flex';
   box.innerHTML = '';
+
+  if (q.sakura) {
+    if (q.sakura.type === 'add') {
+      box.innerHTML = `
+        <div class="sakura-math-card">
+          <div class="sakura-step-badge">🌸 Mẹo Sakura Nhật Bản (Gộp tròn 10)</div>
+          <div class="sakura-flow">
+            <div class="sakura-split-col">
+              <span class="sakura-pill main">${q.b}</span>
+              <span class="sakura-branches">↙ &nbsp; ↘</span>
+              <div class="sakura-sub-row">
+                <span class="sakura-pill hot">${q.sakura.need}</span>
+                <span class="sakura-pill">${q.sakura.rest}</span>
+              </div>
+            </div>
+            <div class="sakura-explain">
+              <div><strong>Bước 1:</strong> ${q.a} + <span class="sakura-hi">${q.sakura.need}</span> = <strong>10</strong></div>
+              <div><strong>Bước 2:</strong> 10 + <strong>${q.sakura.rest}</strong> = <span class="sakura-qmark">?</span></div>
+            </div>
+          </div>
+        </div>`;
+    } else {
+      box.innerHTML = `
+        <div class="sakura-math-card">
+          <div class="sakura-step-badge">🌸 Mẹo Sakura Nhật Bản (Trừ từ 10)</div>
+          <div class="sakura-flow">
+            <div class="sakura-split-col">
+              <span class="sakura-pill main">${q.a}</span>
+              <span class="sakura-branches">↙ &nbsp; ↘</span>
+              <div class="sakura-sub-row">
+                <span class="sakura-pill hot">10</span>
+                <span class="sakura-pill">${q.sakura.units}</span>
+              </div>
+            </div>
+            <div class="sakura-explain">
+              <div><strong>Bước 1:</strong> <span class="sakura-hi">10</span> − ${q.b} = <strong>${q.sakura.tensLeft}</strong></div>
+              <div><strong>Bước 2:</strong> ${q.sakura.tensLeft} + <strong>${q.sakura.units}</strong> = <span class="sakura-qmark">?</span></div>
+            </div>
+          </div>
+        </div>`;
+    }
+    return;
+  }
+
+  if (q.a > 20 || q.b > 20) {
+    const mkBlocks = (n) => {
+      const t = Math.floor(n / 10);
+      const u = n % 10;
+      let html = '';
+      for (let i = 0; i < t; i++) html += '<span class="base10-ten">10</span>';
+      for (let j = 0; j < u; j++) html += '<span class="base10-one">1</span>';
+      return html;
+    };
+    box.innerHTML = `
+      <div class="base10-row">
+        <div class="base10-group">${mkBlocks(q.a)}</div>
+        <div class="calc-vis-op">${q.op === '+' ? '➕' : '➖'}</div>
+        <div class="base10-group">${mkBlocks(q.b)}</div>
+      </div>`;
+    return;
+  }
 
   if (q.op === '+') {
     const grpA = document.createElement('div');
@@ -582,12 +766,20 @@ function showMathCalcVictory() {
 function initMathCompareGame(mode = mathCmpMode) {
   mathCmpMode = mode;
   document.getElementById('btnCmpSimple')?.classList.toggle('active-filter', mode === 'simple');
+  document.getElementById('btnCmp100')?.classList.toggle('active-filter', mode === 'max100');
   document.getElementById('btnCmpExpr')?.classList.toggle('active-filter', mode === 'expr');
 
   document.getElementById('btnCmpSimple').onclick = () => {
     window.soundMgr.playClick();
     initMathCompareGame('simple');
   };
+  const btn100 = document.getElementById('btnCmp100');
+  if (btn100) {
+    btn100.onclick = () => {
+      window.soundMgr.playClick();
+      initMathCompareGame('max100');
+    };
+  }
   document.getElementById('btnCmpExpr').onclick = () => {
     window.soundMgr.playClick();
     initMathCompareGame('expr');
@@ -596,11 +788,19 @@ function initMathCompareGame(mode = mathCmpMode) {
   mathCmpQuestions = [];
   for (let i = 0; i < 8; i++) {
     const forceEq = i === 2 || i === 6;
-    if (mode === 'simple') {
-      const a = 1 + Math.floor(Math.random() * 19);
-      let b = forceEq ? a : 1 + Math.floor(Math.random() * 19);
+    if (mode === 'simple' || mode === 'max100') {
+      const cap = mode === 'max100' ? 99 : 19;
+      const base = mode === 'max100' ? 10 : 1;
+      let a = base + Math.floor(Math.random() * (cap - base + 1));
+      let b = forceEq ? a : base + Math.floor(Math.random() * (cap - base + 1));
+      if (mode === 'max100' && i === 3) {
+        const d1 = 2 + Math.floor(Math.random() * 6);
+        const d2 = d1 + 1;
+        a = d1 * 10 + d2;
+        b = d2 * 10 + d1;
+      }
       const ans = a > b ? '>' : (a < b ? '<' : '=');
-      mathCmpQuestions.push({ leftLabel: String(a), rightLabel: String(b), leftVal: a, rightVal: b, ans });
+      mathCmpQuestions.push({ leftLabel: String(a), rightLabel: String(b), leftVal: a, rightVal: b, ans, useBlocks: mode === 'max100' });
     } else {
       const a1 = 1 + Math.floor(Math.random() * 7);
       const a2 = 1 + Math.floor(Math.random() * 5);
@@ -640,15 +840,23 @@ function loadMathCompareQuestion() {
 
   document.getElementById('cmpLeftNumber').innerText = q.leftLabel;
   document.getElementById('cmpRightNumber').innerText = q.rightLabel;
-  document.getElementById('cmpLeftDots').innerHTML = '🍎'.repeat(Math.min(q.leftVal, 10)) + (q.leftVal > 10 ? ` (+${q.leftVal - 10})` : '');
-  document.getElementById('cmpRightDots').innerHTML = '🍎'.repeat(Math.min(q.rightVal, 10)) + (q.rightVal > 10 ? ` (+${q.rightVal - 10})` : '');
+  const renderDots = (n) => {
+    if (q.useBlocks || n > 20) {
+      const t = Math.floor(n / 10);
+      const u = n % 10;
+      return `${'<span class="base10-ten mini">10</span>'.repeat(t)}${'<span class="base10-one mini">1</span>'.repeat(u)}`;
+    }
+    return '🍎'.repeat(Math.min(n, 10)) + (n > 10 ? ` (+${n - 10})` : '');
+  };
+  document.getElementById('cmpLeftDots').innerHTML = renderDots(q.leftVal);
+  document.getElementById('cmpRightDots').innerHTML = renderDots(q.rightVal);
 
   const signBox = document.getElementById('cmpCenterSign');
   signBox.innerText = '?';
   signBox.classList.remove('solved');
 
   const playCmpQuestion = () => {
-    if (mathCmpMode === 'simple') {
+    if (mathCmpMode === 'simple' || mathCmpMode === 'max100') {
       window.soundMgr.playAudioSequence([`math_v_${q.leftVal}`, 'math_and', `math_v_${q.rightVal}`, 'math_q_cmp'], null, `${q.leftLabel} và ${q.rightLabel}, chọn dấu lớn hơn, bé hơn, hay bằng nhau!`);
     } else {
       window.soundMgr.playAudioFile('math_q_cmp', null, 'Chọn dấu lớn hơn, bé hơn, hay bằng nhau nhé!');
@@ -715,8 +923,34 @@ function loadMathCompareQuestion() {
 function initMathSequenceGame() {
   mathSeqQuestions = [];
   for (let i = 0; i < 8; i++) {
-    if (i % 2 === 0) {
-      // Train sequence: step +1, -1, or +2
+    if (i === 4 || i === 6) {
+      // HK2 sequences up to 100 (+10 tens or +1 between 30..90)
+      const isTens = i === 4;
+      let arr;
+      if (isTens) {
+        const start = [10, 20, 30, 40, 50][Math.floor(Math.random() * 5)];
+        arr = [start, start + 10, start + 20, start + 30];
+      } else {
+        const start = [34, 45, 62, 73, 81][Math.floor(Math.random() * 5)];
+        arr = [start, start + 1, start + 2, start + 3];
+      }
+      const hiddenIdx = 1 + Math.floor(Math.random() * 2);
+      const ans = arr[hiddenIdx];
+      const choices = new Set([ans]);
+      while (choices.size < 4) {
+        const step = isTens ? [-20, -10, 10, 20] : [-2, -1, 1, 2, 3];
+        const c = Math.max(0, Math.min(100, ans + step[Math.floor(Math.random() * step.length)]));
+        choices.add(c);
+      }
+      mathSeqQuestions.push({
+        kind: 'sequence',
+        cars: arr,
+        hiddenIdx,
+        ans,
+        choices: Array.from(choices).sort((x, y) => x - y),
+        hint: isTens ? 'Cộng thêm 10 mỗi toa (số tròn chục)' : 'Đếm tiến thêm 1 số (phạm vi 100)'
+      });
+    } else if (i % 2 === 0) {
       const type = Math.floor(Math.random() * 3);
       let arr, hiddenIdx;
       if (type === 0) {
@@ -729,7 +963,7 @@ function initMathSequenceGame() {
         const start = [2, 4, 6, 8, 10][Math.floor(Math.random() * 5)];
         arr = [start, start + 2, start + 4, start + 6];
       }
-      hiddenIdx = 1 + Math.floor(Math.random() * 2); // hide car 2 or 3
+      hiddenIdx = 1 + Math.floor(Math.random() * 2);
       const ans = arr[hiddenIdx];
       const choices = new Set([ans]);
       while (choices.size < 4) {
@@ -745,8 +979,7 @@ function initMathSequenceGame() {
         hint: type === 1 ? 'Đếm lùi từng 1 số' : (type === 2 ? 'Nhảy cóc thêm 2 số' : 'Đếm tiến thêm 1 số')
       });
     } else {
-      // Missing operand: a + ? = c
-      const c = 5 + Math.floor(Math.random() * 6); // 5..10
+      const c = 5 + Math.floor(Math.random() * 6);
       const a = 1 + Math.floor(Math.random() * (c - 1));
       const ans = c - a;
       const choices = new Set([ans]);
@@ -905,9 +1138,42 @@ function renderMathGeometryTab() {
     });
   }
 
-  // 2. Render interactive clock selector 1..12h
-  renderClockFace('mathClockSvg', mathCurrentHour);
+  // 2. Render interactive clock selector 1..12h (Giờ đúng :00 & Giờ rưỡi :30)
+  const playCurrentClockAudio = () => {
+    if (mathCurrentMinute === 30) {
+      window.soundMgr.playAudioFile(`math_clock_half_${mathCurrentHour}`, null, `${mathCurrentHour} giờ rưỡi`);
+    } else {
+      window.soundMgr.playAudioFile(`math_clock_${mathCurrentHour}`, null, `${mathCurrentHour} giờ đúng`);
+    }
+  };
+
+  renderClockFace('mathClockSvg', mathCurrentHour, mathCurrentMinute);
   updateClockInfoText();
+
+  const btnClockExact = document.getElementById('btnClockExact');
+  const btnClockHalf = document.getElementById('btnClockHalf');
+  if (btnClockExact && btnClockHalf) {
+    btnClockExact.classList.toggle('active-filter', mathCurrentMinute === 0);
+    btnClockHalf.classList.toggle('active-filter', mathCurrentMinute === 30);
+    btnClockExact.onclick = () => {
+      mathCurrentMinute = 0;
+      window.soundMgr.playClick();
+      btnClockExact.classList.add('active-filter');
+      btnClockHalf.classList.remove('active-filter');
+      renderClockFace('mathClockSvg', mathCurrentHour, mathCurrentMinute);
+      updateClockInfoText();
+      playCurrentClockAudio();
+    };
+    btnClockHalf.onclick = () => {
+      mathCurrentMinute = 30;
+      window.soundMgr.playClick();
+      btnClockHalf.classList.add('active-filter');
+      btnClockExact.classList.remove('active-filter');
+      renderClockFace('mathClockSvg', mathCurrentHour, mathCurrentMinute);
+      updateClockInfoText();
+      playCurrentClockAudio();
+    };
+  }
 
   const hourBtnsWrap = document.getElementById('mathClockHourBtns');
   if (hourBtnsWrap) {
@@ -919,10 +1185,10 @@ function renderMathGeometryTab() {
       btn.addEventListener('click', () => {
         mathCurrentHour = h;
         window.soundMgr.playClick();
-        window.soundMgr.playAudioFile(`math_clock_${h}`, null, `${h} giờ đúng`);
+        playCurrentClockAudio();
         hourBtnsWrap.querySelectorAll('.clock-hour-btn.active').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        renderClockFace('mathClockSvg', mathCurrentHour);
+        renderClockFace('mathClockSvg', mathCurrentHour, mathCurrentMinute);
         updateClockInfoText();
       });
       hourBtnsWrap.appendChild(btn);
@@ -933,11 +1199,11 @@ function renderMathGeometryTab() {
   if (btnHearClock) {
     btnHearClock.onclick = () => {
       window.soundMgr.playClick();
-      window.soundMgr.playAudioFile(`math_clock_${mathCurrentHour}`, null, `${mathCurrentHour} giờ đúng`);
+      playCurrentClockAudio();
     };
   }
 
-  // Switch between Learn Clock & Quiz (Shapes + Clock)
+  // Switch between Learn Clock & Quiz (Shapes + Solids + cm + Clock + Days)
   const btnLearn = document.getElementById('btnGeoLearnMode');
   const btnQuiz = document.getElementById('btnGeoQuizMode');
   if (btnLearn && btnQuiz) {
@@ -947,6 +1213,9 @@ function renderMathGeometryTab() {
       mathGeoMode = 'learn';
       window.soundMgr.playClick();
       renderMathGeometryTab();
+      renderMathSolids();
+      renderMathRuler();
+      renderMathDays();
     };
     btnQuiz.onclick = () => {
       mathGeoMode = 'quiz';
@@ -962,31 +1231,35 @@ function renderMathGeometryTab() {
 function updateClockInfoText() {
   const titleEl = document.getElementById('mathClockReadout');
   const tipEl = document.getElementById('mathClockScheduleTip');
-  if (titleEl) titleEl.innerText = `🕒 Đồng hồ chỉ: ${mathCurrentHour} giờ đúng`;
+  if (titleEl) {
+    titleEl.innerText = mathCurrentMinute === 30
+      ? `🕡 Đồng hồ chỉ: ${mathCurrentHour} giờ rưỡi (${mathCurrentHour}:30 • ${mathCurrentHour}時半)`
+      : `🕒 Đồng hồ chỉ: ${mathCurrentHour} giờ đúng (${mathCurrentHour}:00 • ${mathCurrentHour}時)`;
+  }
   if (tipEl) tipEl.innerText = MATH_CLOCK_SCHEDULE[mathCurrentHour] || '';
 }
 
-function renderClockFace(svgId, hour) {
+function renderClockFace(svgId, hour, minute = 0) {
   const svg = document.getElementById(svgId);
   if (!svg) return;
 
-  const angleDeg = (hour % 12) * 30;
+  const angleDeg = (hour % 12) * 30 + (minute === 30 ? 15 : 0);
+  const minuteAngleDeg = minute === 30 ? 180 : 0;
   let numbersHtml = '';
   for (let i = 1; i <= 12; i++) {
     const rad = ((i * 30) - 90) * (Math.PI / 180);
     const nx = 100 + Math.cos(rad) * 72;
     const ny = 100 + Math.sin(rad) * 72;
     const isTarget = i === hour;
-    numbersHtml += `<text x="${nx.toFixed(1)}" y="${(ny + 5).toFixed(1)}" text-anchor="middle" font-size="${isTarget ? '17' : '14'}" font-weight="900" fill="${isTarget ? '#e11d48' : '#1e293b'}">${i}</text>`;
+    const isHalf = minute === 30 && i === 6;
+    numbersHtml += `<text x="${nx.toFixed(1)}" y="${(ny + 5).toFixed(1)}" text-anchor="middle" font-size="${isTarget ? '17' : '14'}" font-weight="900" fill="${isTarget ? '#e11d48' : (isHalf ? '#0284c7' : '#1e293b')}">${i}</text>`;
   }
 
   svg.innerHTML = `
     <circle cx="100" cy="100" r="92" fill="#ffffff" stroke="#0284c7" stroke-width="6"/>
     <circle cx="100" cy="100" r="84" fill="#f8fafc" stroke="#bae6fd" stroke-width="2"/>
     ${numbersHtml}
-    <!-- Kim dài (Phút) chỉ thẳng số 12 -->
-    <line x1="100" y1="100" x2="100" y2="34" stroke="#0284c7" stroke-width="5" stroke-linecap="round"/>
-    <!-- Kim ngắn (Giờ) màu đỏ xoay đúng theo giờ -->
+    <line x1="100" y1="100" x2="100" y2="34" stroke="#0284c7" stroke-width="5" stroke-linecap="round" transform="rotate(${minuteAngleDeg} 100 100)"/>
     <line x1="100" y1="100" x2="100" y2="54" stroke="#e11d48" stroke-width="8" stroke-linecap="round" transform="rotate(${angleDeg} 100 100)"/>
     <circle cx="100" cy="100" r="7" fill="#0f172a"/>
     <circle cx="100" cy="100" r="3" fill="#facc15"/>
@@ -999,15 +1272,15 @@ function initGeoClockQuiz() {
   document.getElementById('mathGeoQuizActive').style.display = 'block';
   document.getElementById('mathGeoQuizVictory').style.display = 'none';
 
-  // Mix 4 Shape questions + 4 Clock questions = 8 rounds
   mathGeoQuizQuestions = [];
-  const shapePrompts = [
-    { kind: 'shape', q: 'Bảo Long ơi, đâu là Hình Tròn (như bánh xe, mặt trời)?', targetId: 'tron', audioKey: 'math_q_shape_tron' },
-    { kind: 'shape', q: 'Đâu là Hình Vuông có 4 cạnh dài bằng nhau?', targetId: 'vuong', audioKey: 'math_q_shape_vuong' },
-    { kind: 'shape', q: 'Hình nào là Hình Tam Giác có 3 cạnh nhọn?', targetId: 'tam_giac', audioKey: 'math_q_shape_tam_giac' },
-    { kind: 'shape', q: 'Đâu là Hình Chữ Nhật giống quyển sách hay cánh cửa?', targetId: 'chu_nhat', audioKey: 'math_q_shape_chu_nhat' }
-  ];
-  shapePrompts.forEach(sp => {
+  // 2 câu Hình phẳng 2D
+  const flatPrompts = [
+    { q: 'Bảo Long ơi, đâu là Hình Tròn (như bánh xe, mặt trời)?', targetId: 'tron', audioKey: 'math_q_shape_tron' },
+    { q: 'Đâu là Hình Vuông có 4 cạnh dài bằng nhau?', targetId: 'vuong', audioKey: 'math_q_shape_vuong' },
+    { q: 'Hình nào là Hình Tam Giác có 3 cạnh nhọn?', targetId: 'tam_giac', audioKey: 'math_q_shape_tam_giac' },
+    { q: 'Đâu là Hình Chữ Nhật giống quyển sách hay cánh cửa?', targetId: 'chu_nhat', audioKey: 'math_q_shape_chu_nhat' }
+  ].sort(() => Math.random() - 0.5).slice(0, 2);
+  flatPrompts.forEach(sp => {
     mathGeoQuizQuestions.push({
       kind: 'shape',
       question: sp.q,
@@ -1017,19 +1290,75 @@ function initGeoClockQuiz() {
     });
   });
 
-  const hours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].sort(() => Math.random() - 0.5).slice(0, 4);
-  hours.forEach(h => {
-    const opts = new Set([h]);
+  // 2 câu Khối 3D Lớp 1
+  const solidPrompts = [...MATH_SOLIDS_DATA].sort(() => Math.random() - 0.5).slice(0, 2);
+  solidPrompts.forEach(sl => {
+    mathGeoQuizQuestions.push({
+      kind: 'shape',
+      question: `Khối nào là ${sl.name}? (${sl.desc.split('—')[1]?.trim() || sl.desc})`,
+      audioKey: sl.quizQKey,
+      target: sl.id,
+      options: [...MATH_SOLIDS_DATA].sort(() => Math.random() - 0.5)
+    });
+  });
+
+  // 2 câu Đo cm bằng thước
+  const rulerPicks = [...MATH_RULER_ITEMS].sort(() => Math.random() - 0.5).slice(0, 2);
+  rulerPicks.forEach(item => {
+    const opts = new Set([item.cm]);
     while (opts.size < 4) {
-      opts.add(1 + Math.floor(Math.random() * 12));
+      opts.add(Math.max(1, Math.min(12, item.cm + [-2, -1, 1, 2, 3][Math.floor(Math.random() * 5)])));
     }
     mathGeoQuizQuestions.push({
-      kind: 'clock',
-      question: 'Bảo Long nhìn kim đỏ xem đồng hồ chỉ mấy giờ nào?',
-      audioKey: 'math_q_clock',
-      targetHour: h,
+      kind: 'ruler',
+      question: `Nhìn thước đo xem ${item.name} dài bao nhiêu xăng-ti-mét (cm)?`,
+      audioKey: 'math_q_ruler_len',
+      rulerItem: item,
+      targetCm: item.cm,
       options: Array.from(opts).sort((a, b) => a - b)
     });
+  });
+
+  // 3 câu Đồng hồ (mix Giờ đúng :00 & Giờ rưỡi :30)
+  const clockHours = [2, 4, 6, 7, 9, 10, 11].sort(() => Math.random() - 0.5).slice(0, 3);
+  clockHours.forEach((h, idx) => {
+    const isHalf = idx === 1 || idx === 2;
+    const opts = new Set([h]);
+    while (opts.size < 4) opts.add(1 + Math.floor(Math.random() * 12));
+    mathGeoQuizQuestions.push({
+      kind: 'clock',
+      question: isHalf
+        ? 'Kim dài chỉ số 6! Đồng hồ chỉ mấy giờ rưỡi (:30)?'
+        : 'Bảo Long nhìn kim đỏ xem đồng hồ chỉ mấy giờ đúng?',
+      audioKey: isHalf ? 'math_q_clock_half' : 'math_q_clock',
+      targetHour: h,
+      targetMinute: isHalf ? 30 : 0,
+      options: Array.from(opts).sort((a, b) => a - b)
+    });
+  });
+
+  // 1 câu Xem Lịch & Thứ
+  const dayQs = [
+    {
+      q: 'Bảo Long được nghỉ học cùng ba mẹ đi chơi vào cuối tuần nào?',
+      audioKey: 'math_q_day_weekend',
+      target: 8,
+      optIds: [2, 4, 6, 8]
+    },
+    {
+      q: 'Ngày học đầu tuần bé đi chào cờ là thứ mấy?',
+      audioKey: 'math_q_day_monday',
+      target: 2,
+      optIds: [2, 3, 5, 7]
+    }
+  ];
+  const dPick = dayQs[Math.floor(Math.random() * dayQs.length)];
+  mathGeoQuizQuestions.push({
+    kind: 'day',
+    question: dPick.q,
+    audioKey: dPick.audioKey,
+    target: dPick.target,
+    options: dPick.optIds.map(id => MATH_WEEKDAYS_DATA.find(d => d.id === id)).sort(() => Math.random() - 0.5)
   });
 
   mathGeoQuizQuestions.sort(() => Math.random() - 0.5);
@@ -1043,12 +1372,12 @@ function loadGeoClockQuestion() {
     fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_math_win', null, 'Hoan hô Bảo Long!');
-    if (typeof awardStars === 'function') awardStars(15, 'Siêu sao Hình Học & Xem Đồng Hồ!');
+    if (typeof awardStars === 'function') awardStars(15, 'Siêu sao Hình Học, Đo cm & Xem Giờ!');
 
     document.getElementById('mathGeoQuizActive').style.display = 'none';
     document.getElementById('mathGeoQuizVictory').style.display = 'block';
     document.getElementById('mathGeoVictoryScore').innerText =
-      `Bé đã trả lời đúng cả 8 câu Hình & Giờ đạt ${mathGeoQuizScore} điểm (+15 ⭐)!`;
+      `Bé đã trả lời đúng cả 10 câu Hình, Khối 3D, cm, Giờ & Lịch đạt ${mathGeoQuizScore} điểm (+15 ⭐)!`;
     return;
   }
 
@@ -1060,29 +1389,34 @@ function loadGeoClockQuestion() {
   const myNav = window.appNavEpoch || 0;
   const myMathEpoch = mathEpoch;
   const clockWrap = document.getElementById('mathGeoQuizClockWrap');
+  const visWrap = document.getElementById('mathGeoQuizVisualWrap');
   const optsGrid = document.getElementById('mathGeoQuizOptionsGrid');
   optsGrid.innerHTML = '';
+  if (visWrap) { visWrap.style.display = 'none'; visWrap.innerHTML = ''; }
   let geoLocked = false;
   const qBoxEl = document.querySelector('#mathGeoQuizActive .quiz-question-box');
   const geoTourSteps = [{ key: q.audioKey, fallbackText: q.question, el: qBoxEl, pauseAfterMs: 160 }];
 
   if (q.kind === 'clock') {
     clockWrap.style.display = 'flex';
-    renderClockFace('mathQuizClockSvg', q.targetHour);
+    renderClockFace('mathQuizClockSvg', q.targetHour, q.targetMinute || 0);
     q.options.forEach(h => {
+      const isHalf = q.targetMinute === 30;
+      const aKey = isHalf ? `math_clock_half_${h}` : `math_clock_${h}`;
+      const labelTxt = isHalf ? `${h}:30 (${h} giờ rưỡi)` : `${h} giờ`;
       const btn = document.createElement('div');
       btn.setAttribute('role', 'button');
       btn.setAttribute('tabindex', '0');
       btn.className = 'math-ans-btn';
-      btn.style.fontSize = '24px';
-      btn.innerHTML = `<span>${h} giờ</span><button type="button" class="quiz-opt-speak-btn" aria-label="Nghe giờ">🔊</button>`;
+      btn.style.fontSize = isHalf ? '18px' : '24px';
+      btn.innerHTML = `<span>${labelTxt}</span><button type="button" class="quiz-opt-speak-btn" aria-label="Nghe giờ">🔊</button>`;
       const spk = btn.querySelector('.quiz-opt-speak-btn');
       if (spk) spk.onclick = (e) => {
         e.stopPropagation();
         window.soundMgr.playClick();
-        window.soundMgr.playAudioFile(`math_clock_${h}`, null, `${h} giờ đúng`);
+        window.soundMgr.playAudioFile(aKey, null, labelTxt);
       };
-      geoTourSteps.push({ key: `math_clock_${h}`, fallbackText: `${h} giờ đúng`, el: btn, pauseAfterMs: 100 });
+      geoTourSteps.push({ key: aKey, fallbackText: labelTxt, el: btn, pauseAfterMs: 100 });
       btn.onclick = () => {
         if (geoLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
         window.soundMgr.stopAll();
@@ -1094,7 +1428,7 @@ function loadGeoClockQuestion() {
           document.getElementById('mathGeoScoreText').innerText = `⭐ ${mathGeoQuizScore} điểm`;
           window.soundMgr.playCorrect();
           fireConfetti();
-          if (typeof showToast === 'function') showToast(`🕒 Chính xác! Đồng hồ chỉ ${h} giờ đúng!`);
+          if (typeof showToast === 'function') showToast(`🕒 Chính xác! Đồng hồ chỉ ${labelTxt}!`);
           window.soundMgr.playPraiseThen(false,
             () => (window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch,
             () => {
@@ -1106,10 +1440,105 @@ function loadGeoClockQuestion() {
           btn.classList.add('wrong');
           window.soundMgr.playWrong();
           window.soundMgr.speakTryAgain();
-          if (typeof showToast === 'function') showToast('🕒 Mẹo: Xem kim NGẮN màu ĐỎ đang chỉ vào số nào nhé!');
+          if (typeof showToast === 'function') showToast('🕒 Mẹo: Xem kim NGẮN màu ĐỎ đang chỉ qua số nào nhé!');
         }
       };
       optsGrid.appendChild(btn);
+    });
+  } else if (q.kind === 'ruler') {
+    clockWrap.style.display = 'none';
+    if (visWrap) {
+      visWrap.style.display = 'flex';
+      visWrap.innerHTML = `<svg viewBox="0 0 560 150" class="math-ruler-svg" style="max-width:460px;">${buildMathRulerSvgMarkup(q.rulerItem)}</svg>`;
+    }
+    q.options.forEach(cmVal => {
+      const btn = document.createElement('div');
+      btn.setAttribute('role', 'button');
+      btn.setAttribute('tabindex', '0');
+      btn.className = 'math-ans-btn';
+      btn.style.fontSize = '22px';
+      btn.innerHTML = `<span>${cmVal} cm</span><button type="button" class="quiz-opt-speak-btn" aria-label="Nghe độ dài">🔊</button>`;
+      const aKey = `math_cm_opt_${cmVal}`;
+      const spk = btn.querySelector('.quiz-opt-speak-btn');
+      if (spk) spk.onclick = (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.playAudioFile(aKey, null, `${cmVal} xăng-ti-mét`);
+      };
+      geoTourSteps.push({ key: aKey, fallbackText: `${cmVal} xăng-ti-mét`, el: btn, pauseAfterMs: 100 });
+      btn.onclick = () => {
+        if (geoLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+        window.soundMgr.stopAll();
+        if (cmVal === q.targetCm) {
+          geoLocked = true;
+          btn.classList.add('correct');
+          mathGeoQuizScore += 10;
+          addMathSessionScore(10);
+          document.getElementById('mathGeoScoreText').innerText = `⭐ ${mathGeoQuizScore} điểm`;
+          window.soundMgr.playCorrect();
+          fireConfetti();
+          if (typeof showToast === 'function') showToast(`📏 Tuyệt vời! Chính xác là ${cmVal} cm!`);
+          window.soundMgr.playPraiseThen(false,
+            () => (window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch,
+            () => {
+              mathGeoQuizIndex++;
+              loadGeoClockQuestion();
+            }
+          );
+        } else {
+          btn.classList.add('wrong');
+          window.soundMgr.playWrong();
+          window.soundMgr.speakTryAgain();
+          if (typeof showToast === 'function') showToast('📏 Mẹo: Đuôi bắt đầu ở số 0, nhìn mũi nhọn chạm vạch số mấy nhé!');
+        }
+      };
+      optsGrid.appendChild(btn);
+    });
+  } else if (q.kind === 'day') {
+    clockWrap.style.display = 'none';
+    q.options.forEach(dayObj => {
+      const card = document.createElement('div');
+      card.className = 'quiz-option-card';
+      card.innerHTML = `
+        <button type="button" class="quiz-opt-speak-btn" aria-label="Nghe thứ">🔊</button>
+        <div style="font-size:32px; font-weight:900; color:#ea580c; margin-bottom:4px;">${dayObj.short}</div>
+        <div class="quiz-opt-name">${dayObj.name}</div>
+        <div style="font-size:12px; color:#64748b; font-weight:700;">${dayObj.ja}</div>
+      `;
+      const aKey = `math_day_${dayObj.id}`;
+      const spk = card.querySelector('.quiz-opt-speak-btn');
+      if (spk) spk.onclick = (e) => {
+        e.stopPropagation();
+        window.soundMgr.playClick();
+        window.soundMgr.playAudioFile(aKey, null, dayObj.name);
+      };
+      geoTourSteps.push({ key: aKey, fallbackText: dayObj.name, el: card, pauseAfterMs: 110 });
+      card.onclick = () => {
+        if (geoLocked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+        window.soundMgr.stopAll();
+        if (dayObj.id === q.target) {
+          geoLocked = true;
+          card.classList.add('correct');
+          mathGeoQuizScore += 10;
+          addMathSessionScore(10);
+          document.getElementById('mathGeoScoreText').innerText = `⭐ ${mathGeoQuizScore} điểm`;
+          window.soundMgr.playCorrect();
+          fireConfetti();
+          if (typeof showToast === 'function') showToast(`📅 Chuẩn xác! Là ${dayObj.name}!`);
+          window.soundMgr.playPraiseThen(false,
+            () => (window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch,
+            () => {
+              mathGeoQuizIndex++;
+              loadGeoClockQuestion();
+            }
+          );
+        } else {
+          card.classList.add('wrong');
+          window.soundMgr.playWrong();
+          window.soundMgr.speakTryAgain();
+        }
+      };
+      optsGrid.appendChild(card);
     });
   } else {
     clockWrap.style.display = 'none';
@@ -1169,4 +1598,199 @@ function loadGeoClockQuestion() {
   setTimeout(() => {
     if ((window.appNavEpoch || 0) === myNav && mathEpoch === myMathEpoch) playGeoTour();
   }, 60);
+}
+
+// ========================================================
+// BẢNG SỐ 0-100, CẤU TẠO SỐ (いくつといくつ), KHỐI 3D, THƯỚC CM & LỊCH
+// ========================================================
+function renderMathHundredBoard() {
+  const btnToggle = document.getElementById('btnToggleHundredBoard');
+  const box = document.getElementById('mathHundredBoardBox');
+  const grid = document.getElementById('mathHundredGrid');
+  if (!grid || !box) return;
+
+  if (btnToggle) {
+    const isOpen = box.style.display !== 'none';
+    btnToggle.innerHTML = isOpen ? '<span>🔼</span> Ẩn bảng 0–100' : '<span>🔢</span> Bảng 0–100 (HK2)';
+    btnToggle.onclick = () => {
+      window.soundMgr.playClick();
+      const willOpen = box.style.display === 'none';
+      box.style.display = willOpen ? 'block' : 'none';
+      btnToggle.innerHTML = willOpen ? '<span>🔼</span> Ẩn bảng 0–100' : '<span>🔢</span> Bảng 0–100 (HK2)';
+    };
+  }
+
+  document.querySelectorAll('.math-skip-btn').forEach(btn => {
+    const step = Number(btn.dataset.step || 1);
+    btn.classList.toggle('active-filter', step === mathHundredSkipStep);
+    btn.onclick = () => {
+      window.soundMgr.playClick();
+      mathHundredSkipStep = step;
+      renderMathHundredBoard();
+    };
+  });
+
+  grid.innerHTML = '';
+  for (let n = 1; n <= 100; n++) {
+    const cell = document.createElement('button');
+    const isHi = mathHundredSkipStep > 1 && n % mathHundredSkipStep === 0;
+    cell.className = `math-hundred-cell ${isHi ? 'skip-hi' : ''}`;
+    cell.innerText = String(n);
+    cell.onclick = () => {
+      grid.querySelectorAll('.math-hundred-cell.selected').forEach(c => c.classList.remove('selected'));
+      cell.classList.add('selected');
+      window.soundMgr.playPop();
+      window.soundMgr.playAudioFile(`math_v_${n}`, null, mathNumberToViText(n));
+      if (typeof showToast === 'function') {
+        showToast(`🔢 Số ${n}: ${mathNumberToViText(n)}`);
+      }
+    };
+    grid.appendChild(cell);
+  }
+}
+
+function renderMathBondsWidget() {
+  const diag = document.getElementById('mathBondDiagram');
+  const grid = document.getElementById('mathBondPairsGrid');
+  if (!diag || !grid) return;
+
+  document.querySelectorAll('.math-bond-target-btn').forEach(btn => {
+    const t = Number(btn.dataset.target);
+    btn.classList.toggle('active-filter', t === mathBondTarget);
+    btn.onclick = () => {
+      window.soundMgr.playClick();
+      mathBondTarget = t;
+      mathBondSelectedA = Math.min(mathBondSelectedA, t);
+      renderMathBondsWidget();
+    };
+  });
+
+  const a = mathBondSelectedA;
+  const b = mathBondTarget - a;
+  diag.innerHTML = `
+    <div class="bond-sakura-card">
+      <div class="bond-top-node">${mathBondTarget}</div>
+      <div class="bond-branches">↙ &nbsp;&nbsp;&nbsp; ↘</div>
+      <div class="bond-bottom-row">
+        <div class="bond-part-node a">${a}<span>${'⭐'.repeat(a)}</span></div>
+        <div class="bond-part-node b">${b}<span>${'🌸'.repeat(b)}</span></div>
+      </div>
+      <div class="bond-sentence"><strong>${mathBondTarget}</strong> gồm <strong>${a}</strong> và <strong>${b}</strong> • ${a} + ${b} = ${mathBondTarget}</div>
+    </div>`;
+
+  grid.innerHTML = '';
+  for (let i = 0; i <= mathBondTarget; i++) {
+    const j = mathBondTarget - i;
+    const pill = document.createElement('button');
+    pill.className = `math-bond-pair-btn ${i === mathBondSelectedA ? 'active' : ''}`;
+    pill.innerHTML = `<span>${i}</span> + <span>${j}</span>`;
+    pill.onclick = () => {
+      mathBondSelectedA = i;
+      window.soundMgr.playPop();
+      window.soundMgr.playAudioFile(`math_bond_${mathBondTarget}_${i}`, null, `${mathBondTarget} gồm ${i} và ${j}`);
+      renderMathBondsWidget();
+    };
+    grid.appendChild(pill);
+  }
+}
+
+function renderMathSolids() {
+  const grid = document.getElementById('mathSolidsGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  MATH_SOLIDS_DATA.forEach(sl => {
+    const card = document.createElement('div');
+    card.className = 'math-shape-card';
+    card.innerHTML = `
+      <div class="shape-svg-wrap">${sl.svg}</div>
+      <div class="shape-title">${sl.name}</div>
+      <div class="shape-ja">🇯🇵 ${sl.ja}</div>
+      <div class="shape-traits">${sl.desc}</div>
+    `;
+    card.onclick = () => {
+      window.soundMgr.playClick();
+      window.soundMgr.playAudioFile(sl.audioKey, null, sl.name);
+      if (typeof showToast === 'function') showToast(`🧊 ${sl.name}: ${sl.desc}`);
+    };
+    grid.appendChild(card);
+  });
+}
+
+function buildMathRulerSvgMarkup(item) {
+  const cmWidth = 40;
+  const startX = 40;
+  let ticks = '';
+  for (let c = 0; c <= 12; c++) {
+    const x = startX + c * cmWidth;
+    ticks += `<line x1="${x}" y1="78" x2="${x}" y2="${c % 5 === 0 ? 104 : 96}" stroke="#0f172a" stroke-width="${c === item.cm ? 3 : 2}"/>`;
+    ticks += `<text x="${x}" y="124" text-anchor="middle" font-size="14" font-weight="900" fill="${c === item.cm || c === 0 ? '#e11d48' : '#334155'}" font-family="Nunito,sans-serif">${c}</text>`;
+  }
+  const barW = item.cm * cmWidth;
+  return `
+    <rect x="20" y="78" width="520" height="58" rx="10" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/>
+    ${ticks}
+    <text x="536" y="124" font-size="12" font-weight="900" fill="#92400e">cm</text>
+    <rect x="${startX}" y="28" width="${barW}" height="32" rx="10" fill="${item.color}" stroke="#0f172a" stroke-width="2.5"/>
+    <text x="${startX + barW / 2}" y="49" text-anchor="middle" font-size="15" font-weight="900" fill="#ffffff" font-family="Nunito,sans-serif">${item.icon} ${item.cm} cm</text>
+    <line x1="${startX + barW}" y1="60" x2="${startX + barW}" y2="78" stroke="#e11d48" stroke-width="3" stroke-dasharray="4 3"/>
+  `;
+}
+
+function renderMathRuler() {
+  const btns = document.getElementById('mathRulerItemBtns');
+  const svg = document.getElementById('mathRulerSvg');
+  const readout = document.getElementById('mathRulerReadout');
+  const btnHear = document.getElementById('btnHearRuler');
+  if (!btns || !svg) return;
+
+  const item = MATH_RULER_ITEMS[mathRulerSelectedIdx] || MATH_RULER_ITEMS[0];
+  btns.innerHTML = '';
+  MATH_RULER_ITEMS.forEach((it, idx) => {
+    const b = document.createElement('button');
+    b.className = `tool-chip ${idx === mathRulerSelectedIdx ? 'active-filter' : ''}`;
+    b.innerText = it.label;
+    b.onclick = () => {
+      mathRulerSelectedIdx = idx;
+      window.soundMgr.playPop();
+      renderMathRuler();
+      window.soundMgr.playAudioFile(`math_cm_${it.cm}`, null, `${it.name} dài ${it.cm} xăng-ti-mét`);
+    };
+    btns.appendChild(b);
+  });
+
+  svg.innerHTML = buildMathRulerSvgMarkup(item);
+  if (readout) {
+    readout.innerText = `📏 ${item.name} dài ${item.cm} xăng-ti-mét (${item.cm} cm)`;
+  }
+  if (btnHear) {
+    btnHear.onclick = () => {
+      window.soundMgr.playClick();
+      window.soundMgr.playAudioFile(`math_cm_${item.cm}`, null, `${item.name} dài ${item.cm} xăng-ti-mét`);
+    };
+  }
+}
+
+function renderMathDays() {
+  const grid = document.getElementById('mathDaysGrid');
+  const tipBox = document.getElementById('mathDayTipBox');
+  if (!grid) return;
+
+  grid.innerHTML = '';
+  MATH_WEEKDAYS_DATA.forEach(d => {
+    const btn = document.createElement('button');
+    btn.className = `math-day-card ${d.isWeekend ? 'weekend' : ''}`;
+    btn.innerHTML = `
+      <div class="day-short">${d.short}</div>
+      <div class="day-name">${d.name}</div>
+      <div class="day-ja">${d.ja}</div>
+    `;
+    btn.onclick = () => {
+      grid.querySelectorAll('.math-day-card.active').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      window.soundMgr.playPop();
+      window.soundMgr.playAudioFile(`math_day_${d.id}`, null, d.name);
+      if (tipBox) tipBox.innerText = `📅 ${d.name} (${d.ja}): ${d.desc}`;
+    };
+    grid.appendChild(btn);
+  });
 }

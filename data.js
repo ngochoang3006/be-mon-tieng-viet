@@ -184,6 +184,66 @@ const VOCAB_LESSONS = [
       { id: 'w69', word: 'hát', breakdown: 'h - at - sắc', tone: 'Sắc', icon: '🎤', ja: 'うたう (Utau - Hát)', spellText: 'Hờ - at - hat - sắc - hát', example: 'Cả nhà cùng hát vui ca' },
       { id: 'w70', word: 'vẽ', breakdown: 'v - e - ngã', tone: 'Ngã', icon: '🎨', ja: 'かく (E wo kaku - Vẽ)', spellText: 'Vờ - e - ve - ngã - vẽ', example: 'Bảo Long vẽ chú khủng long T-Rex' }
     ]
+  },
+  {
+    id: 9,
+    title: 'Bài 9: Mái trường mến yêu & Bạn bè (HK2)',
+    subtitle: 'Từ vựng trường tiểu học lớp 1 kết nối tri thức',
+    words: [
+      { id: 'w71', word: 'cô giáo', breakdown: 'c - ô, gi - ao - sắc', tone: 'Ngang & Sắc', icon: '👩‍🏫', ja: 'せんせい (Sensei)', spellText: 'Cờ - ô - cô, giờ - ao - giao - sắc - giáo -> cô giáo', example: 'Cô giáo giảng bài rất hay' },
+      { id: 'w72', word: 'thầy giáo', breakdown: 'th - ây - huyền, gi - ao - sắc', tone: 'Huyền & Sắc', icon: '👨‍🏫', ja: 'せんせい (Thầy giáo)', spellText: 'Thờ - ây - thây - huyền - thầy, giờ - ao - giao - sắc - giáo -> thầy giáo', example: 'Thầy giáo dạy thể dục' },
+      { id: 'w73', word: 'lớp học', breakdown: 'l - ơp - sắc, h - oc - nặng', tone: 'Sắc & Nặng', icon: '🏫', ja: 'きょうしつ (Kyoushitsu)', spellText: 'Lờ - ơp - lơp - sắc - lớp, hờ - oc - hoc - nặng - học -> lớp học', example: 'Lớp học một A sạch đẹp' },
+      { id: 'w74', word: 'bảng đen', breakdown: 'b - ang - hỏi, đ - en', tone: 'Hỏi & Ngang', icon: '⬛', ja: 'こくばん (Kokuban)', spellText: 'Bờ - ang - bang - hỏi - bảng, đờ - en - đen -> bảng đen', example: 'Cô viết chữ đẹp lên bảng đen' },
+      { id: 'w75', word: 'thước kẻ', breakdown: 'th - ươc - sắc, k - e - hỏi', tone: 'Sắc & Hỏi', icon: '📏', ja: 'じょうぎ (Jougi)', spellText: 'Thờ - ươc - thươc - sắc - thước, ca - e - ke - hỏi - kẻ -> thước kẻ', example: 'Dùng thước kẻ đo độ dài' },
+      { id: 'w76', word: 'cục tẩy', breakdown: 'c - uc - nặng, t - ây - hỏi', tone: 'Nặng & Hỏi', icon: '🧼', ja: 'けしごむ (Keshigomu)', spellText: 'Cờ - uc - cuc - nặng - cục, tờ - ây - tây - hỏi - tẩy -> cục tẩy', example: 'Cục tẩy xóa nét bút chì' },
+      { id: 'w77', word: 'cặp sách', breakdown: 'c - ăp - nặng, s - ach - sắc', tone: 'Nặng & Sắc', icon: '🎒', ja: 'ランドセル (Randoseru)', spellText: 'Cờ - ăp - căp - nặng - cặp, sờ - ach - sach - sắc - sách -> cặp sách', example: 'Bảo Long tự đeo cặp sách đi học' },
+      { id: 'w78', word: 'bạn bè', breakdown: 'b - an - nặng, b - e - huyền', tone: 'Nặng & Huyền', icon: '🤝', ja: 'ともだち (Tomodachi)', spellText: 'Bờ - an - ban - nặng - bạn, bờ - e - be - huyền - bè -> bạn bè', example: 'Bạn bè vui chơi đoàn kết' }
+    ]
+  },
+  {
+    id: 10,
+    title: 'Bài 10: Quê hương Việt Nam & Lễ hội (HK2)',
+    subtitle: 'Tự hào cội nguồn Việt Nam tươi đẹp',
+    words: [
+      { id: 'w79', word: 'việt nam', breakdown: 'v - iêt - nặng, n - am', tone: 'Nặng & Ngang', icon: '🇻🇳', ja: 'ベトナム (Betonamu)', spellText: 'Vờ - iêt - viêt - nặng - việt, nờ - am - nam -> việt nam', example: 'Bảo Long yêu quê hương Việt Nam' },
+      { id: 'w80', word: 'hà nội', breakdown: 'h - a - huyền, n - ôi - nặng', tone: 'Huyền & Nặng', icon: '🏛️', ja: 'ハノイ (Hanoi)', spellText: 'Hờ - a - ha - huyền - hà, nờ - ôi - nôi - nặng - nội -> hà nội', example: 'Thủ đô Hà Nội nghìn năm văn hiến' },
+      { id: 'w81', word: 'hoa sen', breakdown: 'h - oa, s - en', tone: 'Ngang', icon: '🪷', ja: 'はすのはな (Hoa sen)', spellText: 'Hờ - oa - hoa, sờ - en - sen -> hoa sen', example: 'Hoa sen hồng nở trong đầm' },
+      { id: 'w82', word: 'áo dài', breakdown: 'ao - sắc, d - ai - huyền', tone: 'Sắc & Huyền', icon: '👘', ja: 'アオザイ (Ao dai)', spellText: 'A - o - ao - sắc - áo, dờ - ai - dai - huyền - dài -> áo dài', example: 'Mẹ mặc áo dài thật duyên dáng' },
+      { id: 'w83', word: 'bánh chưng', breakdown: 'b - anh - sắc, ch - ưng', tone: 'Sắc & Ngang', icon: '🟩', ja: 'バインチュン (Bánh Tết)', spellText: 'Bờ - anh - banh - sắc - bánh, chờ - ưng - chưng -> bánh chưng', example: 'Tết Việt Nam có bánh chưng xanh' },
+      { id: 'w84', word: 'hoa đào', breakdown: 'h - oa, đ - ao - huyền', tone: 'Ngang & Huyền', icon: '🌸', ja: 'もものはな (Hoa đào)', spellText: 'Hờ - oa - hoa, đờ - ao - đao - huyền - đào -> hoa đào', example: 'Cành hoa đào hồng thắm mùa xuân' },
+      { id: 'w85', word: 'trống đồng', breakdown: 'tr - ông - sắc, đ - ông - huyền', tone: 'Sắc & Huyền', icon: '🥁', ja: 'どうこ (Trống đồng)', spellText: 'Trờ - ông - trông - sắc - trống, đờ - ông - đông - huyền - đồng -> trống đồng', example: 'Trống đồng cổ của tổ tiên Việt Nam' },
+      { id: 'w86', word: 'quê hương', breakdown: 'qu - ê, h - ương', tone: 'Ngang', icon: '🌾', ja: 'ふるさと (Furusato)', spellText: 'Quờ - ê - quê, hờ - ương - hương -> quê hương', example: 'Quê hương có cánh đồng lúa chín' }
+    ]
+  },
+  {
+    id: 11,
+    title: 'Bài 11: Thiên nhiên kì thú & Côn trùng (HK2)',
+    subtitle: 'Mở rộng vốn từ cây cỏ và các loài vật quanh ta',
+    words: [
+      { id: 'w87', word: 'bươm bướm', breakdown: 'b - ươm, b - ươm - sắc', tone: 'Ngang & Sắc', icon: '🦋', ja: 'ちょうちょ (Choucho)', spellText: 'Bờ - ươm - bươm, bờ - ươm - bươm - sắc - bướm -> bươm bướm', example: 'Con bươm bướm bay lượn vườn hoa' },
+      { id: 'w88', word: 'chuồn chuồn', breakdown: 'ch - uôn - huyền, ch - uôn - huyền', tone: 'Huyền', icon: '🦟', ja: 'とんぼ (Tonbo)', spellText: 'Chờ - uôn - chuôn - huyền - chuồn -> chuồn chuồn', example: 'Chuồn chuồn bay thấp thì mưa' },
+      { id: 'w89', word: 'cầu vồng', breakdown: 'c - âu - huyền, v - ông - huyền', tone: 'Huyền', icon: '🌈', ja: 'にじ (Niji)', spellText: 'Cờ - âu - câu - huyền - cầu, vờ - ông - vông - huyền - vồng -> cầu vồng', example: 'Cầu vồng bảy sắc sau cơn mưa' },
+      { id: 'w90', word: 'cánh đồng', breakdown: 'c - anh - sắc, đ - ông - huyền', tone: 'Sắc & Huyền', icon: '🌾', ja: 'たんぼ (Cánh đồng)', spellText: 'Cờ - anh - canh - sắc - cánh, đờ - ông - đông - huyền - đồng -> cánh đồng', example: 'Cánh đồng lúa xanh rì' },
+      { id: 'w91', word: 'rừng xanh', breakdown: 'r - ưng - huyền, x - anh', tone: 'Huyền & Ngang', icon: '🌲', ja: 'もり (Mori)', spellText: 'Rờ - ưng - rưng - huyền - rừng, xờ - anh - xanh -> rừng xanh', example: 'Khu rừng xanh mát nhiều cây cao' },
+      { id: 'w92', word: 'con ong', breakdown: 'c - on, o - ng', tone: 'Ngang', icon: '🐝', ja: 'みつばち (Hachi)', spellText: 'Cờ - on - con, o - ngờ - ong -> con ong', example: 'Con ong chăm chỉ hút mật hoa' },
+      { id: 'w93', word: 'con kiến', breakdown: 'c - on, k - iên - sắc', tone: 'Ngang & Sắc', icon: '🐜', ja: 'あり (Ari)', spellText: 'Cờ - on - con, ca - iên - kiên - sắc - kiến -> con kiến', example: 'Đàn kiến nhỏ tha mồi về tổ' },
+      { id: 'w94', word: 'cây tre', breakdown: 'c - ây, tr - e', tone: 'Ngang', icon: '🎋', ja: 'たけ (Take - Tre)', spellText: 'Cờ - ây - cây, trờ - e - tre -> cây tre', example: 'Lũy tre xanh rì rào trong gió' }
+    ]
+  },
+  {
+    id: 12,
+    title: 'Bài 12: Giao tiếp lễ phép & Đức tính đẹp (HK2)',
+    subtitle: 'Những từ ngữ hay giúp Bảo Long ứng xử văn minh',
+    words: [
+      { id: 'w95', word: 'xin chào', breakdown: 'x - in, ch - ao - huyền', tone: 'Ngang & Huyền', icon: '👋', ja: 'こんにちは', spellText: 'Xờ - in - xin, chờ - ao - chao - huyền - chào -> xin chào', example: 'Bé khoanh tay nói con xin chào ạ' },
+      { id: 'w96', word: 'cảm ơn', breakdown: 'c - am - hỏi, ơ - n', tone: 'Hỏi & Ngang', icon: '🙏', ja: 'ありがとう', spellText: 'Cờ - am - cam - hỏi - cảm, ơ - nờ - ơn -> cảm ơn', example: 'Nói con cảm ơn khi nhận quà' },
+      { id: 'w97', word: 'xin lỗi', breakdown: 'x - in, l - ôi - ngã', tone: 'Ngang & Ngã', icon: '🙇', ja: 'ごめんなさい', spellText: 'Xờ - in - xin, lờ - ôi - lôi - ngã - lỗi -> xin lỗi', example: 'Mạnh dạn nói xin lỗi khi lỡ sai' },
+      { id: 'w98', word: 'lễ phép', breakdown: 'l - ê - ngã, ph - ep - sắc', tone: 'Ngã & Sắc', icon: '🤲', ja: 'れいぎただしい', spellText: 'Lờ - ê - lê - ngã - lễ, phờ - ep - phep - sắc - phép -> lễ phép', example: 'Bảo Long rất lễ phép với ông bà' },
+      { id: 'w99', word: 'chăm chỉ', breakdown: 'ch - ăm, ch - i - hỏi', tone: 'Ngang & Hỏi', icon: '📚', ja: 'まじめ (Chăm chỉ)', spellText: 'Chờ - ăm - chăm, chờ - i - chi - hỏi - chỉ -> chăm chỉ', example: 'Chăm chỉ học bài mỗi tối' },
+      { id: 'w100', word: 'thật thà', breakdown: 'th - ât - nặng, th - a - huyền', tone: 'Nặng & Huyền', icon: '💖', ja: 'しょうじき (Thật thà)', spellText: 'Thờ - ât - thât - nặng - thật, thờ - a - tha - huyền - thà -> thật thà', example: 'Trẻ ngoan luôn thật thà dũng cảm' },
+      { id: 'w101', word: 'gọn gàng', breakdown: 'g - on - nặng, g - ang - huyền', tone: 'Nặng & Huyền', icon: '🧸', ja: 'せいとん (Gọn gàng)', spellText: 'Gờ - on - gon - nặng - gọn, gờ - ang - gang - huyền - gàng -> gọn gàng', example: 'Cất đồ chơi gọn gàng vào hộp' },
+      { id: 'w102', word: 'yêu thương', breakdown: 'y - êu, th - ương', tone: 'Ngang', icon: '❤️', ja: 'だいすき / あい (Yêu thương)', spellText: 'I dài - êu - yêu, thờ - ương - thương -> yêu thương', example: 'Gia đình luôn yêu thương nhau' }
+    ]
   }
 ];
 
@@ -263,6 +323,111 @@ const PHONICS_LESSONS = [
       { id: 'vd6', word: 'bơi', rhyme: 'Vần -ơi', breakdown: 'b - ơi', icon: '🏊', ja: 'およぐ (Oyogu - Bơi)', spellText: 'bờ - ơi - bơi', example: 'Bảo Long tập bơi dưới hồ' },
       { id: 'vd7', word: 'núi', rhyme: 'Vần -ui', breakdown: 'n - ui - sắc', icon: '⛰️', ja: 'やま (Yama - Núi)', spellText: 'nờ - ui - nui - sắc - núi', example: 'Ngọn núi cao sừng sững' },
       { id: 'vd8', word: 'cười', breakdown: 'c - ươi - huyền', rhyme: 'Vần -ươi', icon: '😄', ja: 'わらう (Warau - Cười)', spellText: 'cờ - ươi - cươi - huyền - cười', example: 'Tiếng cười giòn tan' }
+    ]
+  },
+  {
+    id: 6,
+    title: 'Bài 6: Âm cuối NG & NH – ang, ăng, ong, ông, anh, ênh, inh',
+    subtitle: 'Các vần vang ngân chuẩn chương trình Tiếng Việt Lớp 1',
+    words: [
+      { id: 'ng1', word: 'trăng', rhyme: 'Vần -ăng', breakdown: 'tr - ăng', icon: '🌙', ja: 'つき (Mặt trăng)', spellText: 'trờ - ăng - trăng', example: 'Vầng trăng sáng đêm rằm' },
+      { id: 'ng2', word: 'vầng', rhyme: 'Vần -âng', breakdown: 'v - âng - huyền', icon: '🌅', ja: 'たいようのわ', spellText: 'vờ - âng - vâng - huyền - vầng', example: 'Vầng dương rực rỡ ban mai' },
+      { id: 'ng3', word: 'ong', rhyme: 'Vần -ong', breakdown: 'o - ng', icon: '🐝', ja: 'ハチ (Con ong)', spellText: 'o - ngờ - ong', example: 'Con ong làm mật ngọt' },
+      { id: 'ng4', word: 'sông', rhyme: 'Vần -ông', breakdown: 's - ông', icon: '🏞️', ja: 'かわ (Dòng sông)', spellText: 'sờ - ông - sông', example: 'Dòng sông xanh hiền hòa' },
+      { id: 'ng5', word: 'khung', rhyme: 'Vần -ung', breakdown: 'kh - ung', icon: '🖼️', ja: 'わく / フレーム', spellText: 'khờ - ung - khung', example: 'Khung tranh gia đình' },
+      { id: 'ng6', word: 'sừng', rhyme: 'Vần -ưng', breakdown: 's - ưng - huyền', icon: '🦏', ja: 'つの (Sừng)', spellText: 'sờ - ưng - sưng - huyền - sừng', example: 'Khủng long ba sừng dũng mãnh' },
+      { id: 'ng7', word: 'xanh', rhyme: 'Vần -anh', breakdown: 'x - anh', icon: '🌿', ja: 'みどり (Xanh)', spellText: 'xờ - anh - xanh', example: 'Bầu trời xanh ngắt' },
+      { id: 'ng8', word: 'bình', rhyme: 'Vần -inh', breakdown: 'b - inh - huyền', icon: '🏺', ja: 'かびん (Cái bình)', spellText: 'bờ - inh - binh - huyền - bình', example: 'Bình hoa đẹp trên bàn' }
+    ]
+  },
+  {
+    id: 7,
+    title: 'Bài 7: Nguyên âm đôi IÊ / YÊ – iên, iêm, iêng, iêt, iêu, yên',
+    subtitle: 'Nhóm vần nâng cao cực hay gặp cuối Học kỳ 1',
+    words: [
+      { id: 'ie1', word: 'biển', rhyme: 'Vần -iên', breakdown: 'b - iên - hỏi', icon: '🌊', ja: 'うみ (Umi)', spellText: 'bờ - iên - biên - hỏi - biển', example: 'Biển xanh sóng vỗ rì rào' },
+      { id: 'ie2', word: 'kiếm', rhyme: 'Vần -iêm', breakdown: 'k - iêm - sắc', icon: '⚔️', ja: 'けん (Ken)', spellText: 'ca - iêm - kiêm - sắc - kiếm', example: 'Hiệp sĩ cầm thanh kiếm sáng' },
+      { id: 'ie3', word: 'tiếng', rhyme: 'Vần -iêng', breakdown: 't - iêng - sắc', icon: '🗣️', ja: 'こえ / ことば', spellText: 'tờ - iêng - tiêng - sắc - tiếng', example: 'Bảo Long nói tiếng Việt thật chuẩn' },
+      { id: 'ie4', word: 'viết', rhyme: 'Vần -iêt', breakdown: 'v - iêt - sắc', icon: '✍️', ja: 'かく (Viết)', spellText: 'vờ - iêt - viêt - sắc - viết', example: 'Em tập viết nắn nót từng chữ' },
+      { id: 'ie5', word: 'diều', rhyme: 'Vần -iêu', breakdown: 'd - iêu - huyền', icon: '🪁', ja: 'たこ (Cánh diều)', spellText: 'dờ - iêu - diêu - huyền - diều', example: 'Thả cánh diều bay cao' },
+      { id: 'ie6', word: 'yến', rhyme: 'Vần -yên', breakdown: 'yên - sắc', icon: '🐦', ja: 'つばめ (Chim yến)', spellText: 'i dài - ê - nờ - yên - sắc - yến', example: 'Chim yến bay về báo mùa xuân' },
+      { id: 'ie7', word: 'tiệc', rhyme: 'Vần -iêc', breakdown: 't - iêc - nặng', icon: '🎂', ja: 'パーティー', spellText: 'tờ - iêc - tiêc - nặng - tiệc', example: 'Tiệc sinh nhật vui vẻ' },
+      { id: 'ie8', word: 'thiệp', rhyme: 'Vần -iêp', breakdown: 'th - iêp - nặng', icon: '💌', ja: 'カード (Thiệp)', spellText: 'thờ - iêp - thiêp - nặng - thiệp', example: 'Tấm thiệp chúc mừng mẹ' }
+    ]
+  },
+  {
+    id: 8,
+    title: 'Bài 8: Nguyên âm đôi UÔ / ƯƠ – uôn, uông, uôi, ươn, ương, ươm',
+    subtitle: 'Chinh phục nhóm vần UÔ và ƯƠ chuẩn Lớp 1',
+    words: [
+      { id: 'uo1', word: 'cuốn', rhyme: 'Vần -uôn', breakdown: 'c - uôn - sắc', icon: '📘', ja: 'さつ (Cuốn sách)', spellText: 'cờ - uôn - cuôn - sắc - cuốn', example: 'Cuốn truyện tranh hay quá' },
+      { id: 'uo2', word: 'chuông', rhyme: 'Vần -uông', breakdown: 'ch - uông', icon: '🔔', ja: 'かね (Chuông)', spellText: 'chờ - uông - chuông', example: 'Tiếng chuông ngân vang' },
+      { id: 'uo3', word: 'suối', rhyme: 'Vần -uôi', breakdown: 's - uôi - sắc', icon: '💧', ja: 'おがわ (Dòng suối)', spellText: 'sờ - uôi - suôi - sắc - suối', example: 'Dòng suối mát chảy róc rách' },
+      { id: 'uo4', word: 'vườn', rhyme: 'Vần -ươn', breakdown: 'v - ươn - huyền', icon: '🪴', ja: 'にわ (Khu vườn)', spellText: 'vờ - ươn - vươn - huyền - vườn', example: 'Khu vườn đầy hoa thơm' },
+      { id: 'uo5', word: 'trường', rhyme: 'Vần -ương', breakdown: 'tr - ương - huyền', icon: '🏫', ja: 'がっこう (Trường)', spellText: 'trờ - ương - trương - huyền - trường', example: 'Ngôi trường tiểu học thân yêu' },
+      { id: 'uo6', word: 'bướm', rhyme: 'Vần -ươm', breakdown: 'b - ươm - sắc', icon: '🦋', ja: 'ちょう (Con bướm)', spellText: 'bờ - ươm - bươm - sắc - bướm', example: 'Đàn bướm sặc sỡ bay lượn' },
+      { id: 'uo7', word: 'lược', rhyme: 'Vần -ươc', breakdown: 'l - ươc - nặng', icon: '💇', ja: 'くし (Cái lược)', spellText: 'lờ - ươc - lươc - nặng - lược', example: 'Chiếc lược chải tóc gọn gàng' },
+      { id: 'uo8', word: 'bưởi', rhyme: 'Vần -ươi', breakdown: 'b - ươi - hỏi', icon: '🍈', ja: 'ざぼん (Quả bưởi)', spellText: 'bờ - ươi - bươi - hỏi - bưởi', example: 'Quả bưởi ngọt ngày thu' }
+    ]
+  },
+  {
+    id: 9,
+    title: 'Bài 9: Vần có Âm đệm O – oa, oă, oe, oai, oan, oat, oanh',
+    subtitle: 'Tròn môi phát âm chuẩn các vần bắt đầu bằng âm O',
+    words: [
+      { id: 'oa1', word: 'loa', rhyme: 'Vần -oa', breakdown: 'l - oa', icon: '📢', ja: 'スピーカー (Loa)', spellText: 'lờ - oa - loa', example: 'Chiếc loa phát âm to rõ' },
+      { id: 'oa2', word: 'xòe', rhyme: 'Vần -oe', breakdown: 'x - oe - huyền', icon: '🦚', ja: 'ひらく (Xòe cánh)', spellText: 'xờ - oe - xoe - huyền - xòe', example: 'Con công xòe đuôi lộng lẫy' },
+      { id: 'oa3', word: 'xoăn', rhyme: 'Vần -oăn', breakdown: 'x - oăn', icon: '🌀', ja: 'くりくり (Xoăn)', spellText: 'xờ - oăn - xoăn', example: 'Mái tóc xoăn dễ thương' },
+      { id: 'oa4', word: 'khoai', rhyme: 'Vần -oai', breakdown: 'kh - oai', icon: '🍠', ja: 'いも (Khoai)', spellText: 'khờ - oai - khoai', example: 'Củ khoai lang nướng thơm lừng' },
+      { id: 'oa5', word: 'ngoan', rhyme: 'Vần -oan', breakdown: 'ng - oan', icon: '🌟', ja: 'おりこう (Ngoan)', spellText: 'ngờ - oan - ngoan', example: 'Bảo Long là cậu bé ngoan ngoãn' },
+      { id: 'oa6', word: 'hoạt', rhyme: 'Vần -oat', breakdown: 'h - oat - nặng', icon: '🎬', ja: 'かつどう (Hoạt động)', spellText: 'hờ - oat - hoat - nặng - hoạt', example: 'Phim hoạt hình khủng long' },
+      { id: 'oa7', word: 'khoanh', rhyme: 'Vần -oanh', breakdown: 'kh - oanh', icon: '🙏', ja: 'うでをくむ', spellText: 'khờ - oanh - khoanh', example: 'Khoanh tay chào ông bà' },
+      { id: 'oa8', word: 'khỏe', rhyme: 'Vần -oe', breakdown: 'kh - oe - hỏi', icon: '💪', ja: 'げんき (Khỏe mạnh)', spellText: 'khờ - oe - khoe - hỏi - khỏe', example: 'Tập thể dục cho người khỏe mạnh' }
+    ]
+  },
+  {
+    id: 10,
+    title: 'Bài 10: Vần có Âm đệm U – uê, uy, uân, uât, uyên, uyêt',
+    subtitle: 'Hoàn thiện bảng vần nâng cao đầu Học kỳ 2 Lớp 1',
+    words: [
+      { id: 'uy1', word: 'huệ', rhyme: 'Vần -uê', breakdown: 'h - uê - nặng', icon: '🤍', ja: 'ゆり (Hoa huệ)', spellText: 'hờ - uê - huê - nặng - huệ', example: 'Bông hoa huệ trắng tinh khôi' },
+      { id: 'uy2', word: 'xuân', rhyme: 'Vần -uân', breakdown: 'x - uân', icon: '🌸', ja: 'はる (Mùa xuân)', spellText: 'xờ - uân - xuân', example: 'Mùa xuân hoa nở khắp nơi' },
+      { id: 'uy3', word: 'luật', rhyme: 'Vần -uât', breakdown: 'l - uât - nặng', icon: '⚖️', ja: 'ルール (Quy luật)', spellText: 'lờ - uât - luât - nặng - luật', example: 'Chấp hành đúng luật giao thông' },
+      { id: 'uy4', word: 'thủy', rhyme: 'Vần -uy', breakdown: 'th - uy - hỏi', icon: '🚢', ja: 'みず (Thủy)', spellText: 'thờ - uy - thuy - hỏi - thủy', example: 'Tàu thủy lướt sóng biển xanh' },
+      { id: 'uy5', word: 'quýt', rhyme: 'Vần -uyt', breakdown: 'qu - yt - sắc', icon: '🍊', ja: 'みかん (Quả quýt)', spellText: 'quờ - yt - quyt - sắc - quýt', example: 'Quả quýt mọng nước nhiều vitamin' },
+      { id: 'uy6', word: 'thuyền', rhyme: 'Vần -uyên', breakdown: 'th - uyên - huyền', icon: '⛵', ja: 'ふね (Thuyền)', spellText: 'thờ - uyên - thuyên - huyền - thuyền', example: 'Cánh buồm chiếc thuyền ra khơi' },
+      { id: 'uy7', word: 'tuyết', rhyme: 'Vần -uyêt', breakdown: 't - uyêt - sắc', icon: '❄️', ja: 'ゆき (Tuyết trắng)', spellText: 'tờ - uyêt - tuyêt - sắc - tuyết', example: 'Mùa đông Nhật Bản có tuyết rơi' },
+      { id: 'uy8', word: 'khuya', rhyme: 'Vần -uya', breakdown: 'kh - uya', icon: '🌃', ja: 'よなか (Đêm khuya)', spellText: 'khờ - uya - khuya', example: 'Đêm khuya mọi người ngủ say' }
+    ]
+  },
+  {
+    id: 11,
+    title: 'Bài 11: Phân biệt Âm Đầu Dễ Nhầm – S / X, CH / TR, L / N',
+    subtitle: 'Luyện phát âm chuẩn chữ S cong lưỡi, X nhẹ, TR cong lưỡi',
+    words: [
+      { id: 'sx1', word: 'sâu', rhyme: 'Âm S (uốn lưỡi)', breakdown: 's - âu', icon: '🐛', ja: 'いもむし (Con sâu)', spellText: 'sờ - âu - sâu', example: 'Chú sâu xanh ăn lá non' },
+      { id: 'sx2', word: 'xâu', rhyme: 'Âm X (nhẹ)', breakdown: 'x - âu', icon: '📿', ja: 'とおす (Xâu chuỗi)', spellText: 'xờ - âu - xâu', example: 'Bé xâu hạt vòng tặng mẹ' },
+      { id: 'sx3', word: 'sáo', rhyme: 'Âm S (uốn lưỡi)', breakdown: 's - ao - sắc', icon: '🐦', ja: '九官鳥 (Chim sáo)', spellText: 'sờ - ao - sao - sắc - sáo', example: 'Chú chim sáo hót vang' },
+      { id: 'sx4', word: 'xào', rhyme: 'Âm X (nhẹ)', breakdown: 'x - ao - huyền', icon: '🍳', ja: 'いためる (Xào rau)', spellText: 'xờ - ao - xao - huyền - xào', example: 'Mẹ xào rau xanh thơm ngon' },
+      { id: 'sx5', word: 'tre', rhyme: 'Âm TR (cong lưỡi)', breakdown: 'tr - e', icon: '🎋', ja: 'たけ (Cây tre)', spellText: 'trờ - e - tre', example: 'Cây tre xanh thẳng tắp' },
+      { id: 'sx6', word: 'trâu', rhyme: 'Âm TR (cong lưỡi)', breakdown: 'tr - âu', icon: '🐃', ja: 'すいぎゅう (Con trâu)', spellText: 'trờ - âu - trâu', example: 'Con trâu cày ruộng giúp bác nông dân' },
+      { id: 'sx7', word: 'lúa', rhyme: 'Âm L (thẳng lưỡi)', breakdown: 'l - ua - sắc', icon: '🌾', ja: 'いね (Cây lúa)', spellText: 'lờ - ua - lua - sắc - lúa', example: 'Cánh đồng lúa chín vàng' },
+      { id: 'sx8', word: 'nấm', rhyme: 'Âm N (ngậm mũi)', breakdown: 'n - âm - sắc', icon: '🍄', ja: 'きのこ (Cây nấm)', spellText: 'nờ - âm - nâm - sắc - nấm', example: 'Cây nấm tròn như cái ô' }
+    ]
+  },
+  {
+    id: 12,
+    title: 'Bài 12: Quy Tắc Chính Tả Vàng – C / K, G / GH, NG / NGH',
+    subtitle: 'Bí quyết viết đúng chính tả 100% suốt năm Lớp 1',
+    words: [
+      { id: 'qt1', word: 'kiến', rhyme: 'K + i / e / ê', breakdown: 'k - iên - sắc', icon: '🐜', ja: 'あり (Con kiến)', spellText: 'ca - iên - kiên - sắc - kiến', example: 'Chữ K đứng trước i, e, ê như con kiến' },
+      { id: 'qt2', word: 'kéo', rhyme: 'K + e', breakdown: 'k - eo - sắc', icon: '✂️', ja: 'はさみ (Cái kéo)', spellText: 'ca - eo - keo - sắc - kéo', example: 'Cái kéo cắt giấy thủ công' },
+      { id: 'qt3', word: 'cúc', rhyme: 'C + a/ă/â/o/ô/ơ/u/ư', breakdown: 'c - uc - sắc', icon: '🌼', ja: 'きく (Hoa cúc)', spellText: 'cờ - uc - cuc - sắc - cúc', example: 'Bông hoa cúc vàng' },
+      { id: 'qt4', word: 'ghế', rhyme: 'GH + e / ê / i', breakdown: 'gh - ê - sắc', icon: '🪑', ja: 'いす (Cái ghế)', spellText: 'gờ ghép - ê - ghê - sắc - ghế', example: 'Chữ GH đứng trước e, ê, i như cái ghế' },
+      { id: 'qt5', word: 'ghe', rhyme: 'GH + e', breakdown: 'gh - e', icon: '🛶', ja: 'こぶね (Chiếc ghe)', spellText: 'gờ ghép - e - ghe', example: 'Chiếc ghe xuôi dòng sông' },
+      { id: 'qt6', word: 'gỗ', rhyme: 'G + a/o/ô/ơ/u/ư', breakdown: 'g - ô - ngã', icon: '🪵', ja: 'き (Gỗ)', spellText: 'gờ - ô - gô - ngã - gỗ', example: 'Khúc gỗ làm bàn ghế' },
+      { id: 'qt7', word: 'nghé', rhyme: 'NGH + e / ê / i', breakdown: 'ngh - e - sắc', icon: '🐃', ja: 'こうし (Con nghé)', spellText: 'ngờ ghép - e - nghe - sắc - nghé', example: 'NGH đứng trước e, ê, i như con nghé' },
+      { id: 'qt8', word: 'ngựa', rhyme: 'NG + a/ă/â/o/ô/ơ/u/ư', breakdown: 'ng - ưa - nặng', icon: '🐴', ja: 'うま (Con ngựa)', spellText: 'ngờ - ưa - ngưa - nặng - ngựa', example: 'Chú ngựa phi nước đại' }
     ]
   }
 ];
@@ -814,7 +979,15 @@ const SHINKANSEN_WORDS_DATA = [
   { head: 'ph', correctTail: 'ở', headOptions: ['ph', 'th', 'kh'], tailOptions: ['ở', 'ơ', 'ờ'], word: 'phở', meaning: 'Bát phở', icon: '🍜', ja: 'フォー' },
   { head: 'v', correctTail: 'ẹt', headOptions: ['v', 'd', 'b'], tailOptions: ['ẹt', 'et', 'ét'], word: 'vẹt', meaning: 'Con vẹt', icon: '🦜', ja: 'オウム' },
   { head: 's', correctTail: 'ách', headOptions: ['s', 'x', 'c'], tailOptions: ['ách', 'ach', 'ich'], word: 'sách', meaning: 'Quyển sách', icon: '📚', ja: 'ほん' },
-  { head: 'tr', correctTail: 'ứng', headOptions: ['tr', 'ch', 't'], tailOptions: ['ứng', 'ưng', 'ừng'], word: 'trứng', meaning: 'Trứng khủng long', icon: '🥚', ja: 'たまご' }
+  { head: 'tr', correctTail: 'ứng', headOptions: ['tr', 'ch', 't'], tailOptions: ['ứng', 'ưng', 'ừng'], word: 'trứng', meaning: 'Trứng khủng long', icon: '🥚', ja: 'たまご' },
+  { head: 'b', correctTail: 'iển', headOptions: ['b', 'đ', 'v'], tailOptions: ['iển', 'iên', 'iêm'], word: 'biển', meaning: 'Biển xanh', icon: '🌊', ja: 'うみ' },
+  { head: 'v', correctTail: 'ườn', headOptions: ['v', 'tr', 'b'], tailOptions: ['ườn', 'ươn', 'ương'], word: 'vườn', meaning: 'Khu vườn', icon: '🪴', ja: 'にわ' },
+  { head: 'tr', correctTail: 'ường', headOptions: ['tr', 'ch', 'l'], tailOptions: ['ường', 'ương', 'uông'], word: 'trường', meaning: 'Trường học', icon: '🏫', ja: 'がっこう' },
+  { head: 'x', correctTail: 'uân', headOptions: ['x', 's', 't'], tailOptions: ['uân', 'ân', 'uyên'], word: 'xuân', meaning: 'Mùa xuân', icon: '🌸', ja: 'はる' },
+  { head: 't', correctTail: 'uyết', headOptions: ['t', 'th', 'đ'], tailOptions: ['uyết', 'uyêt', 'iêt'], word: 'tuyết', meaning: 'Tuyết trắng', icon: '❄️', ja: 'ゆき' },
+  { head: 'ngh', correctTail: 'é', headOptions: ['ngh', 'ng', 'gh'], tailOptions: ['é', 'á', 'ó'], word: 'nghé', meaning: 'Con nghé', icon: '🐃', ja: '子水牛' },
+  { head: 'h', correctTail: 'oa', headOptions: ['h', 'l', 'th'], tailOptions: ['oa', 'oe', 'ai'], word: 'hoa', meaning: 'Bông hoa', icon: '🌸', ja: 'はな' },
+  { head: 'ch', correctTail: 'uông', headOptions: ['ch', 'tr', 'c'], tailOptions: ['uông', 'ương', 'ôn'], word: 'chuông', meaning: 'Quả chuông', icon: '🔔', ja: 'かね' }
 ];
 
 // DỮ LIỆU GAME MỚI 2: 👂 NGHE ÂM BẮT CHỮ (AUDIO-FIRST PHONEME CHALLENGE)
@@ -831,7 +1004,11 @@ const LISTEN_CATCH_POOLS = {
     { prompt: 'Chữ Ư (phát âm là "ư" - sư tử)', target: 'ư', choices: ['ư', 'u', 'ơ', 'ô'], audioKey: 'alpha_ư', hint: 'Có chiếc râu nhỏ bên phải' },
     { prompt: 'Chữ Ơ (phát âm là "ơ" - lá cờ)', target: 'ơ', choices: ['ơ', 'ô', 'o', 'ư'], audioKey: 'alpha_ơ', hint: 'Hình tròn có chiếc râu nhỏ' },
     { prompt: 'Chữ GH (gờ ghép - cái ghế)', target: 'gh', choices: ['gh', 'g', 'ng', 'ngh'], audioKey: 'alpha_gh', hint: 'Chỉ đi cùng e, ê, i' },
-    { prompt: 'Chữ TR (trờ cong lưỡi - trứng)', target: 'tr', choices: ['tr', 'ch', 'th', 't'], audioKey: 'alpha_tr', hint: 'Uốn đầu lưỡi đọc đậm' }
+    { prompt: 'Chữ NGH (ngờ ghép - con nghé)', target: 'ngh', choices: ['ngh', 'ng', 'gh', 'nh'], audioKey: 'alpha_ngh', hint: 'NGH chỉ đi với e, ê, i' },
+    { prompt: 'Chữ TR (trờ cong lưỡi - trứng)', target: 'tr', choices: ['tr', 'ch', 'th', 't'], audioKey: 'alpha_tr', hint: 'Uốn đầu lưỡi đọc đậm' },
+    { prompt: 'Chữ CH (chờ nhẹ - con chó)', target: 'ch', choices: ['ch', 'tr', 'c', 'kh'], audioKey: 'alpha_ch', hint: 'Đọc nhẹ thẳng lưỡi: chó, chim' },
+    { prompt: 'Chữ L (lờ - chiếc lá)', target: 'l', choices: ['l', 'n', 'h', 't'], audioKey: 'alpha_l', hint: 'Uốn đầu lưỡi chạm vòm trên' },
+    { prompt: 'Chữ N (nờ - cái nơ)', target: 'n', choices: ['n', 'l', 'm', 'ng'], audioKey: 'alpha_n', hint: 'Âm mũi nhẹ nhàng' }
   ],
   words: [
     { prompt: 'Tìm từ: "cá" (Con cá 🐟)', target: 'cá', choices: ['cá', 'gà', 'ba', 'lá'], audioKey: 'word_cá', hint: '🐟さかな' },
@@ -842,12 +1019,159 @@ const LISTEN_CATCH_POOLS = {
     { prompt: 'Tìm từ: "cơm" (Cơm trắng 🍚)', target: 'cơm', choices: ['cơm', 'cam', 'kem', 'tôm'], audioKey: 'word_cơm', hint: '🍚ごはん' },
     { prompt: 'Tìm từ: "vẹt" (Con vẹt 🦜)', target: 'vẹt', choices: ['vẹt', 'vịt', 'mắt', 'cát'], audioKey: 'word_vẹt', hint: '🦜オウム' },
     { prompt: 'Tìm từ: "chó" (Con chó 🐶)', target: 'chó', choices: ['chó', 'mèo', 'bò', 'gà'], audioKey: 'word_chó', hint: '🐶いぬ' },
+    { prompt: 'Tìm từ: "biển" (Biển xanh 🌊)', target: 'biển', choices: ['biển', 'vườn', 'tiếng', 'viết'], audioKey: 'word_biển', hint: '🌊うみ' },
+    { prompt: 'Tìm từ: "trường" (Trường học 🏫)', target: 'trường', choices: ['trường', 'chuông', 'vườn', 'lược'], audioKey: 'word_trường', hint: '🏫がっこう' },
+    { prompt: 'Tìm từ: "tuyết" (Tuyết trắng ❄️)', target: 'tuyết', choices: ['tuyết', 'thuyền', 'xuân', 'luật'], audioKey: 'word_tuyết', hint: '❄️ゆき' },
+    { prompt: 'Tìm từ: "ghế" (Cái ghế 🪑)', target: 'ghế', choices: ['ghế', 'gỗ', 'nghé', 'nhà'], audioKey: 'word_ghế', hint: '🪑いす' },
     { prompt: 'Tìm từ: "trứng" (Trứng khủng long 🥚)', target: 'trứng', choices: ['trứng', 'chân', 'nước', 'sừng'], audioKey: 'dino_trung', hint: '🥚たまご' },
     { prompt: 'Tìm từ: "tàu hỏa" (Tàu Shinkansen 🚅)', target: 'tàu hỏa', choices: ['tàu hỏa', 'máy bay', 'xe tải', 'xe buýt'], audioKey: 'veh_tau_hoa', hint: '🚅しんかんせん' }
   ]
 };
 
-// KHO STICKER & DANH HIỆU CỦA BẢO LONG (MỚI - MỞ KHÓA BẰNG SAO)
+// 6 QUY TẮC CHÍNH TẢ VÀNG LỚP 1 & TRÒ CHƠI CHÍNH TẢ (HK1 + HK2)
+const ORTHOGRAPHY_RULES_DATA = [
+  { id: 'ort_ck', pair: 'C / K', title: 'Chữ K chỉ đi với i, e, ê', rule: 'Đứng trước I, E, Ê dùng chữ K (kiến, kéo, kênh). Các âm còn lại dùng C (cá, cờ, cú)!', example: '🐜 kiến, ✂️ kéo  |  🐟 cá, 🚩 cờ', audioKey: 'ort_ck' },
+  { id: 'ort_ggh', pair: 'G / GH', title: 'Chữ GH chỉ đi với i, e, ê', rule: 'G ghép (GH) luôn đứng trước E, Ê, I (ghế, ghe, ghi). Còn lại dùng G đơn (gà, gỗ, gấu)!', example: '🪑 ghế, 🛶 ghe  |  🐔 gà, 🪵 gỗ', audioKey: 'ort_ggh' },
+  { id: 'ort_ngngh', pair: 'NG / NGH', title: 'Chữ NGH chỉ đi với i, e, ê', rule: 'NGH gồm 3 chữ cái đi với E, Ê, I (nghe, nghé, nghỉ). NG đi với âm còn lại (ngựa, ngủ)!', example: '👂 nghe, 🐃 nghé  |  🐴 ngựa, 😴 ngủ', audioKey: 'ort_ngngh' },
+  { id: 'ort_sx', pair: 'S / X', title: 'Phân biệt S cong lưỡi & X nhẹ', rule: 'S thường chỉ cây cối, con vật (sâu, sóc, sáo, sắn, sữa). X thường chỉ màu sắc, hành động (xanh, xe, xôi, xòe)!', example: '📚 sách, 🐛 sâu  |  🚗 xe, 🌿 xanh', audioKey: 'ort_sx' },
+  { id: 'ort_chtr', pair: 'CH / TR', title: 'Phân biệt CH & TR cong lưỡi', rule: 'CH hay chỉ đồ dùng gia đình, họ hàng (chén, chổi, chú, chị, chó). TR hay chỉ thiên nhiên, hành động (tre, trăng, trời, trường)!', example: '🐶 chó, 🥢 chén  |  🌙 trăng, 🎋 tre', audioKey: 'ort_chtr' },
+  { id: 'ort_ln', pair: 'L / N', title: 'Phân biệt L uốn lưỡi & N âm mũi', rule: 'Phát âm chuẩn từng chữ: L chạm nhẹ vòm trên (lá, lúa, lớp, lịch). N nhẹ mũi (nến, nấm, nai, nước)!', example: '🍃 lá, 🌾 lúa  |  💧 nước, 🦌 nai', audioKey: 'ort_ln' }
+];
+
+const ORTHOGRAPHY_QUIZ_DATA = [
+  { id: 'oq1', blankWord: 'con ...iến', target: 'k', options: ['k', 'c'], fullWord: 'con kiến', ruleNote: 'Trước I, E, Ê ta viết là K!' },
+  { id: 'oq2', blankWord: 'cái ...ế', target: 'gh', options: ['gh', 'g'], fullWord: 'cái ghế', ruleNote: 'Trước E, Ê, I ta viết là GH!' },
+  { id: 'oq3', blankWord: 'con ...é', target: 'ngh', options: ['ngh', 'ng'], fullWord: 'con nghé', ruleNote: 'Trước E, Ê, I ta viết là NGH!' },
+  { id: 'oq4', blankWord: 'con ...á', target: 'c', options: ['c', 'k'], fullWord: 'con cá', ruleNote: 'Trước âm A ta viết chữ C!' },
+  { id: 'oq5', blankWord: 'con ...à', target: 'g', options: ['g', 'gh'], fullWord: 'con gà', ruleNote: 'Trước âm A ta viết chữ G đơn!' },
+  { id: 'oq6', blankWord: 'con ...ựa', target: 'ng', options: ['ng', 'ngh'], fullWord: 'con ngựa', ruleNote: 'Trước âm ƯA ta viết NG đơn!' },
+  { id: 'oq7', blankWord: 'quyển ...ách', target: 's', options: ['s', 'x'], fullWord: 'quyển sách', ruleNote: 'Quyển sách đọc S cong lưỡi!' },
+  { id: 'oq8', blankWord: '...e ô tô', target: 'x', options: ['x', 's'], fullWord: 'xe ô tô', ruleNote: 'Xe ô tô viết bằng chữ X nhẹ!' },
+  { id: 'oq9', blankWord: 'mặt ...ăng', target: 'tr', options: ['tr', 'ch'], fullWord: 'mặt trăng', ruleNote: 'Thiên nhiên mặt trăng viết TR!' },
+  { id: 'oq10', blankWord: 'con ...ó', target: 'ch', options: ['ch', 'tr'], fullWord: 'con chó', ruleNote: 'Con chó viết bằng chữ CH!' },
+  { id: 'oq11', blankWord: 'chiếc ...á', target: 'l', options: ['l', 'n'], fullWord: 'chiếc lá', ruleNote: 'Chiếc lá viết chữ L!' },
+  { id: 'oq12', blankWord: 'cây ...ến', target: 'n', options: ['n', 'l'], fullWord: 'cây nến', ruleNote: 'Cây nến viết chữ N!' }
+];
+
+// 6 BÀI TẬP ĐỌC & ĐỌC HIỂU HỌC KỲ 2 TIẾNG VIỆT LỚP 1
+const VIET_STORIES_DATA = [
+  {
+    id: 'st_vn1',
+    title: '🏫 Bài Đọc 1: Buổi Sáng Đi Học',
+    icon: '🎒',
+    audioKey: 'story_vn_1',
+    lines: [
+      'Ông mặt trời thức dậy,',
+      'Tỏa nắng ấm sân trường.',
+      'Bảo Long đeo cặp sách,',
+      'Vui bước tới lớp thương!'
+    ],
+    question: 'Buổi sáng, Bảo Long đeo gì để đi tới lớp?',
+    qAudioKey: 'story_vn_1_q',
+    options: [
+      { text: 'Đeo cặp sách', isGood: true, audioKey: 'story_vn_1_o1' },
+      { text: 'Đội mũ đi ngủ', isGood: false, audioKey: 'story_vn_1_o2' },
+      { text: 'Cầm cái chảo rán', isGood: false, audioKey: 'story_vn_1_o3' }
+    ]
+  },
+  {
+    id: 'st_vn2',
+    title: '👩‍👦 Bài Đọc 2: Bàn Tay Của Mẹ',
+    icon: '💖',
+    audioKey: 'story_vn_2',
+    lines: [
+      'Bàn tay mẹ nấu cơm ngon,',
+      'Bàn tay mẹ vỗ giấc tròn bé thơ.',
+      'Bảo Long ghi nhớ từng giờ,',
+      'Chăm ngoan học giỏi chẳng mờ công ơn.'
+    ],
+    question: 'Trong bài thơ, bàn tay mẹ làm gì giúp Bảo Long?',
+    qAudioKey: 'story_vn_2_q',
+    options: [
+      { text: 'Nấu cơm ngon và vỗ về bé', isGood: true, audioKey: 'story_vn_2_o1' },
+      { text: 'Lái tàu bay lên mặt trăng', isGood: false, audioKey: 'story_vn_2_o2' },
+      { text: 'Đuổi con cá ngoài biển', isGood: false, audioKey: 'story_vn_2_o3' }
+    ]
+  },
+  {
+    id: 'st_vn3',
+    title: '🐦 Bài Đọc 3: Chú Chim Sâu Chăm Chỉ',
+    icon: '🌳',
+    audioKey: 'story_vn_3',
+    lines: [
+      'Sáng sớm trên cành na xanh,',
+      'Chú chim sâu nhỏ nhảy quanh tìm mồi.',
+      'Bắt sâu bảo vệ lá chồi,',
+      'Cây vui nở quả ngọt bùi tặng ta.'
+    ],
+    question: 'Chú chim sâu nhỏ làm việc gì có ích cho cây cối?',
+    qAudioKey: 'story_vn_3_q',
+    options: [
+      { text: 'Bắt sâu bảo vệ lá xanh', isGood: true, audioKey: 'story_vn_3_o1' },
+      { text: 'Bẻ hết cành hoa rụng xuống', isGood: false, audioKey: 'story_vn_3_o2' },
+      { text: 'Ngủ quên suốt cả ngày', isGood: false, audioKey: 'story_vn_3_o3' }
+    ]
+  },
+  {
+    id: 'st_vn4',
+    title: '🌊 Bài Đọc 4: Chuyện Mưa Và Cầu Vồng',
+    icon: '🌈',
+    audioKey: 'story_vn_4',
+    lines: [
+      'Hạt mưa rơi lộp bộp,',
+      'Tưới mát cả vườn rau.',
+      'Mưa tạnh nắng bừng mau,',
+      'Cầu vồng cong bảy sắc!'
+    ],
+    question: 'Sau khi cơn mưa tạnh và nắng lên, trên trời xuất hiện gì?',
+    qAudioKey: 'story_vn_4_q',
+    options: [
+      { text: 'Cầu vồng cong bảy sắc', isGood: true, audioKey: 'story_vn_4_o1' },
+      { text: 'Bông tuyết rơi mùa đông', isGood: false, audioKey: 'story_vn_4_o2' },
+      { text: 'Cây nến sinh nhật', isGood: false, audioKey: 'story_vn_4_o3' }
+    ]
+  },
+  {
+    id: 'st_vn5',
+    title: '🚅 Bài Đọc 5: Tàu Shinkansen Xuyên Núi',
+    icon: '🚅',
+    audioKey: 'story_vn_5',
+    lines: [
+      'Đoàn tàu trắng mũi thon dài,',
+      'Lướt êm qua núi nối hai miền gần.',
+      'Hành khách trật tự chuyên cần,',
+      'Chuyến tàu an toàn muôn phần vui tươi.'
+    ],
+    question: 'Khi đi trên tàu điện Shinkansen, hành khách giữ gìn điều gì?',
+    qAudioKey: 'story_vn_5_q',
+    options: [
+      { text: 'Giữ trật tự và an toàn', isGood: true, audioKey: 'story_vn_5_o1' },
+      { text: 'Chạy nhảy la hét ầm ĩ', isGood: false, audioKey: 'story_vn_5_o2' },
+      { text: 'Vứt rác ra hành lang', isGood: false, audioKey: 'story_vn_5_o3' }
+    ]
+  },
+  {
+    id: 'st_vn6',
+    title: '🇻🇳 Bài Đọc 6: Hoa Sen Quê Em',
+    icon: '🪷',
+    audioKey: 'story_vn_6',
+    lines: [
+      'Trong đầm gì đẹp bằng sen,',
+      'Lá xanh bông trắng lại chen nhị vàng.',
+      'Hương thơm dịu mát xóm làng,',
+      'Quê hương Việt Nam dịu dàng trong tim.'
+    ],
+    question: 'Bài thơ khen loài hoa nào đẹp nhất trong đầm nước Việt Nam?',
+    qAudioKey: 'story_vn_6_q',
+    options: [
+      { text: 'Hoa sen thơm dịu mát', isGood: true, audioKey: 'story_vn_6_o1' },
+      { text: 'Quả dứa gai nhọn', isGood: false, audioKey: 'story_vn_6_o2' },
+      { text: 'Cục pin đồ chơi', isGood: false, audioKey: 'story_vn_6_o3' }
+    ]
+  }
+];
+
+// KHO STICKER & DANH HIỆU CỦA BẢO LONG (CẢ NĂM LỚP 1 VIỆT - NHẬT)
 const STICKERS_DATA = [
   { id: 'stk_trex', emoji: '🦖', name: 'Khủng Long Tân Binh', unlockStars: 0, desc: 'Sticker khởi đầu hành trình của Bảo Long' },
   { id: 'stk_shinkansen', emoji: '🚅', name: 'Tài Xế Shinkansen', unlockStars: 15, desc: 'Siêu tốc độ vút bay cùng tiếng Việt!' },
@@ -858,7 +1182,12 @@ const STICKERS_DATA = [
   { id: 'stk_rocket', emoji: '🚀', name: 'Phi Hành Gia Nhí', unlockStars: 160, desc: 'Đọc thông viết thạo bay vào vũ trụ!' },
   { id: 'stk_crown', emoji: '👑', name: 'Vua Khủng Long T-Rex', unlockStars: 200, desc: 'Chúa tể đánh vần không đối thủ!' },
   { id: 'stk_dragon', emoji: '🐉', name: 'Rồng Thần Kỷ Jura', unlockStars: 260, desc: 'Siêu trí nhớ & thông minh tuyệt đỉnh!' },
-  { id: 'stk_trophy', emoji: '🏆', name: 'Thần Đồng Bảo Long', unlockStars: 320, desc: 'Danh hiệu cao quý nhất Việt - Nhật!' }
+  { id: 'stk_sakura', emoji: '🌸', name: 'Hoa Anh Đào Nhật Bản', unlockStars: 320, desc: 'Tinh hoa tiếng Nhật Lớp 1 小1!' },
+  { id: 'stk_piano', emoji: '🎹', name: 'Nhạc Công Nhí Pianica', unlockStars: 380, desc: 'Nghệ sĩ âm nhạc & mỹ thuật tài ba!' },
+  { id: 'stk_science', emoji: '🌱', name: 'Nhà Khoa Học Bìm Bìm', unlockStars: 450, desc: 'Khám phá tự nhiên & cuộc sống giỏi quá!' },
+  { id: 'stk_kanji', emoji: '🈷️', name: 'Kiếm Sĩ 80 Chữ Kanji', unlockStars: 550, desc: 'Chinh phục chữ Hán Tiểu học Nhật!' },
+  { id: 'stk_drum', emoji: '🥁', name: 'Trống Đồng Lạc Hồng', unlockStars: 680, desc: 'Niềm tự hào cội nguồn Việt Nam!' },
+  { id: 'stk_trophy', emoji: '🏆', name: 'Thần Đồng Song Ngữ', unlockStars: 800, desc: 'Danh hiệu cao quý nhất Lớp 1 Việt - Nhật!' }
 ];
 
 const EXPLORER_RANKS = [
@@ -867,5 +1196,7 @@ const EXPLORER_RANKS = [
   { minStars: 60, title: 'Đội Trưởng Shinkansen', badge: '🚅' },
   { minStars: 120, title: 'Bác Học Tiếng Việt', badge: '📚' },
   { minStars: 200, title: 'Vua Khủng Long', badge: '🦖' },
-  { minStars: 300, title: 'Huyền Thoại Kỷ Jura', badge: '👑' }
+  { minStars: 320, title: 'Sứ Giả Anh Đào 🌸', badge: '🗾' },
+  { minStars: 500, title: 'Siêu Sao Đa Tài', badge: '🌟' },
+  { minStars: 750, title: 'Thần Đồng Việt – Nhật', badge: '👑' }
 ];
