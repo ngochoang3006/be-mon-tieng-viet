@@ -271,8 +271,16 @@ function initEventListeners() {
     }
   });
 
+  document.getElementById('btnToggleSidebar')?.addEventListener('click', handleSidebarToggle);
+  document.getElementById('btnCollapseSidebar')?.addEventListener('click', handleSidebarToggle);
+  document.getElementById('sideNavBackdrop')?.addEventListener('click', closeMobileSidebar);
+  initSidebarPrefs();
+
   document.querySelectorAll('.mode-pill').forEach(btn => {
-    btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+    btn.addEventListener('click', () => {
+      closeMobileSidebar();
+      switchMode(btn.dataset.mode);
+    });
   });
 
   document.getElementById('btnVoiceGender')?.addEventListener('click', () => {
@@ -332,6 +340,7 @@ function initEventListeners() {
     const modalOpen = document.getElementById('modalOverlay')?.classList.contains('active');
     const stkOpen = document.getElementById('stickerModalOverlay')?.classList.contains('active');
     if (e.key === 'Escape') {
+      closeMobileSidebar();
       if (modalOpen) closeModal();
       if (stkOpen) document.getElementById('stickerModalOverlay').classList.remove('active');
     } else if (modalOpen) {
@@ -459,6 +468,7 @@ function switchMode(mode) {
   stopAutoPlay();
   window.soundMgr.stopAll();
   window.appNavEpoch++;
+  closeMobileSidebar();
   currentMode = mode;
   currentLessonIdx = 0;
 
@@ -2238,4 +2248,57 @@ function fireConfetti() {
     }
   }
   confettiRafId = requestAnimationFrame(updateConfetti);
+}
+
+// ========================================================
+// SIDEBAR MENU BÊN TRÁI (DESKTOP THU/MỞ + MOBILE DRAWER)
+// ========================================================
+const SIDEBAR_PREF_KEY = 'baolong_sidebar_collapsed_v1';
+
+function closeMobileSidebar() {
+  document.getElementById('sideNav')?.classList.remove('mobile-open');
+  document.getElementById('sideNavBackdrop')?.classList.remove('active');
+}
+
+function updateSidebarToggleUI() {
+  const collapsed = document.body.classList.contains('sidebar-collapsed');
+  const colBtn = document.getElementById('btnCollapseSidebar');
+  if (colBtn) {
+    if (window.innerWidth < 1040) {
+      colBtn.innerText = '✕';
+      colBtn.title = 'Đóng menu';
+    } else {
+      colBtn.innerText = collapsed ? '▶' : '◀';
+      colBtn.title = collapsed ? 'Mở rộng hiển thị đầy đủ tên môn học' : 'Thu gọn chỉ giữ biểu tượng';
+    }
+  }
+}
+
+function initSidebarPrefs() {
+  try {
+    if (localStorage.getItem(SIDEBAR_PREF_KEY) === '1' && window.innerWidth >= 1040) {
+      document.body.classList.add('sidebar-collapsed');
+    }
+  } catch (e) {}
+  updateSidebarToggleUI();
+}
+
+function handleSidebarToggle() {
+  window.soundMgr.playClick();
+  const sideNav = document.getElementById('sideNav');
+  const backdrop = document.getElementById('sideNavBackdrop');
+  if (!sideNav) return;
+
+  if (window.innerWidth < 1040) {
+    const willOpen = !sideNav.classList.contains('mobile-open');
+    sideNav.classList.toggle('mobile-open', willOpen);
+    if (backdrop) backdrop.classList.toggle('active', willOpen);
+    updateSidebarToggleUI();
+  } else {
+    const collapsed = document.body.classList.toggle('sidebar-collapsed');
+    try {
+      localStorage.setItem(SIDEBAR_PREF_KEY, collapsed ? '1' : '0');
+    } catch (e) {}
+    updateSidebarToggleUI();
+  }
 }

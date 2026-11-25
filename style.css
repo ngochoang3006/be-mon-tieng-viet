@@ -4044,3 +4044,334 @@ button,
   }
 }
 
+/* ========================================================
+   BỐ CỤC MENU BÊN TRÁI + THANH TRÊN SIÊU GỌN (2 CỘT CÂN ĐỐI)
+   ======================================================== */
+.top-nav {
+  position: relative;
+  padding: 7px 18px;
+}
+
+.top-nav-inner {
+  max-width: 1400px;
+}
+
+.sidebar-toggle-btn {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: 2px solid #0284c7;
+  border-bottom: 4px solid #075985;
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.1s ease;
+}
+.sidebar-toggle-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+@media (min-width: 1040px) {
+  .toggle-menu-label {
+    display: none;
+  }
+}
+
+.app-shell {
+  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 14px 18px 32px 18px;
+  display: grid;
+  grid-template-columns: 232px minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.app-shell .main-content {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.side-nav {
+  position: sticky;
+  top: 14px;
+  max-height: calc(100vh - 28px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+  border-radius: 26px;
+  padding: 12px 10px 14px 10px;
+  border: 3px solid #ffffff;
+  border-bottom: 6px solid #cbd5e1;
+  box-shadow: 0 10px 28px rgba(3, 105, 161, 0.14);
+  z-index: 90;
+}
+
+.side-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 6px 8px 6px;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.side-nav-title {
+  font-size: 12px;
+  font-weight: 900;
+  color: #0369a1;
+  letter-spacing: 0.6px;
+}
+
+.side-collapse-btn {
+  background: #f1f5f9;
+  border: 1.5px solid #cbd5e1;
+  border-bottom: 3px solid #94a3b8;
+  border-radius: 10px;
+  width: 28px;
+  height: 26px;
+  font-size: 11px;
+  font-weight: 900;
+  color: #334155;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.side-collapse-btn:hover {
+  background: #e2e8f0;
+}
+
+.side-nav-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.side-nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.side-group-label {
+  font-size: 10.5px;
+  font-weight: 900;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px 1px 8px;
+}
+
+/* Trạng thái dịu mắt, đồng bộ cho các nút môn học chưa chọn trong Sidebar */
+.side-nav .mode-pill {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 8px 11px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 900;
+  gap: 9px;
+  text-align: left;
+  border: 2px solid #e2e8f0 !important;
+  border-bottom: 3.5px solid #cbd5e1 !important;
+  background: #ffffff !important;
+  color: #334155 !important;
+  box-shadow: none !important;
+}
+.side-nav .mode-pill:hover {
+  transform: translateX(2px);
+  background: #f8fafc !important;
+  border-color: #94a3b8 !important;
+}
+.side-nav .mode-ico {
+  font-size: 17px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.side-nav .mode-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Khi đang chọn: bật màu sắc rực rỡ riêng cho từng môn */
+.side-nav .mode-pill.active {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%) !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+  border-bottom: 4px solid #075985 !important;
+  box-shadow: 0 5px 14px rgba(2, 132, 199, 0.32) !important;
+  transform: translateX(3px);
+}
+.side-nav .mode-pill-dino.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border-color: #059669 !important;
+  border-bottom-color: #047857 !important;
+  box-shadow: 0 5px 14px rgba(16, 185, 129, 0.35) !important;
+}
+.side-nav .mode-pill-dragon.active {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  border-color: #b91c1c !important;
+  border-bottom-color: #7f1d1d !important;
+  box-shadow: 0 5px 14px rgba(220, 38, 38, 0.35) !important;
+}
+.side-nav .mode-pill-veh.active {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+  border-color: #0284c7 !important;
+  border-bottom-color: #075985 !important;
+  box-shadow: 0 5px 14px rgba(14, 165, 233, 0.35) !important;
+}
+.side-nav .mode-pill-math.active {
+  background: linear-gradient(135deg, #ec4899 0%, #db2777 100%) !important;
+  border-color: #db2777 !important;
+  border-bottom-color: #9d174d !important;
+  box-shadow: 0 5px 14px rgba(236, 72, 153, 0.35) !important;
+}
+.side-nav .mode-pill-ethics.active {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
+  border-color: #d97706 !important;
+  border-bottom-color: #9a3412 !important;
+  box-shadow: 0 5px 14px rgba(245, 158, 11, 0.35) !important;
+}
+.side-nav .mode-pill-english.active {
+  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+  border-color: #3730a3 !important;
+  border-bottom-color: #1e1b4b !important;
+  box-shadow: 0 5px 14px rgba(79, 70, 229, 0.35) !important;
+}
+.side-nav .mode-pill-japanese.active {
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%) !important;
+  border-color: #9f1239 !important;
+  border-bottom-color: #881337 !important;
+  box-shadow: 0 5px 14px rgba(225, 29, 72, 0.35) !important;
+}
+.side-nav .mode-pill-game.active {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%) !important;
+  border-color: #5b21b6 !important;
+  border-bottom-color: #4c1d95 !important;
+  box-shadow: 0 5px 14px rgba(109, 40, 217, 0.35) !important;
+}
+
+/* Chế độ Thu Gọn Icon-Rail trên Desktop (>= 1040px) khi bấm thu gọn */
+@media (min-width: 1040px) {
+  body.sidebar-collapsed .app-shell {
+    grid-template-columns: 74px minmax(0, 1fr);
+    gap: 16px;
+  }
+  body.sidebar-collapsed .side-nav {
+    padding: 10px 7px;
+  }
+  body.sidebar-collapsed .side-nav-header {
+    justify-content: center;
+    padding: 0 0 8px 0;
+  }
+  body.sidebar-collapsed .side-nav-title,
+  body.sidebar-collapsed .side-group-label,
+  body.sidebar-collapsed .side-nav .mode-label {
+    display: none;
+  }
+  body.sidebar-collapsed .side-nav .mode-pill {
+    justify-content: center;
+    padding: 9px 4px;
+    transform: none !important;
+  }
+  body.sidebar-collapsed .side-nav .mode-ico {
+    font-size: 21px;
+  }
+}
+
+/* Tablet (768px - 1039px): Mặc định thanh Icon-Rail gọn bên trái, bấm ☰ để bung ngăn kéo đầy đủ */
+@media (min-width: 768px) and (max-width: 1039px) {
+  .app-shell {
+    grid-template-columns: 74px minmax(0, 1fr);
+    gap: 14px;
+    padding: 12px 14px 30px 14px;
+  }
+  .side-nav:not(.mobile-open) {
+    padding: 10px 7px;
+  }
+  .side-nav:not(.mobile-open) .side-nav-header {
+    justify-content: center;
+    padding: 0 0 8px 0;
+  }
+  .side-nav:not(.mobile-open) .side-nav-title,
+  .side-nav:not(.mobile-open) .side-group-label,
+  .side-nav:not(.mobile-open) .mode-label {
+    display: none;
+  }
+  .side-nav:not(.mobile-open) .mode-pill {
+    justify-content: center;
+    padding: 9px 4px;
+  }
+  .side-nav:not(.mobile-open) .mode-ico {
+    font-size: 21px;
+  }
+  .side-nav.mobile-open {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    bottom: 12px;
+    width: 262px;
+    max-height: calc(100vh - 24px);
+    z-index: 320;
+  }
+}
+
+/* Mobile (< 768px): Dành 100% chiều ngang cho bài học; bấm ☰ Môn học mở ngăn kéo trái */
+.side-nav-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  z-index: 310;
+}
+.side-nav-backdrop.active {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .app-shell {
+    display: block;
+    padding: 10px 10px 28px 10px;
+  }
+  .side-nav {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 270px;
+    max-width: 82vw;
+    max-height: 100vh;
+    border-radius: 0 24px 24px 0;
+    z-index: 320;
+    transform: translateX(-108%);
+    transition: transform 0.2s ease;
+  }
+  .side-nav.mobile-open {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 1180px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 680px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+

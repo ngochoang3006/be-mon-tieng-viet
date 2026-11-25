@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc &amp; Đánh Vần</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦖</text></svg>">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=20261125v3">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,10 +16,14 @@
   <div class="cloud cloud-1"></div>
   <div class="cloud cloud-2"></div>
 
-  <!-- Thanh điều hướng trên cùng (Top Nav Bar) - Tối ưu cả Mobile & Web -->
+  <!-- Thanh điều hướng trên cùng siêu gọn (Slim Top Bar) -->
   <header class="top-nav">
     <div class="top-nav-inner">
       <div class="nav-brand-group">
+        <button class="sidebar-toggle-btn" id="btnToggleSidebar" title="Thu gọn hoặc mở rộng thanh Môn học bên trái">
+          <span>☰</span>
+          <span class="toggle-menu-label">Môn học</span>
+        </button>
         <button class="home-btn" id="btnHome" title="Về trang học từ mới">
           <span>🏠</span>
           <span class="hide-xs">Trang chủ</span>
@@ -46,60 +50,79 @@
         </button>
       </div>
     </div>
-
-    <!-- Thanh chuyển chế độ học cuộn ngang mượt mà trên điện thoại -->
-    <div class="nav-modes-container">
-      <div class="mode-pills-row">
-        <button class="mode-pill" data-mode="alphabet">
-          <span>🔠</span>
-          <span>Chữ cái &amp; Ghép âm</span>
-        </button>
-        <button class="mode-pill active" data-mode="vocab">
-          <span>📖</span>
-          <span>Học từ mới</span>
-        </button>
-        <button class="mode-pill" data-mode="phonics">
-          <span>🔤</span>
-          <span>Tập đánh vần</span>
-        </button>
-        <button class="mode-pill mode-pill-dino" data-mode="dino">
-          <span>🦖</span>
-          <span>Khủng Long</span>
-        </button>
-        <button class="mode-pill mode-pill-dragon" data-mode="dragons">
-          <span>🐉</span>
-          <span>Thế Giới Rồng</span>
-        </button>
-        <button class="mode-pill mode-pill-veh" data-mode="vehicles">
-          <span>🚗</span>
-          <span>Xe Cộ</span>
-        </button>
-        <button class="mode-pill mode-pill-math" data-mode="math">
-          <span>🧮</span>
-          <span>Toán Lớp 1</span>
-        </button>
-        <button class="mode-pill mode-pill-ethics" data-mode="ethics">
-          <span>🌱</span>
-          <span>Đạo Đức</span>
-        </button>
-        <button class="mode-pill mode-pill-english" data-mode="english">
-          <span>🇬🇧</span>
-          <span>Tiếng Anh</span>
-        </button>
-        <button class="mode-pill mode-pill-japanese" data-mode="japanese">
-          <span>🇯🇵</span>
-          <span>Tiếng Nhật</span>
-        </button>
-        <button class="mode-pill mode-pill-game" data-mode="game">
-          <span>🎮</span>
-          <span>Khu Trò Chơi</span>
-        </button>
-      </div>
-    </div>
   </header>
 
-  <!-- Vùng nội dung chính -->
-  <main class="main-content">
+  <div class="side-nav-backdrop" id="sideNavBackdrop"></div>
+
+  <!-- Khung bố cục 2 cột cân đối: Menu Trái + Vùng Học Chính -->
+  <div class="app-shell" id="appShell">
+    <aside class="side-nav" id="sideNav" aria-label="Danh sách môn học của Bảo Long">
+      <div class="side-nav-header">
+        <span class="side-nav-title">📚 MÔN HỌC</span>
+        <button class="side-collapse-btn" id="btnCollapseSidebar" title="Thu gọn / Mở rộng menu">◀</button>
+      </div>
+
+      <div class="side-nav-groups">
+        <div class="side-nav-group">
+          <div class="side-group-label">🇻🇳 Tiếng Việt</div>
+          <button class="mode-pill" data-mode="alphabet" title="Chữ cái &amp; Ghép âm">
+            <span class="mode-ico">🔠</span>
+            <span class="mode-label">Chữ cái &amp; Ghép âm</span>
+          </button>
+          <button class="mode-pill active" data-mode="vocab" title="Học từ mới">
+            <span class="mode-ico">📖</span>
+            <span class="mode-label">Học từ mới</span>
+          </button>
+          <button class="mode-pill" data-mode="phonics" title="Tập đánh vần">
+            <span class="mode-ico">🔤</span>
+            <span class="mode-label">Tập đánh vần</span>
+          </button>
+        </div>
+
+        <div class="side-nav-group">
+          <div class="side-group-label">🌍 Thế Giới Quanh Bé</div>
+          <button class="mode-pill mode-pill-dino" data-mode="dino" title="Khủng Long">
+            <span class="mode-ico">🦖</span>
+            <span class="mode-label">Khủng Long</span>
+          </button>
+          <button class="mode-pill mode-pill-dragon" data-mode="dragons" title="Thế Giới Rồng">
+            <span class="mode-ico">🐉</span>
+            <span class="mode-label">Thế Giới Rồng</span>
+          </button>
+          <button class="mode-pill mode-pill-veh" data-mode="vehicles" title="Xe Cộ">
+            <span class="mode-ico">🚗</span>
+            <span class="mode-label">Xe Cộ</span>
+          </button>
+        </div>
+
+        <div class="side-nav-group">
+          <div class="side-group-label">🚀 Môn Học &amp; Chơi</div>
+          <button class="mode-pill mode-pill-math" data-mode="math" title="Toán Lớp 1">
+            <span class="mode-ico">🧮</span>
+            <span class="mode-label">Toán Lớp 1</span>
+          </button>
+          <button class="mode-pill mode-pill-ethics" data-mode="ethics" title="Đạo Đức">
+            <span class="mode-ico">🌱</span>
+            <span class="mode-label">Đạo Đức</span>
+          </button>
+          <button class="mode-pill mode-pill-english" data-mode="english" title="Tiếng Anh">
+            <span class="mode-ico">🇬🇧</span>
+            <span class="mode-label">Tiếng Anh</span>
+          </button>
+          <button class="mode-pill mode-pill-japanese" data-mode="japanese" title="Tiếng Nhật">
+            <span class="mode-ico">🇯🇵</span>
+            <span class="mode-label">Tiếng Nhật</span>
+          </button>
+          <button class="mode-pill mode-pill-game" data-mode="game" title="Khu Trò Chơi">
+            <span class="mode-ico">🎮</span>
+            <span class="mode-label">Khu Trò Chơi</span>
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Vùng nội dung chính -->
+    <main class="main-content">
     <!-- Tiêu đề lớn & Thanh Danh Hiệu Nhà Thám Hiểm Bảo Long -->
     <section class="expedition-header">
       <div class="expedition-title-badge">
@@ -1321,6 +1344,7 @@
       </div>
     </section>
   </main>
+  </div><!-- /.app-shell -->
 
   <!-- Modal Chi Tiết Từ Vựng & Đánh Vần & Tập Viết Ô Ly -->
   <div class="modal-overlay" id="modalOverlay">
@@ -1414,13 +1438,13 @@
   <canvas id="confettiCanvas"></canvas>
 
   <!-- Scripts -->
-  <script src="data.js"></script>
-  <script src="speech.js"></script>
-  <script src="math.js"></script>
-  <script src="ethics.js"></script>
-  <script src="english.js"></script>
-  <script src="japanese.js"></script>
-  <script src="dragons.js"></script>
-  <script src="app.js"></script>
+  <script src="data.js?v=20261125v3"></script>
+  <script src="speech.js?v=20261125v3"></script>
+  <script src="math.js?v=20261125v3"></script>
+  <script src="ethics.js?v=20261125v3"></script>
+  <script src="english.js?v=20261125v3"></script>
+  <script src="japanese.js?v=20261125v3"></script>
+  <script src="dragons.js?v=20261125v3"></script>
+  <script src="app.js?v=20261125v3"></script>
 </body>
 </html>
