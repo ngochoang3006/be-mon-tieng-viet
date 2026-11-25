@@ -378,6 +378,7 @@ function initEventListeners() {
 // ========================================================
 function stopAutoPlay() {
   autoPlayRunning = false;
+  if (typeof stopMathAutoPlay === 'function') stopMathAutoPlay();
   if (autoPlayTimer) {
     clearTimeout(autoPlayTimer);
     autoPlayTimer = null;
@@ -456,6 +457,7 @@ function switchMode(mode) {
     alphabet: '🔠 Bảng chữ cái, 11 Phụ âm ghép & 6 Thanh điệu',
     dino: '🦖 Công viên Khủng Long (Ảnh chụp thực tế!)',
     vehicles: '🚗 Ga Xe Cộ & Shinkansen (Ảnh chụp thực tế!)',
+    math: '🧮 Chế độ: Học Toán Lớp 1 Kỳ Thú (Số đếm, Cộng Trừ, Đồng Hồ)',
     game: '🎮 Khu Trò Chơi (7 game cho Bảo Long!)'
   };
   if (msgs[mode]) showToast(msgs[mode]);
@@ -471,12 +473,14 @@ function renderCurrentView() {
   const alphabetContainer = document.getElementById('alphabetContainer');
   const dinoContainer = document.getElementById('dinoContainer');
   const vehicleContainer = document.getElementById('vehicleContainer');
+  const mathContainer = document.getElementById('mathContainer');
   const gameViewContainer = document.getElementById('gameViewContainer');
 
   cardsContainer.style.display = 'none';
   alphabetContainer.style.display = 'none';
   if (dinoContainer) dinoContainer.style.display = 'none';
   if (vehicleContainer) vehicleContainer.style.display = 'none';
+  if (mathContainer) mathContainer.style.display = 'none';
   gameViewContainer.style.display = 'none';
   roadmapBox.style.display = 'none';
 
@@ -502,6 +506,11 @@ function renderCurrentView() {
     if (vehicleContainer) {
       vehicleContainer.style.display = 'block';
       renderVehicleView();
+    }
+  } else if (currentMode === 'math') {
+    if (mathContainer) {
+      mathContainer.style.display = 'block';
+      if (typeof renderMathHub === 'function') renderMathHub();
     }
   } else if (currentMode === 'game') {
     gameViewContainer.style.display = 'block';
@@ -1164,6 +1173,7 @@ function startMiniGame(source = 'default') {
   document.getElementById('alphabetContainer').style.display = 'none';
   document.getElementById('dinoContainer').style.display = 'none';
   document.getElementById('vehicleContainer').style.display = 'none';
+  if (document.getElementById('mathContainer')) document.getElementById('mathContainer').style.display = 'none';
   document.getElementById('gameViewContainer').style.display = 'block';
 
   // Đảm bảo bật đúng SubGame Puzzle

@@ -69,6 +69,10 @@
           <span>🚗</span>
           <span>Xe Cộ</span>
         </button>
+        <button class="mode-pill mode-pill-math" data-mode="math">
+          <span>🧮</span>
+          <span>Toán Lớp 1</span>
+        </button>
         <button class="mode-pill mode-pill-game" data-mode="game">
           <span>🎮</span>
           <span>Khu Trò Chơi</span>
@@ -220,6 +224,264 @@
         </div>
       </div>
       <div class="cards-grid veh-cards-grid" id="vehicleCardsContainer"></div>
+    </section>
+
+    <!-- ========================================================
+         KHU VỰC TOÁN LỚP 1 DÀNH CHO BÉ BẢO LONG (MATH WORLD)
+         ======================================================== -->
+    <section id="mathContainer" style="display: none;">
+      <div class="math-banner-box">
+        <div class="dino-badge">🧮 TOÁN LỚP 1 THÔNG MINH • CHUẨN TIỂU HỌC 🦖</div>
+        <h2 class="dino-banner-title">Vương Quốc Toán Học Của Bảo Long</h2>
+        <p class="dino-banner-desc">Cùng Khủng Long và Tàu Shinkansen học đếm số 0–100, làm phép Cộng Trừ có hình minh họa, So sánh &gt; &lt; =, Tìm số bí ẩn, Hình học và Xem Đồng hồ cực dễ hiểu nhé!</p>
+        <div class="math-session-badge" id="mathSessionStars">⭐ Điểm Toán hôm nay: 0</div>
+      </div>
+
+      <!-- Thanh 5 Chế độ Toán Lớp 1 -->
+      <div class="math-subnav">
+        <button class="game-tab-btn active" id="mathTabNumbers" onclick="switchMathSubTab('numbers')">
+          <span>🔢</span><span>Số Đếm 0–100</span>
+        </button>
+        <button class="game-tab-btn" id="mathTabCalc" onclick="switchMathSubTab('calc')">
+          <span>➕</span><span>Cộng &amp; Trừ</span>
+        </button>
+        <button class="game-tab-btn" id="mathTabCompare" onclick="switchMathSubTab('compare')">
+          <span>⚖️</span><span>So Sánh &gt; &lt; =</span>
+        </button>
+        <button class="game-tab-btn" id="mathTabSequence" onclick="switchMathSubTab('sequence')">
+          <span>🚅</span><span>Tìm Số Bí Ẩn</span>
+        </button>
+        <button class="game-tab-btn" id="mathTabGeometry" onclick="switchMathSubTab('geometry')">
+          <span>📐</span><span>Hình &amp; Đồng Hồ</span>
+        </button>
+      </div>
+
+      <!-- PANE 1: SỐ ĐẾM 0 - 100 -->
+      <div class="math-sub-pane" id="mathPaneNumbers">
+        <div class="section-header-flex" style="margin-bottom: 12px;">
+          <div>
+            <h3 class="section-blue-title" style="color: #a21caf;"><span>🦖</span> Chạm vào Số hoặc chạm từng Khủng Long để tập đếm!</h3>
+          </div>
+          <button class="tool-chip tool-chip-listen" id="btnAutoPlayMathNumbers">
+            <span>🎧</span> Nghe đếm 0 → 20
+          </button>
+        </div>
+
+        <!-- Khung phóng to Số đang chọn + Đếm 1-1 -->
+        <div class="math-spotlight-card">
+          <div class="math-spot-top">
+            <div class="math-spot-digit" id="mathSpotDigit">5</div>
+            <div style="text-align: left;">
+              <div class="math-spot-word" id="mathSpotWord">năm</div>
+              <div class="math-spot-ja" id="mathSpotJa">🇯🇵 ご (Go)</div>
+              <div class="math-spot-desc" id="mathSpotDesc">5 ngôi sao vàng trên một bàn tay</div>
+              <button class="btn-hear-hint" id="btnHearSpotNum" style="margin-top: 8px; padding: 6px 16px;">
+                <span>🔊</span> Nghe đọc số này
+              </button>
+            </div>
+          </div>
+          <p style="font-size: 12px; font-weight: 800; color: #701a75; margin-top: 10px;">👇 Chạm từng hình bên dưới để đếm to 1, 2, 3... nhé:</p>
+          <div class="math-spot-count-row" id="mathSpotCountIcons"></div>
+        </div>
+
+        <!-- Bảng số 0 - 20 -->
+        <div class="math-numbers-grid" id="mathNumbersGrid"></div>
+
+        <!-- Chục tròn 30 - 100 -->
+        <div style="background: #f0f9ff; border: 2px solid #bae6fd; border-radius: 20px; padding: 14px;">
+          <h4 style="font-size: 15px; font-weight: 900; color: #0369a1; margin-bottom: 10px; text-align: center;">
+            🚀 Các Số Tròn Chục (30 → 100) — Chạm để nghe đọc!
+          </h4>
+          <div class="math-tens-grid" id="mathTensGrid"></div>
+        </div>
+      </div>
+
+      <!-- PANE 2: CỘNG & TRỪ PHẠM VI 10 / 20 -->
+      <div class="math-sub-pane" id="mathPaneCalc" style="display: none;">
+        <div id="mathCalcPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="mathCalcProgressText">Câu 1 / 10</span>
+            <span class="streak-pill" id="mathCalcStreakBadge">🔥 Chuỗi x0</span>
+            <span class="game-stars" id="mathCalcScoreText">⭐ 0 điểm</span>
+          </div>
+
+          <div class="listen-filter-row">
+            <button class="tool-chip math-calc-filter active-filter" data-mode="max10">🌟 Phạm vi 10</button>
+            <button class="tool-chip math-calc-filter" data-mode="max20">🚀 Phạm vi 20</button>
+            <button class="tool-chip math-calc-filter" data-mode="onlyPlus">➕ Chỉ Phép Cộng</button>
+            <button class="tool-chip math-calc-filter" data-mode="onlyMinus">➖ Chỉ Phép Trừ</button>
+            <button class="tool-chip" id="btnToggleCalcVisual" style="background:#fef9c3; color:#854d0e; border-color:#facc15;">👁️ Hình đếm: BẬT</button>
+          </div>
+
+          <div class="math-equation-stage">
+            <div class="math-eq-box" id="mathEqA">4</div>
+            <div class="math-eq-op" id="mathEqOp">+</div>
+            <div class="math-eq-box" id="mathEqB">3</div>
+            <div class="math-eq-op">=</div>
+            <div class="math-eq-ans" id="mathEqAns">?</div>
+          </div>
+
+          <div class="math-calc-visual-box" id="mathCalcVisualBox"></div>
+
+          <div style="text-align: center; margin-bottom: 14px;">
+            <button class="btn-hear-hint" id="btnHearCalc" style="margin: 0 auto;">
+              <span>🔊</span> Đọc phép tính
+            </button>
+          </div>
+
+          <div class="math-options-grid" id="mathCalcOptionsGrid"></div>
+        </div>
+
+        <div id="mathCalcVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🧮🏆🌟🦖</div>
+          <h2 class="victory-title" style="color: #9333ea;">NHÀ TOÁN HỌC NHÍ BẢO LONG!</h2>
+          <p class="victory-desc" id="mathCalcVictoryScore">Bé đã tính đúng siêu nhanh!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initMathCalcGame()">🔄 Làm 10 phép tính mới</button>
+            <button class="home-btn" onclick="switchMathSubTab('compare')">⚖️ Sang So Sánh &gt; &lt; =</button>
+            <button class="home-btn" onclick="switchMathSubTab('sequence')">🚅 Dãy Số Shinkansen</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 3: SO SÁNH > < = -->
+      <div class="math-sub-pane" id="mathPaneCompare" style="display: none;">
+        <div id="mathCmpPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="mathCmpProgressText">Câu 1 / 8</span>
+            <span class="game-stars" id="mathCmpScoreText">⭐ 0 điểm</span>
+          </div>
+
+          <div class="listen-filter-row">
+            <button class="tool-chip active-filter" id="btnCmpSimple">🔢 So sánh Số (0–20)</button>
+            <button class="tool-chip" id="btnCmpExpr">🧮 Tính rồi So sánh (vd: 3+2 ? 4)</button>
+          </div>
+
+          <p class="slot-tip-text" style="color: #15803d; font-size: 13px;">
+            🐊 <strong>Mẹo Cá Sấu Tham Ăn:</strong> Miệng cá sấu luôn há to về phía <strong>SỐ LỚN HƠN</strong> nhé Bảo Long!
+          </p>
+
+          <div class="math-cmp-stage">
+            <div class="cmp-side-box">
+              <div class="cmp-side-num" id="cmpLeftNumber">8</div>
+              <div class="cmp-side-dots" id="cmpLeftDots">🍎🍎🍎🍎🍎🍎🍎🍎</div>
+            </div>
+            <div class="cmp-center-box" id="cmpCenterSign">?</div>
+            <div class="cmp-side-box">
+              <div class="cmp-side-num" id="cmpRightNumber">5</div>
+              <div class="cmp-side-dots" id="cmpRightDots">🍎🍎🍎🍎🍎</div>
+            </div>
+          </div>
+
+          <div class="cmp-buttons-row">
+            <button class="cmp-choice-btn" data-sign=">">&gt;<span class="cmp-choice-label">Lớn hơn</span></button>
+            <button class="cmp-choice-btn" data-sign="=">=<span class="cmp-choice-label">Bằng nhau</span></button>
+            <button class="cmp-choice-btn" data-sign="<">&lt;<span class="cmp-choice-label">Bé hơn</span></button>
+          </div>
+        </div>
+
+        <div id="mathCmpVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🐊⚖️🏆🎉</div>
+          <h2 class="victory-title" style="color: #059669;">CÁ SẤU TOÁN HỌC SIÊU THÔNG MINH!</h2>
+          <p class="victory-desc" id="mathCmpVictoryScore">Bé so sánh chuẩn không cần chỉnh!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initMathCompareGame()">🔄 Chơi 8 câu mới</button>
+            <button class="home-btn" onclick="switchMathSubTab('sequence')">🚅 Sang Tìm Số Bí Ẩn</button>
+            <button class="home-btn" onclick="switchMathSubTab('geometry')">📐 Xem Hình &amp; Đồng Hồ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 4: TÌM SỐ CÒN THIẾU & DÃY SỐ SHINKANSEN -->
+      <div class="math-sub-pane" id="mathPaneSequence" style="display: none;">
+        <div id="mathSeqPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="mathSeqProgressText">Chuyến 1 / 8</span>
+            <span class="game-stars" id="mathSeqScoreText">⭐ 0 điểm</span>
+          </div>
+
+          <h3 id="mathSeqPrompt" style="font-size: 18px; font-weight: 900; color: #0369a1; text-align: center; margin-bottom: 4px;">
+            🚅 Điền số còn thiếu lên toa tàu Shinkansen!
+          </h3>
+          <p class="slot-tip-text" id="mathSeqHint" style="text-align: center;">💡 Gợi ý: Đếm tiến thêm 1 số</p>
+
+          <div class="shinkansen-track-scene">
+            <div class="math-seq-train-row" id="mathSeqTrainCars"></div>
+            <div class="train-rail" style="margin-top: 12px;"></div>
+          </div>
+
+          <div class="math-options-grid" id="mathSeqOptionsGrid"></div>
+        </div>
+
+        <div id="mathSeqVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🚅🔢🏆✨</div>
+          <h2 class="victory-title" style="color: #0284c7;">BẬC THẦY QUY LUẬT DÃY SỐ!</h2>
+          <p class="victory-desc" id="mathSeqVictoryScore">Bé đã hoàn thành cả 8 chuyến tàu!</p>
+          <div class="victory-actions">
+            <button class="challenge-btn" onclick="initMathSequenceGame()">🔄 Chuyến tàu mới</button>
+            <button class="home-btn" onclick="switchMathSubTab('geometry')">📐 Hình &amp; Đồng Hồ</button>
+            <button class="home-btn" onclick="switchMathSubTab('calc')">➕ Luyện Cộng Trừ</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE 5: HÌNH HỌC LỚP 1 & ĐỒNG HỒ GIỜ ĐÚNG -->
+      <div class="math-sub-pane" id="mathPaneGeometry" style="display: none;">
+        <div class="listen-filter-row" style="margin-bottom: 16px;">
+          <button class="tool-chip active-filter" id="btnGeoLearnMode">📖 Khám phá Hình &amp; Đồng Hồ</button>
+          <button class="tool-chip" id="btnGeoQuizMode">🎯 Đố Vui Hình &amp; Xem Giờ (8 câu)</button>
+        </div>
+
+        <div id="mathGeoLearnStage">
+          <h3 class="section-blue-title" style="color: #0284c7; margin-bottom: 10px;">
+            <span>📐</span> 4 Hình Học Cơ Bản Lớp 1 (Chạm vào từng hình để nghe!)
+          </h3>
+          <div class="math-shapes-grid" id="mathShapesGrid"></div>
+
+          <h3 class="section-blue-title" style="color: #e11d48; margin-bottom: 10px;">
+            <span>🕒</span> Thực Hành Xem Đồng Hồ Giờ Đúng (1 giờ – 12 giờ)
+          </h3>
+          <div class="math-clock-box">
+            <svg viewBox="0 0 200 200" class="clock-svg" id="mathClockSvg"></svg>
+            <div style="max-width: 340px; width: 100%; text-align: center;">
+              <div style="font-size: 20px; font-weight: 900; color: #0369a1;" id="mathClockReadout">🕒 Đồng hồ chỉ: 3 giờ đúng</div>
+              <div style="font-size: 13px; font-weight: 700; color: #475569; margin: 6px 0;" id="mathClockScheduleTip"></div>
+              <button class="btn-hear-hint" id="btnHearClock" style="margin: 6px auto 10px auto;">
+                <span>🔊</span> Nghe đọc giờ
+              </button>
+              <div style="font-size: 12px; font-weight: 800; color: #64748b;">Chạm số giờ bên dưới để xoay kim đỏ nhé:</div>
+              <div class="clock-hours-grid" id="mathClockHourBtns"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="mathGeoQuizStage" style="display: none;">
+          <div id="mathGeoQuizActive">
+            <div class="game-score-row">
+              <span class="game-progress-text" id="mathGeoProgressText">Câu 1 / 8</span>
+              <span class="game-stars" id="mathGeoScoreText">⭐ 0 điểm</span>
+            </div>
+            <div class="quiz-question-box">
+              <div class="quiz-question-title" id="mathGeoQuizTitle">Câu hỏi Hình học / Đồng hồ</div>
+            </div>
+            <div id="mathGeoQuizClockWrap" style="display: none; justify-content: center; margin-bottom: 16px;">
+              <svg viewBox="0 0 200 200" class="clock-svg" id="mathQuizClockSvg"></svg>
+            </div>
+            <div class="math-options-grid" id="mathGeoQuizOptionsGrid" style="max-width: 540px; grid-template-columns: repeat(2, 1fr);"></div>
+          </div>
+
+          <div id="mathGeoQuizVictory" class="game-victory-box" style="display: none;">
+            <div class="victory-emojis">📐🕒🏆🌟</div>
+            <h2 class="victory-title" style="color: #0284c7;">SIÊU SAO HÌNH HỌC &amp; ĐỒNG HỒ!</h2>
+            <p class="victory-desc" id="mathGeoVictoryScore">Bé đã vượt qua tất cả câu hỏi Hình và Giờ!</p>
+            <div class="victory-actions">
+              <button class="challenge-btn" onclick="initGeoClockQuiz()">🔄 Đố vui ván mới</button>
+              <button class="home-btn" onclick="mathGeoMode = 'learn'; renderMathGeometryTab();">📖 Về xem Đồng hồ</button>
+              <button class="home-btn" onclick="switchMathSubTab('calc')">➕ Luyện Cộng Trừ</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- Khu Vực Khu Trò Chơi (Game Hub - 7 Trò Chơi Cuốn Hút) -->
@@ -604,6 +866,7 @@
   <!-- Scripts -->
   <script src="data.js"></script>
   <script src="speech.js"></script>
+  <script src="math.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -7,6 +7,7 @@ class SoundManager {
     this.isMuted = false;
     this.currentAudio = null;
     this.audioCtx = null;
+    this.sequenceToken = 0;
 
     // Khôi phục cài đặt âm thanh đã lưu của Bảo Long
     this.loadPrefs();
@@ -89,6 +90,7 @@ class SoundManager {
   }
 
   stopAll() {
+    this.sequenceToken++;
     if (this.currentAudio) {
       this.currentAudio.pause();
       this.currentAudio = null;
@@ -96,6 +98,72 @@ class SoundManager {
     if (this.synth) {
       this.synth.cancel();
     }
+  }
+
+  // Phát nối tiếp nhiều key audio (dùng ghép đọc phép tính Toán lớp 1 bất kỳ)
+  playAudioSequence(keys, onCompleteCallback = null, fallbackText = null) {
+    if (!Array.isArray(keys) || keys.length === 0) {
+      if (onCompleteCallback) onCompleteCallback();
+      return;
+    }
+    this.stopAll();
+    const myToken = this.sequenceToken;
+
+    if (this.isMuted) {
+      if (onCompleteCallback) setTimeout(onCompleteCallback, 200);
+      return;
+    }
+
+    let idx = 0;
+    const playStep = () => {
+      if (myToken !== this.sequenceToken) return;
+      if (idx >= keys.length) {
+        if (onCompleteCallback) onCompleteCallback();
+        return;
+      }
+      const key = keys[idx++];
+      const audioUrl = `audio/${this.gender}/${encodeURIComponent(key)}.mp3`;
+      const audio = new Audio(audioUrl);
+      this.currentAudio = audio;
+      audio.playbackRate = this.speedRate;
+
+      let finished = false;
+      const doneStep = () => {
+        if (finished || myToken !== this.sequenceToken) return;
+        finished = true;
+        this.currentAudio = null;
+        setTimeout(playStep, 30);
+      };
+
+      audio.onended = doneStep;
+      audio.onerror = () => {
+        if (myToken !== this.sequenceToken) return;
+        this.currentAudio = null;
+        if (fallbackText && idx === 1) {
+          this.speakTTS(fallbackText, () => {
+            if (onCompleteCallback && myToken === this.sequenceToken) onCompleteCallback();
+          });
+        } else {
+          doneStep();
+        }
+      };
+
+      const p = audio.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          if (myToken !== this.sequenceToken) return;
+          if (fallbackText && idx === 1) {
+            this.speakTTS(fallbackText, () => {
+              if (onCompleteCallback && myToken === this.sequenceToken) onCompleteCallback();
+            });
+          } else {
+            doneStep();
+          }
+        });
+      }
+    };
+
+    playStep();
   }
 
   // Phát file audio người thật từ thư mục /audio/{gender}/{key}.mp3
