@@ -1,8 +1,8 @@
 // ========================================================
 // BỘ MÔN ĐẠO ĐỨC & GIÁO DỤC CÔNG DÂN LỚP 1 CHO BÉ BẢO LONG (6 TUỔI)
 // Chuẩn chương trình Lớp 1 Việt Nam kết hợp nếp sống văn minh Việt - Nhật
-// Gồm 4 phần: 8 Bài học thói quen đẹp, 8 Tình huống nhập vai,
-// Game Nên/Không Nên (10 câu), Thực hành Đèn Giao Thông & Phân Loại Rác
+// Gồm 4 phần: 12 Bài học thói quen đẹp, 12 Tình huống nhập vai (8 câu/lượt),
+// Game Nên/Không Nên (16 câu, 10 câu/lượt), Đèn Giao Thông & Phân Loại Rác (10 món, 8 món/lượt)
 // ========================================================
 
 const ETHICS_LESSONS_DATA = [
@@ -327,6 +327,13 @@ function addEthicsScore(pts) {
 function renderEthicsHub() {
   const el = document.getElementById('ethicsSessionStars');
   if (el) el.innerText = `⭐ Điểm Bé Ngoan: ${ethicsSessionScore}`;
+  const lessonCount = ETHICS_LESSONS_DATA.length;
+  const tabLbl = document.getElementById('ethicsTabLessonsLabel');
+  if (tabLbl) tabLbl.innerText = `${lessonCount} Thói Quen Đẹp`;
+  const headingEl = document.getElementById('ethicsLessonsHeading');
+  if (headingEl) headingEl.innerText = `${lessonCount} Bài Học Bé Ngoan Lớp 1 (Chạm thẻ để nghe!)`;
+  const retBtn = document.getElementById('ethicsReturnLessonsBtn');
+  if (retBtn) retBtn.innerText = `💝 Xem lại ${lessonCount} Bài học`;
   switchEthicsSubTab(currentEthicsTab);
 }
 
@@ -339,7 +346,7 @@ function stopEthicsAutoPlay() {
   const btn = document.getElementById('btnAutoPlayEthics');
   if (btn) {
     btn.classList.remove('playing');
-    btn.innerHTML = '<span>🎧</span> Nghe cả 8 bài';
+    btn.innerHTML = `<span>🎧</span> Nghe cả ${ETHICS_LESSONS_DATA.length} bài`;
   }
   document.querySelectorAll('#ethicsLessonsGrid .ethics-lesson-card.is-speaking-active').forEach(c => c.classList.remove('is-speaking-active'));
 }
@@ -370,7 +377,7 @@ function switchEthicsSubTab(subtab) {
 }
 
 // ========================================================
-// TAB 1: 8 BÀI HỌC THÓI QUEN ĐẸP
+// TAB 1: 12 BÀI HỌC THÓI QUEN ĐẸP
 // ========================================================
 function renderEthicsLessonsTab() {
   const grid = document.getElementById('ethicsLessonsGrid');
@@ -434,7 +441,7 @@ function renderEthicsLessonsTab() {
         if (!ethicsAutoRunning) return;
         if (idx >= ETHICS_LESSONS_DATA.length) {
           stopEthicsAutoPlay();
-          if (typeof showToast === 'function') showToast('🎉 Bảo Long đã nghe hết 8 bài học Đạo Đức rồi!');
+          if (typeof showToast === 'function') showToast(`🎉 Bảo Long đã nghe hết ${ETHICS_LESSONS_DATA.length} bài học Đạo Đức rồi!`);
           return;
         }
         document.querySelectorAll('#ethicsLessonsGrid .ethics-lesson-card').forEach(c => c.classList.remove('is-speaking-active'));
@@ -741,6 +748,8 @@ function loadNextEcoItem() {
     window.soundMgr.playAudioFile('ethics_eco_correct', null, 'Bảo Long phân loại rác chuẩn quá!');
     if (typeof awardStars === 'function') awardStars(12, 'Chiến Binh Môi Trường Xanh!');
 
+    const descEl = document.getElementById('ecoVictoryDesc');
+    if (descEl) descEl.innerText = `Con đã phân loại đúng tất cả ${ecoQueue.length} món rác (+12 ⭐)! Trái Đất cảm ơn Bảo Long nhiều lắm!`;
     document.getElementById('ecoGamePlay').style.display = 'none';
     document.getElementById('ecoGameVictory').style.display = 'block';
     return;

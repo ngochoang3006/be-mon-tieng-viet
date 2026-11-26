@@ -1127,6 +1127,30 @@ function initJaCanvasEvents() {
       window.soundMgr.playClick();
     });
   });
+
+  document.querySelectorAll('#jaHintLevelGroup .ja-hint-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#jaHintLevelGroup .ja-hint-btn').forEach(b => b.classList.remove('active-filter'));
+      btn.classList.add('active-filter');
+      window.soundMgr.playClick();
+      if (typeof setJaWritingHintLevel === 'function') setJaWritingHintLevel(btn.dataset.level);
+      drawJaMasumeGuide();
+    });
+  });
+
+  document.getElementById('btnJaCheck')?.addEventListener('click', () => {
+    if (!jaCanvas || typeof evaluateCanvasGuideMatch !== 'function') return;
+    window.soundMgr.playClick();
+    const res = evaluateCanvasGuideMatch(jaCanvas, (gCtx, w, h) => {
+      gCtx.font = 'bold 170px "Hiragino Kaku Gothic Pro", "Yu Gothic", "Meiryo", sans-serif';
+      gCtx.fillStyle = '#000';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'middle';
+      gCtx.fillText(jaWriteChar, w / 2, h / 2 + 8);
+    });
+    if (typeof showToast === 'function') showToast(res.hintText);
+    if (res.matchedPct >= 45) window.soundMgr.playPop();
+  });
 }
 
 function drawJaMasumeGuide() {
@@ -1147,9 +1171,16 @@ function drawJaMasumeGuide() {
   jaCtx.lineTo(w, h / 2);
   jaCtx.stroke();
 
-  // Chữ mẫu mờ to rõ giữa ô vuông
+  // Chữ mẫu theo 3 cấp độ hỗ trợ (Nét mờ -> Chấm bắt đầu -> Ô trống)
   jaCtx.setLineDash([]);
-  jaCtx.font = 'bold 170px "Hiragino Kaku Gothic Pro", "Yu Gothic", "Meiryo", sans-serif';
+  const jaFont = 'bold 170px "Hiragino Kaku Gothic Pro", "Yu Gothic", "Meiryo", sans-serif';
+  const jLvl = typeof getJaWritingHintLevel === 'function' ? getJaWritingHintLevel() : 'guide';
+  if (typeof drawHintByLevel === 'function') {
+    jaCtx.restore();
+    drawHintByLevel(jaCtx, w, h, jaWriteChar, jLvl, jaFont, 8);
+    return;
+  }
+  jaCtx.font = jaFont;
   jaCtx.fillStyle = '#e2e8f0';
   jaCtx.textAlign = 'center';
   jaCtx.textBaseline = 'middle';
@@ -1281,6 +1312,7 @@ function loadJaQuizQuestion() {
         const pts = jaQuizStreak >= 3 ? 15 : 10;
         jaQuizScore += pts;
         addJaScore(pts);
+        window.recordAnswer?.(q.target.id, true, { label: `${q.target.ja} (${q.target.vi})`, mode: 'japanese', audioKey: q.target.audioKey });
         document.getElementById('jaQuizStreakBadge').innerText = `🔥 Chuỗi x${jaQuizStreak}`;
         document.getElementById('jaQuizScoreText').innerText = `⭐ ${jaQuizScore} điểm`;
         window.soundMgr.playCorrect();
@@ -1295,6 +1327,7 @@ function loadJaQuizQuestion() {
         );
       } else {
         card.classList.add('wrong');
+        window.recordAnswer?.(q.target.id, false, { label: `${q.target.ja} (${q.target.vi})`, mode: 'japanese', audioKey: q.target.audioKey });
         jaQuizStreak = 0;
         document.getElementById('jaQuizStreakBadge').innerText = `🔥 Chuỗi x0`;
         window.soundMgr.playWrong();

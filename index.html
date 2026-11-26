@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc &amp; Đánh Vần</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦖</text></svg>">
-  <link rel="stylesheet" href="style.css?v=20261126v2">
+  <link rel="stylesheet" href="style.css?v=20261126v4">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -152,6 +152,9 @@
       </div>
     </section>
 
+    <!-- Lộ Trình Hôm Nay (10-15 phút) & Từ Cần Ôn -->
+    <div id="dailyHubHost"></div>
+
     <!-- Khung Lộ Trình Học Tập (Roadmap Header) -->
     <section class="roadmap-box" id="roadmapBox">
       <div class="roadmap-top-row">
@@ -197,6 +200,7 @@
 
     <!-- Khu vực hiển thị thẻ từ vựng (Chế độ Học từ mới & Tập đánh vần) -->
     <section class="cards-grid" id="cardsContainer"></section>
+    <section id="phonicsDecodableHost" style="display: none;"></section>
 
     <!-- Khu vực Bảng chữ cái ABC, 11 Phụ Âm Ghép & 6 Thanh Điệu -->
     <section id="alphabetContainer" style="display: none;">
@@ -261,6 +265,7 @@
           <div class="quiz-options-grid" id="orthoQuizOptionsGrid" style="grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 520px; margin: 0 auto;"></div>
         </div>
       </div>
+      <div id="minimalPairHost"></div>
     </section>
 
     <!-- Khu vực Chuyên Mục Khủng Long Dành Cho Bé Bảo Long (Dino World) -->
@@ -774,7 +779,7 @@
       <!-- 4 Chế độ Đạo Đức & GDCD -->
       <div class="ethics-subnav">
         <button class="game-tab-btn active" id="ethicsTabLessons" onclick="switchEthicsSubTab('lessons')">
-          <span>💝</span><span>8 Thói Quen Đẹp</span>
+          <span>💝</span><span id="ethicsTabLessonsLabel">12 Thói Quen Đẹp</span>
         </button>
         <button class="game-tab-btn" id="ethicsTabSituations" onclick="switchEthicsSubTab('situations')">
           <span>🎭</span><span>Xử Lý Tình Huống</span>
@@ -787,15 +792,15 @@
         </button>
       </div>
 
-      <!-- PANE 1: 8 BÀI HỌC THÓI QUEN ĐẸP -->
+      <!-- PANE 1: 12 BÀI HỌC THÓI QUEN ĐẸP -->
       <div class="ethics-sub-pane" id="ethicsPaneLessons">
         <div class="section-header-flex" style="margin-bottom: 14px;">
           <div>
-            <h3 class="section-blue-title" style="color: #0f766e;"><span>💝</span> 8 Bài Học Bé Ngoan Lớp 1 (Chạm thẻ để nghe!)</h3>
+            <h3 class="section-blue-title" style="color: #0f766e;"><span>💝</span> <span id="ethicsLessonsHeading">12 Bài Học Bé Ngoan Lớp 1 (Chạm thẻ để nghe!)</span></h3>
             <p class="section-sub-desc" style="margin-bottom: 0;">Mỗi thói quen đẹp giúp Bảo Long trở thành cậu bé tự tin, nhân ái và được mọi người yêu quý.</p>
           </div>
           <button class="tool-chip tool-chip-listen" id="btnAutoPlayEthics">
-            <span>🎧</span> Nghe cả 8 bài
+            <span>🎧</span> Nghe cả 12 bài
           </button>
         </div>
         <div class="ethics-lessons-grid" id="ethicsLessonsGrid"></div>
@@ -871,7 +876,7 @@
           <div class="victory-actions">
             <button class="challenge-btn" onclick="initEthicsTfGame()">🔄 Chơi lại 10 câu</button>
             <button class="home-btn" onclick="switchEthicsSubTab('traffic_eco')">🚦 Chơi Đèn GT &amp; Sống Xanh</button>
-            <button class="home-btn" onclick="switchEthicsSubTab('lessons')">💝 Xem lại 8 Bài học</button>
+            <button class="home-btn" id="ethicsReturnLessonsBtn" onclick="switchEthicsSubTab('lessons')">💝 Xem lại 12 Bài học</button>
           </div>
         </div>
       </div>
@@ -938,7 +943,7 @@
           <div id="ecoGameVictory" style="display: none; padding: 16px;">
             <div class="victory-emojis">🌍♻️🏆✨</div>
             <h2 class="victory-title" style="color: #059669;">CHIẾN BINH MÔI TRƯỜNG XANH BẢO LONG!</h2>
-            <p class="victory-desc">Con đã phân loại đúng tất cả 6 món rác (+12 ⭐)! Trái Đất cảm ơn Bảo Long nhiều lắm!</p>
+            <p class="victory-desc" id="ecoVictoryDesc">Con đã phân loại đúng tất cả 8 món rác (+12 ⭐)! Trái Đất cảm ơn Bảo Long nhiều lắm!</p>
             <button class="challenge-btn" onclick="initEcoSortingGame()">🔄 Phân loại lượt mới</button>
           </div>
         </div>
@@ -952,7 +957,7 @@
       <div class="en-banner-box">
         <div class="dino-badge">🇬🇧 ENGLISH KIDS CLUB • CHUẨN MỸ BẢN XỨ 🇺🇸</div>
         <h2 class="dino-banner-title">Vương Quốc Tiếng Anh Của Bảo Long</h2>
-        <p class="dino-banner-desc">Học bảng chữ cái A–Z, 32 từ vựng &amp; câu giao tiếp quen thuộc, chơi Nghe chọn hình và Ghép từ tiếng Anh cùng giọng đọc chuẩn Jenny &amp; Guy!</p>
+        <p class="dino-banner-desc" id="enBannerDesc">Học bảng 26 chữ cái A–Z, 8 chủ đề (64 từ vựng &amp; câu giao tiếp quen thuộc), chơi Nghe chọn hình và Ghép từ tiếng Anh cùng giọng đọc chuẩn Jenny &amp; Guy!</p>
         <div class="math-session-badge" id="enSessionStars">⭐ English Stars: 0</div>
       </div>
 
@@ -1206,9 +1211,15 @@
                 <span class="color-picker-dot ja-color-dot" data-color="#10b981" style="background: #10b981;"></span>
                 <span class="color-picker-dot ja-color-dot" data-color="#7c3aed" style="background: #7c3aed;"></span>
               </div>
-              <div style="display: flex; gap: 6px;">
-                <button class="tool-chip" id="btnJaClear">🧹 Xóa bảng</button>
-                <button class="tool-chip" id="btnJaFinish" style="background:#dcfce7; color:#15803d; border-color:#22c55e;">⭐ Viết xong!</button>
+              <div id="jaHintLevelGroup" class="writing-hint-levels">
+                <button type="button" class="tool-chip active-filter ja-hint-btn" data-level="guide">Nét mờ</button>
+                <button type="button" class="tool-chip ja-hint-btn" data-level="dots">Chấm đầu</button>
+                <button type="button" class="tool-chip ja-hint-btn" data-level="blank">Ô trống</button>
+              </div>
+              <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button type="button" class="tool-chip" id="btnJaCheck">✨ Kiểm tra nét</button>
+                <button type="button" class="tool-chip" id="btnJaClear">🧹 Xóa bảng</button>
+                <button type="button" class="tool-chip" id="btnJaFinish" style="background:#dcfce7; color:#15803d; border-color:#22c55e;">⭐ Viết xong!</button>
               </div>
             </div>
           </div>
@@ -1818,9 +1829,15 @@
             <span class="color-picker-dot" data-color="#10b981" style="background: #10b981;"></span>
             <span class="color-picker-dot" data-color="#f59e0b" style="background: #f59e0b;"></span>
           </div>
-          <div style="display: flex; gap: 6px;">
-            <button class="tool-chip" id="btnCanvasClear">🧹 Xóa</button>
-            <button class="tool-chip" id="btnCanvasFinish" style="background:#dcfce7; color:#15803d; border-color:#22c55e;">⭐ Viết xong!</button>
+          <div id="vnHintLevelGroup" class="writing-hint-levels">
+            <button type="button" class="tool-chip active-filter vn-hint-btn" data-level="guide">Nét mờ</button>
+            <button type="button" class="tool-chip vn-hint-btn" data-level="dots">Chấm đầu</button>
+            <button type="button" class="tool-chip vn-hint-btn" data-level="blank">Ô trống</button>
+          </div>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button type="button" class="tool-chip" id="btnCanvasCheck">✨ Kiểm tra nét</button>
+            <button type="button" class="tool-chip" id="btnCanvasClear">🧹 Xóa</button>
+            <button type="button" class="tool-chip" id="btnCanvasFinish" style="background:#dcfce7; color:#15803d; border-color:#22c55e;">⭐ Viết xong!</button>
           </div>
         </div>
       </div>
@@ -1846,6 +1863,7 @@
         <div class="profile-stats-mini">
           <div class="p-stat-item">⭐ <strong id="stickerTotalStars">0</strong> Sao</div>
           <div class="p-stat-item">📚 <strong id="stickerTotalWords">0</strong> Từ đã thuộc</div>
+          <div class="p-stat-item">🎮 <strong id="stickerTotalGames">0</strong> Ván hoàn thành</div>
         </div>
         <div class="lesson-progress-row" style="margin-top: 10px;">
           <div class="lesson-progress-bar-bg">
@@ -1859,6 +1877,37 @@
         Chạm vào Sticker đã mở khóa để đeo làm <strong>Avatar trên góc màn hình</strong> nhé! 👇
       </p>
       <div class="stickers-grid" id="stickersGrid"></div>
+
+      <div class="parent-corner-wrap">
+        <button type="button" class="tool-chip parent-toggle-btn" id="btnToggleParentCorner">
+          👨‍👩‍👦 Góc Phụ Huynh (Sao lưu &amp; Đặt lại)
+        </button>
+        <div class="parent-corner-panel" id="parentCornerPanel" style="display: none;">
+          <div id="parentGateBox" class="parent-gate-box">
+            <div class="parent-gate-title">🔒 Xác nhận người lớn (tránh bé bấm nhầm)</div>
+            <div class="parent-gate-row">
+              <span id="parentGateQuestion" class="parent-gate-q">7 × 8 = ?</span>
+              <input type="number" id="parentGateInput" class="parent-gate-input" inputmode="numeric" placeholder="Đáp án">
+              <button type="button" class="tool-chip" id="btnParentUnlock">Mở khóa</button>
+            </div>
+          </div>
+          <div id="parentActionsBox" style="display: none;">
+            <div id="parentStatsSummary" class="parent-stats-summary"></div>
+            <div id="parentPlusHost"></div>
+            <div class="parent-actions-row">
+              <button type="button" class="tool-chip" id="btnParentExport">💾 Xuất tiến độ (JSON)</button>
+              <button type="button" class="tool-chip" id="btnParentImport">📂 Nhập tiến độ (JSON)</button>
+              <button type="button" class="tool-chip parent-reset-btn" id="btnParentReset">🗑️ Đặt lại từ đầu</button>
+              <input type="file" id="parentImportFile" accept="application/json,.json" style="display: none;">
+            </div>
+            <div id="parentResetConfirmRow" class="parent-reset-confirm" style="display: none;">
+              <span>⚠️ Xóa toàn bộ Sao, Từ đã thuộc &amp; Sticker?</span>
+              <button type="button" class="tool-chip parent-reset-btn" id="btnParentResetConfirm">Xác nhận xóa</button>
+              <button type="button" class="tool-chip" id="btnParentResetCancel">Hủy</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1871,16 +1920,17 @@
   <canvas id="confettiCanvas"></canvas>
 
   <!-- Scripts -->
-  <script src="data.js?v=20261125v4"></script>
-  <script src="speech.js?v=20261125v4"></script>
-  <script src="math.js?v=20261125v4"></script>
-  <script src="ethics.js?v=20261125v4"></script>
-  <script src="english.js?v=20261125v4"></script>
-  <script src="japanese.js?v=20261125v4"></script>
+  <script src="data.js?v=20261126v4"></script>
+  <script src="speech.js?v=20261126v4"></script>
+  <script src="math.js?v=20261126v4"></script>
+  <script src="ethics.js?v=20261126v3"></script>
+  <script src="english.js?v=20261126v4"></script>
+  <script src="japanese.js?v=20261126v4"></script>
   <script src="science_life.js?v=20261125v4"></script>
   <script src="arts_pe.js?v=20261126v1"></script>
-  <script src="arcade.js?v=20261126v1"></script>
+  <script src="arcade.js?v=20261126v4"></script>
   <script src="dragons.js?v=20261126v1"></script>
-  <script src="app.js?v=20261126v1"></script>
+  <script src="learning_plus.js?v=20261126v4"></script>
+  <script src="app.js?v=20261126v4"></script>
 </body>
 </html>

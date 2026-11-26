@@ -715,6 +715,7 @@ function loadMathCalcQuestion() {
         const pts = mathCalcStreak >= 3 ? 15 : 10;
         mathCalcScore += pts;
         addMathSessionScore(pts);
+        window.recordAnswer?.(`math_${q.a}_${q.op}_${q.b}`, true, { label: `${q.a} ${q.op} ${q.b} = ${q.ans}`, mode: 'math' });
 
         document.getElementById('mathCalcStreakBadge').innerText = `🔥 Chuỗi x${mathCalcStreak}`;
         document.getElementById('mathCalcScoreText').innerText = `⭐ ${mathCalcScore} điểm`;
@@ -737,6 +738,7 @@ function loadMathCalcQuestion() {
         setTimeout(goNextCalc, window.soundMgr.isMuted ? 450 : 2200);
       } else {
         btn.classList.add('wrong');
+        window.recordAnswer?.(`math_${q.a}_${q.op}_${q.b}`, false, { label: `${q.a} ${q.op} ${q.b} = ${q.ans}`, mode: 'math' });
         mathCalcStreak = 0;
         document.getElementById('mathCalcStreakBadge').innerText = `🔥 Chuỗi x0`;
         window.soundMgr.playWrong();
@@ -752,6 +754,7 @@ function showMathCalcVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.playAudioFile('cheer_math_win', null, 'Hoan hô Bảo Long tính toán siêu đỉnh quá!');
+  window.markDailyStep?.('play');
   if (typeof awardStars === 'function') awardStars(15, 'Hoàn thành 10 phép tính Toán Lớp 1!');
 
   document.getElementById('mathCalcPlayStage').style.display = 'none';

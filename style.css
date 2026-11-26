@@ -4355,11 +4355,17 @@ button,
     max-height: 100vh;
     border-radius: 0 24px 24px 0;
     z-index: 320;
-    transform: translateX(-108%);
+    transform: translateX(-110%);
     transition: transform 0.2s ease;
+  }
+  .side-nav:not(.mobile-open) {
+    visibility: hidden;
+    pointer-events: none;
   }
   .side-nav.mobile-open {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
   }
 }
 
@@ -4925,3 +4931,413 @@ button,
   }
 }
 
+/* Góc Phụ Huynh trong Modal Sticker */
+.parent-corner-wrap {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 2px dashed #e2e8f0;
+  text-align: center;
+}
+.parent-toggle-btn {
+  background: #f8fafc;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+.parent-corner-panel {
+  margin-top: 10px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: #f8fafc;
+  border: 2px solid #cbd5e1;
+  text-align: left;
+}
+.parent-gate-title {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #475569;
+  margin-bottom: 8px;
+}
+.parent-gate-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.parent-gate-q {
+  font-size: 15px;
+  font-weight: 900;
+  color: #0369a1;
+}
+.parent-gate-input {
+  width: 96px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 2px solid #cbd5e1;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+}
+.parent-stats-summary {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #334155;
+  margin-bottom: 10px;
+}
+.parent-actions-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.parent-reset-btn {
+  background: #fff1f2 !important;
+  color: #be123c !important;
+  border-color: #fda4af !important;
+}
+.parent-reset-confirm {
+  margin-top: 10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #ffe4e6;
+  color: #9f1239;
+  font-size: 12.5px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+/* ========================================================
+   LEARNING PLUS: DAILY ROADMAP, KARAOKE, SRS & PARENT PLUS
+   ======================================================== */
+body.focus-hide-games .mode-pill-arcade,
+body.focus-hide-games .mode-pill-game {
+  display: none !important;
+}
+
+.daily-hub-card {
+  background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 100%);
+  border: 2px solid #86efac;
+  border-bottom: 4px solid #22c55e;
+  border-radius: 18px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+}
+.daily-hub-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.daily-hub-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.daily-hub-badge {
+  font-size: 13px;
+  font-weight: 900;
+  color: #166534;
+}
+.daily-progress-pill {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.daily-hub-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.daily-week-strip {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+.week-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  background: #ffffff;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+.week-dot.active {
+  background: #22c55e;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+.week-dot.today {
+  box-shadow: 0 0 0 2px #38bdf8;
+}
+.daily-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+@media (max-width: 767px) {
+  .daily-steps-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.daily-step-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 10px 12px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.daily-step-btn:hover {
+  transform: translateY(-1px);
+  border-color: #38bdf8;
+}
+.daily-step-btn.done {
+  background: #f0fdf4;
+  border-color: #22c55e;
+}
+.ds-ico {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.ds-txt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ds-txt strong {
+  font-size: 13px;
+  color: #0f172a;
+}
+.ds-txt small {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.due-review-stage {
+  margin-top: 12px;
+}
+.due-card,
+.due-empty-box {
+  background: #ffffff;
+  border: 2px solid #fbbf24;
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.due-empty-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+}
+.due-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #b45309;
+  margin-bottom: 8px;
+}
+.due-word-display {
+  font-size: 28px;
+  font-weight: 900;
+  color: #0369a1;
+  text-align: center;
+  margin-bottom: 4px;
+}
+.due-hint-box {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 10px;
+}
+.due-btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.decodable-panel {
+  margin-top: 18px;
+  border-color: #5eead4;
+  border-bottom-color: #0d9488;
+}
+.decodable-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+.decodable-card {
+  background: #f0fdfa;
+  border: 2px solid #99f6e4;
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.decodable-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.decodable-badge {
+  font-size: 11px;
+  font-weight: 900;
+  background: #ccfbf1;
+  color: #115e59;
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+.decodable-master-tag {
+  font-size: 11px;
+  font-weight: 800;
+  color: #b45309;
+}
+.decodable-words-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.karaoke-word {
+  background: #ffffff;
+  border: 2px solid #5eead4;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.12s ease, background 0.12s ease;
+}
+.karaoke-word.is-active {
+  background: #fde047;
+  border-color: #eab308;
+  transform: scale(1.08);
+}
+.decodable-ja {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+}
+.decodable-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.decodable-privacy {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.mp-controls-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.mp-options-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 10px;
+}
+
+.writing-hint-levels {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.parent-analytics-box,
+.parent-controls-box,
+.parent-voice-box {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.parent-sub-title {
+  font-size: 12px;
+  font-weight: 900;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+.parent-kpi-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+.parent-weak-list {
+  font-size: 12px;
+  color: #475569;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+.weak-pill {
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 800;
+}
+.parent-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin: 5px 0;
+  flex-wrap: wrap;
+}
+.parent-voice-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.parent-voice-row select,
+.parent-check-row select {
+  padding: 5px 8px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+}

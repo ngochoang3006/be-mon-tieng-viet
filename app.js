@@ -10,11 +10,16 @@ let modalPlaylistIdx = 0;
 
 // Explorer Progress State (lưu tự động vào localStorage)
 const PROGRESS_KEY = 'baolong_progress_v2';
+const PROGRESS_SCHEMA_VERSION = 3;
 let explorerState = {
+  schemaVersion: PROGRESS_SCHEMA_VERSION,
   stars: 0,
   learnedIds: [],
   equippedStickerId: 'stk_trex',
-  completedGames: 0
+  completedGames: 0,
+  wordStats: {},
+  dailyLog: {},
+  parentSettings: { eyeBreakMinutes: 20, focusHideGames: false, dailyArcadeCap: 40 }
 };
 
 // Auto-play audio tour state
@@ -97,15 +102,30 @@ document.addEventListener('DOMContentLoaded', () => {
 // ========================================================
 // KHO SAO, TIẾN ĐỘ & STICKER (PERSISTENT GAMIFICATION)
 // ========================================================
+function migrateProgressData(parsed) {
+  const validStickerIds = typeof STICKERS_DATA !== 'undefined' ? new Set(STICKERS_DATA.map(s => s.id)) : null;
+  const learned = Array.isArray(parsed?.learnedIds)
+    ? Array.from(new Set(parsed.learnedIds.filter(id => typeof id === 'string' && id.trim().length > 0)))
+    : [];
+  const rawSticker = typeof parsed?.equippedStickerId === 'string' ? parsed.equippedStickerId : 'stk_trex';
+  const plusFields = typeof normalizePlusStateFields === 'function'
+    ? normalizePlusStateFields(parsed)
+    : { wordStats: {}, dailyLog: {}, parentSettings: { eyeBreakMinutes: 20, focusHideGames: false, dailyArcadeCap: 40 } };
+  return {
+    schemaVersion: PROGRESS_SCHEMA_VERSION,
+    stars: typeof parsed?.stars === 'number' && Number.isFinite(parsed.stars) && parsed.stars >= 0 ? Math.floor(parsed.stars) : 0,
+    learnedIds: learned,
+    equippedStickerId: (!validStickerIds || validStickerIds.has(rawSticker)) ? rawSticker : 'stk_trex',
+    completedGames: typeof parsed?.completedGames === 'number' && Number.isFinite(parsed.completedGames) && parsed.completedGames >= 0 ? Math.floor(parsed.completedGames) : 0,
+    ...plusFields
+  };
+}
+
 function loadProgress() {
   try {
     const raw = localStorage.getItem(PROGRESS_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw);
-      if (typeof parsed.stars === 'number') explorerState.stars = parsed.stars;
-      if (Array.isArray(parsed.learnedIds)) explorerState.learnedIds = parsed.learnedIds;
-      if (parsed.equippedStickerId) explorerState.equippedStickerId = parsed.equippedStickerId;
-      if (typeof parsed.completedGames === 'number') explorerState.completedGames = parsed.completedGames;
+      explorerState = migrateProgressData(JSON.parse(raw));
     }
   } catch (e) {
     // Ignore storage error
@@ -114,24 +134,40 @@ function loadProgress() {
 
 function saveProgress() {
   try {
+    explorerState.schemaVersion = PROGRESS_SCHEMA_VERSION;
     localStorage.setItem(PROGRESS_KEY, JSON.stringify(explorerState));
   } catch (e) {
     // Ignore storage error
   }
 }
 
-function awardStars(amount, reasonText = '') {
+function awardStars(amount, reasonText = '', countAsGame = amount >= 10, sourceCategory = 'learn') {
   const prevRank = getCurrentRank(explorerState.stars);
-  explorerState.stars += amount;
+  let actual = amount;
+  const log = typeof ensureTodayLog === 'function' ? ensureTodayLog() : null;
+  if (sourceCategory === 'arcade' && log) {
+    const cap = explorerState.parentSettings?.dailyArcadeCap || 40;
+    const remain = Math.max(0, cap - (log.arcadeStars || 0));
+    actual = Math.min(amount, remain);
+    log.arcadeStars = (log.arcadeStars || 0) + actual;
+  }
+  explorerState.stars += actual;
+  if (log) log.starsEarned = (log.starsEarned || 0) + actual;
+  if (countAsGame) {
+    explorerState.completedGames = (explorerState.completedGames || 0) + 1;
+  }
   saveProgress();
   updateProfileHUD();
+  if (typeof renderDailyRoadmapHost === 'function') renderDailyRoadmapHost();
   const nextRank = getCurrentRank(explorerState.stars);
 
   if (nextRank.title !== prevRank.title) {
     fireConfetti();
     showToast(`🎊 THĂNG HẠNG! Bảo Long đạt danh hiệu mới: ${nextRank.badge} ${nextRank.title}!`);
+  } else if (sourceCategory === 'arcade' && actual === 0) {
+    showToast(`🏎️ Bảo Long đã nhận đủ Sao Đua Xe hôm nay — sang học Tiếng Việt / Toán để kiếm thêm Sao nhé!`);
   } else if (reasonText) {
-    showToast(`⭐ +${amount} Sao: ${reasonText}`);
+    showToast(`⭐ +${actual} Sao: ${reasonText}`);
   }
 }
 
@@ -140,8 +176,15 @@ function markWordLearned(wordId) {
   if (!explorerState.learnedIds.includes(wordId)) {
     explorerState.learnedIds.push(wordId);
     explorerState.stars += 2;
+    const log = typeof ensureTodayLog === 'function' ? ensureTodayLog() : null;
+    if (log) {
+      log.newWords = (log.newWords || 0) + 1;
+      log.starsEarned = (log.starsEarned || 0) + 2;
+      if (log.newWords >= 2 && typeof markDailyStep === 'function') markDailyStep('learn');
+    }
     saveProgress();
     updateProfileHUD();
+    if (typeof renderDailyRoadmapHost === 'function') renderDailyRoadmapHost();
     return true;
   }
   return false;
@@ -181,6 +224,8 @@ function openStickerModal() {
   document.getElementById('stickerRankTitle').innerText = rank.title;
   document.getElementById('stickerTotalStars').innerText = explorerState.stars;
   document.getElementById('stickerTotalWords').innerText = explorerState.learnedIds.length;
+  const gamesEl = document.getElementById('stickerTotalGames');
+  if (gamesEl) gamesEl.innerText = explorerState.completedGames || 0;
 
   const barEl = document.getElementById('stickerNextRankBar');
   const txtEl = document.getElementById('stickerNextRankText');
@@ -229,6 +274,8 @@ function openStickerModal() {
     grid.appendChild(card);
   });
 
+  resetParentCornerUI();
+  initParentCornerOnce();
   document.getElementById('stickerModalOverlay').classList.add('active');
 }
 
@@ -381,7 +428,14 @@ function initEventListeners() {
     }
   });
 
+  let lastBreakpointBucket = window.innerWidth < 768 ? 'mobile' : (window.innerWidth < 1040 ? 'tablet' : 'desktop');
   window.addEventListener('resize', () => {
+    const nextBucket = window.innerWidth < 768 ? 'mobile' : (window.innerWidth < 1040 ? 'tablet' : 'desktop');
+    if (nextBucket !== lastBreakpointBucket) {
+      lastBreakpointBucket = nextBucket;
+      closeMobileSidebar();
+      updateSidebarToggleUI();
+    }
     const box = document.getElementById('canvasDrawingBox');
     if (box && box.classList.contains('active')) {
       resizeCanvasToFit();
@@ -523,6 +577,8 @@ function renderCurrentView() {
   const gameViewContainer = document.getElementById('gameViewContainer');
 
   cardsContainer.style.display = 'none';
+  const phDecHost = document.getElementById('phonicsDecodableHost');
+  if (phDecHost) phDecHost.style.display = 'none';
   if (vnStoriesContainer) vnStoriesContainer.style.display = 'none';
   if (btnToggleStories) btnToggleStories.style.display = 'none';
   alphabetContainer.style.display = 'none';
@@ -563,6 +619,9 @@ function renderCurrentView() {
     } else {
       cardsContainer.style.display = 'grid';
       renderLessonCards(PHONICS_LESSONS[currentLessonIdx].words, 'phonics');
+      if (typeof renderPhonicsDecodableSection === 'function') {
+        renderPhonicsDecodableSection(PHONICS_LESSONS[currentLessonIdx].id);
+      }
     }
   } else if (currentMode === 'alphabet') {
     alphabetContainer.style.display = 'block';
@@ -870,6 +929,9 @@ function renderAlphabetView() {
       orthoStage.style.display = 'none';
     };
   }
+  if (typeof renderMinimalPairDrill === 'function') {
+    renderMinimalPairDrill();
+  }
 }
 
 let orthoQuizList = [];
@@ -934,6 +996,7 @@ function loadOrthoQuizQuestion() {
         card.classList.add('correct');
         orthoQuizScore += 10;
         document.getElementById('orthoQuizScore').innerText = `⭐ ${orthoQuizScore} điểm`;
+        window.recordAnswer?.(`oq_${q.id}`, true, { label: q.fullWord, mode: 'alphabet', audioKey: `oq_q_${q.id}` });
         window.soundMgr.playCorrect();
         fireConfetti();
         showToast(`✅ Chuẩn luôn "${q.fullWord}"! ${q.ruleNote}`);
@@ -946,6 +1009,7 @@ function loadOrthoQuizQuestion() {
         );
       } else {
         card.classList.add('wrong');
+        window.recordAnswer?.(`oq_${q.id}`, false, { label: q.fullWord, mode: 'alphabet', audioKey: `oq_q_${q.id}` });
         window.soundMgr.playWrong();
         window.soundMgr.speakTryAgain();
         showToast(`💡 Gợi ý: ${q.ruleNote}`);
@@ -1327,6 +1391,36 @@ function initCanvas() {
       window.soundMgr.playClick();
     });
   });
+
+  document.querySelectorAll('#vnHintLevelGroup .vn-hint-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#vnHintLevelGroup .vn-hint-btn').forEach(b => b.classList.remove('active-filter'));
+      btn.classList.add('active-filter');
+      window.soundMgr?.playClick();
+      if (typeof setVnWritingHintLevel === 'function') setVnWritingHintLevel(btn.dataset.level);
+      clearCanvas();
+      if (currentWordModal) drawLetterGuide(currentWordModal.word);
+    });
+  });
+
+  document.getElementById('btnCanvasCheck')?.addEventListener('click', () => {
+    if (!canvas || !currentWordModal || typeof evaluateCanvasGuideMatch !== 'function') return;
+    window.soundMgr?.playClick();
+    const res = evaluateCanvasGuideMatch(canvas, (gCtx, w, h) => {
+      let fontSize = 86;
+      gCtx.font = `bold ${fontSize}px Nunito, sans-serif`;
+      while (gCtx.measureText(currentWordModal.word).width > w - 28 && fontSize > 26) {
+        fontSize -= 4;
+        gCtx.font = `bold ${fontSize}px Nunito, sans-serif`;
+      }
+      gCtx.fillStyle = '#000';
+      gCtx.textAlign = 'center';
+      gCtx.textBaseline = 'middle';
+      gCtx.fillText(currentWordModal.word, w / 2, h / 2 + 2);
+    });
+    showToast(res.hintText);
+    if (res.matchedPct >= 45) window.soundMgr?.playPop();
+  });
 }
 
 function resizeCanvasToFit() {
@@ -1410,19 +1504,27 @@ function drawPrimaryGridLines() {
 
 function drawLetterGuide(word) {
   if (!ctx || !canvas || !word) return;
-  ctx.save();
   let fontSize = 86;
+  ctx.save();
   ctx.font = `bold ${fontSize}px Nunito, sans-serif`;
-  // Tự động thu nhỏ chữ để không bao giờ tràn viền dù là "khủng long bay" hay "xe cứu thương"
   while (ctx.measureText(word).width > canvas.width - 28 && fontSize > 26) {
     fontSize -= 4;
     ctx.font = `bold ${fontSize}px Nunito, sans-serif`;
   }
-  ctx.fillStyle = '#cbd5e1';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(word, canvas.width / 2, canvas.height / 2 + 2);
+  const fontSpec = ctx.font;
   ctx.restore();
+  const lvl = typeof getVnWritingHintLevel === 'function' ? getVnWritingHintLevel() : 'guide';
+  if (typeof drawHintByLevel === 'function') {
+    drawHintByLevel(ctx, canvas.width, canvas.height, word, lvl, fontSpec, 2);
+  } else {
+    ctx.save();
+    ctx.font = fontSpec;
+    ctx.fillStyle = '#cbd5e1';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(word, canvas.width / 2, canvas.height / 2 + 2);
+    ctx.restore();
+  }
 }
 
 // ========================================================
@@ -1476,21 +1578,25 @@ function switchSubGame(subgame) {
 // GAME 1: GHÉP CHỮ VUI (ĐỘNG THEO BÀI HỌC HOẶC TỔNG HỢP + UNDO SLOT)
 // ========================================================
 function splitVietnameseWordToPuzzle(word) {
-  const lower = (word || '').trim().toLowerCase();
+  const lower = (word || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  if (!lower) return [];
   if (lower.includes(' ')) {
-    return lower.split(/\s+/);
+    return lower.split(' ');
   }
+  // Ưu tiên tách 11 phụ âm ghép đứng đầu tiếng (ngh, ng, gh, gi, ch, kh, nh, ph, qu, th, tr)
   const digraphs = ['ngh', 'ng', 'gh', 'gi', 'ch', 'kh', 'nh', 'ph', 'qu', 'th', 'tr'];
   for (const dg of digraphs) {
     if (lower.startsWith(dg) && lower.length > dg.length) {
       return [dg, lower.slice(dg.length)];
     }
   }
+  // Tiếp theo là phụ âm đơn đầu tiếng
   const singleCons = new Set(['b', 'c', 'd', 'đ', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'x']);
   if (singleCons.has(lower[0]) && lower.length > 1) {
     return [lower[0], lower.slice(1)];
   }
-  for (const coda of ['ng', 'nh', 'ch']) {
+  // Tiếng không có phụ âm đầu (vd: ếch, yến, ăn, uống, ong, ổi): tách phần vần/nguyên âm + âm cuối (coda)
+  for (const coda of ['ng', 'nh', 'ch', 'm', 'n', 'p', 't', 'c']) {
     if (lower.endsWith(coda) && lower.length > coda.length) {
       return [lower.slice(0, lower.length - coda.length), coda];
     }
@@ -1701,6 +1807,7 @@ function checkPuzzleResult() {
     window.soundMgr.playCorrect();
     fireConfetti();
     gameScore += 10;
+    window.recordAnswer?.(q.id || `puz_${q.target}`, true, { label: q.target, mode: 'game', audioKey: `word_${q.target.toLowerCase()}` });
     document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
     showToast(`🎉 Hoan hô Bảo Long! Ghép đúng "${q.target}"!`);
     window.soundMgr.playPraiseThen(false,
@@ -1711,6 +1818,7 @@ function checkPuzzleResult() {
       }
     );
   } else {
+    window.recordAnswer?.(q.id || `puz_${q.target}`, false, { label: q.target, mode: 'game', audioKey: `word_${q.target.toLowerCase()}` });
     window.soundMgr.playWrong();
     showToast(`Bảo Long chạm vào ô sai để đổi lại hoặc thử lại nhé! ❤️`);
     window.soundMgr.speakTryAgain();
@@ -1725,6 +1833,7 @@ function showGameVictory() {
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
   fireConfetti();
+  window.markDailyStep?.('play');
   awardStars(15, 'Hoàn thành Ghép Chữ Vui!');
 
   document.getElementById('puzzlePlayStage').style.display = 'none';
@@ -1807,6 +1916,7 @@ function loadListenCatchQuestion() {
         if (listenStreak > listenBestStreak) listenBestStreak = listenStreak;
         const pts = listenStreak >= 3 ? 15 : 10;
         listenScore += pts;
+        window.recordAnswer?.(`lc_${q.target}`, true, { label: q.target, mode: 'game', audioKey: q.audioKey });
         document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x${listenStreak}`;
         document.getElementById('listenScoreText').innerText = `⭐ ${listenScore} sao`;
 
@@ -1827,6 +1937,7 @@ function loadListenCatchQuestion() {
         );
       } else {
         card.classList.add('wrong');
+        window.recordAnswer?.(`lc_${q.target}`, false, { label: q.target, mode: 'game', audioKey: q.audioKey });
         listenStreak = 0;
         document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x0`;
         window.soundMgr.playWrong();
@@ -1846,6 +1957,7 @@ function showListenCatchVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
+  window.markDailyStep?.('play');
   awardStars(15, 'Siêu thính giác Nghe Âm Bắt Chữ!');
 
   document.getElementById('listenCatchPlayStage').style.display = 'none';
@@ -1952,6 +2064,7 @@ function updateTrainAssembly(q) {
     if (combined === q.word) {
       // Đúng! Tàu Shinkansen hú còi phóng vút!
       shinkansenScore += 10;
+      window.recordAnswer?.(`shin_${q.word}`, true, { label: q.word, mode: 'game', audioKey: `word_${q.word.toLowerCase()}` });
       document.getElementById('shinkansenScoreText').innerText = `⭐ ${shinkansenScore} sao`;
       window.soundMgr.playShinkansenWhistle();
       fireConfetti();
@@ -1973,6 +2086,7 @@ function updateTrainAssembly(q) {
       }, 220);
       setTimeout(goNextShin, window.soundMgr.isMuted ? 500 : 1850);
     } else {
+      window.recordAnswer?.(`shin_${q.word}`, false, { label: q.word, mode: 'game', audioKey: `word_${q.word.toLowerCase()}` });
       window.soundMgr.playWrong();
       window.soundMgr.speakTryAgain();
       showToast(`Chưa khớp toa tàu "${q.word}" rồi, chọn lại nhé Bảo Long! ❤️`);
@@ -1995,6 +2109,7 @@ function showShinkansenVictory() {
   fireConfetti();
   window.soundMgr.playShinkansenWhistle();
   window.soundMgr.speakCheer('win');
+  window.markDailyStep?.('play');
   awardStars(20, 'Trưởng tàu Shinkansen siêu tốc!');
 
   document.getElementById('shinkansenPlayStage').style.display = 'none';
@@ -2585,5 +2700,178 @@ function handleSidebarToggle() {
       localStorage.setItem(SIDEBAR_PREF_KEY, collapsed ? '1' : '0');
     } catch (e) {}
     updateSidebarToggleUI();
+  }
+}
+
+// ========================================================
+// GÓC PHỤ HUYNH (EXPORT / IMPORT / RESET AN TOÀN)
+// ========================================================
+let parentCornerInited = false;
+let parentGateAnswer = 56;
+let parentCornerUnlocked = false;
+
+function refreshParentGateChallenge() {
+  const a = 4 + Math.floor(Math.random() * 6);
+  const b = 3 + Math.floor(Math.random() * 7);
+  parentGateAnswer = a * b;
+  const qEl = document.getElementById('parentGateQuestion');
+  const inp = document.getElementById('parentGateInput');
+  if (qEl) qEl.innerText = `${a} × ${b} = ?`;
+  if (inp) inp.value = '';
+}
+
+function renderParentStatsSummary() {
+  const el = document.getElementById('parentStatsSummary');
+  if (!el) return;
+  const rank = getCurrentRank(explorerState.stars);
+  el.innerText = `⭐ ${explorerState.stars} sao • 📚 ${explorerState.learnedIds.length} mục đã khám phá • 🎮 ${explorerState.completedGames || 0} ván hoàn thành • ${rank.badge} ${rank.title}`;
+  if (typeof renderParentPlusSection === 'function') renderParentPlusSection();
+}
+
+function resetParentCornerUI() {
+  parentCornerUnlocked = false;
+  const panel = document.getElementById('parentCornerPanel');
+  const gate = document.getElementById('parentGateBox');
+  const actions = document.getElementById('parentActionsBox');
+  const confirmRow = document.getElementById('parentResetConfirmRow');
+  if (panel) panel.style.display = 'none';
+  if (gate) gate.style.display = 'block';
+  if (actions) actions.style.display = 'none';
+  if (confirmRow) confirmRow.style.display = 'none';
+  refreshParentGateChallenge();
+}
+
+function initParentCornerOnce() {
+  if (parentCornerInited) return;
+  parentCornerInited = true;
+
+  const btnToggle = document.getElementById('btnToggleParentCorner');
+  const panel = document.getElementById('parentCornerPanel');
+  const btnUnlock = document.getElementById('btnParentUnlock');
+  const gateInp = document.getElementById('parentGateInput');
+  const btnExport = document.getElementById('btnParentExport');
+  const btnImport = document.getElementById('btnParentImport');
+  const fileInp = document.getElementById('parentImportFile');
+  const btnReset = document.getElementById('btnParentReset');
+  const confirmRow = document.getElementById('parentResetConfirmRow');
+  const btnResetOk = document.getElementById('btnParentResetConfirm');
+  const btnResetCancel = document.getElementById('btnParentResetCancel');
+
+  if (btnToggle && panel) {
+    btnToggle.onclick = () => {
+      window.soundMgr.playClick();
+      const willOpen = panel.style.display === 'none';
+      panel.style.display = willOpen ? 'block' : 'none';
+      if (willOpen && !parentCornerUnlocked) {
+        refreshParentGateChallenge();
+        setTimeout(() => gateInp?.focus(), 50);
+      }
+    };
+  }
+
+  const tryUnlock = () => {
+    const val = Number((gateInp?.value || '').trim());
+    if (val === parentGateAnswer) {
+      parentCornerUnlocked = true;
+      window.soundMgr.playPop();
+      document.getElementById('parentGateBox').style.display = 'none';
+      document.getElementById('parentActionsBox').style.display = 'block';
+      renderParentStatsSummary();
+    } else {
+      window.soundMgr.playWrong();
+      showToast('🔒 Đáp án chưa đúng, phụ huynh thử lại nhé!');
+      refreshParentGateChallenge();
+    }
+  };
+  if (btnUnlock) btnUnlock.onclick = tryUnlock;
+  if (gateInp) {
+    gateInp.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') tryUnlock();
+    });
+  }
+
+  if (btnExport) {
+    btnExport.onclick = () => {
+      const payload = {
+        exportedAt: new Date().toISOString(),
+        progress: explorerState,
+        audioPrefs: {
+          gender: window.soundMgr.gender,
+          speedRate: window.soundMgr.speedRate,
+          isMuted: window.soundMgr.isMuted
+        }
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `baolong-progress-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('💾 Đã tải xuống file sao lưu tiến độ!');
+    };
+  }
+
+  if (btnImport && fileInp) {
+    btnImport.onclick = () => fileInp.click();
+    fileInp.onchange = (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(String(reader.result || '{}'));
+          const candidate = data.progress && typeof data.progress === 'object' ? data.progress : data;
+          explorerState = migrateProgressData(candidate);
+          saveProgress();
+          if (data.audioPrefs && typeof data.audioPrefs === 'object') {
+            if (data.audioPrefs.gender === 'male' || data.audioPrefs.gender === 'female') {
+              window.soundMgr.setGender(data.audioPrefs.gender);
+            }
+            if (data.audioPrefs.speedRate === 0.8 || data.audioPrefs.speedRate === 1.0) {
+              window.soundMgr.setSpeed(data.audioPrefs.speedRate === 0.8 ? 'slow' : 'normal');
+            }
+            if (typeof data.audioPrefs.isMuted === 'boolean') {
+              window.soundMgr.setMuted(data.audioPrefs.isMuted);
+            }
+            syncTopControlsUI();
+          }
+          updateProfileHUD();
+          window.applyParentFocusMode?.();
+          window.renderDailyRoadmapHost?.();
+          renderCurrentView();
+          openStickerModal();
+          showToast('📂 Đã khôi phục tiến độ thành công!');
+        } catch (err) {
+          showToast('❌ File JSON không hợp lệ, chưa thể khôi phục.');
+        } finally {
+          fileInp.value = '';
+        }
+      };
+      reader.readAsText(file);
+    };
+  }
+
+  if (btnReset && confirmRow) {
+    btnReset.onclick = () => {
+      confirmRow.style.display = confirmRow.style.display === 'none' ? 'flex' : 'none';
+    };
+  }
+  if (btnResetCancel && confirmRow) {
+    btnResetCancel.onclick = () => { confirmRow.style.display = 'none'; };
+  }
+  if (btnResetOk) {
+    btnResetOk.onclick = () => {
+      explorerState = migrateProgressData({});
+      saveProgress();
+      updateProfileHUD();
+      window.applyParentFocusMode?.();
+      window.renderDailyRoadmapHost?.();
+      renderCurrentView();
+      openStickerModal();
+      showToast('🗑️ Đã đặt lại toàn bộ tiến độ về ban đầu!');
+    };
   }
 }

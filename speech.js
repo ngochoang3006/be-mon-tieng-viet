@@ -1,11 +1,20 @@
 // Module phát âm Audio Người Thật (Nam & Nữ) + Fallback Web Speech API cho Bé Bảo Long
 
+const SILENT_UNLOCK_WAV = 'data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA';
+
 class SoundManager {
   constructor() {
     this.gender = 'female'; // 'female' (Cô giáo Hoài My) | 'male' (Ba Nam Minh)
     this.speedRate = 1.0;   // 1.0 (Chuẩn) | 0.8 (Chậm)
     this.isMuted = false;
+    this.allowSystemTTS = false; // Mặc định tắt giọng máy Windows, chỉ dùng MP3 thật / ghi âm gia đình
     this.currentAudio = null;
+    // Tái sử dụng một HTMLAudioElement duy nhất giúp giữ trạng thái unlock autoplay trên iOS Safari
+    this.player = new Audio();
+    this.player.preload = 'auto';
+    this.player.setAttribute('playsinline', '');
+    this.audioUnlocked = false;
+    this.autoplayNoticeShown = false;
     this.audioCtx = null;
     this.sequenceToken = 0;
     this.blobCache = new Map();
@@ -21,9 +30,62 @@ class SoundManager {
     this.voices = [];
     this.selectedVoice = null;
     this.initWebSpeech();
+    this.bindUnlockOnFirstGesture();
 
     // Tải trước kho lời khen & hiệu ứng cốt lõi để phản hồi 0ms
     setTimeout(() => this.prefetchCommon(), 250);
+  }
+
+  bindUnlockOnFirstGesture() {
+    const unlock = () => {
+      try {
+        this.getAudioContext();
+        if (!this.audioUnlocked && !this.currentAudio && this.player.paused) {
+          this.audioUnlocked = true;
+          const prevVol = this.player.volume;
+          this.player.volume = 0;
+          this.player.src = SILENT_UNLOCK_WAV;
+          const p = this.player.play();
+          if (p && typeof p.then === 'function') {
+            p.then(() => {
+              if (!this.currentAudio) {
+                this.player.pause();
+                this.player.currentTime = 0;
+              }
+              this.player.volume = prevVol;
+            }).catch(() => {
+              this.player.volume = prevVol;
+            });
+          } else {
+            this.player.volume = prevVol;
+          }
+        } else {
+          this.audioUnlocked = true;
+        }
+      } catch (e) {
+        this.audioUnlocked = true;
+      }
+      ['touchstart', 'pointerdown', 'keydown', 'click'].forEach(ev => {
+        document.removeEventListener(ev, unlock, true);
+      });
+    };
+    ['touchstart', 'pointerdown', 'keydown', 'click'].forEach(ev => {
+      document.addEventListener(ev, unlock, { capture: true, passive: true });
+    });
+  }
+
+  inferLangFromKey(key) {
+    if (key && (key.startsWith('en_') || key.startsWith('cheer_en'))) return 'en-US';
+    if (key && (key.startsWith('ja_') || key.startsWith('cheer_ja'))) return 'ja-JP';
+    return 'vi-VN';
+  }
+
+  notifyAutoplayBlocked() {
+    if (this.autoplayNoticeShown || this.isMuted) return;
+    this.autoplayNoticeShown = true;
+    if (typeof showToast === 'function') {
+      showToast('🔊 Chạm vào nút Loa để nghe cô đọc trên thiết bị nhé!');
+    }
   }
 
   getCacheKey(gender, key) {
@@ -70,6 +132,10 @@ class SoundManager {
   }
 
   resolveAudioUrl(key) {
+    const customUrl = window.customVoiceStore?.getSyncUrl?.(key);
+    if (customUrl) {
+      return customUrl;
+    }
     const ck = this.getCacheKey(this.gender, key);
     if (this.blobCache.has(ck)) {
       return this.blobCache.get(ck);
@@ -84,6 +150,7 @@ class SoundManager {
       if (saved.gender === 'male' || saved.gender === 'female') this.gender = saved.gender;
       if (saved.speedRate === 0.8 || saved.speedRate === 1.0) this.speedRate = saved.speedRate;
       if (typeof saved.isMuted === 'boolean') this.isMuted = saved.isMuted;
+      if (typeof saved.allowSystemTTS === 'boolean') this.allowSystemTTS = saved.allowSystemTTS;
     } catch (e) {
       // Ignore storage error
     }
@@ -94,7 +161,8 @@ class SoundManager {
       localStorage.setItem('baolong_audio_prefs_v1', JSON.stringify({
         gender: this.gender,
         speedRate: this.speedRate,
-        isMuted: this.isMuted
+        isMuted: this.isMuted,
+        allowSystemTTS: this.allowSystemTTS
       }));
     } catch (e) {
       // Ignore storage error
@@ -113,15 +181,23 @@ class SoundManager {
     this.updateWebVoice();
   }
 
+  setAllowSystemTTS(val) {
+    this.allowSystemTTS = !!val;
+    this.savePrefs();
+  }
+
   updateWebVoice() {
     const viVoices = this.voices.filter(v => v.lang.includes('vi') || v.lang.includes('VI'));
     if (viVoices.length > 0) {
+      // Ưu tiên giọng Natural / Online / Google trước, tránh giọng desktop Microsoft cũ khi buộc phải fallback
+      const natural = viVoices.filter(v => /Natural|Online|Google/i.test(v.name));
+      const pool = natural.length > 0 ? natural : viVoices;
       if (this.gender === 'female') {
-        const f = viVoices.find(v => v.name.includes('HoaiMy') || v.name.includes('Linh') || v.name.includes('Female') || v.name.includes('Google'));
-        this.selectedVoice = f || viVoices[0];
+        const f = pool.find(v => /HoaiMy|Linh|Female|Google/i.test(v.name));
+        this.selectedVoice = f || pool[0];
       } else {
-        const m = viVoices.find(v => v.name.includes('NamMinh') || v.name.includes('Male') || v.name.includes('An'));
-        this.selectedVoice = m || viVoices[0];
+        const m = pool.find(v => /NamMinh|Male/i.test(v.name));
+        this.selectedVoice = m || pool[0];
       }
     }
   }
@@ -152,14 +228,45 @@ class SoundManager {
   stopAll() {
     this.sequenceToken++;
     document.querySelectorAll('.is-reading-option').forEach(el => el.classList.remove('is-reading-option'));
-    if (this.currentAudio) {
-      this.currentAudio.onended = null;
-      this.currentAudio.onerror = null;
-      this.currentAudio.pause();
-      this.currentAudio = null;
+    if (this.player) {
+      this.player.onended = null;
+      this.player.onerror = null;
+      try {
+        this.player.pause();
+      } catch (e) {}
     }
+    this.currentAudio = null;
     if (this.synth) {
       this.synth.cancel();
+    }
+  }
+
+  _playOnSharedPlayer(key, myToken, onDone, onErrorOrReject) {
+    const audio = this.player;
+    audio.onended = null;
+    audio.onerror = null;
+    audio.src = this.resolveAudioUrl(key);
+    audio.playbackRate = this.speedRate;
+    this.currentAudio = audio;
+
+    let settled = false;
+    const settle = (fn, arg) => {
+      if (settled || myToken !== this.sequenceToken) return;
+      settled = true;
+      audio.onended = null;
+      audio.onerror = null;
+      this.currentAudio = null;
+      if (fn) fn(arg);
+    };
+
+    audio.onended = () => settle(onDone);
+    audio.onerror = () => settle(onErrorOrReject, null);
+
+    const p = audio.play();
+    if (p && typeof p.catch === 'function') {
+      p.then(() => {
+        this.audioUnlocked = true;
+      }).catch((err) => settle(onErrorOrReject, err));
     }
   }
 
@@ -189,51 +296,31 @@ class SoundManager {
         return;
       }
       const step = steps[idx++];
-      if (step.el) {
-        step.el.classList.add('is-reading-option');
-      }
-      const url = this.resolveAudioUrl(step.key);
-      const audio = new Audio(url);
-      this.currentAudio = audio;
-      audio.playbackRate = this.speedRate;
+      if (step.el) step.el.classList.add('is-reading-option');
 
-      let done = false;
       const finishOne = () => {
-        if (done || myToken !== this.sequenceToken) return;
-        done = true;
-        this.currentAudio = null;
+        if (myToken !== this.sequenceToken) return;
         if (step.el) step.el.classList.remove('is-reading-option');
         setTimeout(nextStep, step.pauseAfterMs !== undefined ? step.pauseAfterMs : 120);
       };
 
-      audio.onended = finishOne;
-      audio.onerror = () => {
-        if (done || myToken !== this.sequenceToken) return;
-        this.currentAudio = null;
-        if (step.fallbackText) {
-          const lang = (step.key && (step.key.startsWith('en_') || step.key.startsWith('cheer_en')))
-            ? 'en-US'
-            : ((step.key && (step.key.startsWith('ja_') || step.key.startsWith('cheer_ja'))) ? 'ja-JP' : 'vi-VN');
-          this.speakTTS(step.fallbackText, finishOne, lang);
+      this._playOnSharedPlayer(step.key, myToken, finishOne, (err) => {
+        if (err && err.name === 'AbortError') {
+          if (step.el) step.el.classList.remove('is-reading-option');
+          return;
+        }
+        if (err && err.name === 'NotAllowedError') {
+          if (step.el) step.el.classList.remove('is-reading-option');
+          this.notifyAutoplayBlocked();
+          if (onComplete) onComplete();
+          return;
+        }
+        if (this.allowSystemTTS && step.fallbackText) {
+          this.speakTTS(step.fallbackText, finishOne, this.inferLangFromKey(step.key));
         } else {
           finishOne();
         }
-      };
-
-      const p = audio.play();
-      if (p !== undefined) {
-        p.catch(() => {
-          if (done || myToken !== this.sequenceToken) return;
-          if (step.fallbackText) {
-            const lang = (step.key && (step.key.startsWith('en_') || step.key.startsWith('cheer_en')))
-              ? 'en-US'
-              : ((step.key && (step.key.startsWith('ja_') || step.key.startsWith('cheer_ja'))) ? 'ja-JP' : 'vi-VN');
-            this.speakTTS(step.fallbackText, finishOne, lang);
-          } else {
-            finishOne();
-          }
-        });
-      }
+      });
     };
 
     nextStep();
@@ -262,44 +349,21 @@ class SoundManager {
         return;
       }
       const key = keys[idx++];
-      const audio = new Audio(this.resolveAudioUrl(key));
-      this.currentAudio = audio;
-      audio.playbackRate = this.speedRate;
-
-      let finished = false;
-      const doneStep = () => {
-        if (finished || myToken !== this.sequenceToken) return;
-        finished = true;
-        this.currentAudio = null;
-        playStep();
-      };
-
-      audio.onended = doneStep;
-      audio.onerror = () => {
-        if (myToken !== this.sequenceToken) return;
-        this.currentAudio = null;
-        if (fallbackText && idx === 1) {
+      this._playOnSharedPlayer(key, myToken, playStep, (err) => {
+        if (err && err.name === 'AbortError') return;
+        if (err && err.name === 'NotAllowedError') {
+          this.notifyAutoplayBlocked();
+          if (onCompleteCallback && myToken === this.sequenceToken) onCompleteCallback();
+          return;
+        }
+        if (this.allowSystemTTS && fallbackText && idx === 1) {
           this.speakTTS(fallbackText, () => {
             if (onCompleteCallback && myToken === this.sequenceToken) onCompleteCallback();
-          });
+          }, this.inferLangFromKey(key));
         } else {
-          doneStep();
+          playStep();
         }
-      };
-
-      const p = audio.play();
-      if (p !== undefined) {
-        p.catch(() => {
-          if (myToken !== this.sequenceToken) return;
-          if (fallbackText && idx === 1) {
-            this.speakTTS(fallbackText, () => {
-              if (onCompleteCallback && myToken === this.sequenceToken) onCompleteCallback();
-            });
-          } else {
-            doneStep();
-          }
-        });
-      }
+      });
     };
 
     playStep();
@@ -315,58 +379,38 @@ class SoundManager {
     this.stopAll();
     const myToken = this.sequenceToken;
 
-    const audio = new Audio(this.resolveAudioUrl(key));
-    this.currentAudio = audio;
-    audio.playbackRate = this.speedRate;
-
-    let ended = false;
     const finish = () => {
-      if (ended || myToken !== this.sequenceToken) return;
-      ended = true;
-      this.currentAudio = null;
+      if (myToken !== this.sequenceToken) return;
       if (onEndCallback) onEndCallback();
     };
 
-    audio.onended = finish;
-
-    audio.onerror = () => {
-      if (key === 'alpha_â') {
-        this.playAudioFile('alpha_aa', onEndCallback, fallbackText);
+    this._playOnSharedPlayer(key, myToken, finish, (err) => {
+      if (err && err.name === 'AbortError') return;
+      if (err && err.name === 'NotAllowedError') {
+        this.notifyAutoplayBlocked();
+        finish();
         return;
       }
-      if (key === 'word_â') {
-        this.playAudioFile('word_aa', onEndCallback, fallbackText);
-        return;
+      if (!err) {
+        if (key === 'alpha_â') {
+          this.playAudioFile('alpha_aa', onEndCallback, fallbackText);
+          return;
+        }
+        if (key === 'word_â') {
+          this.playAudioFile('word_aa', onEndCallback, fallbackText);
+          return;
+        }
+        if (key === 'word_sách') {
+          this.playAudioFile('word_sach', onEndCallback, fallbackText);
+          return;
+        }
       }
-      if (key === 'word_sách') {
-        this.playAudioFile('word_sach', onEndCallback, fallbackText);
-        return;
-      }
-
-      this.currentAudio = null;
-      const ttsLang = (key && (key.startsWith('en_') || key.startsWith('cheer_en')))
-        ? 'en-US'
-        : ((key && (key.startsWith('ja_') || key.startsWith('cheer_ja'))) ? 'ja-JP' : 'vi-VN');
-      if (fallbackText) {
-        this.speakTTS(fallbackText, finish, ttsLang);
+      if (this.allowSystemTTS && fallbackText) {
+        this.speakTTS(fallbackText, finish, this.inferLangFromKey(key));
       } else {
         finish();
       }
-    };
-
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(() => {
-        const ttsLang = (key && (key.startsWith('en_') || key.startsWith('cheer_en')))
-          ? 'en-US'
-          : ((key && (key.startsWith('ja_') || key.startsWith('cheer_ja'))) ? 'ja-JP' : 'vi-VN');
-        if (fallbackText) {
-          this.speakTTS(fallbackText, finish, ttsLang);
-        } else {
-          finish();
-        }
-      });
-    }
+    });
   }
 
   // Phát âm chữ cái bảng chữ cái hoặc phụ âm ghép

@@ -1200,3 +1200,1290 @@ const EXPLORER_RANKS = [
   { minStars: 500, title: 'Siêu Sao Đa Tài', badge: '🌟' },
   { minStars: 750, title: 'Thần Đồng Việt – Nhật', badge: '👑' }
 ];
+
+// CÂU GIẢI MÃ ĐƯỢC CHO 12 BÀI ĐÁNH VẦN (MỖI TIẾNG KHỚP 100% AUDIO TRÊN ĐĨA)
+const DECODABLE_PHONICS_SENTENCES = [
+  {
+    "id": "decod_1_1",
+    "lessonId": "phonics_1",
+    "text": "Bé tập đọc sách.",
+    "tokens": [
+      {
+        "label": "Bé",
+        "key": "word_bé",
+        "part": "bé"
+      },
+      {
+        "label": "tập",
+        "key": "word_tập",
+        "part": "tập"
+      },
+      {
+        "label": "đọc",
+        "key": "word_đọc",
+        "part": "đọc"
+      },
+      {
+        "label": "sách",
+        "key": "word_sach",
+        "part": "sách"
+      }
+    ],
+    "sentenceAudioKey": "decod_1_1",
+    "meaningJa": "わたしが ほんを よみます"
+  },
+  {
+    "id": "decod_1_2",
+    "lessonId": "phonics_1",
+    "text": "Dép đỏ, cặp, hộp.",
+    "tokens": [
+      {
+        "label": "Dép",
+        "key": "word_dép",
+        "part": "dép"
+      },
+      {
+        "label": "đỏ",
+        "key": "word_đỏ",
+        "part": "đỏ"
+      },
+      {
+        "label": "cặp",
+        "key": "word_cặp",
+        "part": "cặp"
+      },
+      {
+        "label": "hộp",
+        "key": "word_hộp",
+        "part": "hộp"
+      }
+    ],
+    "sentenceAudioKey": "decod_1_2",
+    "meaningJa": "あかい スリッパ、かばん、はこ"
+  },
+  {
+    "id": "decod_1_3",
+    "lessonId": "phonics_1",
+    "text": "Bếp hồng, súp, kẹo.",
+    "tokens": [
+      {
+        "label": "Bếp",
+        "key": "word_bếp",
+        "part": "bếp"
+      },
+      {
+        "label": "hồng",
+        "key": "word_hồng",
+        "part": "hồng"
+      },
+      {
+        "label": "súp",
+        "key": "word_súp",
+        "part": "súp"
+      },
+      {
+        "label": "kẹo",
+        "key": "word_kẹo",
+        "part": "kẹo"
+      }
+    ],
+    "sentenceAudioKey": "decod_1_3",
+    "meaningJa": "キッチン、スープ、あめ"
+  },
+  {
+    "id": "decod_2_1",
+    "lessonId": "phonics_2",
+    "text": "Bé viết tập vở.",
+    "tokens": [
+      {
+        "label": "Bé",
+        "key": "word_bé",
+        "part": "bé"
+      },
+      {
+        "label": "viết",
+        "key": "word_viết",
+        "part": "viết"
+      },
+      {
+        "label": "tập",
+        "key": "word_tập",
+        "part": "tập"
+      },
+      {
+        "label": "vở",
+        "key": "word_vở",
+        "part": "vở"
+      }
+    ],
+    "sentenceAudioKey": "decod_2_1",
+    "meaningJa": "ノートに かきます"
+  },
+  {
+    "id": "decod_2_2",
+    "lessonId": "phonics_2",
+    "text": "Táo, mận, quýt đỏ.",
+    "tokens": [
+      {
+        "label": "Táo",
+        "key": "word_táo",
+        "part": "táo"
+      },
+      {
+        "label": "mận",
+        "key": "word_mận",
+        "part": "mận"
+      },
+      {
+        "label": "quýt",
+        "key": "word_quýt",
+        "part": "quýt"
+      },
+      {
+        "label": "đỏ",
+        "key": "word_đỏ",
+        "part": "đỏ"
+      }
+    ],
+    "sentenceAudioKey": "decod_2_2",
+    "meaningJa": "りんご、すもも、みかん"
+  },
+  {
+    "id": "decod_2_3",
+    "lessonId": "phonics_2",
+    "text": "Mặt trời, đất Việt.",
+    "tokens": [
+      {
+        "label": "Mặt",
+        "key": "syl_mặt",
+        "part": "mặt"
+      },
+      {
+        "label": "trời",
+        "key": "syl_trời",
+        "part": "trời"
+      },
+      {
+        "label": "đất",
+        "key": "word_đất",
+        "part": "đất"
+      },
+      {
+        "label": "Việt",
+        "key": "syl_việt",
+        "part": "việt"
+      }
+    ],
+    "sentenceAudioKey": "decod_2_3",
+    "meaningJa": "たいようと ベトナム"
+  },
+  {
+    "id": "decod_3_1",
+    "lessonId": "phonics_3",
+    "text": "Bé học đọc sách.",
+    "tokens": [
+      {
+        "label": "Bé",
+        "key": "word_bé",
+        "part": "bé"
+      },
+      {
+        "label": "học",
+        "key": "syl_học",
+        "part": "học"
+      },
+      {
+        "label": "đọc",
+        "key": "word_đọc",
+        "part": "đọc"
+      },
+      {
+        "label": "sách",
+        "key": "word_sach",
+        "part": "sách"
+      }
+    ],
+    "sentenceAudioKey": "decod_3_1",
+    "meaningJa": "べんきょうして ほんを よみます"
+  },
+  {
+    "id": "decod_3_2",
+    "lessonId": "phonics_3",
+    "text": "Sóc đọc sách, ngựa chạy.",
+    "tokens": [
+      {
+        "label": "Sóc",
+        "key": "word_sóc",
+        "part": "sóc"
+      },
+      {
+        "label": "đọc",
+        "key": "word_đọc",
+        "part": "đọc"
+      },
+      {
+        "label": "sách",
+        "key": "word_sach",
+        "part": "sách"
+      },
+      {
+        "label": "ngựa",
+        "key": "word_ngựa",
+        "part": "ngựa"
+      },
+      {
+        "label": "chạy",
+        "key": "word_chạy",
+        "part": "chạy"
+      }
+    ],
+    "sentenceAudioKey": "decod_3_2",
+    "meaningJa": "りすと うま"
+  },
+  {
+    "id": "decod_3_3",
+    "lessonId": "phonics_3",
+    "text": "Cúc vàng, gạch đỏ.",
+    "tokens": [
+      {
+        "label": "Cúc",
+        "key": "word_cúc",
+        "part": "cúc"
+      },
+      {
+        "label": "vàng",
+        "key": "word_vàng",
+        "part": "vàng"
+      },
+      {
+        "label": "gạch",
+        "key": "word_gạch",
+        "part": "gạch"
+      },
+      {
+        "label": "đỏ",
+        "key": "word_đỏ",
+        "part": "đỏ"
+      }
+    ],
+    "sentenceAudioKey": "decod_3_3",
+    "meaningJa": "きいろい きく、あかい れんが"
+  },
+  {
+    "id": "decod_4_1",
+    "lessonId": "phonics_4",
+    "text": "Mẹ ăn cơm, kem.",
+    "tokens": [
+      {
+        "label": "Mẹ",
+        "key": "word_mẹ",
+        "part": "mẹ"
+      },
+      {
+        "label": "ăn",
+        "key": "word_ăn",
+        "part": "ăn"
+      },
+      {
+        "label": "cơm",
+        "key": "word_cơm",
+        "part": "cơm"
+      },
+      {
+        "label": "kem",
+        "key": "word_kem",
+        "part": "kem"
+      }
+    ],
+    "sentenceAudioKey": "decod_4_1",
+    "meaningJa": "おかあさんと ごはん、アイス"
+  },
+  {
+    "id": "decod_4_2",
+    "lessonId": "phonics_4",
+    "text": "Bạn bè chăm chỉ.",
+    "tokens": [
+      {
+        "label": "Bạn",
+        "key": "word_bạn",
+        "part": "bạn"
+      },
+      {
+        "label": "bè",
+        "key": "syl_bè",
+        "part": "bè"
+      },
+      {
+        "label": "chăm",
+        "key": "syl_chăm",
+        "part": "chăm"
+      },
+      {
+        "label": "chỉ",
+        "key": "syl_chỉ",
+        "part": "chỉ"
+      }
+    ],
+    "sentenceAudioKey": "decod_4_2",
+    "meaningJa": "ともだちは がんばりや"
+  },
+  {
+    "id": "decod_4_3",
+    "lessonId": "phonics_4",
+    "text": "Chim hót, vườn cam.",
+    "tokens": [
+      {
+        "label": "Chim",
+        "key": "word_chim",
+        "part": "chim"
+      },
+      {
+        "label": "hót",
+        "key": "word_hót",
+        "part": "hót"
+      },
+      {
+        "label": "vườn",
+        "key": "word_vườn",
+        "part": "vườn"
+      },
+      {
+        "label": "cam",
+        "key": "word_cam",
+        "part": "cam"
+      }
+    ],
+    "sentenceAudioKey": "decod_4_3",
+    "meaningJa": "とりが ないて みかんばたけ"
+  },
+  {
+    "id": "decod_5_1",
+    "lessonId": "phonics_5",
+    "text": "Voi bơi suối núi.",
+    "tokens": [
+      {
+        "label": "Voi",
+        "key": "word_voi",
+        "part": "voi"
+      },
+      {
+        "label": "bơi",
+        "key": "word_bơi",
+        "part": "bơi"
+      },
+      {
+        "label": "suối",
+        "key": "word_suối",
+        "part": "suối"
+      },
+      {
+        "label": "núi",
+        "key": "word_núi",
+        "part": "núi"
+      }
+    ],
+    "sentenceAudioKey": "decod_5_1",
+    "meaningJa": "ぞう、かわ、やま"
+  },
+  {
+    "id": "decod_5_2",
+    "lessonId": "phonics_5",
+    "text": "Máy bay bay, chim sáo.",
+    "tokens": [
+      {
+        "label": "Máy",
+        "key": "syl_máy",
+        "part": "máy"
+      },
+      {
+        "label": "bay",
+        "key": "syl_bay",
+        "part": "bay"
+      },
+      {
+        "label": "bay",
+        "key": "syl_bay",
+        "part": "bay"
+      },
+      {
+        "label": "chim",
+        "key": "word_chim",
+        "part": "chim"
+      },
+      {
+        "label": "sáo",
+        "key": "word_sáo",
+        "part": "sáo"
+      }
+    ],
+    "sentenceAudioKey": "decod_5_2",
+    "meaningJa": "ひこうきと とり"
+  },
+  {
+    "id": "decod_5_3",
+    "lessonId": "phonics_5",
+    "text": "Bưởi, chuối, dâu, xoài.",
+    "tokens": [
+      {
+        "label": "Bưởi",
+        "key": "word_bưởi",
+        "part": "bưởi"
+      },
+      {
+        "label": "chuối",
+        "key": "word_chuối",
+        "part": "chuối"
+      },
+      {
+        "label": "dâu",
+        "key": "syl_dâu",
+        "part": "dâu"
+      },
+      {
+        "label": "xoài",
+        "key": "word_xoài",
+        "part": "xoài"
+      }
+    ],
+    "sentenceAudioKey": "decod_5_3",
+    "meaningJa": "くだもの いっぱい"
+  },
+  {
+    "id": "decod_6_1",
+    "lessonId": "phonics_6",
+    "text": "Trăng vàng, mây hồng.",
+    "tokens": [
+      {
+        "label": "Trăng",
+        "key": "word_trăng",
+        "part": "trăng"
+      },
+      {
+        "label": "vàng",
+        "key": "word_vàng",
+        "part": "vàng"
+      },
+      {
+        "label": "mây",
+        "key": "word_mây",
+        "part": "mây"
+      },
+      {
+        "label": "hồng",
+        "key": "word_hồng",
+        "part": "hồng"
+      }
+    ],
+    "sentenceAudioKey": "decod_6_1",
+    "meaningJa": "おつきさまと くも"
+  },
+  {
+    "id": "decod_6_2",
+    "lessonId": "phonics_6",
+    "text": "Trống đồng, sông xanh.",
+    "tokens": [
+      {
+        "label": "Trống",
+        "key": "syl_trống",
+        "part": "trống"
+      },
+      {
+        "label": "đồng",
+        "key": "syl_đồng",
+        "part": "đồng"
+      },
+      {
+        "label": "sông",
+        "key": "word_sông",
+        "part": "sông"
+      },
+      {
+        "label": "xanh",
+        "key": "word_xanh",
+        "part": "xanh"
+      }
+    ],
+    "sentenceAudioKey": "decod_6_2",
+    "meaningJa": "どうたくと あおい かわ"
+  },
+  {
+    "id": "decod_6_3",
+    "lessonId": "phonics_6",
+    "text": "Chuông, bóng, cánh đồng.",
+    "tokens": [
+      {
+        "label": "Chuông",
+        "key": "word_chuông",
+        "part": "chuông"
+      },
+      {
+        "label": "bóng",
+        "key": "word_bóng",
+        "part": "bóng"
+      },
+      {
+        "label": "cánh",
+        "key": "syl_cánh",
+        "part": "cánh"
+      },
+      {
+        "label": "đồng",
+        "key": "syl_đồng",
+        "part": "đồng"
+      }
+    ],
+    "sentenceAudioKey": "decod_6_3",
+    "meaningJa": "かね、ボール、のはら"
+  },
+  {
+    "id": "decod_7_1",
+    "lessonId": "phonics_7",
+    "text": "Kiến chăm, yến bay.",
+    "tokens": [
+      {
+        "label": "Kiến",
+        "key": "word_kiến",
+        "part": "kiến"
+      },
+      {
+        "label": "chăm",
+        "key": "syl_chăm",
+        "part": "chăm"
+      },
+      {
+        "label": "yến",
+        "key": "word_yến",
+        "part": "yến"
+      },
+      {
+        "label": "bay",
+        "key": "syl_bay",
+        "part": "bay"
+      }
+    ],
+    "sentenceAudioKey": "decod_7_1",
+    "meaningJa": "ありと つばめ"
+  },
+  {
+    "id": "decod_7_2",
+    "lessonId": "phonics_7",
+    "text": "Thiệp hồng, tiệc tết.",
+    "tokens": [
+      {
+        "label": "Thiệp",
+        "key": "word_thiệp",
+        "part": "thiệp"
+      },
+      {
+        "label": "hồng",
+        "key": "word_hồng",
+        "part": "hồng"
+      },
+      {
+        "label": "tiệc",
+        "key": "word_tiệc",
+        "part": "tiệc"
+      },
+      {
+        "label": "tết",
+        "key": "word_tết",
+        "part": "tết"
+      }
+    ],
+    "sentenceAudioKey": "decod_7_2",
+    "meaningJa": "ねんがじょうと おしょうがつ"
+  },
+  {
+    "id": "decod_7_3",
+    "lessonId": "phonics_7",
+    "text": "Biển xanh, thuyền, diều.",
+    "tokens": [
+      {
+        "label": "Biển",
+        "key": "word_biển",
+        "part": "biển"
+      },
+      {
+        "label": "xanh",
+        "key": "word_xanh",
+        "part": "xanh"
+      },
+      {
+        "label": "thuyền",
+        "key": "word_thuyền",
+        "part": "thuyền"
+      },
+      {
+        "label": "diều",
+        "key": "word_diều",
+        "part": "diều"
+      }
+    ],
+    "sentenceAudioKey": "decod_7_3",
+    "meaningJa": "あおい うみ、ふね、たこ"
+  },
+  {
+    "id": "decod_8_1",
+    "lessonId": "phonics_8",
+    "text": "Bố mẹ yêu thương.",
+    "tokens": [
+      {
+        "label": "Bố",
+        "key": "word_bố",
+        "part": "bố"
+      },
+      {
+        "label": "mẹ",
+        "key": "word_mẹ",
+        "part": "mẹ"
+      },
+      {
+        "label": "yêu",
+        "key": "syl_yêu",
+        "part": "yêu"
+      },
+      {
+        "label": "thương",
+        "key": "syl_thương",
+        "part": "thương"
+      }
+    ],
+    "sentenceAudioKey": "decod_8_1",
+    "meaningJa": "おとうさん おかあさん だいすき"
+  },
+  {
+    "id": "decod_8_2",
+    "lessonId": "phonics_8",
+    "text": "Chuồn chuồn, bươm bướm.",
+    "tokens": [
+      {
+        "label": "Chuồn",
+        "key": "syl_chuồn",
+        "part": "chuồn"
+      },
+      {
+        "label": "chuồn",
+        "key": "syl_chuồn",
+        "part": "chuồn"
+      },
+      {
+        "label": "bươm",
+        "key": "syl_bươm",
+        "part": "bươm"
+      },
+      {
+        "label": "bướm",
+        "key": "word_bướm",
+        "part": "bướm"
+      }
+    ],
+    "sentenceAudioKey": "decod_8_2",
+    "meaningJa": "とんぼと ちょうちょ"
+  },
+  {
+    "id": "decod_8_3",
+    "lessonId": "phonics_8",
+    "text": "Miệng cười, uống sữa.",
+    "tokens": [
+      {
+        "label": "Miệng",
+        "key": "word_miệng",
+        "part": "miệng"
+      },
+      {
+        "label": "cười",
+        "key": "word_cười",
+        "part": "cười"
+      },
+      {
+        "label": "uống",
+        "key": "word_uống",
+        "part": "uống"
+      },
+      {
+        "label": "sữa",
+        "key": "word_sữa",
+        "part": "sữa"
+      }
+    ],
+    "sentenceAudioKey": "decod_8_3",
+    "meaningJa": "えがおで ぎゅうにゅうを のみます"
+  },
+  {
+    "id": "decod_9_1",
+    "lessonId": "phonics_9",
+    "text": "Hoa sen, hoa hồng.",
+    "tokens": [
+      {
+        "label": "Hoa",
+        "key": "word_hoa",
+        "part": "hoa"
+      },
+      {
+        "label": "sen",
+        "key": "syl_sen",
+        "part": "sen"
+      },
+      {
+        "label": "hoa",
+        "key": "word_hoa",
+        "part": "hoa"
+      },
+      {
+        "label": "hồng",
+        "key": "word_hồng",
+        "part": "hồng"
+      }
+    ],
+    "sentenceAudioKey": "decod_9_1",
+    "meaningJa": "はすのはなと ばら"
+  },
+  {
+    "id": "decod_9_2",
+    "lessonId": "phonics_9",
+    "text": "Tóc xoăn, áo dài.",
+    "tokens": [
+      {
+        "label": "Tóc",
+        "key": "word_tóc",
+        "part": "tóc"
+      },
+      {
+        "label": "xoăn",
+        "key": "word_xoăn",
+        "part": "xoăn"
+      },
+      {
+        "label": "áo",
+        "key": "syl_áo",
+        "part": "áo"
+      },
+      {
+        "label": "dài",
+        "key": "syl_dài",
+        "part": "dài"
+      }
+    ],
+    "sentenceAudioKey": "decod_9_2",
+    "meaningJa": "くるくる かみと アオザイ"
+  },
+  {
+    "id": "decod_9_3",
+    "lessonId": "phonics_9",
+    "text": "Khoai vàng, hoa huệ.",
+    "tokens": [
+      {
+        "label": "Khoai",
+        "key": "word_khoai",
+        "part": "khoai"
+      },
+      {
+        "label": "vàng",
+        "key": "word_vàng",
+        "part": "vàng"
+      },
+      {
+        "label": "hoa",
+        "key": "word_hoa",
+        "part": "hoa"
+      },
+      {
+        "label": "huệ",
+        "key": "word_huệ",
+        "part": "huệ"
+      }
+    ],
+    "sentenceAudioKey": "decod_9_3",
+    "meaningJa": "さつまいもと ゆり"
+  },
+  {
+    "id": "decod_10_1",
+    "lessonId": "phonics_10",
+    "text": "Xuân hồng, hoa huệ.",
+    "tokens": [
+      {
+        "label": "Xuân",
+        "key": "word_xuân",
+        "part": "xuân"
+      },
+      {
+        "label": "hồng",
+        "key": "word_hồng",
+        "part": "hồng"
+      },
+      {
+        "label": "hoa",
+        "key": "word_hoa",
+        "part": "hoa"
+      },
+      {
+        "label": "huệ",
+        "key": "word_huệ",
+        "part": "huệ"
+      }
+    ],
+    "sentenceAudioKey": "decod_10_1",
+    "meaningJa": "はると ゆりのはな"
+  },
+  {
+    "id": "decod_10_2",
+    "lessonId": "phonics_10",
+    "text": "Trăng khuya, tuyết xanh.",
+    "tokens": [
+      {
+        "label": "Trăng",
+        "key": "word_trăng",
+        "part": "trăng"
+      },
+      {
+        "label": "khuya",
+        "key": "word_khuya",
+        "part": "khuya"
+      },
+      {
+        "label": "tuyết",
+        "key": "word_tuyết",
+        "part": "tuyết"
+      },
+      {
+        "label": "xanh",
+        "key": "word_xanh",
+        "part": "xanh"
+      }
+    ],
+    "sentenceAudioKey": "decod_10_2",
+    "meaningJa": "よるの つきと ゆき"
+  },
+  {
+    "id": "decod_10_3",
+    "lessonId": "phonics_10",
+    "text": "Bé lễ phép, thật thà.",
+    "tokens": [
+      {
+        "label": "Bé",
+        "key": "word_bé",
+        "part": "bé"
+      },
+      {
+        "label": "lễ",
+        "key": "syl_lễ",
+        "part": "lễ"
+      },
+      {
+        "label": "phép",
+        "key": "syl_phép",
+        "part": "phép"
+      },
+      {
+        "label": "thật",
+        "key": "syl_thật",
+        "part": "thật"
+      },
+      {
+        "label": "thà",
+        "key": "syl_thà",
+        "part": "thà"
+      }
+    ],
+    "sentenceAudioKey": "decod_10_3",
+    "meaningJa": "れいぎただしく しょうじき"
+  },
+  {
+    "id": "decod_11_1",
+    "lessonId": "phonics_11",
+    "text": "Xe cứu hỏa đỏ.",
+    "tokens": [
+      {
+        "label": "Xe",
+        "key": "word_xe",
+        "part": "xe"
+      },
+      {
+        "label": "cứu",
+        "key": "syl_cứu",
+        "part": "cứu"
+      },
+      {
+        "label": "hỏa",
+        "key": "syl_hỏa",
+        "part": "hỏa"
+      },
+      {
+        "label": "đỏ",
+        "key": "word_đỏ",
+        "part": "đỏ"
+      }
+    ],
+    "sentenceAudioKey": "decod_11_1",
+    "meaningJa": "あかい しょうぼうしゃ"
+  },
+  {
+    "id": "decod_11_2",
+    "lessonId": "phonics_11",
+    "text": "Tre xanh, sáo hót.",
+    "tokens": [
+      {
+        "label": "Tre",
+        "key": "word_tre",
+        "part": "tre"
+      },
+      {
+        "label": "xanh",
+        "key": "word_xanh",
+        "part": "xanh"
+      },
+      {
+        "label": "sáo",
+        "key": "word_sáo",
+        "part": "sáo"
+      },
+      {
+        "label": "hót",
+        "key": "word_hót",
+        "part": "hót"
+      }
+    ],
+    "sentenceAudioKey": "decod_11_2",
+    "meaningJa": "あおい たけと とりの こえ"
+  },
+  {
+    "id": "decod_11_3",
+    "lessonId": "phonics_11",
+    "text": "Nai con, mèo ngủ.",
+    "tokens": [
+      {
+        "label": "Nai",
+        "key": "word_nai",
+        "part": "nai"
+      },
+      {
+        "label": "con",
+        "key": "syl_con",
+        "part": "con"
+      },
+      {
+        "label": "mèo",
+        "key": "word_mèo",
+        "part": "mèo"
+      },
+      {
+        "label": "ngủ",
+        "key": "word_ngủ",
+        "part": "ngủ"
+      }
+    ],
+    "sentenceAudioKey": "decod_11_3",
+    "meaningJa": "こじかと ねむる ねこ"
+  },
+  {
+    "id": "decod_12_1",
+    "lessonId": "phonics_12",
+    "text": "Cô giáo, bảng đen.",
+    "tokens": [
+      {
+        "label": "Cô",
+        "key": "word_cô",
+        "part": "cô"
+      },
+      {
+        "label": "giáo",
+        "key": "syl_giáo",
+        "part": "giáo"
+      },
+      {
+        "label": "bảng",
+        "key": "syl_bảng",
+        "part": "bảng"
+      },
+      {
+        "label": "đen",
+        "key": "syl_đen",
+        "part": "đen"
+      }
+    ],
+    "sentenceAudioKey": "decod_12_1",
+    "meaningJa": "せんせいと こくばん"
+  },
+  {
+    "id": "decod_12_2",
+    "lessonId": "phonics_12",
+    "text": "Ghế gỗ, thước kẻ.",
+    "tokens": [
+      {
+        "label": "Ghế",
+        "key": "word_ghế",
+        "part": "ghế"
+      },
+      {
+        "label": "gỗ",
+        "key": "word_gỗ",
+        "part": "gỗ"
+      },
+      {
+        "label": "thước",
+        "key": "syl_thước",
+        "part": "thước"
+      },
+      {
+        "label": "kẻ",
+        "key": "syl_kẻ",
+        "part": "kẻ"
+      }
+    ],
+    "sentenceAudioKey": "decod_12_2",
+    "meaningJa": "きの いすと じょうぎ"
+  },
+  {
+    "id": "decod_12_3",
+    "lessonId": "phonics_12",
+    "text": "Nghé, ngựa chạy nhanh.",
+    "tokens": [
+      {
+        "label": "Nghé",
+        "key": "word_nghé",
+        "part": "nghé"
+      },
+      {
+        "label": "ngựa",
+        "key": "word_ngựa",
+        "part": "ngựa"
+      },
+      {
+        "label": "chạy",
+        "key": "word_chạy",
+        "part": "chạy"
+      },
+      {
+        "label": "nhanh",
+        "key": "syl_nhanh",
+        "part": "nhanh"
+      }
+    ],
+    "sentenceAudioKey": "decod_12_3",
+    "meaningJa": "こうしと はやい うま"
+  }
+];
+
+// LUYỆN TAI THANH ĐIỆU & CẶP TỐI THIỂU VIỆT - NHẬT
+const MINIMAL_PAIR_DRILLS = [
+  {
+    "id": "mp_eo",
+    "title": "Nhóm vần eo / èo / éo / ẹo",
+    "options": [
+      {
+        "label": "eo",
+        "audioKey": "syl_eo"
+      },
+      {
+        "label": "èo",
+        "audioKey": "syl_èo"
+      },
+      {
+        "label": "éo",
+        "audioKey": "syl_éo"
+      },
+      {
+        "label": "ẹo",
+        "audioKey": "syl_ẹo"
+      }
+    ]
+  },
+  {
+    "id": "mp_hoa",
+    "title": "Nhóm thanh hoa / hóa / hỏa",
+    "options": [
+      {
+        "label": "hoa",
+        "audioKey": "syl_hoa"
+      },
+      {
+        "label": "hóa",
+        "audioKey": "syl_hóa"
+      },
+      {
+        "label": "hỏa",
+        "audioKey": "syl_hỏa"
+      }
+    ]
+  },
+  {
+    "id": "mp_ao",
+    "title": "Nhóm vần ao / ào / áo",
+    "options": [
+      {
+        "label": "ao",
+        "audioKey": "syl_ao"
+      },
+      {
+        "label": "ào",
+        "audioKey": "syl_ào"
+      },
+      {
+        "label": "áo",
+        "audioKey": "syl_áo"
+      }
+    ]
+  },
+  {
+    "id": "mp_oe",
+    "title": "Nhóm âm đệm oe / òe / ỏe",
+    "options": [
+      {
+        "label": "oe",
+        "audioKey": "syl_oe"
+      },
+      {
+        "label": "òe",
+        "audioKey": "syl_òe"
+      },
+      {
+        "label": "ỏe",
+        "audioKey": "syl_ỏe"
+      }
+    ]
+  },
+  {
+    "id": "mp_ay",
+    "title": "Nhóm vần ay / ạy / ảy",
+    "options": [
+      {
+        "label": "ay",
+        "audioKey": "syl_ay"
+      },
+      {
+        "label": "ạy",
+        "audioKey": "syl_ạy"
+      },
+      {
+        "label": "ảy",
+        "audioKey": "syl_ảy"
+      }
+    ]
+  },
+  {
+    "id": "mp_ien",
+    "title": "Nhóm vần iên / iến / iển",
+    "options": [
+      {
+        "label": "iên",
+        "audioKey": "syl_iên"
+      },
+      {
+        "label": "iến",
+        "audioKey": "syl_iến"
+      },
+      {
+        "label": "iển",
+        "audioKey": "syl_iển"
+      }
+    ]
+  },
+  {
+    "id": "mp_uoi",
+    "title": "Nhóm vần ươi / ười / ưởi",
+    "options": [
+      {
+        "label": "ươi",
+        "audioKey": "syl_ươi"
+      },
+      {
+        "label": "ười",
+        "audioKey": "syl_ười"
+      },
+      {
+        "label": "ưởi",
+        "audioKey": "syl_ưởi"
+      }
+    ]
+  },
+  {
+    "id": "mp_ung",
+    "title": "Nhóm vần ưng / ứng / ừng",
+    "options": [
+      {
+        "label": "ưng",
+        "audioKey": "syl_ưng"
+      },
+      {
+        "label": "ứng",
+        "audioKey": "syl_ứng"
+      },
+      {
+        "label": "ừng",
+        "audioKey": "syl_ừng"
+      }
+    ]
+  },
+  {
+    "id": "mp_sx",
+    "title": "Âm dễ nhầm với người Nhật: S / X",
+    "options": [
+      {
+        "label": "s",
+        "audioKey": "oq_letter_s"
+      },
+      {
+        "label": "x",
+        "audioKey": "oq_letter_x"
+      }
+    ]
+  },
+  {
+    "id": "mp_trch",
+    "title": "Âm dễ nhầm: TR / CH",
+    "options": [
+      {
+        "label": "tr",
+        "audioKey": "oq_letter_tr"
+      },
+      {
+        "label": "ch",
+        "audioKey": "oq_letter_ch"
+      }
+    ]
+  },
+  {
+    "id": "mp_ln",
+    "title": "Âm dễ nhầm: L / N",
+    "options": [
+      {
+        "label": "l",
+        "audioKey": "oq_letter_l"
+      },
+      {
+        "label": "n",
+        "audioKey": "oq_letter_n"
+      }
+    ]
+  },
+  {
+    "id": "mp_tones",
+    "title": "6 Thanh điệu Tiếng Việt",
+    "options": [
+      {
+        "label": "ngang",
+        "audioKey": "tone_ngang"
+      },
+      {
+        "label": "sắc",
+        "audioKey": "tone_sac"
+      },
+      {
+        "label": "huyền",
+        "audioKey": "tone_huyen"
+      },
+      {
+        "label": "hỏi",
+        "audioKey": "tone_hoi"
+      },
+      {
+        "label": "ngã",
+        "audioKey": "tone_nga"
+      },
+      {
+        "label": "nặng",
+        "audioKey": "tone_nang"
+      }
+    ]
+  }
+];

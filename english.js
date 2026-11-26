@@ -2,9 +2,9 @@
 // BỘ MÔN TIẾNG ANH CHO BÉ BẢO LONG (6 TUỔI)
 // Gồm 4 phần:
 // 1. 26 Chữ cái ABC & Phonics (A - Z)
-// 2. 4 Chủ đề Từ vựng & Giao tiếp hàng ngày (32 từ/câu)
+// 2. 8 Chủ đề Từ vựng & Giao tiếp hàng ngày (64 từ/câu)
 // 3. Game Nghe Tiếng Anh Chọn Hình (10 câu)
-// 4. Game Ghép Chữ Tiếng Anh Vui (10 từ)
+// 4. Game Ghép Chữ Tiếng Anh Vui (pool 16 từ, 10 từ/lượt)
 // Đồng bộ giọng đọc Anh-Mỹ Nữ (Jenny) / Nam (Guy) & Kho Sao Bảo Long!
 // ========================================================
 
@@ -228,6 +228,11 @@ function stopEnAutoPlay() {
 function renderEnglishHub() {
   const el = document.getElementById('enSessionStars');
   if (el) el.innerText = `⭐ English Stars: ${enSessionScore}`;
+  const descEl = document.getElementById('enBannerDesc');
+  if (descEl) {
+    const totalWords = EN_VOCAB_TOPICS.reduce((sum, t) => sum + t.words.length, 0);
+    descEl.innerText = `Học bảng ${EN_ALPHABET_DATA.length} chữ cái A–Z, ${EN_VOCAB_TOPICS.length} chủ đề (${totalWords} từ vựng & câu giao tiếp quen thuộc), chơi Nghe chọn hình và Ghép từ tiếng Anh cùng giọng đọc chuẩn Jenny & Guy!`;
+  }
   switchEnglishSubTab(currentEnTab);
 }
 
@@ -332,7 +337,7 @@ function renderEnAbcTab() {
 }
 
 // ========================================================
-// TAB 2: 4 CHỦ ĐỀ TỪ VỰNG & GIAO TIẾP TIẾNG ANH
+// TAB 2: 8 CHỦ ĐỀ TỪ VỰNG & GIAO TIẾP TIẾNG ANH
 // ========================================================
 function renderEnVocabTab() {
   const track = document.getElementById('enTopicsTrack');
@@ -509,6 +514,7 @@ function loadEnQuizQuestion() {
         const pts = enQuizStreak >= 3 ? 15 : 10;
         enQuizScore += pts;
         addEnScore(pts);
+        window.recordAnswer?.(q.target.id, true, { label: `${q.target.en} (${q.target.vi})`, mode: 'english', audioKey: q.target.audioKey });
         document.getElementById('enQuizStreakBadge').innerText = `🔥 Streak x${enQuizStreak}`;
         document.getElementById('enQuizScoreText').innerText = `⭐ ${enQuizScore} điểm`;
         window.soundMgr.playCorrect();
@@ -523,6 +529,7 @@ function loadEnQuizQuestion() {
         );
       } else {
         card.classList.add('wrong');
+        window.recordAnswer?.(q.target.id, false, { label: `${q.target.en} (${q.target.vi})`, mode: 'english', audioKey: q.target.audioKey });
         enQuizStreak = 0;
         document.getElementById('enQuizStreakBadge').innerText = `🔥 Streak x0`;
         window.soundMgr.playWrong();

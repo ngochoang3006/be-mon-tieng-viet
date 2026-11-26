@@ -113,7 +113,7 @@ function renderArcadeHeroPicker() {
   const chosenId = arcadeSelectedHero[currentArcadeMode];
 
   wrap.innerHTML = '';
-  cfg.heroes.slice(0, 3).forEach(hero => {
+  cfg.heroes.forEach(hero => {
     const btn = document.createElement('button');
     btn.className = `arcade-hero-chip ${hero.id === chosenId ? 'active' : ''}`;
     btn.style.setProperty('--hero-col', hero.color);
@@ -410,7 +410,8 @@ function finishArcadeRace() {
   window.soundMgr?.playVictory();
   const winKey = rank === 1 ? 'arcade_rank_1' : (rank === 2 ? 'arcade_rank_2' : 'arcade_rank_3');
   window.soundMgr?.playAudioFile(winKey, null, medals[rank]);
-  if (typeof awardStars === 'function') awardStars(reward, `Đua ${ARCADE_MODES[currentArcadeMode].title} Hạng ${rank}!`);
+  window.markDailyStep?.('play');
+  if (typeof awardStars === 'function') awardStars(reward, `Đua ${ARCADE_MODES[currentArcadeMode].title} Hạng ${rank}!`, true, 'arcade');
 }
 
 function drawArcadeFrame() {
