@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc &amp; Đánh Vần</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦖</text></svg>">
-  <link rel="stylesheet" href="style.css?v=20261125v4">
+  <link rel="stylesheet" href="style.css?v=20261126v2">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -124,6 +124,10 @@
           <button class="mode-pill mode-pill-game" data-mode="game" title="Khu Trò Chơi">
             <span class="mode-ico">🎮</span>
             <span class="mode-label">Khu Trò Chơi</span>
+          </button>
+          <button class="mode-pill mode-pill-arcade" data-mode="arcade" title="Đua Tốc Độ 4 Nút">
+            <span class="mode-ico">🏎️</span>
+            <span class="mode-label">Đua Xe &amp; Rồng</span>
           </button>
         </div>
       </div>
@@ -1421,6 +1425,71 @@
       </div>
     </section>
 
+    <!-- ========================================================
+         KHU ĐUA TỐC ĐỘ (SIÊU XE • KHỦNG LONG CHẠY • RỒNG BAY)
+         ======================================================== -->
+    <section id="arcadeContainer" style="display: none;">
+      <div class="arcade-banner-box">
+        <div class="dino-badge" style="background: #dc2626; color: #fff;">🏁 ĐƯỜNG ĐUA TỐC ĐỘ 4 NÚT • BẢO LONG SIÊU ĐẲNG</div>
+        <h2 class="dino-banner-title" style="color: #991b1b;">Đua Xe Lamborghini, Khủng Long &amp; Rồng Bay!</h2>
+        <p class="dino-banner-desc" id="arcadeModeInstruction">Chọn Lamborghini, Ferrari hoặc Porsche, dùng 4 nút mũi tên vượt qua các đối thủ về đích!</p>
+      </div>
+
+      <div class="lang-subnav">
+        <button class="game-tab-btn active" id="arcadeTabCar" onclick="switchArcadeMode('car')">
+          <span>🏎️</span><span>Đua Siêu Xe</span>
+        </button>
+        <button class="game-tab-btn" id="arcadeTabDino" onclick="switchArcadeMode('dino')">
+          <span>🦖</span><span>Khủng Long Chạy</span>
+        </button>
+        <button class="game-tab-btn" id="arcadeTabDragon" onclick="switchArcadeMode('dragon')">
+          <span>🐉</span><span>Rồng Bay Vượt Mây</span>
+        </button>
+      </div>
+
+      <div class="arcade-top-bar">
+        <div class="arcade-hero-picker" id="arcadeHeroPicker"></div>
+        <div class="arcade-hud-row">
+          <span class="arcade-hud-pill" id="arcadeStatusRank">🏆 Hạng 1 / 4</span>
+          <span class="arcade-hud-pill" id="arcadeStatusDist">🏁 Đường đua: 0%</span>
+          <span class="arcade-hud-pill" id="arcadeStatusStars">⭐ Nhặt: 0</span>
+        </div>
+      </div>
+
+      <div class="arcade-stage-layout">
+        <div class="arcade-canvas-wrap">
+          <canvas id="arcadeCanvas" width="760" height="420"></canvas>
+          <div class="arcade-result-overlay" id="arcadeResultBanner" style="display: none;">
+            <div class="victory-emojis">🏆🏎️🦖🐉</div>
+            <h3 id="arcadeResultTitle" style="font-size: 24px; font-weight: 900; color: #991b1b; margin: 4px 0;">🏆 VỀ NHẤT SIÊU TỐC!</h3>
+            <p id="arcadeResultDesc" style="font-size: 14px; font-weight: 800; color: #334155; margin: 4px 0 12px 0;">Tuyệt vời Bảo Long ơi!</p>
+            <button class="challenge-btn" id="btnArcadeReplay">🔄 Đua ván mới ngay!</button>
+          </div>
+        </div>
+
+        <div class="arcade-controls-panel">
+          <div class="arcade-action-btns">
+            <button class="challenge-btn" id="btnArcadeStart" style="padding: 10px 20px;"><span>🏁</span> BẮT ĐẦU ĐUA!</button>
+            <button class="btn-hear-hint" id="btnArcadeSoundTip"><span>🔊</span> Nghe hướng dẫn</button>
+          </div>
+
+          <div class="dpad-wrapper" aria-label="Bảng điều khiển 4 nút">
+            <div class="dpad-row">
+              <button type="button" class="dpad-btn" id="btnPadUp" title="Lên (Mũi tên lên)">⬆️<span>Lên</span></button>
+            </div>
+            <div class="dpad-row dpad-mid">
+              <button type="button" class="dpad-btn" id="btnPadLeft" title="Trái (Mũi tên trái)">⬅️<span>Trái</span></button>
+              <button type="button" class="dpad-btn" id="btnPadDown" title="Xuống (Mũi tên xuống)">⬇️<span>Xuống</span></button>
+              <button type="button" class="dpad-btn" id="btnPadRight" title="Phải (Mũi tên phải)">➡️<span>Phải</span></button>
+            </div>
+          </div>
+          <p style="font-size: 12px; font-weight: 800; color: #64748b; text-align: center; margin: 4px 0 0 0;">
+            💡 Chạm giữ nút hoặc dùng phím mũi tên ⬆️⬇️⬅️➡️ để điều khiển!
+          </p>
+        </div>
+      </div>
+    </section>
+
     <!-- Khu Vực Khu Trò Chơi (Game Hub - 7 Trò Chơi Cuốn Hút) -->
     <section id="gameViewContainer" style="display: none;">
       <div class="game-hub-nav">
@@ -1809,8 +1878,9 @@
   <script src="english.js?v=20261125v4"></script>
   <script src="japanese.js?v=20261125v4"></script>
   <script src="science_life.js?v=20261125v4"></script>
-  <script src="arts_pe.js?v=20261125v4"></script>
-  <script src="dragons.js?v=20261125v4"></script>
-  <script src="app.js?v=20261125v4"></script>
+  <script src="arts_pe.js?v=20261126v1"></script>
+  <script src="arcade.js?v=20261126v1"></script>
+  <script src="dragons.js?v=20261126v1"></script>
+  <script src="app.js?v=20261126v1"></script>
 </body>
 </html>

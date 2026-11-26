@@ -470,6 +470,7 @@ let currentVnStoryIdx = 0;
 function switchMode(mode) {
   stopAutoPlay();
   window.soundMgr.stopAll();
+  if (typeof stopArcadeGameLoop === 'function') stopArcadeGameLoop();
   window.appNavEpoch++;
   closeMobileSidebar();
   currentMode = mode;
@@ -493,7 +494,8 @@ function switchMode(mode) {
     arts_pe: '🎨 Chế độ: Âm nhạc (Đàn Pianica), Mỹ thuật & Thể dục',
     english: '🇬🇧 Chế độ: Tiếng Anh Lớp 1 (ABC & 8 Chủ đề)',
     japanese: '🇯🇵 Chế độ: Tiếng Nhật 小1 (Hiragana, Katakana, 80 Kanji & Truyện)',
-    game: '🎮 Khu Trò Chơi (7 game cho Bảo Long!)'
+    game: '🎮 Khu Trò Chơi (7 game cho Bảo Long!)',
+    arcade: '🏎️ Khu Đua Tốc Độ: Xe Lamborghini, Khủng Long & Rồng Bay!'
   };
   if (msgs[mode]) showToast(msgs[mode]);
 
@@ -517,6 +519,7 @@ function renderCurrentView() {
   const artsContainer = document.getElementById('artsContainer');
   const englishContainer = document.getElementById('englishContainer');
   const japaneseContainer = document.getElementById('japaneseContainer');
+  const arcadeContainer = document.getElementById('arcadeContainer');
   const gameViewContainer = document.getElementById('gameViewContainer');
 
   cardsContainer.style.display = 'none';
@@ -532,6 +535,7 @@ function renderCurrentView() {
   if (artsContainer) artsContainer.style.display = 'none';
   if (englishContainer) englishContainer.style.display = 'none';
   if (japaneseContainer) japaneseContainer.style.display = 'none';
+  if (arcadeContainer) arcadeContainer.style.display = 'none';
   gameViewContainer.style.display = 'none';
   roadmapBox.style.display = 'none';
 
@@ -607,6 +611,11 @@ function renderCurrentView() {
     if (japaneseContainer) {
       japaneseContainer.style.display = 'block';
       if (typeof renderJapaneseHub === 'function') renderJapaneseHub();
+    }
+  } else if (currentMode === 'arcade') {
+    if (arcadeContainer) {
+      arcadeContainer.style.display = 'block';
+      if (typeof renderArcadeHub === 'function') renderArcadeHub();
     }
   } else if (currentMode === 'game') {
     gameViewContainer.style.display = 'block';
@@ -1422,6 +1431,7 @@ function drawLetterGuide(word) {
 function switchSubGame(subgame) {
   stopAutoPlay();
   window.soundMgr.stopAll();
+  if (typeof stopArcadeGameLoop === 'function') stopArcadeGameLoop();
   window.appNavEpoch++;
   currentSubGame = subgame;
 
@@ -1528,6 +1538,7 @@ function buildDynamicPuzzlesForLesson(lesson) {
 function startMiniGame(source = 'default') {
   stopAutoPlay();
   window.soundMgr.stopAll();
+  if (typeof stopArcadeGameLoop === 'function') stopArcadeGameLoop();
   window.appNavEpoch++;
   lastPuzzleSource = source;
   currentMode = 'game';
@@ -1551,6 +1562,7 @@ function startMiniGame(source = 'default') {
   if (document.getElementById('scienceContainer')) document.getElementById('scienceContainer').style.display = 'none';
   if (document.getElementById('artsContainer')) document.getElementById('artsContainer').style.display = 'none';
   if (document.getElementById('vnStoriesContainer')) document.getElementById('vnStoriesContainer').style.display = 'none';
+  if (document.getElementById('arcadeContainer')) document.getElementById('arcadeContainer').style.display = 'none';
   document.getElementById('gameViewContainer').style.display = 'block';
 
   // Đảm bảo bật đúng SubGame Puzzle
