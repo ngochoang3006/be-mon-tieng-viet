@@ -84,7 +84,7 @@ class SoundManager {
     if (this.autoplayNoticeShown || this.isMuted) return;
     this.autoplayNoticeShown = true;
     if (typeof showToast === 'function') {
-      showToast('🔊 Chạm vào nút Loa để nghe cô đọc trên thiết bị nhé!');
+      showToast(this.gender === 'male' ? '🔊 Chạm vào nút Loa để nghe ba đọc trên thiết bị nhé!' : '🔊 Chạm vào nút Loa để nghe cô đọc trên thiết bị nhé!');
     }
   }
 
@@ -105,8 +105,9 @@ class SoundManager {
   prefetchKeys(keys) {
     if (!Array.isArray(keys) || window.location.protocol === 'file:' || typeof fetch !== 'function') return;
     const g = this.gender;
-    keys.forEach(key => {
-      if (!key) return;
+    keys.forEach(rawKey => {
+      if (!rawKey) return;
+      const key = this.normalizeKey(rawKey);
       const ck = this.getCacheKey(g, key);
       if (this.blobCache.has(ck) || this.inflightFetches.has(ck)) return;
       const url = `audio/${g}/${encodeURIComponent(key)}.mp3`;
@@ -131,17 +132,24 @@ class SoundManager {
     });
   }
 
+  normalizeKey(key) {
+    if (key === 'alpha_â') return 'alpha_aa';
+    if (key === 'word_â') return 'word_aa';
+    if (key === 'word_sách') return 'word_sach';
+    return key;
+  }
+
   resolveAudioUrl(key) {
-    const customUrl = window.customVoiceStore?.getSyncUrl?.(key);
+    const norm = this.normalizeKey(key);
+    const customUrl = window.customVoiceStore?.getSyncUrl?.(norm) || window.customVoiceStore?.getSyncUrl?.(key);
     if (customUrl) {
       return customUrl;
     }
-    const ck = this.getCacheKey(this.gender, key);
+    const ck = this.getCacheKey(this.gender, norm);
     if (this.blobCache.has(ck)) {
       return this.blobCache.get(ck);
     }
-    this.prefetchKeys([key]);
-    return `audio/${this.gender}/${encodeURIComponent(key)}.mp3`;
+    return `audio/${this.gender}/${encodeURIComponent(norm)}.mp3`;
   }
 
   loadPrefs() {

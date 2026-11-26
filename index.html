@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc &amp; Đánh Vần</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦖</text></svg>">
-  <link rel="stylesheet" href="style.css?v=20261126v5">
+  <link rel="stylesheet" href="style.css?v=20261126v6">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,15 +20,15 @@
   <header class="top-nav">
     <div class="top-nav-inner">
       <div class="nav-brand-group">
-        <button class="sidebar-toggle-btn" id="btnToggleSidebar" title="Thu gọn hoặc mở rộng thanh Môn học bên trái">
+        <button type="button" class="sidebar-toggle-btn" id="btnToggleSidebar" title="Thu gọn hoặc mở rộng thanh Môn học bên trái">
           <span>☰</span>
           <span class="toggle-menu-label">Môn học</span>
         </button>
-        <button class="home-btn" id="btnHome" title="Về trang học từ mới">
+        <button type="button" class="home-btn" id="btnHome" title="Về trang học từ mới">
           <span>🏠</span>
           <span class="hide-xs">Trang chủ</span>
         </button>
-        <button class="long-avatar-pill" id="btnOpenProfile" title="Mở Kho Báu Sao &amp; Sticker của Bảo Long">
+        <button type="button" class="long-avatar-pill" id="btnOpenProfile" title="Mở Kho Báu Sao &amp; Sticker của Bảo Long">
           <span id="profileAvatarEmoji">🦖</span>
           <span>Bảo Long</span>
           <span class="nav-star-chip" id="navTotalStars">⭐ 0</span>
@@ -36,15 +36,15 @@
       </div>
 
       <div class="nav-controls-group">
-        <button class="control-pill" id="btnVoiceGender" title="Nhấn để đổi giữa giọng Cô giáo và giọng Ba">
+        <button type="button" class="control-pill" id="btnVoiceGender" title="Nhấn để đổi giữa giọng Cô giáo và giọng Ba">
           <span>👩</span>
           <span>Nữ (Cô)</span>
         </button>
-        <button class="control-pill" id="btnSpeed" title="Nhấn để đổi tốc độ đọc">
+        <button type="button" class="control-pill" id="btnSpeed" title="Nhấn để đổi tốc độ đọc">
           <span>⚡</span>
           <span>Chuẩn</span>
         </button>
-        <button class="control-pill" id="btnMute" title="Bật / Tắt âm thanh">
+        <button type="button" class="control-pill" id="btnMute" title="Bật / Tắt âm thanh">
           <span>🔊</span>
           <span class="hide-xs">Bật</span>
         </button>
@@ -59,37 +59,37 @@
     <aside class="side-nav" id="sideNav" aria-label="Danh sách môn học của Bảo Long">
       <div class="side-nav-header">
         <span class="side-nav-title">📚 MÔN HỌC</span>
-        <button class="side-collapse-btn" id="btnCollapseSidebar" title="Thu gọn / Mở rộng menu">◀</button>
+        <button type="button" class="side-collapse-btn" id="btnCollapseSidebar" title="Thu gọn / Mở rộng menu">◀</button>
       </div>
 
       <div class="side-nav-groups">
         <div class="side-nav-group">
           <div class="side-group-label">🇻🇳 Lớp 1 Việt Nam</div>
-          <button class="mode-pill" data-mode="alphabet" title="Chữ cái &amp; Chính tả">
+          <button type="button" class="mode-pill" data-mode="alphabet" title="Chữ cái &amp; Chính tả">
             <span class="mode-ico">🔠</span>
             <span class="mode-label">Chữ cái &amp; Chính tả</span>
           </button>
-          <button class="mode-pill active" data-mode="vocab" title="Học từ mới">
+          <button type="button" class="mode-pill active" data-mode="vocab" title="Học từ mới">
             <span class="mode-ico">📖</span>
             <span class="mode-label">Học từ mới (12 Bài)</span>
           </button>
-          <button class="mode-pill" data-mode="phonics" title="Đánh vần &amp; Đọc hiểu">
+          <button type="button" class="mode-pill" data-mode="phonics" title="Đánh vần &amp; Đọc hiểu">
             <span class="mode-ico">🔤</span>
             <span class="mode-label">Đánh vần &amp; Đọc hiểu</span>
           </button>
-          <button class="mode-pill mode-pill-math" data-mode="math" title="Toán Lớp 1">
+          <button type="button" class="mode-pill mode-pill-math" data-mode="math" title="Toán Lớp 1">
             <span class="mode-ico">🧮</span>
             <span class="mode-label">Toán Lớp 1</span>
           </button>
-          <button class="mode-pill mode-pill-science" data-mode="science_life" title="Tự nhiên &amp; Đời sống">
+          <button type="button" class="mode-pill mode-pill-science" data-mode="science_life" title="Tự nhiên &amp; Đời sống">
             <span class="mode-ico">🌿</span>
             <span class="mode-label">Tự nhiên &amp; Đời sống</span>
           </button>
-          <button class="mode-pill mode-pill-ethics" data-mode="ethics" title="Đạo Đức Lớp 1">
+          <button type="button" class="mode-pill mode-pill-ethics" data-mode="ethics" title="Đạo Đức Lớp 1">
             <span class="mode-ico">🌱</span>
             <span class="mode-label">Đạo Đức Lớp 1</span>
           </button>
-          <button class="mode-pill mode-pill-arts" data-mode="arts_pe" title="Nhạc, Họa &amp; Thể dục">
+          <button type="button" class="mode-pill mode-pill-arts" data-mode="arts_pe" title="Nhạc, Họa &amp; Thể dục">
             <span class="mode-ico">🎨</span>
             <span class="mode-label">Nhạc, Họa &amp; Thể dục</span>
           </button>
@@ -97,11 +97,11 @@
 
         <div class="side-nav-group">
           <div class="side-group-label">🇯🇵 Song Ngữ Nhật – Anh</div>
-          <button class="mode-pill mode-pill-japanese" data-mode="japanese" title="Tiếng Nhật 小1 (80 Kanji)">
+          <button type="button" class="mode-pill mode-pill-japanese" data-mode="japanese" title="Tiếng Nhật 小1 (80 Kanji)">
             <span class="mode-ico">🇯🇵</span>
             <span class="mode-label">Tiếng Nhật 小1</span>
           </button>
-          <button class="mode-pill mode-pill-english" data-mode="english" title="Tiếng Anh (8 Chủ đề)">
+          <button type="button" class="mode-pill mode-pill-english" data-mode="english" title="Tiếng Anh (8 Chủ đề)">
             <span class="mode-ico">🇬🇧</span>
             <span class="mode-label">Tiếng Anh</span>
           </button>
@@ -109,23 +109,23 @@
 
         <div class="side-nav-group">
           <div class="side-group-label">🌍 Khám Phá &amp; Chơi</div>
-          <button class="mode-pill mode-pill-dino" data-mode="dino" title="Khủng Long">
+          <button type="button" class="mode-pill mode-pill-dino" data-mode="dino" title="Khủng Long">
             <span class="mode-ico">🦖</span>
             <span class="mode-label">Khủng Long</span>
           </button>
-          <button class="mode-pill mode-pill-dragon" data-mode="dragons" title="Thế Giới Rồng">
+          <button type="button" class="mode-pill mode-pill-dragon" data-mode="dragons" title="Thế Giới Rồng">
             <span class="mode-ico">🐉</span>
             <span class="mode-label">Thế Giới Rồng</span>
           </button>
-          <button class="mode-pill mode-pill-veh" data-mode="vehicles" title="Xe Cộ">
+          <button type="button" class="mode-pill mode-pill-veh" data-mode="vehicles" title="Xe Cộ">
             <span class="mode-ico">🚗</span>
             <span class="mode-label">Xe Cộ</span>
           </button>
-          <button class="mode-pill mode-pill-game" data-mode="game" title="Khu Trò Chơi">
+          <button type="button" class="mode-pill mode-pill-game" data-mode="game" title="Khu Trò Chơi">
             <span class="mode-ico">🎮</span>
             <span class="mode-label">Khu Trò Chơi</span>
           </button>
-          <button class="mode-pill mode-pill-arcade" data-mode="arcade" title="Đua Tốc Độ 4 Nút">
+          <button type="button" class="mode-pill mode-pill-arcade" data-mode="arcade" title="Đua Tốc Độ 4 Nút">
             <span class="mode-ico">🏎️</span>
             <span class="mode-label">Đua Xe &amp; Rồng</span>
           </button>
@@ -163,10 +163,10 @@
           <span class="roadmap-current-title" id="roadmapTitle">Bài 1: Từ 1 tiếng, 2 chữ cái – Rất dễ</span>
         </div>
         <div class="roadmap-tools">
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayLesson" title="Tự động đọc lần lượt từng từ trong bài">
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayLesson" title="Tự động đọc lần lượt từng từ trong bài">
             🎧 Nghe cả bài
           </button>
-          <button class="tool-chip" id="btnResetLesson" title="Quay về Bài 1">
+          <button type="button" class="tool-chip" id="btnResetLesson" title="Quay về Bài 1">
             🔄 Về Bài 1
           </button>
         </div>
@@ -185,11 +185,11 @@
 
       <!-- Nút Thử thách ghép hình nổi bật ở giữa (Chơi ngay chính bài đang học!) -->
       <div class="challenge-btn-wrapper" style="gap: 10px; flex-wrap: wrap;">
-        <button class="challenge-btn" id="bigChallengeBtn">
+        <button type="button" class="challenge-btn" id="bigChallengeBtn">
           <span>🎯</span>
           <span id="bigChallengeBtnText">Thử thách ghép chữ Bài 1 (10 câu)</span>
         </button>
-        <button class="tool-chip" id="btnToggleVnStories" style="display: none; padding: 10px 16px; font-size: 14px; background: #fff1f2; color: #be123c; border-color: #fda4af;">
+        <button type="button" class="tool-chip" id="btnToggleVnStories" style="display: none; padding: 10px 16px; font-size: 14px; background: #fff1f2; color: #be123c; border-color: #fda4af;">
           <span>📖</span> 6 Bài Đọc Hiểu HK2
         </button>
       </div>
@@ -212,7 +212,7 @@
             </h3>
             <p class="section-sub-desc">Chạm vào chữ cái để nghe phát âm chuẩn, hoặc chạm vào hình minh họa bên dưới chữ để nghe đọc từ ví dụ nhé! Đặc biệt chú ý: <strong>Ă, Â, Đ, Ê, Ô, Ơ, Ư, K (ca), S (uốn lưỡi), X (nhẹ)</strong>.</p>
           </div>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayAlphabet">🎧 Nghe lần lượt</button>
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayAlphabet">🎧 Nghe lần lượt</button>
         </div>
         <div class="alphabet-grid" id="alphabetGrid"></div>
       </div>
@@ -242,9 +242,9 @@
             <h3 class="section-blue-title" style="color: #be123c;">
               <span>✍️</span> 6 Quy Tắc Chính Tả Vàng Lớp 1 (Không bao giờ viết sai!)
             </h3>
-            <p class="section-sub-desc">Chạm từng thẻ quy tắc để nghe cô đọc bí kíp phân biệt <strong>c / k, g / gh, ng / ngh, ch / tr, s / x, l / n</strong> nhé!</p>
+            <p class="section-sub-desc">Chạm từng thẻ quy tắc để nghe cô/ba đọc bí kíp phân biệt <strong>c / k, g / gh, ng / ngh, ch / tr, s / x, l / n</strong> nhé!</p>
           </div>
-          <button class="challenge-btn" id="btnStartOrthoQuiz" style="padding: 9px 18px; font-size: 14px;">
+          <button type="button" class="challenge-btn" id="btnStartOrthoQuiz" style="padding: 9px 18px; font-size: 14px;">
             🎯 Chơi Đố Chính Tả (12 câu)
           </button>
         </div>
@@ -254,11 +254,11 @@
           <div class="game-score-row" style="margin-bottom: 10px;">
             <span class="game-progress-text" id="orthoQuizProgress">Câu 1 / 12</span>
             <span class="game-stars" id="orthoQuizScore">⭐ 0 điểm</span>
-            <button class="tool-chip" id="btnCloseOrthoQuiz">✖️ Đóng bài đố</button>
+            <button type="button" class="tool-chip" id="btnCloseOrthoQuiz">✖️ Đóng bài đố</button>
           </div>
           <div class="quiz-question-box" style="margin-bottom: 12px;">
             <div class="quiz-question-title" id="orthoQuizPrompt">Chọn chữ đúng chính tả nhé!</div>
-            <button class="btn-hear-hint" id="btnHearOrthoQuiz" style="margin: 8px auto 0 auto;">
+            <button type="button" class="btn-hear-hint" id="btnHearOrthoQuiz" style="margin: 8px auto 0 auto;">
               <span>🔊</span> Nghe câu hỏi &amp; 2 đáp án
             </button>
           </div>
@@ -276,19 +276,19 @@
           <h2 class="dino-banner-title">Công Viên Khủng Long Của Bảo Long</h2>
           <p class="dino-banner-desc">Bảo Long chạm vào từng chú khủng long để xem ảnh thật, nghe tiếng gầm Roar, học tên tiếng Việt - Nhật và tập đánh vần siêu ngầu!</p>
           <div class="banner-action-row">
-            <button class="dino-roar-btn" id="btnDinoRoar">
+            <button type="button" class="dino-roar-btn" id="btnDinoRoar">
               <span>🌋</span> Gầm to nào: ROAR!
             </button>
-            <button class="dino-roar-btn" id="btnAutoPlayDinos" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #064e3b;">
+            <button type="button" class="dino-roar-btn" id="btnAutoPlayDinos" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #064e3b;">
               <span>🎧</span> Nghe cả 10 loài
             </button>
-            <button class="dino-roar-btn" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-bottom-color: #0c4a6e;" onclick="switchMode('game'); switchSubGame('dino_memory');">
+            <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-bottom-color: #0c4a6e;" onclick="switchMode('game'); switchSubGame('dino_memory');">
               <span>🃏</span> Lật Thẻ
             </button>
-            <button class="dino-roar-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-bottom-color: #4c1d95;" onclick="switchMode('game'); switchSubGame('dino_quiz');">
+            <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-bottom-color: #4c1d95;" onclick="switchMode('game'); switchSubGame('dino_quiz');">
               <span>🎯</span> Đố Vui
             </button>
-            <button class="dino-roar-btn" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); border-bottom-color: #7c2d12;" onclick="switchMode('game'); switchSubGame('dino_dig');">
+            <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); border-bottom-color: #7c2d12;" onclick="switchMode('game'); switchSubGame('dino_dig');">
               <span>⛏️</span> Khai Quật
             </button>
           </div>
@@ -307,19 +307,19 @@
           <h2 class="dino-banner-title">Vương Quốc Rồng Thần Của Bảo Long</h2>
           <p class="dino-banner-desc">Khám phá 8 loài Rồng kỳ thú (Rồng Lửa, Rồng Nước, Rồng Băng, Rồng Vàng...), chạm vào từng chú rồng để nghe đọc, đánh vần, tập viết và chơi Đố Vui / Lật Thẻ Rồng!</p>
           <div class="banner-action-row">
-            <button class="dino-roar-btn" id="btnDragonRoar">
+            <button type="button" class="dino-roar-btn" id="btnDragonRoar">
               <span>🔥</span> Rồng gầm nào: ROAAAR!
             </button>
-            <button class="dino-roar-btn" id="btnAutoPlayDragons" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #064e3b;">
+            <button type="button" class="dino-roar-btn" id="btnAutoPlayDragons" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #064e3b;">
               <span>🎧</span> Nghe cả 8 loài Rồng
             </button>
-            <button class="dino-roar-btn active" id="btnDragonModeExplore" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); border-bottom-color: #7f1d1d;" onclick="switchDragonSubMode('explore')">
+            <button type="button" class="dino-roar-btn active" id="btnDragonModeExplore" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); border-bottom-color: #7f1d1d;" onclick="switchDragonSubMode('explore')">
               <span>🐉</span> 8 Loài Rồng
             </button>
-            <button class="dino-roar-btn" id="btnDragonModeQuiz" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-bottom-color: #4c1d95;" onclick="switchDragonSubMode('quiz')">
+            <button type="button" class="dino-roar-btn" id="btnDragonModeQuiz" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-bottom-color: #4c1d95;" onclick="switchDragonSubMode('quiz')">
               <span>🎯</span> Đố Vui Rồng
             </button>
-            <button class="dino-roar-btn" id="btnDragonModeMemory" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-bottom-color: #0c4a6e;" onclick="switchDragonSubMode('memory')">
+            <button type="button" class="dino-roar-btn" id="btnDragonModeMemory" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-bottom-color: #0c4a6e;" onclick="switchDragonSubMode('memory')">
               <span>🃏</span> Lật Thẻ Rồng
             </button>
           </div>
@@ -339,7 +339,7 @@
           <div class="quiz-question-box" style="background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); border-color: #fca5a5; border-bottom-color: #dc2626;">
             <div class="quiz-question-title" id="dragonQuizQuestionTitle" style="color: #7f1d1d;">Câu hỏi về loài Rồng</div>
             <div class="quiz-question-ja" id="dragonQuizHintJa" style="color: #b91c1c;">🇯🇵</div>
-            <button class="btn-hear-hint" id="btnHearDragonQuiz" style="margin: 10px auto 0 auto;">
+            <button type="button" class="btn-hear-hint" id="btnHearDragonQuiz" style="margin: 10px auto 0 auto;">
               <span>🔊</span> Nghe câu đố &amp; 4 đáp án
             </button>
           </div>
@@ -350,9 +350,9 @@
           <h2 class="victory-title" style="color: #b91c1c;">HIỆP SĨ RỒNG THIÊNG BẢO LONG!</h2>
           <p class="victory-desc" id="dragonQuizVictoryScore">Bảo Long đã vượt qua tất cả thử thách về 8 loài Rồng!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initDragonQuiz()">🔄 Chơi lại Đố Vui Rồng</button>
-            <button class="home-btn" onclick="switchDragonSubMode('memory')">🃏 Chơi Lật Thẻ Rồng</button>
-            <button class="home-btn" onclick="switchDragonSubMode('explore')">🐉 Xem lại 8 Loài Rồng</button>
+            <button type="button" class="challenge-btn" onclick="initDragonQuiz()">🔄 Chơi lại Đố Vui Rồng</button>
+            <button type="button" class="home-btn" onclick="switchDragonSubMode('memory')">🃏 Chơi Lật Thẻ Rồng</button>
+            <button type="button" class="home-btn" onclick="switchDragonSubMode('explore')">🐉 Xem lại 8 Loài Rồng</button>
           </div>
         </div>
       </div>
@@ -365,7 +365,7 @@
               <span class="memory-stat-pill" id="dragonMemFlipsText">👀 Lượt lật: 0</span>
               <span class="memory-stat-pill" id="dragonMemPairsText">⭐ Đã ghép: 0 / 6 cặp</span>
             </div>
-            <button class="tool-chip" onclick="initDragonMemoryGame()" style="background:#fef08a; color:#854d0e; border-color:#facc15;">
+            <button type="button" class="tool-chip" onclick="initDragonMemoryGame()" style="background:#fef08a; color:#854d0e; border-color:#facc15;">
               <span>🔄</span> Đổi bộ Rồng mới
             </button>
           </div>
@@ -376,9 +376,9 @@
           <h2 class="victory-title" style="color: #b91c1c;">BẢO LONG TRIỆU HỒI ĐỦ 6 RỒNG THẦN!</h2>
           <p class="victory-desc" id="dragonMemoryVictoryFlips">Trí nhớ siêu đỉnh quá Bảo Long ơi!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initDragonMemoryGame()">🔄 Chơi ván Rồng mới</button>
-            <button class="home-btn" onclick="switchDragonSubMode('quiz')">🎯 Chơi Đố Vui Rồng</button>
-            <button class="home-btn" onclick="switchDragonSubMode('explore')">🐉 Về 8 Loài Rồng</button>
+            <button type="button" class="challenge-btn" onclick="initDragonMemoryGame()">🔄 Chơi ván Rồng mới</button>
+            <button type="button" class="home-btn" onclick="switchDragonSubMode('quiz')">🎯 Chơi Đố Vui Rồng</button>
+            <button type="button" class="home-btn" onclick="switchDragonSubMode('explore')">🐉 Về 8 Loài Rồng</button>
           </div>
         </div>
       </div>
@@ -392,13 +392,13 @@
           <h2 class="veh-banner-title">Ga Xe Cộ Kỳ Thú Của Bảo Long</h2>
           <p class="veh-banner-desc">Khám phá 12 phương tiện thật quen thuộc tại Nhật Bản và Việt Nam: Tàu Shinkansen, Xe Cảnh Sát Nhật, Máy Bay, Máy Xúc... Chạm vào xe để nghe phát âm &amp; đánh vần nhé!</p>
           <div class="banner-action-row">
-            <button class="challenge-btn" style="padding: 10px 20px; font-size: 14px;" onclick="switchMode('game'); switchSubGame('quiz');">
+            <button type="button" class="challenge-btn" style="padding: 10px 20px; font-size: 14px;" onclick="switchMode('game'); switchSubGame('quiz');">
               <span>🎯</span> Đố vui 12 Xe Cộ
             </button>
-            <button class="dino-roar-btn" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-bottom-color: #075985;" onclick="switchMode('game'); switchSubGame('shinkansen');">
+            <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-bottom-color: #075985;" onclick="switchMode('game'); switchSubGame('shinkansen');">
               <span>🚅</span> Lắp Tàu Shinkansen Đánh Vần
             </button>
-            <button class="dino-roar-btn" id="btnAutoPlayVehicles" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #047857;">
+            <button type="button" class="dino-roar-btn" id="btnAutoPlayVehicles" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #047857;">
               <span>🎧</span> Nghe cả 12 xe
             </button>
           </div>
@@ -420,19 +420,19 @@
 
       <!-- Thanh 5 Chế độ Toán Lớp 1 -->
       <div class="math-subnav">
-        <button class="game-tab-btn active" id="mathTabNumbers" onclick="switchMathSubTab('numbers')">
+        <button type="button" class="game-tab-btn active" id="mathTabNumbers" onclick="switchMathSubTab('numbers')">
           <span>🔢</span><span>Số Đếm 0–100</span>
         </button>
-        <button class="game-tab-btn" id="mathTabCalc" onclick="switchMathSubTab('calc')">
+        <button type="button" class="game-tab-btn" id="mathTabCalc" onclick="switchMathSubTab('calc')">
           <span>➕</span><span>Cộng &amp; Trừ</span>
         </button>
-        <button class="game-tab-btn" id="mathTabCompare" onclick="switchMathSubTab('compare')">
+        <button type="button" class="game-tab-btn" id="mathTabCompare" onclick="switchMathSubTab('compare')">
           <span>⚖️</span><span>So Sánh &gt; &lt; =</span>
         </button>
-        <button class="game-tab-btn" id="mathTabSequence" onclick="switchMathSubTab('sequence')">
+        <button type="button" class="game-tab-btn" id="mathTabSequence" onclick="switchMathSubTab('sequence')">
           <span>🚅</span><span>Tìm Số Bí Ẩn</span>
         </button>
-        <button class="game-tab-btn" id="mathTabGeometry" onclick="switchMathSubTab('geometry')">
+        <button type="button" class="game-tab-btn" id="mathTabGeometry" onclick="switchMathSubTab('geometry')">
           <span>📐</span><span>Hình &amp; Đồng Hồ</span>
         </button>
       </div>
@@ -444,10 +444,10 @@
             <h3 class="section-blue-title" style="color: #a21caf;"><span>🦖</span> Chạm vào Số hoặc chạm từng Khủng Long để tập đếm!</h3>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            <button class="tool-chip tool-chip-listen" id="btnAutoPlayMathNumbers">
+            <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayMathNumbers">
               <span>🎧</span> Nghe đếm 0 → 20
             </button>
-            <button class="tool-chip" id="btnToggleHundredBoard" style="background: #f0fdf4; color: #15803d; border-color: #86efac;">
+            <button type="button" class="tool-chip" id="btnToggleHundredBoard" style="background: #f0fdf4; color: #15803d; border-color: #86efac;">
               <span>🔢</span> Bảng 0–100 (HK2)
             </button>
           </div>
@@ -461,7 +461,7 @@
               <div class="math-spot-word" id="mathSpotWord">năm</div>
               <div class="math-spot-ja" id="mathSpotJa">🇯🇵 ご (Go)</div>
               <div class="math-spot-desc" id="mathSpotDesc">5 ngôi sao vàng trên một bàn tay</div>
-              <button class="btn-hear-hint" id="btnHearSpotNum" style="margin-top: 8px; padding: 6px 16px;">
+              <button type="button" class="btn-hear-hint" id="btnHearSpotNum" style="margin-top: 8px; padding: 6px 16px;">
                 <span>🔊</span> Nghe đọc số này
               </button>
             </div>
@@ -478,10 +478,10 @@
               <p style="font-size: 12px; font-weight: 700; color: #475569; margin: 2px 0 0 0;">Thử chọn chế độ đếm nhảy (+2, +5, +10) để khám phá quy luật số nhé!</p>
             </div>
             <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="mathSkipStepRow">
-              <button class="tool-chip active-filter math-skip-btn" data-step="1">+1 Tất cả</button>
-              <button class="tool-chip math-skip-btn" data-step="2">+2 Số chẵn</button>
-              <button class="tool-chip math-skip-btn" data-step="5">+5 Nhảy 5</button>
-              <button class="tool-chip math-skip-btn" data-step="10">+10 Tròn chục</button>
+              <button type="button" class="tool-chip active-filter math-skip-btn" data-step="1">+1 Tất cả</button>
+              <button type="button" class="tool-chip math-skip-btn" data-step="2">+2 Số chẵn</button>
+              <button type="button" class="tool-chip math-skip-btn" data-step="5">+5 Nhảy 5</button>
+              <button type="button" class="tool-chip math-skip-btn" data-step="10">+10 Tròn chục</button>
             </div>
           </div>
           <div class="math-hundred-grid" id="mathHundredGrid"></div>
@@ -510,12 +510,12 @@
               </p>
             </div>
             <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="mathBondTargetBtns">
-              <button class="tool-chip math-bond-target-btn" data-target="5">Số 5</button>
-              <button class="tool-chip math-bond-target-btn" data-target="6">Số 6</button>
-              <button class="tool-chip math-bond-target-btn" data-target="7">Số 7</button>
-              <button class="tool-chip math-bond-target-btn active-filter" data-target="8">Số 8</button>
-              <button class="tool-chip math-bond-target-btn" data-target="9">Số 9</button>
-              <button class="tool-chip math-bond-target-btn" data-target="10">Số 10</button>
+              <button type="button" class="tool-chip math-bond-target-btn" data-target="5">Số 5</button>
+              <button type="button" class="tool-chip math-bond-target-btn" data-target="6">Số 6</button>
+              <button type="button" class="tool-chip math-bond-target-btn" data-target="7">Số 7</button>
+              <button type="button" class="tool-chip math-bond-target-btn active-filter" data-target="8">Số 8</button>
+              <button type="button" class="tool-chip math-bond-target-btn" data-target="9">Số 9</button>
+              <button type="button" class="tool-chip math-bond-target-btn" data-target="10">Số 10</button>
             </div>
           </div>
           <div class="math-bond-layout">
@@ -535,13 +535,13 @@
           </div>
 
           <div class="listen-filter-row">
-            <button class="tool-chip math-calc-filter active-filter" data-mode="max10">🌟 Phạm vi 10</button>
-            <button class="tool-chip math-calc-filter" data-mode="max20">🚀 Phạm vi 20</button>
-            <button class="tool-chip math-calc-filter" data-mode="sakura">🌸 Qua 10 (Sakura)</button>
-            <button class="tool-chip math-calc-filter" data-mode="max100">💯 Phạm vi 100 (HK2)</button>
-            <button class="tool-chip math-calc-filter" data-mode="onlyPlus">➕ Chỉ Cộng</button>
-            <button class="tool-chip math-calc-filter" data-mode="onlyMinus">➖ Chỉ Trừ</button>
-            <button class="tool-chip" id="btnToggleCalcVisual" style="background:#fef9c3; color:#854d0e; border-color:#facc15;">👁️ Hình đếm: BẬT</button>
+            <button type="button" class="tool-chip math-calc-filter active-filter" data-mode="max10">🌟 Phạm vi 10</button>
+            <button type="button" class="tool-chip math-calc-filter" data-mode="max20">🚀 Phạm vi 20</button>
+            <button type="button" class="tool-chip math-calc-filter" data-mode="sakura">🌸 Qua 10 (Sakura)</button>
+            <button type="button" class="tool-chip math-calc-filter" data-mode="max100">💯 Phạm vi 100 (HK2)</button>
+            <button type="button" class="tool-chip math-calc-filter" data-mode="onlyPlus">➕ Chỉ Cộng</button>
+            <button type="button" class="tool-chip math-calc-filter" data-mode="onlyMinus">➖ Chỉ Trừ</button>
+            <button type="button" class="tool-chip" id="btnToggleCalcVisual" style="background:#fef9c3; color:#854d0e; border-color:#facc15;">👁️ Hình đếm: BẬT</button>
           </div>
 
           <div class="math-equation-stage">
@@ -555,7 +555,7 @@
           <div class="math-calc-visual-box" id="mathCalcVisualBox"></div>
 
           <div style="text-align: center; margin-bottom: 14px;">
-            <button class="btn-hear-hint" id="btnHearCalc" style="margin: 0 auto;">
+            <button type="button" class="btn-hear-hint" id="btnHearCalc" style="margin: 0 auto;">
               <span>🔊</span> Đọc phép tính
             </button>
           </div>
@@ -568,9 +568,9 @@
           <h2 class="victory-title" style="color: #9333ea;">NHÀ TOÁN HỌC NHÍ BẢO LONG!</h2>
           <p class="victory-desc" id="mathCalcVictoryScore">Bé đã tính đúng siêu nhanh!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initMathCalcGame()">🔄 Làm 10 phép tính mới</button>
-            <button class="home-btn" onclick="switchMathSubTab('compare')">⚖️ Sang So Sánh &gt; &lt; =</button>
-            <button class="home-btn" onclick="switchMathSubTab('sequence')">🚅 Dãy Số Shinkansen</button>
+            <button type="button" class="challenge-btn" onclick="initMathCalcGame()">🔄 Làm 10 phép tính mới</button>
+            <button type="button" class="home-btn" onclick="switchMathSubTab('compare')">⚖️ Sang So Sánh &gt; &lt; =</button>
+            <button type="button" class="home-btn" onclick="switchMathSubTab('sequence')">🚅 Dãy Số Shinkansen</button>
           </div>
         </div>
       </div>
@@ -584,9 +584,9 @@
           </div>
 
           <div class="listen-filter-row">
-            <button class="tool-chip active-filter" id="btnCmpSimple">🔢 Số 0–20</button>
-            <button class="tool-chip" id="btnCmp100">🚀 Số 0–100 (HK2)</button>
-            <button class="tool-chip" id="btnCmpExpr">🧮 Tính rồi So sánh</button>
+            <button type="button" class="tool-chip active-filter" id="btnCmpSimple">🔢 Số 0–20</button>
+            <button type="button" class="tool-chip" id="btnCmp100">🚀 Số 0–100 (HK2)</button>
+            <button type="button" class="tool-chip" id="btnCmpExpr">🧮 Tính rồi So sánh</button>
           </div>
 
           <p class="slot-tip-text" style="color: #15803d; font-size: 13px;">
@@ -606,15 +606,15 @@
           </div>
 
           <div style="text-align: center; margin-bottom: 12px;">
-            <button class="btn-hear-hint" id="btnHearMathCmp" style="margin: 0 auto;">
+            <button type="button" class="btn-hear-hint" id="btnHearMathCmp" style="margin: 0 auto;">
               <span>🔊</span> Nghe so sánh &amp; lựa chọn
             </button>
           </div>
 
           <div class="cmp-buttons-row">
-            <button class="cmp-choice-btn" data-sign=">">&gt;<span class="cmp-choice-label">Lớn hơn</span></button>
-            <button class="cmp-choice-btn" data-sign="=">=<span class="cmp-choice-label">Bằng nhau</span></button>
-            <button class="cmp-choice-btn" data-sign="<">&lt;<span class="cmp-choice-label">Bé hơn</span></button>
+            <button type="button" class="cmp-choice-btn" data-sign=">">&gt;<span class="cmp-choice-label">Lớn hơn</span></button>
+            <button type="button" class="cmp-choice-btn" data-sign="=">=<span class="cmp-choice-label">Bằng nhau</span></button>
+            <button type="button" class="cmp-choice-btn" data-sign="<">&lt;<span class="cmp-choice-label">Bé hơn</span></button>
           </div>
         </div>
 
@@ -623,9 +623,9 @@
           <h2 class="victory-title" style="color: #059669;">CÁ SẤU TOÁN HỌC SIÊU THÔNG MINH!</h2>
           <p class="victory-desc" id="mathCmpVictoryScore">Bé so sánh chuẩn không cần chỉnh!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initMathCompareGame()">🔄 Chơi 8 câu mới</button>
-            <button class="home-btn" onclick="switchMathSubTab('sequence')">🚅 Sang Tìm Số Bí Ẩn</button>
-            <button class="home-btn" onclick="switchMathSubTab('geometry')">📐 Xem Hình &amp; Đồng Hồ</button>
+            <button type="button" class="challenge-btn" onclick="initMathCompareGame()">🔄 Chơi 8 câu mới</button>
+            <button type="button" class="home-btn" onclick="switchMathSubTab('sequence')">🚅 Sang Tìm Số Bí Ẩn</button>
+            <button type="button" class="home-btn" onclick="switchMathSubTab('geometry')">📐 Xem Hình &amp; Đồng Hồ</button>
           </div>
         </div>
       </div>
@@ -649,7 +649,7 @@
           </div>
 
           <div style="text-align: center; margin-bottom: 12px;">
-            <button class="btn-hear-hint" id="btnHearMathSeq" style="margin: 0 auto;">
+            <button type="button" class="btn-hear-hint" id="btnHearMathSeq" style="margin: 0 auto;">
               <span>🔊</span> Nghe đọc dãy số
             </button>
           </div>
@@ -662,9 +662,9 @@
           <h2 class="victory-title" style="color: #0284c7;">BẬC THẦY QUY LUẬT DÃY SỐ!</h2>
           <p class="victory-desc" id="mathSeqVictoryScore">Bé đã hoàn thành cả 8 chuyến tàu!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initMathSequenceGame()">🔄 Chuyến tàu mới</button>
-            <button class="home-btn" onclick="switchMathSubTab('geometry')">📐 Hình &amp; Đồng Hồ</button>
-            <button class="home-btn" onclick="switchMathSubTab('calc')">➕ Luyện Cộng Trừ</button>
+            <button type="button" class="challenge-btn" onclick="initMathSequenceGame()">🔄 Chuyến tàu mới</button>
+            <button type="button" class="home-btn" onclick="switchMathSubTab('geometry')">📐 Hình &amp; Đồng Hồ</button>
+            <button type="button" class="home-btn" onclick="switchMathSubTab('calc')">➕ Luyện Cộng Trừ</button>
           </div>
         </div>
       </div>
@@ -672,8 +672,8 @@
       <!-- PANE 5: HÌNH HỌC 2D/3D, ĐO ĐỘ DÀI CM, ĐỒNG HỒ & XEM LỊCH -->
       <div class="math-sub-pane" id="mathPaneGeometry" style="display: none;">
         <div class="listen-filter-row" style="margin-bottom: 16px;">
-          <button class="tool-chip active-filter" id="btnGeoLearnMode">📖 Khám phá Hình, Đo cm &amp; Đồng Hồ</button>
-          <button class="tool-chip" id="btnGeoQuizMode">🎯 Đố Vui Hình, cm, Giờ &amp; Thứ (10 câu)</button>
+          <button type="button" class="tool-chip active-filter" id="btnGeoLearnMode">📖 Khám phá Hình, Đo cm &amp; Đồng Hồ</button>
+          <button type="button" class="tool-chip" id="btnGeoQuizMode">🎯 Đố Vui Hình, cm, Giờ &amp; Thứ (10 câu)</button>
         </div>
 
         <div id="mathGeoLearnStage">
@@ -697,7 +697,7 @@
             </div>
             <div style="text-align: center; margin-top: 10px;">
               <div id="mathRulerReadout" style="font-size: 17px; font-weight: 900; color: #065f46;">📏 Chiếc bút chì dài 7 xăng-ti-mét (7 cm)</div>
-              <button class="btn-hear-hint" id="btnHearRuler" style="margin: 8px auto 0 auto;">
+              <button type="button" class="btn-hear-hint" id="btnHearRuler" style="margin: 8px auto 0 auto;">
                 <span>🔊</span> Nghe kết quả đo
               </button>
             </div>
@@ -710,12 +710,12 @@
             <svg viewBox="0 0 200 200" class="clock-svg" id="mathClockSvg"></svg>
             <div style="max-width: 360px; width: 100%; text-align: center;">
               <div class="listen-filter-row" style="justify-content: center; margin-bottom: 8px;">
-                <button class="tool-chip active-filter" id="btnClockExact">🕒 Giờ đúng (:00)</button>
-                <button class="tool-chip" id="btnClockHalf">🕡 Giờ rưỡi (:30 • 半)</button>
+                <button type="button" class="tool-chip active-filter" id="btnClockExact">🕒 Giờ đúng (:00)</button>
+                <button type="button" class="tool-chip" id="btnClockHalf">🕡 Giờ rưỡi (:30 • 半)</button>
               </div>
               <div style="font-size: 20px; font-weight: 900; color: #0369a1;" id="mathClockReadout">🕒 Đồng hồ chỉ: 3 giờ đúng</div>
               <div style="font-size: 13px; font-weight: 700; color: #475569; margin: 6px 0;" id="mathClockScheduleTip"></div>
-              <button class="btn-hear-hint" id="btnHearClock" style="margin: 6px auto 10px auto;">
+              <button type="button" class="btn-hear-hint" id="btnHearClock" style="margin: 6px auto 10px auto;">
                 <span>🔊</span> Nghe đọc giờ
               </button>
               <div style="font-size: 12px; font-weight: 800; color: #64748b;">Chạm số giờ bên dưới để xoay kim đỏ nhé:</div>
@@ -740,7 +740,7 @@
             </div>
             <div class="quiz-question-box">
               <div class="quiz-question-title" id="mathGeoQuizTitle">Câu hỏi Hình học / Đồng hồ</div>
-              <button class="btn-hear-hint" id="btnHearMathGeoQuiz" style="margin: 10px auto 0 auto;">
+              <button type="button" class="btn-hear-hint" id="btnHearMathGeoQuiz" style="margin: 10px auto 0 auto;">
                 <span>🔊</span> Nghe câu hỏi &amp; đáp án
               </button>
             </div>
@@ -756,9 +756,9 @@
             <h2 class="victory-title" style="color: #0284c7;">SIÊU SAO HÌNH HỌC &amp; ĐỒNG HỒ!</h2>
             <p class="victory-desc" id="mathGeoVictoryScore">Bé đã vượt qua tất cả câu hỏi Hình và Giờ!</p>
             <div class="victory-actions">
-              <button class="challenge-btn" onclick="initGeoClockQuiz()">🔄 Đố vui ván mới</button>
-              <button class="home-btn" onclick="mathGeoMode = 'learn'; renderMathGeometryTab();">📖 Về xem Đồng hồ</button>
-              <button class="home-btn" onclick="switchMathSubTab('calc')">➕ Luyện Cộng Trừ</button>
+              <button type="button" class="challenge-btn" onclick="initGeoClockQuiz()">🔄 Đố vui ván mới</button>
+              <button type="button" class="home-btn" onclick="mathGeoMode = 'learn'; renderMathGeometryTab();">📖 Về xem Đồng hồ</button>
+              <button type="button" class="home-btn" onclick="switchMathSubTab('calc')">➕ Luyện Cộng Trừ</button>
             </div>
           </div>
         </div>
@@ -778,16 +778,16 @@
 
       <!-- 4 Chế độ Đạo Đức & GDCD -->
       <div class="ethics-subnav">
-        <button class="game-tab-btn active" id="ethicsTabLessons" onclick="switchEthicsSubTab('lessons')">
+        <button type="button" class="game-tab-btn active" id="ethicsTabLessons" onclick="switchEthicsSubTab('lessons')">
           <span>💝</span><span id="ethicsTabLessonsLabel">12 Thói Quen Đẹp</span>
         </button>
-        <button class="game-tab-btn" id="ethicsTabSituations" onclick="switchEthicsSubTab('situations')">
+        <button type="button" class="game-tab-btn" id="ethicsTabSituations" onclick="switchEthicsSubTab('situations')">
           <span>🎭</span><span>Xử Lý Tình Huống</span>
         </button>
-        <button class="game-tab-btn" id="ethicsTabTrueFalse" onclick="switchEthicsSubTab('truefalse')">
+        <button type="button" class="game-tab-btn" id="ethicsTabTrueFalse" onclick="switchEthicsSubTab('truefalse')">
           <span>👍</span><span>Nên / Không Nên</span>
         </button>
-        <button class="game-tab-btn" id="ethicsTabTrafficEco" onclick="switchEthicsSubTab('traffic_eco')">
+        <button type="button" class="game-tab-btn" id="ethicsTabTrafficEco" onclick="switchEthicsSubTab('traffic_eco')">
           <span>🚦</span><span>Đèn GT &amp; Sống Xanh</span>
         </button>
       </div>
@@ -799,7 +799,7 @@
             <h3 class="section-blue-title" style="color: #0f766e;"><span>💝</span> <span id="ethicsLessonsHeading">12 Bài Học Bé Ngoan Lớp 1 (Chạm thẻ để nghe!)</span></h3>
             <p class="section-sub-desc" style="margin-bottom: 0;">Mỗi thói quen đẹp giúp Bảo Long trở thành cậu bé tự tin, nhân ái và được mọi người yêu quý.</p>
           </div>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayEthics">
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayEthics">
             <span>🎧</span> Nghe cả 12 bài
           </button>
         </div>
@@ -818,7 +818,7 @@
             <span class="ethics-badge" id="ethicsSitBadge">🛝 Xếp hàng</span>
             <div class="ethics-sit-icon" id="ethicsSitIcon">🎡</div>
             <div class="ethics-sit-question" id="ethicsSitQuestion">Câu hỏi tình huống</div>
-            <button class="btn-hear-hint" id="btnHearEthicsSit" style="margin: 12px auto 0 auto;">
+            <button type="button" class="btn-hear-hint" id="btnHearEthicsSit" style="margin: 12px auto 0 auto;">
               <span>🔊</span> Nghe tình huống
             </button>
           </div>
@@ -831,9 +831,9 @@
           <h2 class="victory-title" style="color: #0d9488;">BẢO LONG ỨNG XỬ TUYỆT VỜI QUÁ!</h2>
           <p class="victory-desc" id="ethicsSitVictoryScore">Bé đã xử lý xuất sắc cả 8 tình huống đời sống!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initEthicsSituationsGame()">🔄 Thử thách ván mới</button>
-            <button class="home-btn" onclick="switchEthicsSubTab('truefalse')">👍 Chơi Nên / Không Nên</button>
-            <button class="home-btn" onclick="switchEthicsSubTab('traffic_eco')">🚦 Thực hành Đèn GT &amp; Rác</button>
+            <button type="button" class="challenge-btn" onclick="initEthicsSituationsGame()">🔄 Thử thách ván mới</button>
+            <button type="button" class="home-btn" onclick="switchEthicsSubTab('truefalse')">👍 Chơi Nên / Không Nên</button>
+            <button type="button" class="home-btn" onclick="switchEthicsSubTab('traffic_eco')">🚦 Thực hành Đèn GT &amp; Rác</button>
           </div>
         </div>
       </div>
@@ -850,7 +850,7 @@
           <div class="ethics-sit-card" style="background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%); border-color: #2dd4bf;">
             <div class="ethics-sit-icon" id="ethicsTfIcon">🪥</div>
             <div class="ethics-sit-question" id="ethicsTfText" style="color: #0f766e;">Hành động hàng ngày</div>
-            <button class="btn-hear-hint" id="btnHearEthicsTf" style="margin: 12px auto 0 auto;">
+            <button type="button" class="btn-hear-hint" id="btnHearEthicsTf" style="margin: 12px auto 0 auto;">
               <span>🔊</span> Nghe lại câu hỏi
             </button>
           </div>
@@ -874,9 +874,9 @@
           <h2 class="victory-title" style="color: #059669;">CẬU BÉ NGOAN NGOÃN BẢO LONG!</h2>
           <p class="victory-desc" id="ethicsTfVictoryScore">Bé phân biệt xuất sắc việc nên làm và không nên làm!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initEthicsTfGame()">🔄 Chơi lại 10 câu</button>
-            <button class="home-btn" onclick="switchEthicsSubTab('traffic_eco')">🚦 Chơi Đèn GT &amp; Sống Xanh</button>
-            <button class="home-btn" id="ethicsReturnLessonsBtn" onclick="switchEthicsSubTab('lessons')">💝 Xem lại 12 Bài học</button>
+            <button type="button" class="challenge-btn" onclick="initEthicsTfGame()">🔄 Chơi lại 10 câu</button>
+            <button type="button" class="home-btn" onclick="switchEthicsSubTab('traffic_eco')">🚦 Chơi Đèn GT &amp; Sống Xanh</button>
+            <button type="button" class="home-btn" id="ethicsReturnLessonsBtn" onclick="switchEthicsSubTab('lessons')">💝 Xem lại 12 Bài học</button>
           </div>
         </div>
       </div>
@@ -889,9 +889,9 @@
         <div class="traffic-sim-box">
           <div class="traffic-top-flex">
             <div class="tl-pillar">
-              <button class="tl-light-btn tl-red lit" data-color="red">ĐỎ</button>
-              <button class="tl-light-btn tl-yellow" data-color="yellow">VÀNG</button>
-              <button class="tl-light-btn tl-green" data-color="green">XANH</button>
+              <button type="button" class="tl-light-btn tl-red lit" data-color="red">ĐỎ</button>
+              <button type="button" class="tl-light-btn tl-yellow" data-color="yellow">VÀNG</button>
+              <button type="button" class="tl-light-btn tl-green" data-color="green">XANH</button>
             </div>
             <div class="tl-road-area">
               <div class="tl-status-pill" id="trafficSimStatus">🔴 ĐÈN ĐỎ: TẤT CẢ DỪNG LẠI NGAY TRƯỚC VẠCH TRẮNG!</div>
@@ -914,7 +914,7 @@
               <div style="font-size: 17px; font-weight: 900; color: #0f172a; margin-top: 4px;" id="ecoTrashName">Vỏ chuối chín</div>
             </div>
             <div style="text-align: center; margin-bottom: 14px;">
-              <button class="btn-hear-hint" id="btnHearEcoItem" style="margin: 0 auto;">
+              <button type="button" class="btn-hear-hint" id="btnHearEcoItem" style="margin: 0 auto;">
                 <span>🔊</span> Nghe món đồ &amp; 3 thùng rác
               </button>
             </div>
@@ -944,7 +944,7 @@
             <div class="victory-emojis">🌍♻️🏆✨</div>
             <h2 class="victory-title" style="color: #059669;">CHIẾN BINH MÔI TRƯỜNG XANH BẢO LONG!</h2>
             <p class="victory-desc" id="ecoVictoryDesc">Con đã phân loại đúng tất cả 8 món rác (+12 ⭐)! Trái Đất cảm ơn Bảo Long nhiều lắm!</p>
-            <button class="challenge-btn" onclick="initEcoSortingGame()">🔄 Phân loại lượt mới</button>
+            <button type="button" class="challenge-btn" onclick="initEcoSortingGame()">🔄 Phân loại lượt mới</button>
           </div>
         </div>
       </div>
@@ -962,16 +962,16 @@
       </div>
 
       <div class="lang-subnav">
-        <button class="game-tab-btn active" id="enTabAbc" onclick="switchEnglishSubTab('abc')">
+        <button type="button" class="game-tab-btn active" id="enTabAbc" onclick="switchEnglishSubTab('abc')">
           <span>🔤</span><span>26 Chữ ABC</span>
         </button>
-        <button class="game-tab-btn" id="enTabVocab" onclick="switchEnglishSubTab('vocab')">
+        <button type="button" class="game-tab-btn" id="enTabVocab" onclick="switchEnglishSubTab('vocab')">
           <span>📚</span><span>Từ Vựng &amp; Giao Tiếp</span>
         </button>
-        <button class="game-tab-btn" id="enTabQuiz" onclick="switchEnglishSubTab('quiz')">
+        <button type="button" class="game-tab-btn" id="enTabQuiz" onclick="switchEnglishSubTab('quiz')">
           <span>👂</span><span>Nghe Chọn Hình</span>
         </button>
-        <button class="game-tab-btn" id="enTabSpelling" onclick="switchEnglishSubTab('spelling')">
+        <button type="button" class="game-tab-btn" id="enTabSpelling" onclick="switchEnglishSubTab('spelling')">
           <span>🧩</span><span>Ghép Chữ Vui</span>
         </button>
       </div>
@@ -983,7 +983,7 @@
             <h3 class="section-blue-title" style="color: #1d4ed8;"><span>🔤</span> 26 Chữ Cái Tiếng Anh (A – Z)</h3>
             <p class="section-sub-desc" style="margin-bottom: 0;">Chạm vào từng thẻ chữ cái để nghe phát âm tiếng Anh chuẩn và xem nghĩa tiếng Việt &amp; tiếng Nhật nhé!</p>
           </div>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayEnAbc">
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayEnAbc">
             <span>🎧</span> Nghe A → Z
           </button>
         </div>
@@ -998,7 +998,7 @@
             <h3 class="section-blue-title" id="enTopicTitleText" style="color: #1d4ed8;">🦖 Dinosaurs &amp; Animals</h3>
             <p class="section-sub-desc" style="margin-bottom: 0;">Chạm từng thẻ để nghe đọc chuẩn Anh–Mỹ và sưu tầm thêm ⭐ nhé!</p>
           </div>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayEnVocab">
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayEnVocab">
             <span>🎧</span> Nghe cả chủ đề
           </button>
         </div>
@@ -1017,7 +1017,7 @@
           <div class="quiz-question-box" style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-color: #93c5fd; border-bottom-color: #2563eb;">
             <div class="quiz-question-title" style="color: #1e3a8a;">👂 Nghe tiếng Anh và chọn đúng hình nhé Bảo Long!</div>
             <div class="quiz-question-ja" id="enQuizHintText" style="color: #1d4ed8;">💡 Nghe kỹ từ tiếng Anh và chọn hình đúng nhé!</div>
-            <button class="challenge-btn" id="btnHearEnQuiz" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); border-color: #3730a3; border-bottom-color: #1e1b4b;">
+            <button type="button" class="challenge-btn" id="btnHearEnQuiz" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%); border-color: #3730a3; border-bottom-color: #1e1b4b;">
               <span>🔊</span> Nghe Từ &amp; 4 Đáp Án
             </button>
           </div>
@@ -1030,9 +1030,9 @@
           <h2 class="victory-title" style="color: #1d4ed8;">AWESOME JOB BẢO LONG!</h2>
           <p class="victory-desc" id="enQuizVictoryScore">Bảo Long nghe tiếng Anh siêu chuẩn!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initEnQuizGame()">🔄 Chơi ván mới</button>
-            <button class="home-btn" onclick="switchEnglishSubTab('spelling')">🧩 Chơi Ghép Chữ Tiếng Anh</button>
-            <button class="home-btn" onclick="switchEnglishSubTab('vocab')">📚 Ôn lại Từ vựng</button>
+            <button type="button" class="challenge-btn" onclick="initEnQuizGame()">🔄 Chơi ván mới</button>
+            <button type="button" class="home-btn" onclick="switchEnglishSubTab('spelling')">🧩 Chơi Ghép Chữ Tiếng Anh</button>
+            <button type="button" class="home-btn" onclick="switchEnglishSubTab('vocab')">📚 Ôn lại Từ vựng</button>
           </div>
         </div>
       </div>
@@ -1056,8 +1056,8 @@
           <div class="options-letters-row" id="enSpellLettersRow"></div>
 
           <div class="game-controls-row">
-            <button class="btn-hear-hint" id="btnHearEnSpell"><span>🔊</span> Nghe từ mẫu</button>
-            <button class="btn-reset-puzzle" id="btnResetEnSpell"><span>🔄</span> Xếp lại</button>
+            <button type="button" class="btn-hear-hint" id="btnHearEnSpell"><span>🔊</span> Nghe từ mẫu</button>
+            <button type="button" class="btn-reset-puzzle" id="btnResetEnSpell"><span>🔄</span> Xếp lại</button>
           </div>
         </div>
 
@@ -1066,9 +1066,9 @@
           <h2 class="victory-title" style="color: #1d4ed8;">EXCELLENT SPELLER BẢO LONG!</h2>
           <p class="victory-desc" id="enSpellVictoryScore">Bảo Long ghép đúng cả 10 từ tiếng Anh!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initEnSpellingGame()">🔄 Ghép chữ ván mới</button>
-            <button class="home-btn" onclick="switchEnglishSubTab('quiz')">👂 Chơi Nghe Chọn Hình</button>
-            <button class="home-btn" onclick="switchEnglishSubTab('abc')">🔤 Về Bảng chữ cái A–Z</button>
+            <button type="button" class="challenge-btn" onclick="initEnSpellingGame()">🔄 Ghép chữ ván mới</button>
+            <button type="button" class="home-btn" onclick="switchEnglishSubTab('quiz')">👂 Chơi Nghe Chọn Hình</button>
+            <button type="button" class="home-btn" onclick="switchEnglishSubTab('abc')">🔤 Về Bảng chữ cái A–Z</button>
           </div>
         </div>
       </div>
@@ -1086,25 +1086,25 @@
       </div>
 
       <div class="lang-subnav">
-        <button class="game-tab-btn active" id="jaTabHira" onclick="switchJapaneseSubTab('hiragana')">
+        <button type="button" class="game-tab-btn active" id="jaTabHira" onclick="switchJapaneseSubTab('hiragana')">
           <span>🌸</span><span>Hiragana (71)</span>
         </button>
-        <button class="game-tab-btn" id="jaTabKata" onclick="switchJapaneseSubTab('katakana')">
+        <button type="button" class="game-tab-btn" id="jaTabKata" onclick="switchJapaneseSubTab('katakana')">
           <span>⚡</span><span>Katakana (46)</span>
         </button>
-        <button class="game-tab-btn" id="jaTabKanji" onclick="switchJapaneseSubTab('kanji')">
+        <button type="button" class="game-tab-btn" id="jaTabKanji" onclick="switchJapaneseSubTab('kanji')">
           <span>⛩️</span><span>80 Kanji Lớp 1</span>
         </button>
-        <button class="game-tab-btn" id="jaTabVocab" onclick="switchJapaneseSubTab('vocab')">
+        <button type="button" class="game-tab-btn" id="jaTabVocab" onclick="switchJapaneseSubTab('vocab')">
           <span>🍱</span><span>Từ Vựng (8 Bài)</span>
         </button>
-        <button class="game-tab-btn" id="jaTabStories" onclick="switchJapaneseSubTab('stories')">
+        <button type="button" class="game-tab-btn" id="jaTabStories" onclick="switchJapaneseSubTab('stories')">
           <span>📖</span><span>Truyện Đọc 小1</span>
         </button>
-        <button class="game-tab-btn" id="jaTabWriting" onclick="switchJapaneseSubTab('writing')">
+        <button type="button" class="game-tab-btn" id="jaTabWriting" onclick="switchJapaneseSubTab('writing')">
           <span>✍️</span><span>Viết Masume</span>
         </button>
-        <button class="game-tab-btn" id="jaTabQuiz" onclick="switchJapaneseSubTab('quiz')">
+        <button type="button" class="game-tab-btn" id="jaTabQuiz" onclick="switchJapaneseSubTab('quiz')">
           <span>🎯</span><span>Đố Vui Nhật</span>
         </button>
       </div>
@@ -1116,7 +1116,7 @@
             <h3 class="section-blue-title" style="color: #be123c;"><span>🌸</span> Bảng 46 Chữ Cái Hiragana (あ → ん)</h3>
             <p class="section-sub-desc" style="margin-bottom: 0;">Chạm vào từng chữ cái Hiragana để nghe người Nhật đọc chuẩn âm và học từ ví dụ thật vui!</p>
           </div>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayJaHira">
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayJaHira">
             <span>🎧</span> Nghe あ → ん
           </button>
         </div>
@@ -1135,7 +1135,7 @@
             <h3 class="section-blue-title" style="color: #be123c;"><span>⚡</span> Bảng 46 Chữ Cứng Katakana (ア → ン)</h3>
             <p class="section-sub-desc" style="margin-bottom: 0;">Ở Nhật, tên <strong>Khủng Long (ティラノサウルス)</strong>, <strong>Rồng (ファイヤードラゴン)</strong> và <strong>Shinkansen</strong> đều viết bằng Katakana đấy!</p>
           </div>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayJaKata">
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayJaKata">
             <span>🎧</span> Nghe ア → ン
           </button>
         </div>
@@ -1149,7 +1149,7 @@
             <h3 class="section-blue-title" style="color: #be123c;"><span>⛩️</span> Trọn Bộ 80 Chữ Kanji Lớp 1 (一年生の漢字 • Chuẩn MEXT Nhật Bản)</h3>
             <p class="section-sub-desc" style="margin-bottom: 0;">Chạm từng chữ Hán để nghe phát âm &amp; từ ghép, hoặc nhấn <strong>✍️ Viết chữ này</strong> để tập viết trên ô vuông Masume!</p>
           </div>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayJaKanji">
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayJaKanji">
             <span>🎧</span> Nghe 20 chữ bài này
           </button>
         </div>
@@ -1165,7 +1165,7 @@
             <h3 class="section-blue-title" id="jaTopicTitleText" style="color: #be123c;">👋 Chào Hỏi &amp; Lễ Phép</h3>
             <p class="section-sub-desc" style="margin-bottom: 0;">Chạm vào từng thẻ để nghe phát âm tiếng Nhật chuẩn và ghi nhớ thật nhanh nhé!</p>
           </div>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayJaVocab">
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayJaVocab">
             <span>🎧</span> Nghe cả chủ đề
           </button>
         </div>
@@ -1191,15 +1191,15 @@
             <span>✍️</span> Tập Viết Trên Ô Vuông Nhật Bản (マス目)
           </h3>
           <div style="display: flex; gap: 6px; flex-wrap: wrap;" id="jaWriteSetBtns">
-            <button class="tool-chip active-filter ja-write-set-btn" data-set="hira">🌸 Hiragana</button>
-            <button class="tool-chip ja-write-set-btn" data-set="kata">⚡ Katakana</button>
-            <button class="tool-chip ja-write-set-btn" data-set="kanji">⛩️ 80 Kanji</button>
+            <button type="button" class="tool-chip active-filter ja-write-set-btn" data-set="hira">🌸 Hiragana</button>
+            <button type="button" class="tool-chip ja-write-set-btn" data-set="kata">⚡ Katakana</button>
+            <button type="button" class="tool-chip ja-write-set-btn" data-set="kanji">⛩️ 80 Kanji</button>
           </div>
         </div>
         <div class="ja-write-layout">
           <div class="ja-write-board">
             <div style="font-size: 16px; font-weight: 900; color: #9f1239; margin-bottom: 6px;" id="jaWriteCurrentTitle">Tập viết chữ: あ (a)</div>
-            <button class="btn-hear-hint" id="btnHearJaWrite" style="margin: 0 auto 6px auto;">
+            <button type="button" class="btn-hear-hint" id="btnHearJaWrite" style="margin: 0 auto 6px auto;">
               <span>🔊</span> Nghe phát âm
             </button>
             <canvas id="jaWritingCanvas"></canvas>
@@ -1241,17 +1241,17 @@
           </div>
 
           <div class="listen-filter-row" id="jaQuizFilterRow" style="margin-bottom: 12px;">
-            <button class="tool-chip ja-quiz-filter active-filter" data-mode="all">🌟 Tổng hợp</button>
-            <button class="tool-chip ja-quiz-filter" data-mode="hira">🌸 Hiragana</button>
-            <button class="tool-chip ja-quiz-filter" data-mode="kata">⚡ Katakana</button>
-            <button class="tool-chip ja-quiz-filter" data-mode="kanji">⛩️ 80 Kanji</button>
-            <button class="tool-chip ja-quiz-filter" data-mode="vocab">🍱 Từ vựng</button>
+            <button type="button" class="tool-chip ja-quiz-filter active-filter" data-mode="all">🌟 Tổng hợp</button>
+            <button type="button" class="tool-chip ja-quiz-filter" data-mode="hira">🌸 Hiragana</button>
+            <button type="button" class="tool-chip ja-quiz-filter" data-mode="kata">⚡ Katakana</button>
+            <button type="button" class="tool-chip ja-quiz-filter" data-mode="kanji">⛩️ 80 Kanji</button>
+            <button type="button" class="tool-chip ja-quiz-filter" data-mode="vocab">🍱 Từ vựng</button>
           </div>
 
           <div class="quiz-question-box" style="background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%); border-color: #fda4af; border-bottom-color: #e11d48;">
             <div class="quiz-question-title" style="color: #881337;">👂 Nghe tiếng Nhật và chọn đúng nghĩa nhé!</div>
             <div class="quiz-question-ja" id="jaQuizPromptWord" style="font-size: 22px; font-weight: 900; color: #be123c; margin-top: 4px;">おはよう (Ohayou)</div>
-            <button class="challenge-btn" id="btnHearJaQuiz" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); border-color: #9f1239; border-bottom-color: #881337;">
+            <button type="button" class="challenge-btn" id="btnHearJaQuiz" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); border-color: #9f1239; border-bottom-color: #881337;">
               <span>🔊</span> Nghe Tiếng Nhật &amp; 4 Đáp Án
             </button>
           </div>
@@ -1264,9 +1264,9 @@
           <h2 class="victory-title" style="color: #be123c;">SUGOI BẢO LONG! すごい!</h2>
           <p class="victory-desc" id="jaQuizVictoryScore">Bảo Long giỏi tiếng Nhật quá đi thôi!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initJaQuizGame()">🔄 Chơi ván mới</button>
-            <button class="home-btn" onclick="switchJapaneseSubTab('kanji')">⛩️ Ôn 80 Kanji</button>
-            <button class="home-btn" onclick="switchJapaneseSubTab('writing')">✍️ Tập viết Masume</button>
+            <button type="button" class="challenge-btn" onclick="initJaQuizGame()">🔄 Chơi ván mới</button>
+            <button type="button" class="home-btn" onclick="switchJapaneseSubTab('kanji')">⛩️ Ôn 80 Kanji</button>
+            <button type="button" class="home-btn" onclick="switchJapaneseSubTab('writing')">✍️ Tập viết Masume</button>
           </div>
         </div>
       </div>
@@ -1284,13 +1284,13 @@
       </div>
 
       <div class="lang-subnav">
-        <button class="game-tab-btn active" id="scienceTabTopics" onclick="switchScienceSubTab('topics')">
+        <button type="button" class="game-tab-btn active" id="scienceTabTopics" onclick="switchScienceSubTab('topics')">
           <span>🌱</span><span>6 Chủ Đề Lớp 1</span>
         </button>
-        <button class="game-tab-btn" id="scienceTabLab" onclick="switchScienceSubTab('lab')">
+        <button type="button" class="game-tab-btn" id="scienceTabLab" onclick="switchScienceSubTab('lab')">
           <span>🌺</span><span>Trồng Asagao &amp; 5 Giác Quan</span>
         </button>
-        <button class="game-tab-btn" id="scienceTabQuiz" onclick="switchScienceSubTab('quiz')">
+        <button type="button" class="game-tab-btn" id="scienceTabQuiz" onclick="switchScienceSubTab('quiz')">
           <span>🎯</span><span>Đố Vui Khoa Học (8 câu)</span>
         </button>
       </div>
@@ -1299,7 +1299,7 @@
         <div class="lesson-tabs-track" id="scienceTopicsTrack"></div>
         <div class="section-header-flex" style="margin: 14px 0;">
           <h3 class="section-blue-title" id="scienceTopicTitle" style="color: #065f46; margin: 0;">Gia Đình &amp; Ngôi Nhà An Toàn</h3>
-          <button class="tool-chip tool-chip-listen" id="btnAutoPlayScienceTopic"><span>🎧</span> Nghe cả chủ đề</button>
+          <button type="button" class="tool-chip tool-chip-listen" id="btnAutoPlayScienceTopic"><span>🎧</span> Nghe cả chủ đề</button>
         </div>
         <div class="cards-grid" id="scienceCardsGrid"></div>
       </div>
@@ -1327,7 +1327,7 @@
           </div>
           <div class="quiz-question-box" style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-color: #6ee7b7; border-bottom-color: #059669;">
             <div class="quiz-question-title" id="scienceQuizPrompt" style="color: #065f46;">Câu hỏi Khoa học</div>
-            <button class="btn-hear-hint" id="btnHearScienceQuiz" style="margin: 10px auto 0 auto;"><span>🔊</span> Nghe câu hỏi &amp; 4 đáp án</button>
+            <button type="button" class="btn-hear-hint" id="btnHearScienceQuiz" style="margin: 10px auto 0 auto;"><span>🔊</span> Nghe câu hỏi &amp; 4 đáp án</button>
           </div>
           <div class="quiz-options-grid" id="scienceQuizOptionsGrid"></div>
         </div>
@@ -1336,8 +1336,8 @@
           <h2 class="victory-title" style="color: #059669;">NHÀ KHOA HỌC NHÍ BẢO LONG!</h2>
           <p class="victory-desc" id="scienceQuizVictoryScore">Bảo Long giỏi quá đi thôi!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initScienceQuizGame()">🔄 Chơi lại 8 câu mới</button>
-            <button class="home-btn" onclick="switchScienceSubTab('lab')">🌺 Trồng hoa Bìm Bìm</button>
+            <button type="button" class="challenge-btn" onclick="initScienceQuizGame()">🔄 Chơi lại 8 câu mới</button>
+            <button type="button" class="home-btn" onclick="switchScienceSubTab('lab')">🌺 Trồng hoa Bìm Bìm</button>
           </div>
         </div>
       </div>
@@ -1355,16 +1355,16 @@
       </div>
 
       <div class="lang-subnav">
-        <button class="game-tab-btn active" id="artsTabMusic" onclick="switchArtsSubTab('music')">
+        <button type="button" class="game-tab-btn active" id="artsTabMusic" onclick="switchArtsSubTab('music')">
           <span>🎹</span><span>Đàn Pianica &amp; Nhạc</span>
         </button>
-        <button class="game-tab-btn" id="artsTabPaint" onclick="switchArtsSubTab('paint')">
+        <button type="button" class="game-tab-btn" id="artsTabPaint" onclick="switchArtsSubTab('paint')">
           <span>🎨</span><span>Pha Màu &amp; Vẽ Tranh</span>
         </button>
-        <button class="game-tab-btn" id="artsTabPe" onclick="switchArtsSubTab('pe')">
+        <button type="button" class="game-tab-btn" id="artsTabPe" onclick="switchArtsSubTab('pe')">
           <span>🤸</span><span>Thể Dục &amp; An Toàn</span>
         </button>
-        <button class="game-tab-btn" id="artsTabQuiz" onclick="switchArtsSubTab('quiz')">
+        <button type="button" class="game-tab-btn" id="artsTabQuiz" onclick="switchArtsSubTab('quiz')">
           <span>🎯</span><span>Đố Vui Nghệ Thuật</span>
         </button>
       </div>
@@ -1393,16 +1393,16 @@
             <span class="color-picker-dot art-color-dot" data-color="#eab308" style="background: #eab308;"></span>
             <span class="color-picker-dot art-color-dot" data-color="#7c3aed" style="background: #7c3aed;"></span>
             <span style="margin-left: 8px; font-size: 12px; font-weight: 800; color: #475569;">Hoặc chạm Sticker để đóng dấu:</span>
-            <button class="tool-chip art-sticker-btn" data-sticker="🦖">🦖</button>
-            <button class="tool-chip art-sticker-btn" data-sticker="🐉">🐉</button>
-            <button class="tool-chip art-sticker-btn" data-sticker="🌸">🌸</button>
-            <button class="tool-chip art-sticker-btn" data-sticker="🚅">🚅</button>
-            <button class="tool-chip art-sticker-btn" data-sticker="⭐">⭐</button>
+            <button type="button" class="tool-chip art-sticker-btn" data-sticker="🦖">🦖</button>
+            <button type="button" class="tool-chip art-sticker-btn" data-sticker="🐉">🐉</button>
+            <button type="button" class="tool-chip art-sticker-btn" data-sticker="🌸">🌸</button>
+            <button type="button" class="tool-chip art-sticker-btn" data-sticker="🚅">🚅</button>
+            <button type="button" class="tool-chip art-sticker-btn" data-sticker="⭐">⭐</button>
           </div>
           <canvas id="artDrawCanvas" class="art-draw-canvas"></canvas>
           <div style="display: flex; gap: 10px; margin-top: 10px; justify-content: center; flex-wrap: wrap;">
-            <button class="tool-chip" id="btnArtCanvasClear">🧹 Xóa bảng vẽ</button>
-            <button class="tool-chip" id="btnArtCanvasSave" style="background:#dcfce7; color:#15803d; border-color:#22c55e;">⭐ Hoàn thành tác phẩm!</button>
+            <button type="button" class="tool-chip" id="btnArtCanvasClear">🧹 Xóa bảng vẽ</button>
+            <button type="button" class="tool-chip" id="btnArtCanvasSave" style="background:#dcfce7; color:#15803d; border-color:#22c55e;">⭐ Hoàn thành tác phẩm!</button>
           </div>
         </div>
       </div>
@@ -1420,7 +1420,7 @@
           </div>
           <div class="quiz-question-box" style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border-color: #d8b4fe; border-bottom-color: #9333ea;">
             <div class="quiz-question-title" id="artsQuizPrompt" style="color: #6b21a8;">Câu hỏi Nghệ thuật &amp; Thể dục</div>
-            <button class="btn-hear-hint" id="btnHearArtsQuiz" style="margin: 10px auto 0 auto;"><span>🔊</span> Nghe câu hỏi &amp; 4 đáp án</button>
+            <button type="button" class="btn-hear-hint" id="btnHearArtsQuiz" style="margin: 10px auto 0 auto;"><span>🔊</span> Nghe câu hỏi &amp; 4 đáp án</button>
           </div>
           <div class="quiz-options-grid" id="artsQuizOptionsGrid"></div>
         </div>
@@ -1429,8 +1429,8 @@
           <h2 class="victory-title" style="color: #9333ea;">NGHỆ SĨ &amp; VẬN ĐỘNG VIÊN NHÍ!</h2>
           <p class="victory-desc" id="artsQuizVictoryScore">Bảo Long thật tài năng!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initArtsQuizGame()">🔄 Chơi lại 8 câu mới</button>
-            <button class="home-btn" onclick="switchArtsSubTab('music')">🎹 Về đàn Pianica</button>
+            <button type="button" class="challenge-btn" onclick="initArtsQuizGame()">🔄 Chơi lại 8 câu mới</button>
+            <button type="button" class="home-btn" onclick="switchArtsSubTab('music')">🎹 Về đàn Pianica</button>
           </div>
         </div>
       </div>
@@ -1447,13 +1447,13 @@
       </div>
 
       <div class="lang-subnav">
-        <button class="game-tab-btn active" id="arcadeTabCar" onclick="switchArcadeMode('car')">
+        <button type="button" class="game-tab-btn active" id="arcadeTabCar" onclick="switchArcadeMode('car')">
           <span>🏎️</span><span>Đua Siêu Xe</span>
         </button>
-        <button class="game-tab-btn" id="arcadeTabDino" onclick="switchArcadeMode('dino')">
+        <button type="button" class="game-tab-btn" id="arcadeTabDino" onclick="switchArcadeMode('dino')">
           <span>🦖</span><span>Khủng Long Chạy</span>
         </button>
-        <button class="game-tab-btn" id="arcadeTabDragon" onclick="switchArcadeMode('dragon')">
+        <button type="button" class="game-tab-btn" id="arcadeTabDragon" onclick="switchArcadeMode('dragon')">
           <span>🐉</span><span>Rồng Bay Vượt Mây</span>
         </button>
       </div>
@@ -1483,14 +1483,14 @@
             <div class="victory-emojis">🏆🏎️🦖🐉</div>
             <h3 id="arcadeResultTitle" style="font-size: 24px; font-weight: 900; color: #991b1b; margin: 4px 0;">🏆 VỀ NHẤT SIÊU TỐC!</h3>
             <p id="arcadeResultDesc" style="font-size: 14px; font-weight: 800; color: #334155; margin: 4px 0 12px 0;">Tuyệt vời Bảo Long ơi!</p>
-            <button class="challenge-btn" id="btnArcadeReplay">🔄 Đua ván mới ngay!</button>
+            <button type="button" class="challenge-btn" id="btnArcadeReplay">🔄 Đua ván mới ngay!</button>
           </div>
         </div>
 
         <div class="arcade-controls-panel">
           <div class="arcade-action-btns">
-            <button class="challenge-btn" id="btnArcadeStart" style="padding: 10px 20px;"><span>🏁</span> BẮT ĐẦU ĐUA!</button>
-            <button class="btn-hear-hint" id="btnArcadeSoundTip"><span>🔊</span> Nghe hướng dẫn</button>
+            <button type="button" class="challenge-btn" id="btnArcadeStart" style="padding: 10px 20px;"><span>🏁</span> BẮT ĐẦU ĐUA!</button>
+            <button type="button" class="btn-hear-hint" id="btnArcadeSoundTip"><span>🔊</span> Nghe hướng dẫn</button>
           </div>
 
           <div class="dpad-wrapper" aria-label="Bảng điều khiển 4 nút">
@@ -1510,28 +1510,36 @@
       </div>
     </section>
 
-    <!-- Khu Vực Khu Trò Chơi (Game Hub - 7 Trò Chơi Cuốn Hút) -->
+    <!-- Khu Vực Khu Trò Chơi (Game Hub - 7 Trò Chơi Tương Tác & Thực Tế) -->
     <section id="gameViewContainer" style="display: none;">
+      <div class="game-hub-coins-bar" id="gameHubStatsBar">
+        <div class="game-coins-info">
+          <span class="arcade-coins-pill" id="gameTotalCoinsPill">🪙 Tổng Xu: 0</span>
+          <span class="streak-pill" id="gameSessionCoins">✨ Phiên chơi: +0 🪙</span>
+        </div>
+        <button type="button" class="tool-chip" id="btnGoArcadeGarage" onclick="switchMode('arcade')">🏎️ Sang Xưởng Đua Xu</button>
+      </div>
+
       <div class="game-hub-nav">
-        <button class="game-tab-btn active" id="tabBtnPuzzle" onclick="switchSubGame('puzzle')">
+        <button type="button" class="game-tab-btn active" id="tabBtnPuzzle" onclick="switchSubGame('puzzle')">
           <span>🧩</span><span>Ghép Chữ Vui</span>
         </button>
-        <button class="game-tab-btn" id="tabBtnListenCatch" onclick="switchSubGame('listen_catch')">
+        <button type="button" class="game-tab-btn" id="tabBtnListenCatch" onclick="switchSubGame('listen_catch')">
           <span>👂</span><span>Nghe Âm Bắt Chữ</span>
         </button>
-        <button class="game-tab-btn" id="tabBtnShinkansen" onclick="switchSubGame('shinkansen')">
+        <button type="button" class="game-tab-btn" id="tabBtnShinkansen" onclick="switchSubGame('shinkansen')">
           <span>🚅</span><span>Tàu Shinkansen</span>
         </button>
-        <button class="game-tab-btn" id="tabBtnMemory" onclick="switchSubGame('dino_memory')">
+        <button type="button" class="game-tab-btn" id="tabBtnMemory" onclick="switchSubGame('dino_memory')">
           <span>🃏</span><span>Lật Thẻ Khủng Long</span>
         </button>
-        <button class="game-tab-btn" id="tabBtnDinoQuiz" onclick="switchSubGame('dino_quiz')">
+        <button type="button" class="game-tab-btn" id="tabBtnDinoQuiz" onclick="switchSubGame('dino_quiz')">
           <span>🎯</span><span>Đố Vui Khủng Long</span>
         </button>
-        <button class="game-tab-btn" id="tabBtnDinoDig" onclick="switchSubGame('dino_dig')">
+        <button type="button" class="game-tab-btn" id="tabBtnDinoDig" onclick="switchSubGame('dino_dig')">
           <span>⛏️</span><span>Khai Quật Hóa Thạch</span>
         </button>
-        <button class="game-tab-btn" id="tabBtnQuiz" onclick="switchSubGame('quiz')">
+        <button type="button" class="game-tab-btn" id="tabBtnQuiz" onclick="switchSubGame('quiz')">
           <span>🚗</span><span>Đố Vui Xe Cộ</span>
         </button>
       </div>
@@ -1541,6 +1549,7 @@
         <div id="puzzlePlayStage">
           <div class="game-score-row">
             <span class="game-progress-text" id="gameProgressText">Câu 1 / 10</span>
+            <span class="streak-pill" id="puzzleStreakBadge">🔥 Chuỗi x0</span>
             <span class="tool-chip" id="puzzleModePill" style="background:#fff7ed; color:#c2410c; border-color:#fdba74;">📚 Tổng hợp quen thuộc</span>
             <span class="game-stars" id="gameStarsCount">⭐ 0 sao</span>
           </div>
@@ -1551,14 +1560,15 @@
             <div class="game-target-ja" id="gameTargetJa">🇯🇵 うし (Ushi)</div>
           </div>
 
-          <p class="slot-tip-text">💡 Mẹo: Nếu chọn nhầm chữ, chạm trực tiếp vào ô chữ bên dưới để lấy lại nhé!</p>
+          <p class="slot-tip-text">💡 Mẹo: Chạm vào ô chữ bên dưới để gỡ lại, hoặc bấm Gợi ý để nghe chữ tiếp theo!</p>
           <div class="puzzle-slots-container" id="puzzleSlots"></div>
           <div class="options-letters-row" id="optionsLettersRow"></div>
 
           <div class="game-controls-row">
-            <button class="btn-hear-hint" id="btnHearHint"><span>🔊</span> Nghe lại</button>
-            <button class="btn-reset-puzzle" id="btnResetPuzzle"><span>🔄</span> Xếp lại</button>
-            <button class="btn-reset-puzzle" id="btnTogglePuzzleSource">🔀 Đổi bộ câu hỏi</button>
+            <button type="button" class="btn-hear-hint" id="btnHearHint"><span>🔊</span> Nghe lại</button>
+            <button type="button" class="btn-reset-puzzle" id="btnPuzzleHint" style="background:#fef3c7; border-color:#f59e0b; color:#92400e;"><span>💡</span> Gợi ý chữ</button>
+            <button type="button" class="btn-reset-puzzle" id="btnResetPuzzle"><span>🔄</span> Xếp lại</button>
+            <button type="button" class="btn-reset-puzzle" id="btnTogglePuzzleSource">🔀 Đổi bộ câu hỏi</button>
           </div>
         </div>
         <div id="puzzleVictoryStage" class="game-victory-box" style="display: none;">
@@ -1566,31 +1576,33 @@
           <h2 class="victory-title">XUẤT SẮC QUÁ BẢO LONG ƠI!</h2>
           <p class="victory-desc" id="puzzleVictoryScore">Bảo Long đã hoàn thành thử thách ghép chữ!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="startMiniGame(lastPuzzleSource)">🔄 Ghép chữ ván mới</button>
-            <button class="home-btn" onclick="switchSubGame('shinkansen')">🚅 Chơi Tàu Shinkansen</button>
-            <button class="home-btn" onclick="switchMode('vocab')">📖 Về học từ mới</button>
+            <button type="button" class="challenge-btn" onclick="startMiniGame(lastPuzzleSource)">🔄 Ghép chữ ván mới</button>
+            <button type="button" class="home-btn" onclick="switchSubGame('shinkansen')">🚅 Chơi Tàu Shinkansen</button>
+            <button type="button" class="home-btn" onclick="switchMode('vocab')">📖 Về học từ mới</button>
           </div>
         </div>
       </div>
 
-      <!-- SUBGAME 2 (MỚI): NGHE ÂM BẮT CHỮ (AUDIO-FIRST PHONICS GAME) -->
+      <!-- SUBGAME 2: NGHE ÂM BẮT CHỮ (+ PHẢN XẠ 45S BLITZ) -->
       <div class="game-view" id="subgameListenCatchPane" style="display: none;">
         <div id="listenCatchPlayStage">
           <div class="game-score-row">
             <span class="game-progress-text" id="listenProgressText">Câu 1 / 10</span>
             <span class="streak-pill" id="listenStreakBadge">🔥 Chuỗi x0</span>
+            <span class="tool-chip" id="listenTimerBadge" style="display:none; background:#fee2e2; color:#b91c1c; border-color:#fca5a5;">⏱️ 45s</span>
             <span class="game-stars" id="listenScoreText">⭐ 0 sao</span>
           </div>
 
           <div class="listen-filter-row">
-            <button class="tool-chip active-filter" id="btnListenTricky">⚡ Âm dễ nhầm (s/x, c/k, ă/â, đ/d...)</button>
-            <button class="tool-chip" id="btnListenWords">📖 Nghe từ vựng &amp; Khủng long &amp; Xe</button>
+            <button type="button" class="tool-chip active-filter" id="btnListenTricky">⚡ Âm dễ nhầm (s/x, c/k, ă/â, đ/d...)</button>
+            <button type="button" class="tool-chip" id="btnListenWords">📖 Nghe từ vựng &amp; Khủng long &amp; Xe</button>
+            <button type="button" class="tool-chip" id="btnListenBlitz">⏱️ Phản xạ nhanh 45s</button>
           </div>
 
           <div class="quiz-question-box" style="background: linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%); border-color: #c4b5fd; border-bottom-color: #8b5cf6;">
             <div class="quiz-question-title" style="color: #5b21b6;">👂 Bảo Long lắng nghe và chọn đúng chữ vừa đọc nhé!</div>
             <div class="quiz-question-ja" id="listenPromptSub" style="color: #6d28d9;">💡 Gợi ý: Chạm nút Loa để nghe lại bất cứ lúc nào</div>
-            <button class="challenge-btn" id="btnHearListenCatch" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #5b21b6; border-bottom-color: #4c1d95;">
+            <button type="button" class="challenge-btn" id="btnHearListenCatch" style="margin-top: 12px; padding: 10px 24px; font-size: 15px; background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #5b21b6; border-bottom-color: #4c1d95;">
               <span>🔊</span> Nghe Âm Thanh
             </button>
           </div>
@@ -1602,18 +1614,19 @@
           <h2 class="victory-title" style="color: #6d28d9;">ĐÔI TAI THẦN KỲ CỦA BẢO LONG!</h2>
           <p class="victory-desc" id="listenVictoryScore">Bé nghe chuẩn xác 100%!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initListenCatchGame()">🔄 Chơi lại Nghe Âm</button>
-            <button class="home-btn" onclick="switchSubGame('shinkansen')">🚅 Lắp Tàu Shinkansen</button>
-            <button class="home-btn" onclick="switchMode('alphabet')">🔠 Xem lại Bảng Chữ Cái</button>
+            <button type="button" class="challenge-btn" onclick="initListenCatchGame()">🔄 Chơi lại Nghe Âm</button>
+            <button type="button" class="home-btn" onclick="switchSubGame('shinkansen')">🚅 Lắp Tàu Shinkansen</button>
+            <button type="button" class="home-btn" onclick="switchMode('alphabet')">🔠 Xem lại Bảng Chữ Cái</button>
           </div>
         </div>
       </div>
 
-      <!-- SUBGAME 3 (MỚI): LẮP TÀU SHINKANSEN ĐÁNH VẦN -->
+      <!-- SUBGAME 3: LẮP TÀU SHINKANSEN ĐÁNH VẦN (GA TÀU THỰC TẾ) -->
       <div class="game-view" id="subgameShinkansenPane" style="display: none;">
         <div id="shinkansenPlayStage">
           <div class="game-score-row">
             <span class="game-progress-text" id="shinkansenProgressText">Chuyến tàu 1 / 10</span>
+            <span class="tool-chip" id="trainSignalLight" style="background:#fef2f2; color:#b91c1c; border-color:#fca5a5;">🔴 Đợi nối toa tàu</span>
             <span class="game-stars" id="shinkansenScoreText">⭐ 0 sao</span>
           </div>
 
@@ -1623,11 +1636,12 @@
               <div class="shinkansen-target-hint" id="shinkansenTargetHint">Lắp tàu chở chữ: Con cá</div>
               <div class="shinkansen-target-ja" id="shinkansenTargetJa">🇯🇵 さかな (Sakana)</div>
             </div>
-            <button class="btn-hear-hint" id="btnHearShinkansen"><span>🔊</span> Nghe mẫu</button>
+            <button type="button" class="btn-hear-hint" id="btnHearShinkansen"><span>🔊</span> Nghe mẫu</button>
           </div>
 
           <!-- Đường ray tàu Shinkansen -->
           <div class="shinkansen-track-scene">
+            <div class="train-station-banner" id="trainFunBanner">🚉 Ga Tokyo → Đón hành khách lắp chữ!</div>
             <div class="train-unit" id="trainTrainUnit">
               <div class="train-nose" id="trainNoseSlot">?</div>
               <div class="train-coupler">🔗</div>
@@ -1654,43 +1668,49 @@
           <h2 class="victory-title" style="color: #0369a1;">TRƯỞNG TÀU SHINKANSEN BẢO LONG!</h2>
           <p class="victory-desc" id="shinkansenVictoryScore">Bé đã ghép tàu siêu tốc hoàn hảo!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initShinkansenGame()">🔄 Chuyến tàu mới</button>
-            <button class="home-btn" onclick="switchSubGame('quiz')">🚗 Đố vui Xe Cộ</button>
-            <button class="home-btn" onclick="switchMode('vehicles')">🚅 Về Ga Xe Cộ</button>
+            <button type="button" class="challenge-btn" onclick="initShinkansenGame()">🔄 Chuyến tàu mới</button>
+            <button type="button" class="home-btn" onclick="switchSubGame('quiz')">🚗 Đố vui Xe Cộ</button>
+            <button type="button" class="home-btn" onclick="switchMode('vehicles')">🚅 Về Ga Xe Cộ</button>
           </div>
         </div>
       </div>
 
-      <!-- SUBGAME 4: LẬT THẺ KHỦNG LONG (DINO MEMORY) -->
+      <!-- SUBGAME 4: LẬT THẺ KHỦNG LONG (3 ĐỘ KHÓ + SOI NHANH + KỶ LỤC) -->
       <div class="game-view" id="subgameMemoryPane" style="display: none;">
         <div id="memoryPlayStage">
           <div class="memory-board-header">
             <div class="memory-stats-group">
               <span class="memory-stat-pill" id="memoryFlipsText">👀 Lượt lật: 0</span>
               <span class="memory-stat-pill" id="memoryPairsText">⭐ Đã ghép: 0 / 6 cặp</span>
+              <span class="memory-stat-pill" id="memoryStreakText">🔥 Chuỗi x0</span>
+              <span class="memory-stat-pill" id="memoryBestText">🏆 Kỷ lục: --</span>
             </div>
-            <button class="tool-chip" id="btnRestartMemory" style="background:#fef08a; color:#854d0e; border-color:#eab308;">
-              🔄 Đổi bộ khủng long mới
-            </button>
+            <div class="memory-controls-row">
+              <button type="button" class="tool-chip" id="btnMemEasy">🌱 4 cặp</button>
+              <button type="button" class="tool-chip active-filter" id="btnMemNormal">🔥 6 cặp</button>
+              <button type="button" class="tool-chip" id="btnMemHard">👑 8 cặp</button>
+              <button type="button" class="tool-chip" id="btnMemPeek" style="background:#e0f2fe; color:#0369a1; border-color:#38bdf8;">👀 Soi 2s (1)</button>
+              <button type="button" class="tool-chip" id="btnRestartMemory" style="background:#fef08a; color:#854d0e; border-color:#eab308;">🔄 Đổi bộ mới</button>
+            </div>
           </div>
           <p class="slot-tip-text">
-            Bảo Long chạm vào 2 thẻ giống nhau để mở khóa ảnh thật các chú khủng long nhé! (Mỗi ván chọn ngẫu nhiên 6 loài từ bộ 10 loài!) 🦖
+            Chạm 2 thẻ giống nhau để ghép cặp ảnh thật khủng long! Dùng <strong>👀 Soi 2s</strong> một lần mỗi ván nếu muốn nhớ vị trí trước nhé! 🦖
           </p>
           <div class="memory-grid" id="memoryGrid"></div>
         </div>
         <div id="memoryVictoryStage" class="game-victory-box" style="display: none;">
           <div class="victory-emojis">🃏🦖🦕🏆</div>
           <h2 class="victory-title" style="color: #15803d;">TRÍ NHỚ SIÊU PHÀM BẢO LONG!</h2>
-          <p class="victory-desc" id="memoryVictoryFlips">Bé đã ghép đúng tất cả 6 cặp khủng long!</p>
+          <p class="victory-desc" id="memoryVictoryFlips">Bé đã ghép đúng tất cả các cặp khủng long!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initDinoMemoryGame()">🔄 Chơi bộ khủng long khác</button>
-            <button class="home-btn" onclick="switchSubGame('dino_quiz')">🎯 Đố Vui Khủng Long</button>
-            <button class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
+            <button type="button" class="challenge-btn" onclick="initDinoMemoryGame()">🔄 Chơi bộ khủng long khác</button>
+            <button type="button" class="home-btn" onclick="switchSubGame('dino_quiz')">🎯 Đố Vui Khủng Long</button>
+            <button type="button" class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
           </div>
         </div>
       </div>
 
-      <!-- SUBGAME 5: ĐỐ VUI KHỦNG LONG (DINO QUIZ) -->
+      <!-- SUBGAME 5: ĐỐ VUI KHỦNG LONG (KÈM SỰ THẬT THÚ VỊ) -->
       <div class="game-view" id="subgameDinoQuizPane" style="display: none;">
         <div id="dinoQuizPlayStage">
           <div class="game-score-row">
@@ -1700,10 +1720,11 @@
           <div class="quiz-question-box" style="border-color: #34d399; border-bottom-color: #10b981; background: #f0fdf4;">
             <div class="quiz-question-title" id="dinoQuizQuestionTitle" style="color: #064e3b;">Câu hỏi khủng long</div>
             <div class="quiz-question-ja" id="dinoQuizQuestionHint" style="color: #047857; font-weight: 700;">💡 Gợi ý</div>
-            <button class="btn-hear-hint" id="btnHearDinoQuizHint" style="margin: 10px auto 0 auto; background: #10b981; border-color: #059669; border-bottom-color: #047857;">
+            <button type="button" class="btn-hear-hint" id="btnHearDinoQuizHint" style="margin: 10px auto 0 auto; background: #10b981; border-color: #059669; border-bottom-color: #047857;">
               <span>🔊</span> Nghe câu đố &amp; 4 đáp án
             </button>
           </div>
+          <div class="quiz-fact-reveal" id="dinoQuizFactBox" style="display: none;"></div>
           <div class="quiz-options-grid" id="dinoQuizOptionsGrid"></div>
         </div>
         <div id="dinoQuizVictoryStage" class="game-victory-box" style="display: none; background: linear-gradient(135deg, #dcfce7 0%, #fef08a 100%); border-color: #16a34a;">
@@ -1711,14 +1732,14 @@
           <h2 class="victory-title" style="color: #15803d;">BẢO LONG LÀ CHUYÊN GIA KHỦNG LONG!</h2>
           <p class="victory-desc" id="dinoQuizVictoryScore">Bé đã trả lời xuất sắc các câu đố về kỷ Jura!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initDinoQuiz()">🔄 Chơi lại Đố Vui</button>
-            <button class="home-btn" onclick="switchSubGame('dino_dig')">⛏️ Khai Quật Hóa Thạch</button>
-            <button class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
+            <button type="button" class="challenge-btn" onclick="initDinoQuiz()">🔄 Chơi lại Đố Vui</button>
+            <button type="button" class="home-btn" onclick="switchSubGame('dino_dig')">⛏️ Khai Quật Hóa Thạch</button>
+            <button type="button" class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
           </div>
         </div>
       </div>
 
-      <!-- SUBGAME 6: KHAI QUẬT HÓA THẠCH KHỦNG LONG (DINO DIG) -->
+      <!-- SUBGAME 6: KHAI QUẬT HÓA THẠCH KHỦNG LONG (2 CÔNG CỤ + VẾT NỨT + HỒ SƠ THỰC TẾ) -->
       <div class="game-view" id="subgameDinoDigPane" style="display: none;">
         <div id="dinoDigPlayStage">
           <div class="game-score-row">
@@ -1728,7 +1749,11 @@
           <div class="dig-site-box">
             <div class="dig-site-header">
               <h3 class="dig-site-title" id="dinoDigTargetTitle">Khu Khảo Cổ Tiền Sử Của Bảo Long</h3>
-              <p class="dig-site-subtitle">Chạm tay liên tục 5 lần vào tảng đá để dùng búa đập vỡ lớp đất cổ đại!</p>
+              <p class="dig-site-subtitle" id="dinoDigSubtitle">Bước 1: Dùng ⛏️ Búa đập nứt lớp đá → Bước 2: Dùng 🖌️ Cọ quét sạch bụi cát!</p>
+            </div>
+            <div class="dig-tools-row" id="digToolsRow">
+              <button type="button" class="tool-chip active-filter" id="btnDigHammer">⛏️ Búa Đá (Đập lớp cứng)</button>
+              <button type="button" class="tool-chip" id="btnDigBrush">🖌️ Cọ Khảo Cổ (Phủi bụi cát)</button>
             </div>
             <div class="dig-progress-container">
               <div class="dig-progress-bar" id="dinoDigProgressBar" style="width: 0%;"></div>
@@ -1737,18 +1762,21 @@
             <div class="dig-rock-area" id="dinoDigRockArea">
               <div class="dig-fossil-underlay" id="dinoDigFossilUnderlay"></div>
               <div class="dig-rock-overlay" id="dinoDigRockOverlay">
+                <svg class="dig-crack-svg" id="dinoDigCrackSvg" viewBox="0 0 260 260"></svg>
                 <div class="dig-crack-layer" id="dinoDigCrackLayer"></div>
                 <div class="dig-rock-prompt">
-                  <span class="hammer-bounce-icon">🔨</span>
-                  <span class="dig-prompt-text" id="digPromptText">Chạm vào tảng đá (0/5)</span>
+                  <span class="hammer-bounce-icon" id="digToolAnimIcon">⛏️</span>
+                  <span class="dig-prompt-text" id="digPromptText">Chạm tảng đá bằng Búa (0/5)</span>
                 </div>
               </div>
+              <div class="dig-sparks-layer" id="dinoDigSparksLayer"></div>
               <div class="dig-revived-dino" id="dinoDigRevivedDino" style="display: none;">
                 <div class="revived-icon" id="dinoDigRevivedIcon"></div>
                 <div class="revived-title" id="dinoDigRevivedTitle">T-Rex Bạo Chúa</div>
                 <div class="revived-ja" id="dinoDigRevivedJa">ティラノサウルス</div>
+                <div class="revived-fact-badge" id="dinoDigRevivedFact">🦴 Thông tin khảo cổ</div>
                 <div class="revived-action">
-                  <button class="dino-roar-btn" id="btnNextFossil" style="font-size: 14px; padding: 10px 20px;">
+                  <button type="button" class="dino-roar-btn" id="btnNextFossil" style="font-size: 13px; padding: 8px 16px;">
                     ⛏️ Khai quật chú tiếp theo ➡️
                   </button>
                 </div>
@@ -1759,16 +1787,16 @@
         <div id="dinoDigVictoryStage" class="game-victory-box" style="display: none; background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); border-color: #ea580c;">
           <div class="victory-emojis">⛏️🦕🦖🏆✨</div>
           <h2 class="victory-title" style="color: #9a3412;">NHÀ KHẢO CỔ VĨ ĐẠI BẢO LONG!</h2>
-          <p class="victory-desc">Bé đã khai quật và đánh thức toàn bộ các loài khủng long tiền sử từ lòng đất!</p>
+          <p class="victory-desc" id="dinoDigVictoryDesc">Bé đã khai quật và đánh thức toàn bộ các loài khủng long tiền sử từ lòng đất!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" style="background: #ea580c; border-color: #c2410c;" onclick="initDinoDig()">🔄 Khai quật lại từ đầu</button>
-            <button class="home-btn" onclick="switchSubGame('dino_quiz')">🎯 Đố Vui Khủng Long</button>
-            <button class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
+            <button type="button" class="challenge-btn" style="background: #ea580c; border-color: #c2410c;" onclick="initDinoDig()">🔄 Khai quật lại từ đầu</button>
+            <button type="button" class="home-btn" onclick="switchSubGame('dino_quiz')">🎯 Đố Vui Khủng Long</button>
+            <button type="button" class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
           </div>
         </div>
       </div>
 
-      <!-- SUBGAME 7: ĐỐ VUI XE CỘ (VEHICLE QUIZ - ĐẦY ĐỦ 12 XE) -->
+      <!-- SUBGAME 7: ĐỐ VUI XE CỘ (KÈM KIẾN THỨC THỰC TẾ) -->
       <div class="game-view" id="subgameQuizPane" style="display: none;">
         <div id="quizPlayStage">
           <div class="game-score-row">
@@ -1778,10 +1806,11 @@
           <div class="quiz-question-box">
             <div class="quiz-question-title" id="quizQuestionTitle">Câu hỏi xe cộ</div>
             <div class="quiz-question-ja" id="quizQuestionJa">🇯🇵</div>
-            <button class="btn-hear-hint" id="btnHearQuizQuestion" style="margin: 10px auto 0 auto;">
+            <button type="button" class="btn-hear-hint" id="btnHearQuizQuestion" style="margin: 10px auto 0 auto;">
               <span>🔊</span> Nghe câu đố &amp; 4 đáp án
             </button>
           </div>
+          <div class="quiz-fact-reveal" id="quizFactBox" style="display: none;"></div>
           <div class="quiz-options-grid" id="quizOptionsGrid"></div>
         </div>
         <div id="quizVictoryStage" class="game-victory-box" style="display: none;">
@@ -1789,9 +1818,9 @@
           <h2 class="victory-title" style="color: #0284c7;">BẢO LONG LÀ BÁC TÀI XUẤT SẮC!</h2>
           <p class="victory-desc" id="quizVictoryScore">Bé đã hoàn thành xuất sắc thử thách Đố vui Xe Cộ!</p>
           <div class="victory-actions">
-            <button class="challenge-btn" onclick="initVehicleQuiz()">🔄 Chơi lại Đố Vui Xe</button>
-            <button class="home-btn" onclick="switchSubGame('shinkansen')">🚅 Chơi Tàu Shinkansen</button>
-            <button class="home-btn" onclick="switchMode('vehicles')">🚗 Về Ga Xe Cộ</button>
+            <button type="button" class="challenge-btn" onclick="initVehicleQuiz()">🔄 Chơi lại Đố Vui Xe</button>
+            <button type="button" class="home-btn" onclick="switchSubGame('shinkansen')">🚅 Chơi Tàu Shinkansen</button>
+            <button type="button" class="home-btn" onclick="switchMode('vehicles')">🚗 Về Ga Xe Cộ</button>
           </div>
         </div>
       </div>
@@ -1803,10 +1832,10 @@
   <div class="modal-overlay" id="modalOverlay">
     <div class="modal-content">
       <div class="modal-nav-header">
-        <button class="modal-step-btn" id="modalPrevBtn" title="Từ trước (Phím mũi tên trái)">◀ Trước</button>
+        <button type="button" class="modal-step-btn" id="modalPrevBtn" title="Từ trước (Phím mũi tên trái)">◀ Trước</button>
         <span class="modal-step-info" id="modalStepInfo">1 / 10</span>
-        <button class="modal-step-btn" id="modalNextBtn" title="Từ tiếp theo (Phím mũi tên phải)">Sau ▶</button>
-        <button class="modal-close-btn" id="modalCloseBtn" title="Đóng (ESC)">✕</button>
+        <button type="button" class="modal-step-btn" id="modalNextBtn" title="Từ tiếp theo (Phím mũi tên phải)">Sau ▶</button>
+        <button type="button" class="modal-close-btn" id="modalCloseBtn" title="Đóng (ESC)">✕</button>
       </div>
 
       <div class="modal-icon" id="modalIcon">👨</div>
@@ -1821,9 +1850,9 @@
       <div class="modal-example" id="modalExample">Ví dụ: "Ba yêu Bảo Long"</div>
 
       <div class="modal-btn-row">
-        <button class="modal-act-btn btn-sound-main" id="modalBtnSpeakWord"><span>🔊</span> Nghe đọc</button>
-        <button class="modal-act-btn btn-sound-spell" id="modalBtnSpell"><span>🔤</span> Đánh vần chậm</button>
-        <button class="modal-act-btn btn-drawing" id="modalBtnToggleDrawing"><span>✍️</span> Tập viết ô ly</button>
+        <button type="button" class="modal-act-btn btn-sound-main" id="modalBtnSpeakWord"><span>🔊</span> Nghe đọc</button>
+        <button type="button" class="modal-act-btn btn-sound-spell" id="modalBtnSpell"><span>🔤</span> Đánh vần chậm</button>
+        <button type="button" class="modal-act-btn btn-drawing" id="modalBtnToggleDrawing"><span>✍️</span> Tập viết ô ly</button>
       </div>
 
       <!-- Khung vẽ Canvas 4 ô ly cho bé tập đồ nét chữ -->
@@ -1858,7 +1887,7 @@
     <div class="modal-content" style="max-width: 560px; border-color: #fde047;">
       <div class="modal-nav-header" style="justify-content: space-between;">
         <span style="font-size: 18px; font-weight: 900; color: #b45309;">🏆 Kho Báu Sao &amp; Sticker Của Bảo Long</span>
-        <button class="modal-close-btn" id="stickerModalCloseBtn">✕</button>
+        <button type="button" class="modal-close-btn" id="stickerModalCloseBtn">✕</button>
       </div>
 
       <div class="profile-summary-card">
@@ -1929,17 +1958,17 @@
   <canvas id="confettiCanvas"></canvas>
 
   <!-- Scripts -->
-  <script src="data.js?v=20261126v4"></script>
-  <script src="speech.js?v=20261126v4"></script>
-  <script src="math.js?v=20261126v4"></script>
-  <script src="ethics.js?v=20261126v3"></script>
-  <script src="english.js?v=20261126v4"></script>
-  <script src="japanese.js?v=20261126v4"></script>
-  <script src="science_life.js?v=20261125v4"></script>
-  <script src="arts_pe.js?v=20261126v1"></script>
-  <script src="arcade.js?v=20261126v5"></script>
-  <script src="dragons.js?v=20261126v1"></script>
-  <script src="learning_plus.js?v=20261126v5"></script>
-  <script src="app.js?v=20261126v5"></script>
+  <script src="data.js?v=20261126v6"></script>
+  <script src="speech.js?v=20261126v6"></script>
+  <script src="math.js?v=20261126v6"></script>
+  <script src="ethics.js?v=20261126v6"></script>
+  <script src="english.js?v=20261126v6"></script>
+  <script src="japanese.js?v=20261126v6"></script>
+  <script src="science_life.js?v=20261126v6"></script>
+  <script src="arts_pe.js?v=20261126v6"></script>
+  <script src="arcade.js?v=20261126v6"></script>
+  <script src="dragons.js?v=20261126v6"></script>
+  <script src="learning_plus.js?v=20261126v6"></script>
+  <script src="app.js?v=20261126v6"></script>
 </body>
 </html>

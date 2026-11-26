@@ -1,20 +1,20 @@
 # 🦖 Tổng Hợp Hệ Thống Học Tập & Vui Chơi Lớp 1 Việt – Nhật Cho Bảo Long
 
 > **Phiên bản:** Full-Year Grade 1 VN (GDPT 2018) & JP (MEXT 小学1年生) + Đua Xe 4 Nút + Lộ Trình Hôm Nay, Leitner SRS & Góc Phụ Huynh  
-> **Cập nhật:** 26/11/2026 • **Git Branch:** `main` (Nền `6c59a7e` + Giải Đua 3 Chặng, Cổng Chữ, Xưởng Xu & Ảnh thật)
+> **Cập nhật:** 26/11/2026 • **Git Branch:** `main` (Nền `ddd56e9` + Sửa Giọng Nam & Nâng cấp 7 Mini-game)
 
 ---
 
 ## 1. Kiến Trúc & Các `class` / `function` Chính
 
-Ứng dụng chạy hoàn toàn client-side (HTML5 + CSS3 + Vanilla JS + Local MP3 Audio + IndexedDB ghi âm cục bộ + WebAudio). Tổng cộng **12 file JS** gồm **1 class (`SoundManager` với 42 methods)** và **217 top-level functions** (**259 hàm/phương thức**):
+Ứng dụng chạy hoàn toàn client-side (HTML5 + CSS3 + Vanilla JS + Local MP3 Audio + IndexedDB ghi âm cục bộ + WebAudio). Tổng cộng **12 file JS** gồm **1 class (`SoundManager` với 43 methods)** và **222 top-level functions** (**265 hàm/phương thức**):
 
 | File | Kích thước | Nhiệm vụ chính | Các `class` / `function` |
 | :--- | :---: | :--- | :--- |
 | [`data.js`](data.js) | 2.489 dòng<br>(130.498 B) | Kho dữ liệu Tiếng Việt, `DECODABLE_PHONICS_SENTENCES` (36 câu), `MINIMAL_PAIR_DRILLS` (12 nhóm), Khủng long, Xe cộ, Chính tả, Truyện đọc, Sticker & Danh hiệu | *(Chỉ chứa hằng dữ liệu)* |
-| [`speech.js`](speech.js) | 643 dòng<br>(21.095 B) | Quản lý âm thanh Nam/Nữ, 1 player tái sử dụng + unlock iOS, ưu tiên ghi âm Ba/Mẹ cục bộ, chặn mặc định giọng máy Windows (`allowSystemTTS = false`), `AbortError` guard & SFX WebAudio | **Class `SoundManager` (42 methods):** `constructor`, `bindUnlockOnFirstGesture`, `inferLangFromKey`, `notifyAutoplayBlocked`, `getCacheKey`, `prefetchCommon`, `prefetchKeys`, `resolveAudioUrl`, `loadPrefs`, `savePrefs`, `initWebSpeech`, `setAllowSystemTTS`, `updateWebVoice`, `setGender`, `setSpeed`, `setMuted`, `stopAll`, `_playOnSharedPlayer`, `playChoiceTour`, `playAudioSequence`, `playAudioFile`, `speakAlphabet`, `speakPart`, `speakWordObj`, `speakWord`, `spellWord`, `speakTone`, `speakPraise`, `speakTryAgain`, `playPraiseThen`, `speakCheer`, `speakTTS`, `getAudioContext`, `playToneFreq`, `playClick`, `playPop`, `playCorrect`, `playWrong`, `playVictory`, `playHammerHit`, `playMagicalRevive`, `playShinkansenWhistle` |
+| [`speech.js`](speech.js) | 651 dòng<br>(21.492 B) | Quản lý âm thanh Nam/Nữ, `normalizeKey` thống nhất, bỏ double-fetch, nhãn động Ba/Cô, 1 player iOS, ưu tiên ghi âm gia đình, chặn giọng Windows & WebAudio SFX | **Class `SoundManager` (43 methods):** `constructor`, `bindUnlockOnFirstGesture`, `inferLangFromKey`, `notifyAutoplayBlocked`, `getCacheKey`, `prefetchCommon`, `prefetchKeys`, `normalizeKey`, `resolveAudioUrl`, `loadPrefs`, `savePrefs`, `initWebSpeech`, `setAllowSystemTTS`, `updateWebVoice`, `setGender`, `setSpeed`, `setMuted`, `stopAll`, `_playOnSharedPlayer`, `playChoiceTour`, `playAudioSequence`, `playAudioFile`, `speakAlphabet`, `speakPart`, `speakWordObj`, `speakWord`, `spellWord`, `speakTone`, `speakPraise`, `speakTryAgain`, `playPraiseThen`, `speakCheer`, `speakTTS`, `getAudioContext`, `playToneFreq`, `playClick`, `playPop`, `playCorrect`, `playWrong`, `playVictory`, `playHammerHit`, `playMagicalRevive`, `playShinkansenWhistle` |
 | [`learning_plus.js`](learning_plus.js) | 1.151 dòng<br>(47.697 B) | Lộ trình hôm nay (`+20 🪙 Xu`/bước), Lịch 7 ngày không phạt, Leitner SRS (`recordAnswer` + `+5 🪙 Xu`), Ôn tập hôm nay, Câu giải mã Karaoke & Tự đọc (`MediaRecorder` + IndexedDB), Luyện tai thanh điệu, Phản hồi độ phủ nét, trần sao Đua `25 ⭐/ngày` & Góc Phụ Huynh mở rộng | **23 functions + `customVoiceStore`:** `getLocalDateKey`, `addDaysToDateKey`, `normalizePlusStateFields`, `ensureTodayLog`, `getWordMetaById`, `recordAnswer`, `markDailyStep`, `getDueReviewItems`, `renderDailyRoadmapHost`, `openDueReviewDeck`, `renderDueReviewCard`, `playDecodableKaraoke`, `renderPhonicsDecodableSection`, `renderMinimalPairDrill`, `drawHintByLevel`, `evaluateCanvasGuideMatch`, `getVnWritingHintLevel`, `setVnWritingHintLevel`, `getJaWritingHintLevel`, `setJaWritingHintLevel`, `applyParentFocusMode`, `startStudyActivityTimer`, `renderParentPlusSection` |
-| [`app.js`](app.js) | 2.888 dòng<br>(112.161 B) | Điều hướng 14 tab sidebar, tiến độ `schemaVersion: 3` (`coins`, `arcadeGear`, trần Đua `25 ⭐/ngày`), Tiếng Việt (`+3 🪙 Xu`/từ mới), Khủng long, Xe, Tập viết ô ly (3 mức gợi ý) & 7 Mini-game | **76 functions:** `migrateProgressData`, `loadProgress`, `saveProgress`, `awardCoins`, `awardStars`, `markWordLearned`, `getCurrentRank`, `updateProfileHUD`, `openStickerModal`, `syncTopControlsUI`, `initEventListeners`, `stopAutoPlay`, `toggleAutoPlayList`, `switchMode`, `renderCurrentView`, `renderRoadmapHeader`, `renderLessonCards`, `renderAlphabetView`, `initOrthographyQuiz`, `loadOrthoQuizQuestion`, `renderVnStoriesView`, `renderDinoView`, `renderVehicleView`, `openModal`, `navigateModal`, `refreshCurrentGridStarsOnly`, `closeModal`, `initCanvas`, `resizeCanvasToFit`, `getCanvasCoords`, `startDraw`, `draw`, `stopDraw`, `clearCanvas`, `drawPrimaryGridLines`, `drawLetterGuide`, `switchSubGame`, `splitVietnameseWordToPuzzle`, `buildDynamicPuzzlesForLesson`, `startMiniGame`, `loadGameQuestion`, `handleLetterChoose`, `checkPuzzleResult`, `showGameVictory`, `initListenCatchGame`, `loadListenCatchQuestion`, `showListenCatchVictory`, `initShinkansenGame`, `loadShinkansenRound`, `updateTrainAssembly`, `showShinkansenVictory`, `initDinoMemoryGame`, `updateMemoryStats`, `handleMemoryCardClick`, `initDinoQuiz`, `loadDinoQuizQuestion`, `checkDinoQuizAnswer`, `showDinoQuizVictory`, `initDinoDig`, `loadDinoDigStage`, `hitExcavationRock`, `showDinoDigVictory`, `initVehicleQuiz`, `loadQuizQuestion`, `handleQuizChoice`, `showQuizVictory`, `showToast`, `fireConfetti`, `closeMobileSidebar`, `updateSidebarToggleUI`, `initSidebarPrefs`, `handleSidebarToggle`, `refreshParentGateChallenge`, `renderParentStatsSummary`, `resetParentCornerUI`, `initParentCornerOnce` |
+| [`app.js`](app.js) | 3.207 dòng<br>(125.549 B) | Điều hướng 14 tab sidebar, tiến độ `schemaVersion: 3` (`coins`, `arcadeGear`, trần Đua `25 ⭐/ngày`), Tiếng Việt, Khủng long, Xe, Tập viết ô ly & **7 Mini-game nâng cấp thực tế** | **81 functions:** `migrateProgressData`, `loadProgress`, `saveProgress`, `awardStars`, `updateGameCoinsHUD`, `awardCoins`, `markWordLearned`, `getCurrentRank`, `updateProfileHUD`, `openStickerModal`, `syncTopControlsUI`, `initEventListeners`, `clearListenBlitzTimer`, `stopAutoPlay`, `toggleAutoPlayList`, `switchMode`, `renderCurrentView`, `renderRoadmapHeader`, `renderLessonCards`, `renderAlphabetView`, `initOrthographyQuiz`, `loadOrthoQuizQuestion`, `renderVnStoriesView`, `renderDinoView`, `renderVehicleView`, `openModal`, `navigateModal`, `refreshCurrentGridStarsOnly`, `closeModal`, `initCanvas`, `resizeCanvasToFit`, `getCanvasCoords`, `startDraw`, `draw`, `stopDraw`, `clearCanvas`, `drawPrimaryGridLines`, `drawLetterGuide`, `switchSubGame`, `splitVietnameseWordToPuzzle`, `buildDynamicPuzzlesForLesson`, `startMiniGame`, `loadGameQuestion`, `handleLetterChoose`, `checkPuzzleResult`, `showGameVictory`, `initListenCatchGame`, `loadListenCatchQuestion`, `showListenCatchVictory`, `initShinkansenGame`, `loadShinkansenRound`, `updateTrainAssembly`, `showShinkansenVictory`, `getMemoryBestKey`, `initDinoMemoryGame`, `updateMemoryStats`, `handleMemoryCardClick`, `initDinoQuiz`, `loadDinoQuizQuestion`, `checkDinoQuizAnswer`, `showDinoQuizVictory`, `setDinoDigTool`, `spawnDigParticles`, `initDinoDig`, `loadDinoDigStage`, `hitExcavationRock`, `showDinoDigVictory`, `initVehicleQuiz`, `loadQuizQuestion`, `handleQuizChoice`, `showQuizVictory`, `showToast`, `fireConfetti`, `closeMobileSidebar`, `updateSidebarToggleUI`, `initSidebarPrefs`, `handleSidebarToggle`, `refreshParentGateChallenge`, `renderParentStatsSummary`, `resetParentCornerUI`, `initParentCornerOnce` |
 | [`math.js`](math.js) | 1.799 dòng<br>(76.524 B) | Toán Lớp 1 VN & JP cả năm học (có ghi nhận `recordAnswer` & bước ngày) | **27 functions** |
 | [`science_life.js`](science_life.js) | 421 dòng<br>(23.991 B) | Tự nhiên & Xã hội (VN) + Seikatsuka `生活科` (JP) | **7 functions** |
 | [`ethics.js`](ethics.js) | 826 dòng<br>(41.497 B) | Đạo Đức & GDCD Lớp 1 (nhãn động `12` bài & `8` món rác) | **12 functions** |
@@ -37,6 +37,8 @@
 
 7. **Giải Đua 3 Chặng, Cổng Chữ, Xưởng Xu & Ảnh Thật Khủng Long / Rồng (`arcade.js`):** Mỗi ván gồm 3 chặng đổi cảnh (`Xe`: Ngày/Hoàng Hôn/Đêm Đèn Pha; `Khủng long`: Rừng/Hẻm Núi/Núi Lửa; `Rồng`: Biển Mây/Bão Sấm/Cầu Vồng), đếm ngược `3-2-1`, slow-motion về đích, AI bám đuổi sát nút, `6` **Cổng Chữ** ôn `alpha_*.mp3` thật (ưu tiên chữ hay sai trong `wordStats`), kinh tế **`🪙 Xu`** kết nối việc học với **Xưởng Xu** (Speed/Nitro `Lv0–3`, Vương miện, Đuôi lửa, Cầu vồng), thưởng cân bằng **`1–3 ⭐`** (`25 ⭐/ngày`), cùng `8` ảnh JPG thật cho Khủng long & Rồng.
 
+8. **Sửa toàn diện Giọng Nam & Nâng cấp 7 Mini-game Khu Trò Chơi:** Quét PCM sửa `118` key Tiếng Anh Nam sang `en-US-AndrewNeural` (`~118,8 Hz`), sửa `121` file Tiếng Nhật Nam bằng `ja-JP-KeitaNeural` (hết câm tiếng), sửa các file `spell_*`/`tone_ngang`, cắt gọn `1.000,5 KB` khoảng lặng đuôi trên `216` file `math_*`, thêm `normalizeKey` & bỏ double-fetch trong `speech.js`, nâng cấp 7 mini-game tương tác với `🪙 Xu`, gợi ý chữ, Blitz 45s, đèn ga Shinkansen, Lật thẻ 3 độ khó + Soi 2s + Kỷ lục, Sự thật kỷ Jura/Xe cộ & Khảo cổ 2 công cụ Búa/Cọ + vết nứt SVG.
+
 ---
 
 ## 3. Chẩn Đoán & Xử Lý Giọng Đọc "Giả Giọng Windows"
@@ -46,7 +48,7 @@
    - Ngoài ra, `speech.js` trước đây có thể rơi sang `window.speechSynthesis` (giọng Windows *Microsoft An/Hoa*) nếu gặp `AbortError` khi chuyển nhanh.
 2. **Kết quả sau khi sửa & tái tạo:**
    - Trong [`speech.js`](speech.js): chặn `AbortError` không rơi sang `speakTTS`; mặc định `allowSystemTTS = false` (tắt giọng máy Windows, chỉ bật lại nếu phụ huynh chủ động chọn); ưu tiên giọng `Online (Natural)` khi fallback bật; hỗ trợ ưu tiên bản thu giọng Ba/Mẹ cục bộ.
-   - Đã chạy xong [`tools/regen_natural_voices.py`](tools/regen_natural_voices.py) (đã vá `aiohttp.ThreadedResolver()` + ghi `.tmp` nguyên tử) cho đủ **`389/389` key** (`353` key `fff384c4` cũ + `36` câu giải mã `decod_*`) bằng 100% Microsoft Edge Neural Voices. Toàn bộ kho **`4.326` MP3 (`2.163` Nữ + `2.163` Nam = `67,77 MB`)** đạt **`identical_FM = 0`**, **`gtts_fff384c4 = 0`**, **`small = 0`**.
+   - Đã chạy xong [`tools/regen_natural_voices.py`](tools/regen_natural_voices.py) (đã vá `aiohttp.ThreadedResolver()` + ghi `.tmp` nguyên tử) cho đủ **`389/389` key** (`353` key `fff384c4` cũ + `36` câu giải mã `decod_*`) bằng 100% Microsoft Edge Neural Voices. Toàn bộ kho **`4.326` MP3 (`2.163` Nữ + `2.163` Nam = `66,51 MB`)** đạt **`identical_FM = 0`**, **`gtts_fff384c4 = 0`**, **`small = 0`**.
 
 ---
 
@@ -54,9 +56,9 @@
 
 ### A. Kiểm tra tĩnh tự động ([`tools/audit.py`](tools/audit.py))
 ```text
-DOM IDs: html=530, dyn_js=39, getElementById=476, missing=0
+DOM IDs: html=557, dyn_js=39, getElementById=499, missing=0
 Local Images: 30 referenced, missing=0
-Audio MP3s: female=2163, male=2163, size_mb=67.77, small=0, identical_FM=0, gtts_fff384c4=0
+Audio MP3s: female=2163, male=2163, size_mb=66.51, small=0, identical_FM=0, gtts_fff384c4=0
 Puzzle checks: 200 lesson words + 12 hard cases verified
 Audio Keys: checked=2122, missing=0, orphans=41
 Node syntax check: skipped (node not installed)
@@ -74,13 +76,17 @@ ALL STATIC AUDIT CHECKS PASSED!
 - **Phiên 3 (Kiểm thử Live Khu Đua 3 Chặng, Cổng Chữ & Xưởng Xu, `1280×800` → Mobile `390×844`):**
   - Console errors (HUD): `0` | HTTP `>= 400`: `0` | Broken images: `0` (`8/8` ảnh thật `images/dinos/*` & `images/dragons/*` đạt HTTP `200`).
   - Xác nhận trọn luồng: học `9` thẻ từ vựng nâng `⭐ 49 → 67` và nhận `🪙 Xu: 27` (`+3 Xu`/từ); vào Khu Đua mua `Tốc độ Lv1/3` (`20 🪙`, còn `7 🪙`); đua Rồng `Rồng Lửa Đỏ` qua `3-2-1`, vượt Cổng Chữ `"S"` đạt `Hạng 1/4` + `+10 🪙 Xu`, sang `Chặng 2: Bão Sấm` kích hoạt Cổng Chữ `"Ă"` (phát `alpha_*.mp3` HTTP `200`/`206` & `#btnArcadeReplayGate`), sang `Chặng 3: Cầu Vồng` (`67%`); Mobile `390×844` giữ `375.2 px <= 390 px` không tràn ngang.
+- **Phiên 4 (Kiểm thử Live Giọng Nam & 7 Mini-game nâng cấp, `1280×800` → Mobile `390×844`):**
+  - Console errors: `0` | Page errors: `0` | HTTP `>= 400`: `0` | Broken images: `0`.
+  - Xác nhận giọng Nam (`word_bố.mp3`, `ort_ck.mp3`, `ja_hira_ん.mp3`, `ja_hira_ほ.mp3`, `en_alpha_a.mp3`, `en_w_goodmorning.mp3` HTTP `200`/`206`), nút `#btnHearVnStory` (`Nghe ba đọc bài văn`), và toàn bộ 7 mini-game mới (`#gameSessionCoins` `+23 🪙`, `#btnPuzzleHint`, `#btnListenBlitz` `45s → 43s`, `#trainSignalLight` `🟢`, `#btnMemEasy` + `#btnMemPeek` `👀 Đã dùng`, `#dinoQuizFactBox`, `#quizFactBox`, Khai quật Búa/Cọ lộ ảnh thật T-Rex `+5 🪙`); Mobile `390×844` bề rộng `375.2 px <= 390 px` không tràn ngang.
 
 ### C. Lịch sử Git (`origin/main`)
 ```text
+ddd56e9 feat: 3-stage racing arcade with letter gates, Xu upgrades, balanced stars, and real dino/dragon photos
 6c59a7e feat: apply review fixes, Leitner SRS roadmap, decodable reading, and 100% Edge Neural voices
 2d07f96 docs: update paths after moving repo to MonhoctiengViet
 4c7d08e docs: add complete Markdown system summary TONG_HOP_HE_THONG.md
 e776562 feat: add 4-way Racing Arcade tab (Lamborghini/Ferrari, Dino, Dragon)
 ccbe820 feat: full-year Grade 1 VN & JP curriculum, 80 MEXT Kanji, Science/Arts subjects, and dual-voice audio
 ```
-*(Các sửa đổi trước đã push lên `6c59a7e`; bản nâng cấp Giải Đua 3 Chặng, Cổng Chữ, Xưởng Xu & Ảnh thật đã kiểm thử hoàn tất và chuẩn bị commit/push lên `origin/main`).*
+*(Các bản cập nhật trước đã push lên `ddd56e9`; bản sửa Giọng Nam & Nâng cấp 7 Mini-game đã kiểm thử xong và sẵn sàng commit/push lên `origin/main`).*

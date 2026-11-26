@@ -417,7 +417,7 @@ TEXT_MAP = {
 
 def voices_for_key(key: str):
     if key.startswith("en_") or key.startswith("cheer_en"):
-        return ("en-US-JennyNeural", "en-US-GuyNeural")
+        return ("en-US-JennyNeural", "en-US-AndrewNeural")
     if (key.startswith("ja_") or key.startswith("cheer_ja")) and not key.startswith(("ja_st", "ja_story_")):
         return ("ja-JP-NanamiNeural", "ja-JP-KeitaNeural")
     return ("vi-VN-HoaiMyNeural", "vi-VN-NamMinhNeural")

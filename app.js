@@ -173,11 +173,22 @@ function awardStars(amount, reasonText = '', countAsGame = amount >= 10, sourceC
   }
 }
 
-function awardCoins(amount) {
-  if (!amount || amount <= 0) return;
-  explorerState.coins = (explorerState.coins || 0) + Math.floor(amount);
+let gameSessionCoinsEarned = 0;
+function updateGameCoinsHUD() {
+  const totalEl = document.getElementById('gameTotalCoinsPill');
+  const sesEl = document.getElementById('gameSessionCoins');
+  if (totalEl) totalEl.innerText = `🪙 Tổng Xu: ${explorerState.coins || 0}`;
+  if (sesEl) sesEl.innerText = `✨ Phiên chơi: +${gameSessionCoinsEarned} 🪙`;
+}
+
+function awardCoins(amount, fromMiniGame = false) {
+  const n = Math.floor(Number(amount) || 0);
+  if (n <= 0) return;
+  explorerState.coins = Math.max(0, (explorerState.coins || 0) + n);
+  if (fromMiniGame) gameSessionCoinsEarned += n;
   saveProgress();
   window.updateArcadeCoinsUI?.();
+  updateGameCoinsHUD();
 }
 window.awardCoins = awardCoins;
 
@@ -302,6 +313,10 @@ function syncTopControlsUI() {
     btnGender.innerHTML = window.soundMgr.gender === 'male'
       ? '<span>👨</span> <span>Nam (Ba)</span>'
       : '<span>👩</span> <span>Nữ (Cô)</span>';
+  }
+  const btnStoryHear = document.getElementById('btnHearVnStory');
+  if (btnStoryHear) {
+    btnStoryHear.innerHTML = `<span>🔊</span> Nghe ${window.soundMgr.gender === 'male' ? 'ba' : 'cô'} đọc bài văn`;
   }
   if (btnSpeed) {
     btnSpeed.innerHTML = window.soundMgr.speedRate < 0.95
@@ -459,7 +474,23 @@ function initEventListeners() {
 // ========================================================
 // CHẾ ĐỘ NGHE TỰ ĐỘNG CẢ BÀI (AUTO-PLAY AUDIO TOUR)
 // ========================================================
+let listenBlitzTimer = null;
+let listenBlitzSec = 45;
+let puzzleStreak = 0;
+let memoryStreak = 0;
+let memoryTargetPairs = 6;
+let memoryPeekUsed = false;
+let dinoDigTool = 'hammer';
+
+function clearListenBlitzTimer() {
+  if (listenBlitzTimer) {
+    clearInterval(listenBlitzTimer);
+    listenBlitzTimer = null;
+  }
+}
+
 function stopAutoPlay() {
+  clearListenBlitzTimer();
   autoPlayRunning = false;
   if (typeof stopMathAutoPlay === 'function') stopMathAutoPlay();
   if (typeof stopEthicsAutoPlay === 'function') stopEthicsAutoPlay();
@@ -1055,7 +1086,7 @@ function renderVnStoriesView() {
       <div class="story-header-row">
         <h3 style="margin:0; font-size:20px; font-weight:900; color:#be123c;">${st.icon} ${st.title}</h3>
         <button class="challenge-btn" id="btnHearVnStory" style="padding:8px 18px; font-size:14px;">
-          <span>🔊</span> Nghe cô đọc bài văn
+          <span>🔊</span> Nghe ${window.soundMgr?.gender === 'male' ? 'ba' : 'cô'} đọc bài văn
         </button>
       </div>
       <div class="story-vn-lines">
@@ -1539,14 +1570,16 @@ function drawLetterGuide(word) {
 }
 
 // ========================================================
-// KHU TRÒ CHƠI (GAME HUB - 7 TRÒ CHƠI KHÔNG BAO GIỜ LỖI DOM)
+// KHU TRÒ CHƠI (GAME HUB - 7 TRÒ CHƠI TƯƠNG TÁC & THỰC TẾ)
 // ========================================================
 function switchSubGame(subgame) {
   stopAutoPlay();
+  clearListenBlitzTimer();
   window.soundMgr.stopAll();
   if (typeof stopArcadeGameLoop === 'function') stopArcadeGameLoop();
   window.appNavEpoch++;
   currentSubGame = subgame;
+  updateGameCoinsHUD();
 
   const paneMap = {
     puzzle: ['subgamePuzzlePane', 'tabBtnPuzzle'],
@@ -1586,7 +1619,7 @@ function switchSubGame(subgame) {
 }
 
 // ========================================================
-// GAME 1: GHÉP CHỮ VUI (ĐỘNG THEO BÀI HỌC HOẶC TỔNG HỢP + UNDO SLOT)
+// GAME 1: GHÉP CHỮ VUI (ĐỘNG + GỢI Ý TỪNG CHỮ + COMBO XU)
 // ========================================================
 function splitVietnameseWordToPuzzle(word) {
   const lower = (word || '').trim().toLowerCase().replace(/\s+/g, ' ');
@@ -1594,19 +1627,16 @@ function splitVietnameseWordToPuzzle(word) {
   if (lower.includes(' ')) {
     return lower.split(' ');
   }
-  // Ưu tiên tách 11 phụ âm ghép đứng đầu tiếng (ngh, ng, gh, gi, ch, kh, nh, ph, qu, th, tr)
   const digraphs = ['ngh', 'ng', 'gh', 'gi', 'ch', 'kh', 'nh', 'ph', 'qu', 'th', 'tr'];
   for (const dg of digraphs) {
     if (lower.startsWith(dg) && lower.length > dg.length) {
       return [dg, lower.slice(dg.length)];
     }
   }
-  // Tiếp theo là phụ âm đơn đầu tiếng
   const singleCons = new Set(['b', 'c', 'd', 'đ', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'x']);
   if (singleCons.has(lower[0]) && lower.length > 1) {
     return [lower[0], lower.slice(1)];
   }
-  // Tiếng không có phụ âm đầu (vd: ếch, yến, ăn, uống, ong, ổi): tách phần vần/nguyên âm + âm cuối (coda)
   for (const coda of ['ng', 'nh', 'ch', 'm', 'n', 'p', 't', 'c']) {
     if (lower.endsWith(coda) && lower.length > coda.length) {
       return [lower.slice(0, lower.length - coda.length), coda];
@@ -1628,7 +1658,6 @@ function buildDynamicPuzzlesForLesson(lesson) {
   return lesson.words.map(w => {
     const puzzle = splitVietnameseWordToPuzzle(w.word);
     const distractors = new Set(puzzle);
-    // Add contrasting heads & tails from the lesson
     let guard = 0;
     while (distractors.size < Math.min(5, puzzle.length + 3) && guard < 40) {
       guard++;
@@ -1654,18 +1683,19 @@ function buildDynamicPuzzlesForLesson(lesson) {
 
 function startMiniGame(source = 'default') {
   stopAutoPlay();
+  clearListenBlitzTimer();
   window.soundMgr.stopAll();
   if (typeof stopArcadeGameLoop === 'function') stopArcadeGameLoop();
   window.appNavEpoch++;
   lastPuzzleSource = source;
   currentMode = 'game';
   currentSubGame = 'puzzle';
+  updateGameCoinsHUD();
 
   document.querySelectorAll('.mode-pill').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.mode === 'game');
   });
 
-  // Ẩn các view học, bật Game Hub
   document.getElementById('roadmapBox').style.display = 'none';
   document.getElementById('cardsContainer').style.display = 'none';
   document.getElementById('alphabetContainer').style.display = 'none';
@@ -1682,7 +1712,6 @@ function startMiniGame(source = 'default') {
   if (document.getElementById('arcadeContainer')) document.getElementById('arcadeContainer').style.display = 'none';
   document.getElementById('gameViewContainer').style.display = 'block';
 
-  // Đảm bảo bật đúng SubGame Puzzle
   document.querySelectorAll('#gameViewContainer .game-view').forEach(p => { p.style.display = 'none'; });
   document.querySelectorAll('#gameViewContainer .game-tab-btn').forEach(t => { t.classList.remove('active'); });
   document.getElementById('subgamePuzzlePane').style.display = 'block';
@@ -1698,6 +1727,7 @@ function startMiniGame(source = 'default') {
   gameQuestions.sort(() => Math.random() - 0.5);
   gameCurrentIndex = 0;
   gameScore = 0;
+  puzzleStreak = 0;
 
   document.getElementById('puzzlePlayStage').style.display = 'block';
   document.getElementById('puzzleVictoryStage').style.display = 'none';
@@ -1718,6 +1748,8 @@ function loadGameQuestion() {
 
   const q = gameQuestions[gameCurrentIndex];
   document.getElementById('gameProgressText').innerText = `Câu ${gameCurrentIndex + 1} / ${gameQuestions.length}`;
+  const stEl = document.getElementById('puzzleStreakBadge');
+  if (stEl) stEl.innerText = `🔥 Chuỗi x${puzzleStreak}`;
   document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
 
   const modePill = document.getElementById('puzzleModePill');
@@ -1731,7 +1763,6 @@ function loadGameQuestion() {
   document.getElementById('gameTargetHint').innerText = `Ghép chữ: "${q.target}"`;
   document.getElementById('gameTargetJa').innerText = q.ja ? `🇯🇵 ${q.ja}` : `🇯🇵 ${q.meaning}`;
 
-  // Tạo Slots - bấm vào ô đã điền để gỡ lại chữ!
   const slotsContainer = document.getElementById('puzzleSlots');
   slotsContainer.innerHTML = '';
   gameSlots = new Array(q.puzzle.length).fill(null);
@@ -1756,12 +1787,12 @@ function loadGameQuestion() {
     slotsContainer.appendChild(slot);
   });
 
-  // Tạo lựa chọn chữ cái (cùng audio speakPart chuẩn 100% không 404)
   const optionsContainer = document.getElementById('optionsLettersRow');
   optionsContainer.innerHTML = '';
   const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
   shuffledOptions.forEach((char, idx) => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'letter-option-btn';
     btn.style.width = char.length > 2 ? 'auto' : '56px';
     btn.style.padding = char.length > 2 ? '0 14px' : '0';
@@ -1780,6 +1811,22 @@ function loadGameQuestion() {
     window.soundMgr.playClick();
     window.soundMgr.speakWord(q.target);
   };
+  const btnHintPiece = document.getElementById('btnPuzzleHint');
+  if (btnHintPiece) {
+    btnHintPiece.onclick = () => {
+      if (puzzleLocked) return;
+      const nextEmpty = gameSlots.findIndex(s => s === null);
+      if (nextEmpty === -1) return;
+      const neededChar = q.puzzle[nextEmpty];
+      const matchBtn = Array.from(optionsContainer.querySelectorAll('.letter-option-btn'))
+        .find(b => !b.classList.contains('used') && b.innerText === neededChar);
+      if (matchBtn) {
+        window.soundMgr.speakPart(neededChar);
+        showToast(`💡 Gợi ý ô ${nextEmpty + 1}: "${neededChar}"`);
+        handleLetterChoose(neededChar, matchBtn);
+      }
+    };
+  }
   document.getElementById('btnResetPuzzle').onclick = () => {
     window.soundMgr.playClick();
     loadGameQuestion();
@@ -1815,13 +1862,18 @@ function checkPuzzleResult() {
   const currentWord = gameSlots.map(s => s.char).join(q.target.includes(' ') ? ' ' : '');
 
   if (currentWord === q.target) {
+    puzzleStreak++;
+    const bonusCoins = puzzleStreak >= 3 ? 3 : 2;
     window.soundMgr.playCorrect();
     fireConfetti();
-    gameScore += 10;
+    gameScore += puzzleStreak >= 3 ? 15 : 10;
+    awardCoins(bonusCoins, true);
     window.recordAnswer?.(q.id || `puz_${q.target}`, true, { label: q.target, mode: 'game', audioKey: `word_${q.target.toLowerCase()}` });
     document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
-    showToast(`🎉 Hoan hô Bảo Long! Ghép đúng "${q.target}"!`);
-    window.soundMgr.playPraiseThen(false,
+    const stEl = document.getElementById('puzzleStreakBadge');
+    if (stEl) stEl.innerText = `🔥 Chuỗi x${puzzleStreak}`;
+    showToast(`🎉 Chuẩn xác "${q.target}"! +${bonusCoins} 🪙 Xu!`);
+    window.soundMgr.playPraiseThen(puzzleStreak >= 3,
       () => window.appNavEpoch === myNav && puzzleEpoch === myPuz,
       () => {
         gameCurrentIndex++;
@@ -1829,9 +1881,12 @@ function checkPuzzleResult() {
       }
     );
   } else {
+    puzzleStreak = 0;
+    const stEl = document.getElementById('puzzleStreakBadge');
+    if (stEl) stEl.innerText = `🔥 Chuỗi x0`;
     window.recordAnswer?.(q.id || `puz_${q.target}`, false, { label: q.target, mode: 'game', audioKey: `word_${q.target.toLowerCase()}` });
     window.soundMgr.playWrong();
-    showToast(`Bảo Long chạm vào ô sai để đổi lại hoặc thử lại nhé! ❤️`);
+    showToast(`Chưa khớp "${q.target}" rồi (ra "${currentWord}"), thử xếp lại nhé! ❤️`);
     window.soundMgr.speakTryAgain();
     setTimeout(() => {
       if (window.appNavEpoch !== myNav || puzzleEpoch !== myPuz) return;
@@ -1845,21 +1900,24 @@ function showGameVictory() {
   window.soundMgr.speakCheer('win');
   fireConfetti();
   window.markDailyStep?.('play');
-  awardStars(15, 'Hoàn thành Ghép Chữ Vui!');
+  awardCoins(10, true);
+  awardStars(15, 'Hoàn thành Ghép Chữ Vui (+10 🪙 Xu)!');
 
   document.getElementById('puzzlePlayStage').style.display = 'none';
   document.getElementById('puzzleVictoryStage').style.display = 'block';
   document.getElementById('puzzleVictoryScore').innerText =
-    `Bảo Long đã hoàn thành xuất sắc với ${gameScore} điểm (+15 ⭐ vào Kho Báu)!`;
+    `Bảo Long đạt ${gameScore} điểm (+15 ⭐ & +10 🪙 Xu thưởng)!`;
 }
 
 // ========================================================
-// GAME 2 MỚI: 👂 NGHE ÂM BẮT CHỮ (AUDIO-FIRST PHONICS)
+// GAME 2: 👂 NGHE ÂM BẮT CHỮ (+ CHẾ ĐỘ PHẢN XẠ NHANH 45S)
 // ========================================================
 function initListenCatchGame(mode = listenMode) {
+  clearListenBlitzTimer();
   listenMode = mode;
   document.getElementById('btnListenTricky')?.classList.toggle('active-filter', mode === 'tricky');
   document.getElementById('btnListenWords')?.classList.toggle('active-filter', mode === 'words');
+  document.getElementById('btnListenBlitz')?.classList.toggle('active-filter', mode === 'blitz');
 
   document.getElementById('btnListenTricky').onclick = () => {
     window.soundMgr.playClick();
@@ -1869,13 +1927,52 @@ function initListenCatchGame(mode = listenMode) {
     window.soundMgr.playClick();
     initListenCatchGame('words');
   };
+  const blitzBtn = document.getElementById('btnListenBlitz');
+  if (blitzBtn) {
+    blitzBtn.onclick = () => {
+      window.soundMgr.playClick();
+      initListenCatchGame('blitz');
+    };
+  }
 
-  const pool = [...LISTEN_CATCH_POOLS[mode]].sort(() => Math.random() - 0.5);
-  listenQuestions = pool.slice(0, Math.min(10, pool.length));
+  let pool;
+  if (mode === 'blitz') {
+    pool = [...LISTEN_CATCH_POOLS.tricky, ...LISTEN_CATCH_POOLS.words].sort(() => Math.random() - 0.5);
+    listenQuestions = pool;
+  } else {
+    pool = [...LISTEN_CATCH_POOLS[mode]].sort(() => Math.random() - 0.5);
+    listenQuestions = pool.slice(0, Math.min(10, pool.length));
+  }
+
   listenIndex = 0;
   listenScore = 0;
   listenStreak = 0;
   listenBestStreak = 0;
+
+  const tBadge = document.getElementById('listenTimerBadge');
+  if (mode === 'blitz') {
+    listenBlitzSec = 45;
+    if (tBadge) {
+      tBadge.style.display = 'inline-flex';
+      tBadge.innerText = `⏱️ 45s`;
+    }
+    const myNav = window.appNavEpoch;
+    const startEp = listenEpoch + 1;
+    listenBlitzTimer = setInterval(() => {
+      if (window.appNavEpoch !== myNav || currentSubGame !== 'listen_catch' || listenMode !== 'blitz') {
+        clearListenBlitzTimer();
+        return;
+      }
+      listenBlitzSec--;
+      if (tBadge) tBadge.innerText = `⏱️ ${Math.max(0, listenBlitzSec)}s`;
+      if (listenBlitzSec <= 0) {
+        clearListenBlitzTimer();
+        showListenCatchVictory();
+      }
+    }, 1000);
+  } else if (tBadge) {
+    tBadge.style.display = 'none';
+  }
 
   document.getElementById('listenCatchPlayStage').style.display = 'block';
   document.getElementById('listenCatchVictoryStage').style.display = 'none';
@@ -1886,13 +1983,19 @@ function loadListenCatchQuestion() {
   listenEpoch++;
   const myNav = window.appNavEpoch;
   const myEpoch = listenEpoch;
+  if (listenMode === 'blitz' && listenIndex >= listenQuestions.length) {
+    listenQuestions = [...LISTEN_CATCH_POOLS.tricky, ...LISTEN_CATCH_POOLS.words].sort(() => Math.random() - 0.5);
+    listenIndex = 0;
+  }
   if (listenIndex >= listenQuestions.length) {
     showListenCatchVictory();
     return;
   }
 
   const q = listenQuestions[listenIndex];
-  document.getElementById('listenProgressText').innerText = `Câu ${listenIndex + 1} / ${listenQuestions.length}`;
+  document.getElementById('listenProgressText').innerText = listenMode === 'blitz'
+    ? `⚡ Câu ${listenIndex + 1}`
+    : `Câu ${listenIndex + 1} / ${listenQuestions.length}`;
   document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x${listenStreak}`;
   document.getElementById('listenScoreText').innerText = `⭐ ${listenScore} sao`;
   document.getElementById('listenPromptSub').innerText = `💡 Gợi ý: ${q.hint}`;
@@ -1916,6 +2019,7 @@ function loadListenCatchQuestion() {
 
   choices.forEach(ch => {
     const card = document.createElement('button');
+    card.type = 'button';
     card.className = `listen-choice-card ${ch.length > 2 ? 'long-word' : ''}`;
     card.innerText = ch;
     card.addEventListener('click', () => {
@@ -1926,26 +2030,35 @@ function loadListenCatchQuestion() {
         listenStreak++;
         if (listenStreak > listenBestStreak) listenBestStreak = listenStreak;
         const pts = listenStreak >= 3 ? 15 : 10;
+        const coinBonus = listenMode === 'blitz' ? 3 : 2;
         listenScore += pts;
+        awardCoins(coinBonus, true);
         window.recordAnswer?.(`lc_${q.target}`, true, { label: q.target, mode: 'game', audioKey: q.audioKey });
         document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x${listenStreak}`;
         document.getElementById('listenScoreText').innerText = `⭐ ${listenScore} sao`;
 
         window.soundMgr.playCorrect();
         fireConfetti();
-        if (listenStreak >= 3) {
-          showToast(`🔥 COMBO x${listenStreak}! Siêu đỉnh +${pts} điểm!`);
-        } else {
-          showToast(`🎉 Chuẩn xác! Đó chính là "${q.target}"!`);
-        }
+        showToast(listenStreak >= 3
+          ? `🔥 COMBO x${listenStreak}! Siêu đỉnh +${coinBonus} 🪙 Xu!`
+          : `🎉 Chuẩn xác "${q.target}"! +${coinBonus} 🪙 Xu!`);
 
-        window.soundMgr.playPraiseThen(listenStreak >= 3,
-          () => window.appNavEpoch === myNav && listenEpoch === myEpoch,
-          () => {
-            listenIndex++;
-            loadListenCatchQuestion();
-          }
-        );
+        if (listenMode === 'blitz') {
+          setTimeout(() => {
+            if (window.appNavEpoch === myNav && listenEpoch === myEpoch) {
+              listenIndex++;
+              loadListenCatchQuestion();
+            }
+          }, 480);
+        } else {
+          window.soundMgr.playPraiseThen(listenStreak >= 3,
+            () => window.appNavEpoch === myNav && listenEpoch === myEpoch,
+            () => {
+              listenIndex++;
+              loadListenCatchQuestion();
+            }
+          );
+        }
       } else {
         card.classList.add('wrong');
         window.recordAnswer?.(`lc_${q.target}`, false, { label: q.target, mode: 'game', audioKey: q.audioKey });
@@ -1965,20 +2078,22 @@ function loadListenCatchQuestion() {
 }
 
 function showListenCatchVictory() {
+  clearListenBlitzTimer();
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
   window.markDailyStep?.('play');
-  awardStars(15, 'Siêu thính giác Nghe Âm Bắt Chữ!');
+  awardCoins(10, true);
+  awardStars(15, 'Siêu thính giác Nghe Âm Bắt Chữ (+10 🪙 Xu)!');
 
   document.getElementById('listenCatchPlayStage').style.display = 'none';
   document.getElementById('listenCatchVictoryStage').style.display = 'block';
   document.getElementById('listenVictoryScore').innerText =
-    `Bảo Long ghi được ${listenScore} điểm (Chuỗi đúng dài nhất: x${listenBestStreak})! (+15 ⭐ vào Kho Báu)`;
+    `Bảo Long ghi được ${listenScore} điểm (Chuỗi dài nhất: x${listenBestStreak})! (+15 ⭐ & +10 🪙 Xu)`;
 }
 
 // ========================================================
-// GAME 3 MỚI: 🚅 TÀU SHINKANSEN ĐÁNH VẦN
+// GAME 3: 🚅 TÀU SHINKANSEN ĐÁNH VẦN (ĐÈN GA + CÂU THỰC TẾ)
 // ========================================================
 function initShinkansenGame() {
   shinkansenQuestions = [...SHINKANSEN_WORDS_DATA].sort(() => Math.random() - 0.5).slice(0, 10);
@@ -2006,6 +2121,15 @@ function loadShinkansenRound() {
 
   const trainEl = document.getElementById('trainTrainUnit');
   trainEl.classList.remove('zooming');
+  const sigEl = document.getElementById('trainSignalLight');
+  if (sigEl) {
+    sigEl.innerText = '🔴 Đợi nối toa tàu';
+    sigEl.style.background = '#fef2f2';
+    sigEl.style.color = '#b91c1c';
+    sigEl.style.borderColor = '#fca5a5';
+  }
+  const bannerEl = document.getElementById('trainFunBanner');
+  if (bannerEl) bannerEl.innerText = `🚉 Ga số ${shinkansenIndex + 1} • Lắp đầu tàu + toa vần thành "${q.meaning}"!`;
 
   document.getElementById('shinkansenProgressText').innerText = `Chuyến tàu ${shinkansenIndex + 1} / ${shinkansenQuestions.length}`;
   document.getElementById('shinkansenScoreText').innerText = `⭐ ${shinkansenScore} sao`;
@@ -2025,11 +2149,11 @@ function loadShinkansenRound() {
     if (window.appNavEpoch === myNav && shinkansenEpoch === myEpoch) window.soundMgr.speakWord(q.word);
   }, 60);
 
-  // Đầu tàu (âm đầu)
   const headGrid = document.getElementById('shinkansenHeadChoices');
   headGrid.innerHTML = '';
   [...q.headOptions].sort(() => Math.random() - 0.5).forEach(h => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'train-part-btn';
     btn.innerText = h;
     btn.addEventListener('click', () => {
@@ -2043,11 +2167,11 @@ function loadShinkansenRound() {
     headGrid.appendChild(btn);
   });
 
-  // Toa tàu (vần & thanh)
   const tailGrid = document.getElementById('shinkansenTailChoices');
   tailGrid.innerHTML = '';
   [...q.tailOptions].sort(() => Math.random() - 0.5).forEach(t => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'train-part-btn';
     btn.innerText = t;
     btn.addEventListener('click', () => {
@@ -2072,15 +2196,24 @@ function updateTrainAssembly(q) {
     const myNav = window.appNavEpoch;
     const myEpoch = shinkansenEpoch;
     shinkansenLocked = true;
+    const sigEl = document.getElementById('trainSignalLight');
+    const bannerEl = document.getElementById('trainFunBanner');
     if (combined === q.word) {
-      // Đúng! Tàu Shinkansen hú còi phóng vút!
       shinkansenScore += 10;
+      awardCoins(2, true);
       window.recordAnswer?.(`shin_${q.word}`, true, { label: q.word, mode: 'game', audioKey: `word_${q.word.toLowerCase()}` });
       document.getElementById('shinkansenScoreText').innerText = `⭐ ${shinkansenScore} sao`;
+      if (sigEl) {
+        sigEl.innerText = '🟢 ĐÈN XANH • TÀU CHẠY!';
+        sigEl.style.background = '#dcfce7';
+        sigEl.style.color = '#15803d';
+        sigEl.style.borderColor = '#4ade80';
+      }
+      if (bannerEl) bannerEl.innerText = `💨 TU TUU! Chuyến tàu "${q.word}" (${q.meaning}) đang tăng tốc 320 km/h!`;
       window.soundMgr.playShinkansenWhistle();
       fireConfetti();
       document.getElementById('trainTrainUnit').classList.add('zooming');
-      showToast(`🚅 TU TUU! Ghép chuẩn tàu "${q.word}" (${q.meaning})!`);
+      showToast(`🚅 TU TUU! Ghép chuẩn tàu "${q.word}"! +2 🪙 Xu!`);
 
       let shinAdvanced = false;
       const goNextShin = () => {
@@ -2100,7 +2233,8 @@ function updateTrainAssembly(q) {
       window.recordAnswer?.(`shin_${q.word}`, false, { label: q.word, mode: 'game', audioKey: `word_${q.word.toLowerCase()}` });
       window.soundMgr.playWrong();
       window.soundMgr.speakTryAgain();
-      showToast(`Chưa khớp toa tàu "${q.word}" rồi, chọn lại nhé Bảo Long! ❤️`);
+      if (bannerEl) bannerEl.innerText = `⚠️ "${selectedTrainHead} + ${selectedTrainTail}" ghép thành "${combined}", chưa đúng "${q.word}" rồi!`;
+      showToast(`Chưa khớp "${q.word}" rồi (bé đang ghép "${combined}"), chọn lại nhé! ❤️`);
       setTimeout(() => {
         if (window.appNavEpoch !== myNav || shinkansenEpoch !== myEpoch) return;
         shinkansenLocked = false;
@@ -2111,7 +2245,7 @@ function updateTrainAssembly(q) {
         document.getElementById('trainNoseSlot').innerText = '?';
         document.getElementById('trainBodySlot').innerText = '?';
         document.getElementById('trainPreviewWord').innerText = '= ...';
-      }, 650);
+      }, 750);
     }
   }
 }
@@ -2121,28 +2255,67 @@ function showShinkansenVictory() {
   window.soundMgr.playShinkansenWhistle();
   window.soundMgr.speakCheer('win');
   window.markDailyStep?.('play');
-  awardStars(20, 'Trưởng tàu Shinkansen siêu tốc!');
+  awardCoins(12, true);
+  awardStars(20, 'Trưởng tàu Shinkansen siêu tốc (+12 🪙 Xu)!');
 
   document.getElementById('shinkansenPlayStage').style.display = 'none';
   document.getElementById('shinkansenVictoryStage').style.display = 'block';
   document.getElementById('shinkansenVictoryScore').innerText =
-    `Bảo Long đã lắp thành công 10 chuyến tàu Shinkansen đạt ${shinkansenScore} điểm (+20 ⭐ vào Kho Báu)!`;
+    `Bảo Long đã lắp 10 chuyến tàu đạt ${shinkansenScore} điểm (+20 ⭐ & +12 🪙 Xu)!`;
 }
 
 // ========================================================
-// GAME 4: LẬT THẺ KHỦNG LONG (RÚT NGẪU NHIÊN 6 TỪ TỪ 10 LOÀI ẢNH THẬT)
+// GAME 4: LẬT THẺ KHỦNG LONG (3 ĐỘ KHÓ + SOI 2S + KỶ LỤC + XU)
 // ========================================================
-function initDinoMemoryGame() {
+function getMemoryBestKey(pairsCount) {
+  return `baolong_mem_best_${pairsCount}`;
+}
+
+function initDinoMemoryGame(pairCount = memoryTargetPairs) {
+  memoryTargetPairs = Math.min(8, Math.max(4, pairCount || 6));
+  memoryPeekUsed = false;
+  memoryStreak = 0;
+
   const grid = document.getElementById('memoryGrid');
   if (!grid) return;
   grid.innerHTML = '';
 
+  document.getElementById('btnMemEasy')?.classList.toggle('active-filter', memoryTargetPairs === 4);
+  document.getElementById('btnMemNormal')?.classList.toggle('active-filter', memoryTargetPairs === 6);
+  document.getElementById('btnMemHard')?.classList.toggle('active-filter', memoryTargetPairs === 8);
+
+  if (document.getElementById('btnMemEasy')) document.getElementById('btnMemEasy').onclick = () => { window.soundMgr.playClick(); initDinoMemoryGame(4); };
+  if (document.getElementById('btnMemNormal')) document.getElementById('btnMemNormal').onclick = () => { window.soundMgr.playClick(); initDinoMemoryGame(6); };
+  if (document.getElementById('btnMemHard')) document.getElementById('btnMemHard').onclick = () => { window.soundMgr.playClick(); initDinoMemoryGame(8); };
+
+  const peekBtn = document.getElementById('btnMemPeek');
+  if (peekBtn) {
+    peekBtn.disabled = false;
+    peekBtn.innerText = '👀 Soi 2s (1)';
+    peekBtn.onclick = () => {
+      if (memoryPeekUsed || memoryIsLocked) return;
+      memoryPeekUsed = true;
+      peekBtn.disabled = true;
+      peekBtn.innerText = '👀 Đã dùng';
+      memoryIsLocked = true;
+      window.soundMgr.playPop();
+      const cards = grid.querySelectorAll('.memory-card:not(.is-matched)');
+      cards.forEach(c => c.classList.add('is-flipped'));
+      showToast('👀 Nhìn nhanh để ghi nhớ trong 2 giây nhé!');
+      setTimeout(() => {
+        cards.forEach(c => {
+          if (!memoryFlippedCards.some(fc => fc.el === c)) c.classList.remove('is-flipped');
+        });
+        memoryIsLocked = false;
+      }, 2000);
+    };
+  }
+
   document.getElementById('memoryPlayStage').style.display = 'block';
   document.getElementById('memoryVictoryStage').style.display = 'none';
-
   document.getElementById('btnRestartMemory').onclick = () => {
     window.soundMgr.playClick();
-    initDinoMemoryGame();
+    initDinoMemoryGame(memoryTargetPairs);
   };
 
   memoryFlips = 0;
@@ -2151,10 +2324,9 @@ function initDinoMemoryGame() {
   memoryIsLocked = false;
   updateMemoryStats();
 
-  // Lấy ngẫu nhiên 6 loài từ cả 10 loài khủng long trong DINO_MEMORY_POOL
-  const chosenSix = [...DINO_MEMORY_POOL].sort(() => Math.random() - 0.5).slice(0, 6);
+  const chosen = [...DINO_MEMORY_POOL].sort(() => Math.random() - 0.5).slice(0, memoryTargetPairs);
   const pairDeck = [];
-  chosenSix.forEach(dino => {
+  chosen.forEach(dino => {
     pairDeck.push({ ...dino, instanceId: `${dino.id}_a` });
     pairDeck.push({ ...dino, instanceId: `${dino.id}_b` });
   });
@@ -2190,8 +2362,16 @@ function initDinoMemoryGame() {
 function updateMemoryStats() {
   const flipsEl = document.getElementById('memoryFlipsText');
   const pairsEl = document.getElementById('memoryPairsText');
+  const streakEl = document.getElementById('memoryStreakText');
+  const bestEl = document.getElementById('memoryBestText');
   if (flipsEl) flipsEl.innerText = `👀 Lượt lật: ${memoryFlips}`;
-  if (pairsEl) pairsEl.innerText = `⭐ Đã ghép: ${memoryMatchedCount} / 6 cặp`;
+  if (pairsEl) pairsEl.innerText = `⭐ Đã ghép: ${memoryMatchedCount} / ${memoryTargetPairs} cặp`;
+  if (streakEl) streakEl.innerText = `🔥 Chuỗi x${memoryStreak}`;
+  if (bestEl) {
+    let best = null;
+    try { best = localStorage.getItem(getMemoryBestKey(memoryTargetPairs)); } catch (e) {}
+    bestEl.innerText = best ? `🏆 Kỷ lục: ${best} lượt` : '🏆 Kỷ lục: --';
+  }
 }
 
 function handleMemoryCardClick(cardData, cardEl) {
@@ -2213,10 +2393,13 @@ function handleMemoryCardClick(cardData, cardEl) {
         first.el.classList.add('is-matched');
         second.el.classList.add('is-matched');
         memoryMatchedCount++;
+        memoryStreak++;
+        const pairCoins = memoryStreak >= 2 ? 3 : 2;
+        awardCoins(pairCoins, true);
         updateMemoryStats();
 
         window.soundMgr.playCorrect();
-        showToast(`🎉 Giỏi quá! Đã tìm thấy cặp ${first.data.name}!`);
+        showToast(`🎉 Trúng cặp ${first.data.name}! +${pairCoins} 🪙 Xu!`);
         if (first.data.audioKey) {
           window.soundMgr.playAudioFile(first.data.audioKey);
         }
@@ -2224,20 +2407,29 @@ function handleMemoryCardClick(cardData, cardEl) {
         memoryFlippedCards = [];
         memoryIsLocked = false;
 
-        if (memoryMatchedCount === 6) {
+        if (memoryMatchedCount === memoryTargetPairs) {
+          try {
+            const k = getMemoryBestKey(memoryTargetPairs);
+            const prev = Number(localStorage.getItem(k) || '999');
+            if (memoryFlips < prev) localStorage.setItem(k, String(memoryFlips));
+          } catch (e) {}
+          updateMemoryStats();
           setTimeout(() => {
             fireConfetti();
             window.soundMgr.playVictory();
             window.soundMgr.playAudioFile('cheer_flip_win');
-            awardStars(15, 'Chiến thắng Lật Thẻ Khủng Long!');
+            awardCoins(10, true);
+            awardStars(15, 'Chiến thắng Lật Thẻ Khủng Long (+10 🪙 Xu)!');
             document.getElementById('memoryPlayStage').style.display = 'none';
             document.getElementById('memoryVictoryStage').style.display = 'block';
             document.getElementById('memoryVictoryFlips').innerText =
-              `Bảo Long đã mở khóa 6 loài khủng long chỉ trong ${memoryFlips} lượt lật (+15 ⭐)!`;
+              `Bảo Long đã mở khóa ${memoryTargetPairs} cặp khủng long trong ${memoryFlips} lượt lật (+15 ⭐ & +10 🪙 Xu)!`;
           }, 550);
         }
       }, 240);
     } else {
+      memoryStreak = 0;
+      updateMemoryStats();
       setTimeout(() => {
         first.el.classList.remove('is-flipped');
         second.el.classList.remove('is-flipped');
@@ -2249,7 +2441,7 @@ function handleMemoryCardClick(cardData, cardEl) {
 }
 
 // ========================================================
-// GAME 5: ĐỐ VUI KHỦNG LONG (DINO QUIZ - ĐẦY ĐỦ 10 LOÀI & AN TOÀN DOM)
+// GAME 5: ĐỐ VUI KHỦNG LONG (KÈM KIẾN THỨC THỰC TẾ + XU + SRS)
 // ========================================================
 function initDinoQuiz() {
   dinoQuizQuestions = [...DINO_QUIZ_DATA].sort(() => Math.random() - 0.5);
@@ -2277,6 +2469,8 @@ function loadDinoQuizQuestion() {
   document.getElementById('dinoQuizProgressText').innerText = `Câu ${dinoQuizCurrentIndex + 1} / ${total}`;
   document.getElementById('dinoQuizQuestionTitle').innerText = q.question;
   document.getElementById('dinoQuizQuestionHint').innerText = '🔍 Nghe kỹ mô tả rồi chạm đúng chú Khủng Long nhé!';
+  const factEl = document.getElementById('dinoQuizFactBox');
+  if (factEl) { factEl.style.display = 'none'; factEl.innerText = ''; }
 
   const container = document.getElementById('dinoQuizOptionsGrid');
   container.innerHTML = '';
@@ -2330,14 +2524,21 @@ function loadDinoQuizQuestion() {
 
 function checkDinoQuizAnswer(chosenId, cardEl, q, item, myNav, myEpoch) {
   if (cardEl.classList.contains('correct') || cardEl.classList.contains('wrong')) return;
+  const factEl = document.getElementById('dinoQuizFactBox');
 
   if (chosenId === q.correctId) {
     cardEl.classList.add('correct');
     window.soundMgr.playCorrect();
     fireConfetti();
     dinoQuizScore += 10;
+    awardCoins(2, true);
+    window.recordAnswer?.(item.id, true, { label: item.word, mode: 'game', audioKey: item.audioKey });
     document.getElementById('dinoQuizScoreText').innerText = `⭐ ${dinoQuizScore} sao`;
-    showToast(`🎉 Giỏi quá Bảo Long ơi! Chính là ${item.dinoName}! 🦖`);
+    if (factEl) {
+      factEl.style.display = 'block';
+      factEl.innerHTML = `💡 <strong>Sự thật kỷ Jura:</strong> ${item.funFact} <em>(+2 🪙 Xu!)</em>`;
+    }
+    showToast(`🎉 Chuẩn xác ${item.dinoName}! +2 🪙 Xu!`);
 
     window.soundMgr.playPraiseThen(false,
       () => window.appNavEpoch === myNav && dinoQuizEpoch === myEpoch,
@@ -2348,9 +2549,14 @@ function checkDinoQuizAnswer(chosenId, cardEl, q, item, myNav, myEpoch) {
     );
   } else {
     cardEl.classList.add('wrong');
+    window.recordAnswer?.(q.correctId, false, { label: q.hint || item.word, mode: 'game', audioKey: q.audioKey });
     window.soundMgr.playWrong();
     window.soundMgr.speakTryAgain();
-    showToast(`Bảo Long thử chọn chú khủng long khác xem nhé! ❤️`);
+    if (factEl) {
+      factEl.style.display = 'block';
+      factEl.innerHTML = `🔍 Đây là <strong>${item.dinoName}</strong> — ${item.funFact}`;
+    }
+    showToast(`Đây là ${item.dinoName} rồi, thử chọn chú khác nhé! ❤️`);
   }
 }
 
@@ -2358,17 +2564,52 @@ function showDinoQuizVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
-  awardStars(15, 'Chuyên gia Đố Vui Khủng Long!');
+  awardCoins(10, true);
+  awardStars(15, 'Chuyên gia Đố Vui Khủng Long (+10 🪙 Xu)!');
 
   document.getElementById('dinoQuizPlayStage').style.display = 'none';
   document.getElementById('dinoQuizVictoryStage').style.display = 'block';
   document.getElementById('dinoQuizVictoryScore').innerText =
-    `Bé đã hoàn thành cả 10 câu hỏi kỷ Jura và đạt ${dinoQuizScore} điểm (+15 ⭐)!`;
+    `Bé đã hoàn thành cả 10 câu hỏi kỷ Jura đạt ${dinoQuizScore} điểm (+15 ⭐ & +10 🪙 Xu)!`;
 }
 
 // ========================================================
-// GAME 6: KHAI QUẬT HÓA THẠCH KỲ BÍ (DINO DIG - AN TOÀN DOM)
+// GAME 6: KHAI QUẬT HÓA THẠCH THỰC TẾ (BÚA ĐÁ + CỌ QUÉT + VẾT NỨT SVG)
 // ========================================================
+const DIG_CRACK_PATHS = [
+  'M 130 20 L 122 88 L 145 130 L 118 190 L 138 240',
+  'M 30 95 L 92 115 L 145 130 L 210 105 L 240 120',
+  'M 55 215 L 105 162 L 145 130 L 195 178 L 235 220',
+  'M 75 45 L 115 95 L 145 130 L 178 72 L 210 40'
+];
+
+function setDinoDigTool(tool) {
+  dinoDigTool = tool === 'brush' ? 'brush' : 'hammer';
+  document.getElementById('btnDigHammer')?.classList.toggle('active-filter', dinoDigTool === 'hammer');
+  document.getElementById('btnDigBrush')?.classList.toggle('active-filter', dinoDigTool === 'brush');
+  const iconEl = document.getElementById('digToolAnimIcon');
+  if (iconEl) iconEl.innerText = dinoDigTool === 'brush' ? '🖌️' : '⛏️';
+}
+
+function spawnDigParticles(x, y, isBrush) {
+  const layer = document.getElementById('dinoDigSparksLayer');
+  if (!layer) return;
+  const colors = isBrush ? ['#fde68a', '#fcd34d', '#f59e0b'] : ['#78350f', '#b45309', '#d6d3d1', '#f59e0b'];
+  for (let i = 0; i < 8; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'dig-chip-particle';
+    const angle = (Math.PI * 2 * i) / 8 + Math.random() * 0.5;
+    const dist = 24 + Math.random() * 34;
+    dot.style.left = `${x}px`;
+    dot.style.top = `${y}px`;
+    dot.style.background = colors[i % colors.length];
+    dot.style.setProperty('--dx', `${Math.round(Math.cos(angle) * dist)}px`);
+    dot.style.setProperty('--dy', `${Math.round(Math.sin(angle) * dist - 14)}px`);
+    layer.appendChild(dot);
+    setTimeout(() => dot.remove(), 520);
+  }
+}
+
 function initDinoDig() {
   dinoDigCurrentIndex = 0;
   dinoDigBadges = 0;
@@ -2388,20 +2629,32 @@ function loadDinoDigStage() {
 
   const stage = DINO_DIG_DATA[dinoDigCurrentIndex];
   dinoDigHits = 0;
+  setDinoDigTool('hammer');
+
+  if (document.getElementById('btnDigHammer')) {
+    document.getElementById('btnDigHammer').onclick = () => { window.soundMgr.playClick(); setDinoDigTool('hammer'); };
+  }
+  if (document.getElementById('btnDigBrush')) {
+    document.getElementById('btnDigBrush').onclick = () => { window.soundMgr.playClick(); setDinoDigTool('brush'); };
+  }
 
   document.getElementById('dinoDigProgressText').innerText = `Hóa thạch ${dinoDigCurrentIndex + 1} / ${total}`;
   document.getElementById('dinoDigTargetTitle').innerText = `Khai quật: ${stage.name}`;
   document.getElementById('dinoDigProgressBar').style.width = '0%';
   document.getElementById('dinoDigProgressLabel').innerText = 'Tiến độ đào: 0%';
-  document.getElementById('digPromptText').innerText = `Chạm vào tảng đá (0/${stage.hitsRequired})`;
+  document.getElementById('digPromptText').innerText = `Dùng ⛏️ Búa đập đá (0/${stage.hitsRequired})`;
 
   document.getElementById('dinoDigFossilUnderlay').innerHTML = stage.fossilSilhouette;
+  const crackSvg = document.getElementById('dinoDigCrackSvg');
+  if (crackSvg) crackSvg.innerHTML = '';
+
   const overlay = document.getElementById('dinoDigRockOverlay');
   overlay.style.opacity = '1';
   overlay.style.display = 'flex';
+  overlay.classList.remove('dust-phase');
   document.getElementById('dinoDigRevivedDino').style.display = 'none';
 
-  document.getElementById('dinoDigRockArea').onclick = () => hitExcavationRock(stage);
+  document.getElementById('dinoDigRockArea').onclick = (e) => hitExcavationRock(stage, e);
 
   document.getElementById('btnNextFossil').onclick = (e) => {
     e.stopPropagation();
@@ -2411,33 +2664,78 @@ function loadDinoDigStage() {
   };
 }
 
-function hitExcavationRock(stage) {
+function hitExcavationRock(stage, ev) {
   if (dinoDigHits >= stage.hitsRequired) return;
 
+  const isDustStep = dinoDigHits === stage.hitsRequired - 1;
+  if (!isDustStep && dinoDigTool === 'brush') {
+    window.soundMgr.playPop();
+    showToast('🪨 Lớp đá còn cứng! Hãy dùng ⛏️ Búa đập nứt đá trước nhé!');
+    return;
+  }
+
   dinoDigHits++;
-  window.soundMgr.playHammerHit();
+  if (isDustStep && dinoDigTool === 'hammer') {
+    // Tự chuyển nhẹ sang Cọ nếu bé quên đổi nút nhưng vừa chạm bước phủi cát
+    setDinoDigTool('brush');
+  }
+
+  if (isDustStep) {
+    window.soundMgr.playPop();
+  } else {
+    window.soundMgr.playHammerHit();
+  }
 
   const rockArea = document.getElementById('dinoDigRockArea');
+  if (ev && rockArea) {
+    const rect = rockArea.getBoundingClientRect();
+    spawnDigParticles(ev.clientX - rect.left, ev.clientY - rect.top, isDustStep);
+  }
   rockArea.classList.remove('wobble');
   void rockArea.offsetWidth;
   rockArea.classList.add('wobble');
 
+  const crackSvg = document.getElementById('dinoDigCrackSvg');
+  if (crackSvg && dinoDigHits <= DIG_CRACK_PATHS.length) {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', DIG_CRACK_PATHS[dinoDigHits - 1]);
+    path.setAttribute('stroke', '#451a03');
+    path.setAttribute('stroke-width', String(3 + dinoDigHits));
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke-linecap', 'round');
+    crackSvg.appendChild(path);
+  }
+
   const pct = Math.min(100, Math.round((dinoDigHits / stage.hitsRequired) * 100));
   document.getElementById('dinoDigProgressBar').style.width = `${pct}%`;
   document.getElementById('dinoDigProgressLabel').innerText = `Tiến độ đào: ${pct}%`;
-  document.getElementById('digPromptText').innerText = `Đập đá! (${dinoDigHits}/${stage.hitsRequired})`;
 
   const overlay = document.getElementById('dinoDigRockOverlay');
-  overlay.style.opacity = `${(stage.hitsRequired - dinoDigHits) / stage.hitsRequired}`;
+  if (dinoDigHits === stage.hitsRequired - 1) {
+    overlay.classList.add('dust-phase');
+    setDinoDigTool('brush');
+    document.getElementById('digPromptText').innerText = 'Đá đã vỡ! Chạm bằng 🖌️ Cọ để phủi sạch cát!';
+  } else {
+    document.getElementById('digPromptText').innerText = `Đập nứt đá! (${dinoDigHits}/${stage.hitsRequired})`;
+  }
+  overlay.style.opacity = `${Math.max(0.28, (stage.hitsRequired - dinoDigHits) / stage.hitsRequired)}`;
 
   if (dinoDigHits >= stage.hitsRequired) {
     setTimeout(() => {
       overlay.style.display = 'none';
+      const dinoInfo = typeof DINO_LESSONS !== 'undefined'
+        ? DINO_LESSONS.find(d => d.audioKey === stage.audioKey)
+        : null;
       document.getElementById('dinoDigRevivedIcon').innerHTML = stage.revivedIcon;
       document.getElementById('dinoDigRevivedTitle').innerText = stage.name;
       document.getElementById('dinoDigRevivedJa').innerText = `🇯🇵 ${stage.ja}`;
+      const factEl = document.getElementById('dinoDigRevivedFact');
+      if (factEl) {
+        factEl.innerText = dinoInfo ? `🦴 ${dinoInfo.funFact}` : stage.celebrationText;
+      }
       document.getElementById('dinoDigRevivedDino').style.display = 'flex';
 
+      awardCoins(5, true);
       window.soundMgr.playMagicalRevive();
       fireConfetti();
       setTimeout(() => {
@@ -2446,8 +2744,8 @@ function hitExcavationRock(stage) {
 
       dinoDigBadges++;
       document.getElementById('dinoDigStarsText').innerText = `🏆 ${dinoDigBadges} huy hiệu`;
-      showToast(`🎉 ${stage.celebrationText} 🌋`);
-    }, 200);
+      showToast(`🎉 Khai quật thành công ${stage.name}! +5 🪙 Xu!`);
+    }, 220);
   }
 }
 
@@ -2455,14 +2753,19 @@ function showDinoDigVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
-  awardStars(20, 'Nhà Khảo Cổ Vĩ Đại Bảo Long!');
+  awardCoins(15, true);
+  awardStars(20, 'Nhà Khảo Cổ Vĩ Đại Bảo Long (+15 🪙 Xu)!');
 
   document.getElementById('dinoDigPlayStage').style.display = 'none';
   document.getElementById('dinoDigVictoryStage').style.display = 'block';
+  const descEl = document.getElementById('dinoDigVictoryDesc');
+  if (descEl) {
+    descEl.innerText = 'Bé đã hoàn thành ca khảo cổ (+20 ⭐ & +15 🪙 Xu vào Xưởng Đua)!';
+  }
 }
 
 // ========================================================
-// GAME 7: ĐỐ VUI XE CỘ (FIXED ID MAPPING + 12 XE + AN TOÀN DOM)
+// GAME 7: ĐỐ VUI XE CỘ (KÈM SỰ THẬT THÚ VỊ + XU + SRS)
 // ========================================================
 function initVehicleQuiz() {
   const pool = [...VEHICLE_QUIZ_DATA].sort(() => Math.random() - 0.5).slice(0, 8);
@@ -2496,6 +2799,8 @@ function loadQuizQuestion() {
   document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} sao`;
   document.getElementById('quizQuestionTitle').innerText = q.question;
   document.getElementById('quizQuestionJa').innerText = q.ja;
+  const factEl = document.getElementById('quizFactBox');
+  if (factEl) { factEl.style.display = 'none'; factEl.innerText = ''; }
 
   const optionsGrid = document.getElementById('quizOptionsGrid');
   optionsGrid.innerHTML = '';
@@ -2547,13 +2852,21 @@ function loadQuizQuestion() {
 
 function handleQuizChoice(chosen, target, cardEl, myNav, myEpoch) {
   if (cardEl.classList.contains('correct') || cardEl.classList.contains('wrong')) return;
+  const factEl = document.getElementById('quizFactBox');
+
   if (chosen.id === target.id) {
     cardEl.classList.add('correct');
     window.soundMgr.playCorrect();
     fireConfetti();
     quizScore += 10;
+    awardCoins(2, true);
+    window.recordAnswer?.(target.id, true, { label: target.word, mode: 'game', audioKey: target.audioKey });
     document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} sao`;
-    showToast(`🎉 Chính xác! Đó là ${target.word}!`);
+    if (factEl) {
+      factEl.style.display = 'block';
+      factEl.innerHTML = `🚗 <strong>Khám phá xe:</strong> ${target.funFact} <em>(+2 🪙 Xu!)</em>`;
+    }
+    showToast(`🎉 Chuẩn xác ${target.word}! +2 🪙 Xu!`);
 
     window.soundMgr.playPraiseThen(false,
       () => window.appNavEpoch === myNav && vehQuizEpoch === myEpoch,
@@ -2564,9 +2877,14 @@ function handleQuizChoice(chosen, target, cardEl, myNav, myEpoch) {
     );
   } else {
     cardEl.classList.add('wrong');
+    window.recordAnswer?.(target.id, false, { label: target.word, mode: 'game', audioKey: target.audioKey });
     window.soundMgr.playWrong();
     window.soundMgr.speakTryAgain();
-    showToast(`Bảo Long thử lại xem chiếc nào mới đúng nhé! ❤️`);
+    if (factEl) {
+      factEl.style.display = 'block';
+      factEl.innerHTML = `🔍 Đây là <strong>${chosen.word}</strong> — ${chosen.funFact}`;
+    }
+    showToast(`Chiếc này là ${chosen.word}, thử tìm chiếc khác nhé! ❤️`);
   }
 }
 
@@ -2574,12 +2892,13 @@ function showQuizVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
-  awardStars(15, 'Bác tài xuất sắc Đố Vui Xe Cộ!');
+  awardCoins(10, true);
+  awardStars(15, 'Bác tài xuất sắc Đố Vui Xe Cộ (+10 🪙 Xu)!');
 
   document.getElementById('quizPlayStage').style.display = 'none';
   document.getElementById('quizVictoryStage').style.display = 'block';
   document.getElementById('quizVictoryScore').innerText =
-    `Bé đã hoàn thành xuất sắc 8 câu hỏi Xe Cộ với ${quizScore} điểm (+15 ⭐)!`;
+    `Bé đã hoàn thành 8 câu hỏi Xe Cộ với ${quizScore} điểm (+15 ⭐ & +10 🪙 Xu)!`;
 }
 
 // ========================================================
