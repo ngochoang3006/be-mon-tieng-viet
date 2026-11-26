@@ -2,7 +2,7 @@
 
 > **Tên ứng dụng:** Bảo Long Thám Hiểm Tiếng Việt – Hệ Thống Học Tập & Vui Chơi Lớp 1 Song Ngữ Việt – Nhật  
 > **Repository Git:** https://github.com/ngochoang3006/be-mon-tieng-viet.git  
-> **Nhánh hiện tại:** `main` (nền `ddd56e9` + bản sửa Giọng Nam & Nâng cấp 7 Mini-Game ngày 26/11/2026)  
+> **Nhánh hiện tại:** `main` (nền `d64b291` + nâng cấp 10 Truyện Đọc 小1 ngày 26/11/2026)  
 > **Ngày lập hồ sơ & chạy kiểm thử:** 26/11/2026
 
 Tài liệu này tổng hợp kiến trúc hàm, nội dung học tập, chẩn đoán giọng đọc, các cải tiến đã triển khai từ `DE_XUAT_CAI_THIEN_HE_THONG.md` và log kiểm thử thực tế sau chỉnh sửa cuối.
@@ -23,14 +23,14 @@ Tài liệu này tổng hợp kiến trúc hàm, nội dung học tập, chẩn 
 | [`science_life.js`](science_life.js) | 421 dòng<br>(23.991 B) | Tự nhiên & Xã hội (VN) + Seikatsuka `生活科` (6 chủ đề, trồng Asagao, 5 Giác quan, Đố vui) | **7 top-level functions** |
 | [`ethics.js`](ethics.js) | 826 dòng<br>(41.497 B) | Đạo Đức Lớp 1: 12 bài học, tình huống, Nên/Không nên, Đèn giao thông & Phân loại rác (8 món) | **12 top-level functions** |
 | [`arts_pe.js`](arts_pe.js) | 444 dòng<br>(19.508 B) | Âm nhạc Pianica 8 phím, Pha màu, Vẽ tranh & Thể dục (`音楽・図工・体育`) | **9 top-level functions** |
-| [`japanese.js`](japanese.js) | 1.351 dòng<br>(71.411 B) | Tiếng Nhật 小1 (46+25 Hiragana, 46 Katakana, 80 MEXT Kanji, 8 chủ đề từ vựng, 4 truyện, Masume 3 mức gợi ý & kiểm tra nét) | **16 top-level functions** |
+| [`japanese.js`](japanese.js) | 2.885 dòng<br>(147.382 B) | Tiếng Nhật 小1 (46+25 Hiragana, 46 Katakana, 80 MEXT Kanji, 8 chủ đề từ vựng, **10 truyện đọc 小1 & cổ tích Nhật đầy đủ `8–9` câu/bài, đọc tô sáng từng câu, bật/tắt Romaji, từ vựng & 2 câu hỏi/bài +5 🪙 +5 ⭐**, Masume 3 mức) | **16 top-level functions** |
 | [`english.js`](english.js) | 685 dòng<br>(33.990 B) | Tiếng Anh Lớp 1: 26 ABC, 8 chủ đề (`64` từ), Nghe chọn hình & Ghép chữ | **10 top-level functions** |
 | [`dragons.js`](dragons.js) | 471 dòng<br>(21.589 B) | Vương Quốc Rồng: 8 loài rồng ảnh thật, Đố vui & Lật thẻ | **7 top-level functions** |
 | [`arcade.js`](arcade.js) | 1.378 dòng<br>(52.863 B) | Giải Đua 3 Chặng (~60–90s) Xe / Khủng Long / Rồng: đếm ngược `3-2-1`, 6 Cổng Chữ MP3 thật, AI bám đuổi, Xưởng Xu nâng cấp Speed/Nitro Lv0–3 & Trang trí, ảnh thật JPG Khủng long & Rồng, thưởng `1–3 ⭐` + `🪙 Xu` | **30 top-level functions** |
 
 ---
 
-## 2. Chẩn Đoán & Cập Nhật Hệ Thống Giọng Đọc (`4.326` MP3 = `66,51 MB`)
+## 2. Chẩn Đoán & Cập Nhật Hệ Thống Giọng Đọc (`4.720` MP3 = `81,54 MB`)
 
 ### A. Chẩn đoán & Xử lý dứt điểm giọng đọc "giống Windows / giả giả"
 1. **Nguyên nhân phát hiện trước đó:**
@@ -39,7 +39,7 @@ Tài liệu này tổng hợp kiến trúc hàm, nội dung học tập, chẩn 
 2. **Đã sửa & tái tạo triệt để 100%:**
    - [`speech.js`](speech.js): Mặc định **`allowSystemTTS = false`** (chặn hẳn giọng máy Windows tự phát), chặn `AbortError` rơi vào `speakTTS()`, ưu tiên giọng `Online / Natural / Google` nếu phụ huynh bật lại fallback, và ưu tiên phát **bản thu giọng Ba/Mẹ cục bộ (IndexedDB)**.
    - [`tools/regen_natural_voices.py`](tools/regen_natural_voices.py) (cũng đã vá `aiohttp.ThreadedResolver()` tránh lỗi `aiodns` trên Python 3.14 Windows và ghi tạm nguyên tử `.tmp`): Đã chạy hoàn tất **`389/389` key** (`353` key `fff384c4` cũ + `36` câu giải mã `decod_1_1..decod_12_3`) bằng 100% Microsoft Edge Neural (`vi-VN-HoaiMyNeural`, `vi-VN-NamMinhNeural`, `ja-JP-NanamiNeural`, `ja-JP-KeitaNeural`).
-   - Kết quả kiểm tra toàn bộ **`2.163` MP3 Nữ + `2.163` MP3 Nam = `4.326` file (`66,51 MB`)**: **`identical_FM = 0`**, **`gtts_fff384c4 = 0`**, **`small = 0`**.
+   - Tiếp tục bổ sung [`tools/gen_ja_stories_audio.py`](tools/gen_ja_stories_audio.py) tạo trọn bộ **`201` cặp MP3 Edge Neural** (`ja_story_1..10` dài `47–59s`/truyện, `81` câu từng dòng `ja_story_*_l*`, `30` từ khóa truyện `ja_story_*_v*` và `80` câu hỏi/đáp án tiếng Việt). Kết quả kiểm tra toàn bộ **`2.360` MP3 Nữ + `2.360` MP3 Nam = `4.720` file (`81,54 MB`)**: **`identical_FM = 0`**, **`gtts_fff384c4 = 0`**, **`small = 0`**, cùng kiểm âm PCM `0` file câm tiếng trên toàn bộ truyện đọc.
 
 ---
 
@@ -61,6 +61,10 @@ Tài liệu này tổng hợp kiến trúc hàm, nội dung học tập, chẩn 
   4. **Kinh tế `🪙 Xu`, Xưởng Xu (`#arcadeGarageBar`) & Cân bằng sao (`1–3 ⭐`):** Học từ mới (`+3 Xu`), trả lời đúng ngoài Arcade (`+5 Xu`), hoàn thành bước Lộ trình (`+20 Xu`), qua Cổng Chữ (`+10 Xu`) và về đích (`+12..25+ Xu`) dùng để nâng cấp Tốc độ/Nitro `Lv0–3` và trang trí (`👑 Vương miện`, `🔥 Đuôi lửa`, `🌈 Cầu vồng`). Đua chỉ thưởng **`1–3 ⭐`** (`25 ⭐/ngày`) để việc học & nhớ từ giữ vai trò nguồn sao chính.
   5. **Hình thật Khủng long & Rồng (`images/dinos/*`, `images/dragons/*`):** Toàn bộ `8` nhân vật Khủng long & Rồng hiển thị ảnh chụp thật cả ở `#arcadeHeroPicker` lẫn khung tròn chuyển động có cánh/vương miện/hào quang trên Canvas (`drawPhotoRacerSprite()`).
 
+- **Mở rộng & Hoàn thiện Truyện Đọc 小1 (`japanese.js`, `index.html`, `style.css`, `tools/gen_ja_stories_audio.py`, `tools/audit.py`):**
+  1. Mở rộng từ `4` truyện tóm tắt lên **`10` truyện kinh điển sách Quốc ngữ lớp 1 Nhật Bản (`光村図書・東京書籍`) & Cổ tích Nhật** (`ja_story_1..10`), mỗi truyện đầy đủ `8–9` câu liền mạch từ mở đầu đến kết thúc.
+  2. Giao diện đọc từng câu có số thứ tự, nút loa `🔊` riêng từng câu, chế độ **Nghe từng câu tô sáng** (`playChoiceTour`), **Nghe liền mạch**, bật/tắt **Romaji** (`#btnToggleJaStoryRomaji`), **30 từ khóa truyện** bấm nghe trực tiếp, bài học ý nghĩa và **`2` câu hỏi đọc hiểu/truyện** thưởng **`+5 🪙 Xu` + `+5 ⭐`** (`recordAnswer` + đánh dấu `✅` đã đọc).
+
 - **Sửa Giọng Nam & Nâng cấp 7 Mini-Game thực tế (`tools/regen_male_fixes.py`, `speech.js`, `app.js`, `index.html`, `style.css`):**
   1. **Sửa kho giọng Nam bằng quét PCM thực tế:** Đổi toàn bộ `118` key Tiếng Anh Nam từ `GuyNeural` (bị cao `157–235 Hz`) sang `en-US-AndrewNeural` (`~118,8 Hz` trung bình); tái tạo `117` kana Tiếng Nhật + `4` key `ja_n_2`/`ja_n_5`/`ja_kanji_02`/`ja_kanji_31` bằng `ja-JP-KeitaNeural` với dấu kéo/chuẩn `を→おー` xóa sạch `104` file câm/bé tiếng; sửa các file đánh vần & vần lệch độ dài (`spell_ổi`, `spell_cờ`, `spell_ăn`, `spell_xôi`, `spell_tàu`, `spell_mặt trời`, `spell_dragon_earth`, `tone_ngang`); cắt gọn `1.000,5 KB` khoảng lặng đuôi thừa trên `216` file ghép phép tính `math_*`.
   2. **Sửa `speech.js` & nhãn UI:** Thêm `normalizeKey()`, bỏ double-fetch ở `resolveAudioUrl()`, cập nhật nhãn động theo giọng `Nam (Ba)` / `Nữ (Cô)` và bổ sung `type="button"` trong `index.html`.
@@ -71,11 +75,11 @@ Tài liệu này tổng hợp kiến trúc hàm, nội dung học tập, chẩn 
 
 ### A. Kiểm tra tĩnh tự động ([`tools/audit.py`](tools/audit.py))
 ```text
-DOM IDs: html=557, dyn_js=39, getElementById=499, missing=0
+DOM IDs: html=557, dyn_js=44, getElementById=502, missing=0
 Local Images: 30 referenced, missing=0
-Audio MP3s: female=2163, male=2163, size_mb=66.51, small=0, identical_FM=0, gtts_fff384c4=0
+Audio MP3s: female=2360, male=2360, size_mb=81.54, small=0, identical_FM=0, gtts_fff384c4=0
 Puzzle checks: 200 lesson words + 12 hard cases verified
-Audio Keys: checked=2122, missing=0, orphans=41
+Audio Keys: checked=2319, missing=0, orphans=41
 Node syntax check: skipped (node not installed)
 
 ALL STATIC AUDIT CHECKS PASSED!
@@ -86,11 +90,12 @@ ALL STATIC AUDIT CHECKS PASSED!
 - **Phiên 2 (Kiểm tra lại Step 3 sau bản vá `lessonId` trong `learning_plus.js`, `1440×900`):** `50` network buffer requests, `0` lỗi `>= 400`, `0` console/page errors; xác minh `#phonicsDecodableHost` hiển thị `3` câu/bài (`Bài 1`, `Bài 2`, `Bài 8`), Karaoke tải chuẩn MP3 (`word_tập.mp3`, `word_bé.mp3`, `word_đọc.mp3`, `word_sach.mp3` HTTP `200`/`206`), chế độ `🎤 Con tự đọc` và tiến độ Lộ trình `2/3 bước`.
 - **Phiên 3 (Kiểm thử Live Khu Đua 3 Chặng & Xưởng Xu, Desktop `1280×800` → Mobile `390×844`):** `0` lỗi console HUD, `0` HTTP `>= 400`, `8/8` ảnh thật Khủng long & Rồng tải HTTP `200`; học `9` thẻ từ tăng `⭐ 49 → 67` và tích `🪙 Xu: 27`; nâng cấp `Tốc độ Lv0/3 → Lv1/3` (`20 🪙`, còn `7 🪙`); đua Rồng `Rồng Lửa Đỏ` qua đếm ngược `3-2-1`, qua Cổng Chữ `"S"` nhận Nitro + `+10 🪙 Xu`, sang `Chặng 2: Bão Sấm` kích hoạt Cổng Chữ `"Ă"` (`alpha_*.mp3` HTTP `200`/`206`) & nút `#btnArcadeReplayGate`, sang `Chặng 3: Cầu Vồng` (`67%`); kiểm tra Mobile `390×844` bề rộng `375.2 px <= 390 px` không tràn ngang.
 - **Phiên 4 (Kiểm thử Live Giọng Nam & 7 Mini-Game nâng cấp, `1280×800` → Mobile `390×844`):** `0` lỗi console, `0` page errors, `0` HTTP `>= 400`, `0` ảnh lỗi; bật `👨 Nam (Ba)` (`word_bố.mp3`, `ort_ck.mp3`, `ja_hira_ん.mp3`, `ja_hira_ほ.mp3`, `en_alpha_a.mp3`, `en_w_goodmorning.mp3` HTTP `200`/`206`), `#btnHearVnStory` đổi đúng thành `Nghe ba đọc bài văn`; test đủ 7 mini-game (`#btnPuzzleHint`, `#btnListenBlitz` đếm ngược `45s → 43s`, `#trainSignalLight` đổi `🟢`, `#btnMemEasy` 8 thẻ + `#btnMemPeek` -> `👀 Đã dùng`, `#dinoQuizFactBox`, `#quizFactBox`, Khai quật 5 lần Búa/Cọ lộ ảnh thật T-Rex + `+5 🪙 Xu`), `#gameSessionCoins` tăng `+23 🪙`; Mobile `390×844` giữ `375.2 px <= 390 px` không tràn ngang.
+- **Phiên 5 (Kiểm thử Live 10 Truyện Đọc 小1 nâng cấp, `390×844` & `1280×800`):** `50` HTTP requests, `0` lỗi `>= 400`, `0` console errors; xác minh `10/10` tab truyện trong `#jaStoriesTabs`, Truyện 1 (`9` câu, `3` từ vựng, `#btnToggleJaStoryRomaji`, tô sáng `.is-reading-option`, `ja_story_1_l1..l9.mp3` & `ja_story_1_v1.mp3` HTTP `200`/`206`, trả lời 2 câu tăng `⭐ 97 → 102` & `Điểm Tiếng Nhật 0 → 10` + đánh dấu `✅`), Truyện 3/7/10 (`8` câu & `2` câu hỏi), giọng Nam `male/ja_story_7_l1.mp3` HTTP `200`, và kiểm tra lại Mobile `390×844` toàn bộ `10` nút tab gói gọn trong `317,71 px <= 390 px`, không tràn ngang.
 
 ---
 
 ## 5. Việc Còn Lại & Điểm Mở
 
-1. **Đồng bộ GitHub (`origin/main`):** Các mốc trước (`6c59a7e`, `ddd56e9`) đã lên `origin/main`; bản sửa Giọng Nam & Nâng cấp 7 Mini-game đã kiểm thử xong và chuẩn bị commit/push trong phiên này.
+1. **Đồng bộ GitHub (`origin/main`):** Các mốc trước (`6c59a7e`, `ddd56e9`, `d64b291`) đã lên `origin/main`; bản mở rộng 10 Truyện Đọc 小1 đã kiểm thử xong và được commit/push trong phiên này.
 2. **Kiểm tra trên thiết bị iOS thật (iPad/iPhone Safari):** Kiểm thử `MediaRecorder` và audio player trong Safari thực tế.
 3. **Các câu hỏi định hướng từ `DE_XUAT` Mục 14:** Chưa tự ý thêm `LICENSES.md`/PWA/tách ES module để chờ bạn chốt mục tiêu cuối năm lớp 1, thời lượng học mỗi ngày và chế độ công khai/riêng tư của repo.

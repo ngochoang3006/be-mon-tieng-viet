@@ -213,85 +213,1413 @@ const JA_KANJI_80_DATA = [
   { id: 'ja_kanji_80', unit: 4, char: '糸', kun: 'いと', on: 'シ', vi: 'Sợi chỉ / Sợi tơ', word: '糸 (いと)', emoji: '🧵' }
 ];
 
-// 4 Truyện Đọc Kinh Điển Sách Quốc Ngữ Lớp 1 Nhật Bản (小1 国語)
+// 10 Truyện Đọc Kinh Điển Sách Quốc Ngữ Lớp 1 & Cổ Tích Nhật Bản (小1 国語・昔話)
 const JA_STORIES_DATA = [
   {
-    id: 'ja_story_1',
-    title: '🥕 おおきな かぶ (Củ Cải Khổng Lồ)',
-    audioKey: 'ja_story_1',
-    jaLines: [
-      'おじいさんが かぶの たねを まきました。',
-      '「あまい あまい かぶに なれ。おおきな おおきな かぶに なれ。」',
-      '「うんとこしょ、どっこいしょ。」',
-      'おじいさん、おばあさん、まご、いぬ、ねこ、ねずみで、とうとう かぶが ぬけました！'
+    "id": "ja_story_1",
+    "badge": "📘 Sách 小1 Quốc Ngữ",
+    "title": "🥕 おおきな かぶ (Củ Cải Khổng Lồ)",
+    "audioKey": "ja_story_1",
+    "moral": "💡 Đoàn kết là sức mạnh: dù bé nhỏ như chú chuột nhắt, góp sức cùng nhau cũng làm nên kỳ tích!",
+    "jaLines": [
+      {
+        "key": "ja_story_1_l1",
+        "ja": "おじいさんが かぶの たねを まきました。",
+        "romaji": "Ojiisan ga kabu no tane o makimashita.",
+        "vi": "Ông lão gieo một hạt củ cải xuống mảnh vườn nhỏ."
+      },
+      {
+        "key": "ja_story_1_l2",
+        "ja": "「あまい あまい かぶに なれ。おおきな かぶに なれ。」",
+        "romaji": "\"Amai amai kabu ni nare. Ookina kabu ni nare.\"",
+        "vi": "\"Hãy mọc thành củ cải thật ngọt, thành củ cải thật to nhé!\""
+      },
+      {
+        "key": "ja_story_1_l3",
+        "ja": "あまい げんきの よい、とてつもなく おおきな かぶが できました。",
+        "romaji": "Amai genki no yoi, totetsumonaku ookina kabu ga dekimashita.",
+        "vi": "Một củ cải vừa ngọt, vừa tươi tốt và khổng lồ chưa từng thấy đã lớn lên."
+      },
+      {
+        "key": "ja_story_1_l4",
+        "ja": "おじいさんは かぶを ぬこうと しました。「うんとこしょ、どっこいしょ。」それでも かぶは ぬけません。",
+        "romaji": "Ojiisan wa kabu o nukou to shimashita. \"Untokosho, dokkoisho.\" Soredemo kabu wa nukemasen.",
+        "vi": "Ông lão ra sức nhổ củ cải: \"Hò dô ta, kéo lên nào!\" Nhưng củ cải vẫn không nhúc nhích."
+      },
+      {
+        "key": "ja_story_1_l5",
+        "ja": "おじいさんは おばあさんを よんで きました。ふたりで ひっぱっても、まだ ぬけません。",
+        "romaji": "Ojiisan wa obaasan o yonde kimashita. Futari de hippatte mo, mada nukemasen.",
+        "vi": "Ông lão gọi bà lão ra giúp. Hai ông bà cùng hợp sức kéo mà vẫn chưa nhổ được."
+      },
+      {
+        "key": "ja_story_1_l6",
+        "ja": "おばあさんは まごを よびました。まごが おばあさんを ひっぱって、みんなで ひっぱっても ぬけません。",
+        "romaji": "Obaasan wa mago o yobimashita. Mago ga obaasan o hippatte, minna de hippatte mo nukemasen.",
+        "vi": "Bà lão gọi cô cháu gái ra phụ. Cháu kéo bà, bà kéo ông, kéo mãi mà củ cải vẫn đứng yên."
+      },
+      {
+        "key": "ja_story_1_l7",
+        "ja": "まごは いぬを よび、いぬは ねこを よび、ねこは 小さな ねずみを よんで きました。",
+        "romaji": "Mago wa inu o yobi, inu wa neko o yobi, neko wa chiisana nezumi o yonde kimashita.",
+        "vi": "Cháu gái gọi chú chó, chó gọi mèo con, và mèo con gọi thêm chú chuột nhắt bé xíu tới giúp."
+      },
+      {
+        "key": "ja_story_1_l8",
+        "ja": "ねずみが ねこを、ねこが いぬを、いぬが まごを、まごが おばあさんを、おばあさんが おじいさんを ひっぱって、「うんとこしょ、どっこいしょ。」",
+        "romaji": "Nezumi ga neko o, neko ga inu o, inu ga mago o, mago ga obaasan o, obaasan ga ojiisan o hippatte, \"untokosho, dokkoisho.\"",
+        "vi": "Chuột kéo mèo, mèo kéo chó, chó kéo cháu, cháu kéo bà, bà kéo ông, ông kéo củ cải: \"Hò dô ta, kéo nào!\""
+      },
+      {
+        "key": "ja_story_1_l9",
+        "ja": "とうとう、おおきな かぶは ぬけました！ みんなで よろこんで わらいあいました。",
+        "romaji": "Toutou, ookina kabu wa nukemashita! Minna de yorokonde waraiaimashita.",
+        "vi": "Cuối cùng, củ cải khổng lồ đã bật lên khỏi mặt đất! Cả nhà reo hò cười vang hạnh phúc."
+      }
     ],
-    viMeaning: 'Ông lão gieo hạt củ cải ngọt và to. Ông gọi bà, cháu gái, chú chó, cô mèo và bé chuột nhắt cùng hò dô "Ưn-tô-cô-shô!" hợp sức nhổ bật được củ cải khổng lồ!',
-    question: 'Trong truyện Củ cải khổng lồ, ai là bạn nhỏ cuối cùng tới kéo giúp và nhổ bật được củ cải?',
-    qKey: 'ja_story_1_q',
-    options: [
-      { key: 'ja_st1_o1', emoji: '🐭', text: 'Chú chuột nhắt (ねずみ)', isGood: true },
-      { key: 'ja_st1_o2', emoji: '🦖', text: 'Khủng long T-Rex', isGood: false },
-      { key: 'ja_st1_o3', emoji: '🐘', text: 'Chú voi con', isGood: false },
-      { key: 'ja_st1_o4', emoji: '🦁', text: 'Sư tử dũng mãnh', isGood: false }
-    ]
+    "vocab": [
+      {
+        "audioKey": "ja_story_1_v1",
+        "ja": "かぶ",
+        "romaji": "kabu",
+        "vi": "củ cải trắng"
+      },
+      {
+        "audioKey": "ja_story_1_v2",
+        "ja": "ひっぱる",
+        "romaji": "hipparu",
+        "vi": "kéo thật mạnh"
+      },
+      {
+        "audioKey": "ja_story_1_v3",
+        "ja": "ねずみ",
+        "romaji": "nezumi",
+        "vi": "chú chuột nhắt"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_1_q",
+        "question": "Trong truyện Củ cải khổng lồ, ai là bạn nhỏ cuối cùng tới kéo giúp và nhổ bật được củ cải?",
+        "options": [
+          {
+            "key": "ja_st1_o1",
+            "emoji": "🐭",
+            "text": "Chú chuột nhắt (ねずみ)",
+            "isGood": true
+          },
+          {
+            "key": "ja_st1_o2",
+            "emoji": "🦖",
+            "text": "Khủng long T-Rex",
+            "isGood": false
+          },
+          {
+            "key": "ja_st1_o3",
+            "emoji": "🐘",
+            "text": "Chú voi con",
+            "isGood": false
+          },
+          {
+            "key": "ja_st1_o4",
+            "emoji": "🦁",
+            "text": "Sư tử dũng mãnh",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_1_q2",
+        "question": "Mọi người đã hợp sức gọi thêm từng ai ra kéo củ cải theo đúng trình tự nào?",
+        "options": [
+          {
+            "key": "ja_st1_q2_o1",
+            "emoji": "🤝",
+            "text": "Ông → Bà → Cháu → Chó → Mèo → Chuột",
+            "isGood": true
+          },
+          {
+            "key": "ja_st1_q2_o2",
+            "emoji": "🐭",
+            "text": "Chuột tự nhổ một mình từ đầu",
+            "isGood": false
+          },
+          {
+            "key": "ja_st1_q2_o3",
+            "emoji": "🐯",
+            "text": "Hổ và Gấu từ rừng chạy ra kéo giúp",
+            "isGood": false
+          },
+          {
+            "key": "ja_st1_q2_o4",
+            "emoji": "🚜",
+            "text": "Dùng xe máy kéo nông trại kéo lên",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Ông lão gieo một hạt củ cải xuống mảnh vườn nhỏ. \"Hãy mọc thành củ cải thật ngọt, thành củ cải thật to nhé!\" Một củ cải vừa ngọt, vừa tươi tốt và khổng lồ chưa từng thấy đã lớn lên. Ông lão ra sức nhổ củ cải: \"Hò dô ta, kéo lên nào!\" Nhưng củ cải vẫn không nhúc nhích. Ông lão gọi bà lão ra giúp. Hai ông bà cùng hợp sức kéo mà vẫn chưa nhổ được. Bà lão gọi cô cháu gái ra phụ. Cháu kéo bà, bà kéo ông, kéo mãi mà củ cải vẫn đứng yên. Cháu gái gọi chú chó, chó gọi mèo con, và mèo con gọi thêm chú chuột nhắt bé xíu tới giúp. Chuột kéo mèo, mèo kéo chó, chó kéo cháu, cháu kéo bà, bà kéo ông, ông kéo củ cải: \"Hò dô ta, kéo nào!\" Cuối cùng, củ cải khổng lồ đã bật lên khỏi mặt đất! Cả nhà reo hò cười vang hạnh phúc."
   },
   {
-    id: 'ja_story_2',
-    title: '🐋 くじらぐも (Đám Mây Cá Voi)',
-    audioKey: 'ja_story_2',
-    jaLines: [
-      'いちねん にくみの 子どもたちが たいそうを しています。',
-      'そらに おおきな しろい くじらぐもが あらわれました。',
-      '「おーい。」天まで とどけ、一、二、三！',
-      'みんなで くじらぐもの せなかに のって、青い 空の たびへ しゅっぱつ！'
+    "id": "ja_story_2",
+    "badge": "📘 Sách 小1 Quốc Ngữ",
+    "title": "🐋 くじらぐも (Đám Mây Cá Voi)",
+    "audioKey": "ja_story_2",
+    "moral": "💡 Trí tưởng tượng bay bổng và niềm vui tập thể giúp mỗi giờ học trở thành chuyến phiêu lưu kỳ diệu!",
+    "jaLines": [
+      {
+        "key": "ja_story_2_l1",
+        "ja": "いちねん 二くみの 子どもたちが、校庭で たいそうを して いました。",
+        "romaji": "Ichinen nikumi no kodomotachi ga, koutei de taisou o shite imashita.",
+        "vi": "Các bạn học sinh lớp 1B đang tập thể dục ngoài sân trường ngập nắng."
+      },
+      {
+        "key": "ja_story_2_l2",
+        "ja": "ふと 空を みあげると、まっ白な おおきな くじらぐもが うかんで いました。",
+        "romaji": "Futo sora o miageru to, masshiro na ookina kujiragumo ga ukande imashita.",
+        "vi": "Bỗng nhiên ngước nhìn bầu trời, cả lớp thấy một đám mây trắng muốt hình chú cá voi khổng lồ."
+      },
+      {
+        "key": "ja_story_2_l3",
+        "ja": "「おーい、こっちへ おいでよ。」子どもたちも くじらぐもも、おたがいに よびあいました。",
+        "romaji": "\"Ooi, kocchi e oide yo.\" Kodomotachi mo kujiragumo mo, otagai ni yobiaimashita.",
+        "vi": "\"Này ơi, bay lại đây đi!\" Cả các bạn nhỏ lẫn đám mây cá voi cùng vui vẻ gọi nhau."
+      },
+      {
+        "key": "ja_story_2_l4",
+        "ja": "先生と 子どもたちは てを つないで、「てんまで とどけ、一、二、三！」と ジャンプしました。",
+        "romaji": "Sensei to kodomotachi wa te o tsunaide, \"Ten made todoke, ichi, ni, san!\" to janpu shimashita.",
+        "vi": "Cô giáo và các bạn nắm chặt tay nhau hô vang: \"Bay chạm tới trời cao nào, một, hai, ba!\" rồi bật nhảy."
+      },
+      {
+        "key": "ja_story_2_l5",
+        "ja": "さんどめに、とうとう くもに のる ことが できました！ くじらぐもは ぐんぐん 空へ のぼります。",
+        "romaji": "Sandome ni, toutou kumo ni noru koto ga dekimashita! Kujiragumo wa gungun sora e noborimasu.",
+        "vi": "Đến lần nhảy thứ ba, cả lớp đã trèo lên được lưng mây! Đám mây cá voi bay vút lên bầu trời xanh."
+      },
+      {
+        "key": "ja_story_2_l6",
+        "ja": "空の うえからは、みんなが 住む まちや 青い うみが 小さく 見えました。",
+        "romaji": "Sora no ue kara wa, minna ga sumu machi ya aoi umi ga chiisaku miemashita.",
+        "vi": "Từ trên trời cao nhìn xuống, phố xá thân thương và biển xanh bao la hiện ra thật nhỏ bé."
+      },
+      {
+        "key": "ja_story_2_l7",
+        "ja": "そろそろ おひるに なります。学校から きれいな チャイムの 音が きこえて きました。",
+        "romaji": "Sorosoro ohiru ni narimasu. Gakkou kara kirei na chaimu no oto ga kikoete kimashita.",
+        "vi": "Đã sắp đến giờ ăn trưa rồi. Từ ngôi trường phía dưới, tiếng chuông báo giờ vang lên trong trẻo."
+      },
+      {
+        "key": "ja_story_2_l8",
+        "ja": "子どもたちは くじらぐもに 「さようなら」と 手を ふって、もといた 校庭へ おりて きました。",
+        "romaji": "Kodomotachi wa kujiragumo ni \"sayounara\" to te o futte, moto ita koutei e orite kimashita.",
+        "vi": "Các bạn nhỏ vẫy tay chào tạm biệt đám mây cá voi rồi nhẹ nhàng đáp xuống sân trường."
+      }
     ],
-    viMeaning: 'Các bạn lớp 1-2 đang tập thể dục dưới sân trường thì thấy một Đám Mây Cá Voi trắng muốt trên bầu trời xanh. Cả lớp cùng nắm tay nhảy cao lên lưng mây Cá Voi bay lượn khắp bầu trời!',
-    question: 'Đám mây khổng lồ trên bầu trời trong bài đọc lớp 1 có hình con gì?',
-    qKey: 'ja_story_2_q',
-    options: [
-      { key: 'ja_st2_o1', emoji: '🐋', text: 'Con cá voi (くじら)', isGood: true },
-      { key: 'ja_st2_o2', emoji: '🚗', text: 'Xe ô tô con', isGood: false },
-      { key: 'ja_st2_o3', emoji: '🍎', text: 'Quả táo đỏ', isGood: false },
-      { key: 'ja_st2_o4', emoji: '🐢', text: 'Con rùa vàng', isGood: false }
-    ]
+    "vocab": [
+      {
+        "audioKey": "ja_story_2_v1",
+        "ja": "くじら",
+        "romaji": "kujira",
+        "vi": "con cá voi"
+      },
+      {
+        "audioKey": "ja_story_2_v2",
+        "ja": "くも",
+        "romaji": "kumo",
+        "vi": "đám mây"
+      },
+      {
+        "audioKey": "ja_story_2_v3",
+        "ja": "たいそう",
+        "romaji": "taisou",
+        "vi": "tập thể dục"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_2_q",
+        "question": "Đám mây khổng lồ trên bầu trời sân trường biến thành hình con vật gì để đón các bạn nhỏ bay lên chơi?",
+        "options": [
+          {
+            "key": "ja_st2_o1",
+            "emoji": "🐋",
+            "text": "Con cá voi (くじら)",
+            "isGood": true
+          },
+          {
+            "key": "ja_st2_o2",
+            "emoji": "🚗",
+            "text": "Xe ô tô con",
+            "isGood": false
+          },
+          {
+            "key": "ja_st2_o3",
+            "emoji": "🍎",
+            "text": "Quả táo đỏ",
+            "isGood": false
+          },
+          {
+            "key": "ja_st2_o4",
+            "emoji": "🐢",
+            "text": "Con rùa vàng",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_2_q2",
+        "question": "Khi nghe tiếng chuông trường báo giờ trưa vang lên, các bạn nhỏ đã làm gì?",
+        "options": [
+          {
+            "key": "ja_st2_q2_o1",
+            "emoji": "👋",
+            "text": "Vẫy tay chào tạm biệt đám mây và đáp xuống sân trường",
+            "isGood": true
+          },
+          {
+            "key": "ja_st2_q2_o2",
+            "emoji": "😴",
+            "text": "Ngủ quên luôn trên đám mây cả buổi chiều",
+            "isGood": false
+          },
+          {
+            "key": "ja_st2_q2_o3",
+            "emoji": "⚽",
+            "text": "Chơi đá bóng ngay trên tầng mây cao",
+            "isGood": false
+          },
+          {
+            "key": "ja_st2_q2_o4",
+            "emoji": "🍦",
+            "text": "Ngồi ăn kem cầu vồng cùng bầy chim sẻ",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Các bạn học sinh lớp 1B đang tập thể dục ngoài sân trường ngập nắng. Bỗng nhiên ngước nhìn bầu trời, cả lớp thấy một đám mây trắng muốt hình chú cá voi khổng lồ. \"Này ơi, bay lại đây đi!\" Cả các bạn nhỏ lẫn đám mây cá voi cùng vui vẻ gọi nhau. Cô giáo và các bạn nắm chặt tay nhau hô vang: \"Bay chạm tới trời cao nào, một, hai, ba!\" rồi bật nhảy. Đến lần nhảy thứ ba, cả lớp đã trèo lên được lưng mây! Đám mây cá voi bay vút lên bầu trời xanh. Từ trên trời cao nhìn xuống, phố xá thân thương và biển xanh bao la hiện ra thật nhỏ bé. Đã sắp đến giờ ăn trưa rồi. Từ ngôi trường phía dưới, tiếng chuông báo giờ vang lên trong trẻo. Các bạn nhỏ vẫy tay chào tạm biệt đám mây cá voi rồi nhẹ nhàng đáp xuống sân trường."
   },
   {
-    id: 'ja_story_3',
-    title: '🦝 たぬきの 糸車 (Guồng Quay Tơ Của Chú Lửng)',
-    audioKey: 'ja_story_3',
-    jaLines: [
-      'きこりの おかみさんが まいばん いとぐるまを まわしました。',
-      '「キーカラカラ、キークルクル。」',
-      'いたずら たぬきも まねをして、あとで お礼に 白い いとを おりました。'
+    "id": "ja_story_3",
+    "badge": "📘 Sách 小1 Quốc Ngữ",
+    "title": "🦝 たぬきの いとぐるま (Guồng Quay Tơ Của Chú Lửng)",
+    "audioKey": "ja_story_3",
+    "moral": "💡 Lòng nhân hậu và biết ơn luôn mang lại phép màu ấm áp giữa con người và thiên nhiên.",
+    "jaLines": [
+      {
+        "key": "ja_story_3_l1",
+        "ja": "むかし、山おくの いっけんやに きこりの ふうふが すんで いました。",
+        "romaji": "Mukashi, yamaoku no ikkenya ni kikori no fuufu ga sunde imashita.",
+        "vi": "Ngày xưa, trong ngôi nhà lẻ loi sâu trong núi, có hai vợ chồng bác tiều phu sinh sống."
+      },
+      {
+        "key": "ja_story_3_l2",
+        "ja": "まいばん、いたずらな たぬきが やぶの かげから いえの 中を のぞいて いました。",
+        "romaji": "Maiban, itazura na tanuki ga yabu no kage kara ie no naka o nozoite imashita.",
+        "vi": "Tối nào cũng vậy, một chú lửng tinh nghịch lại núp sau bụi cây lén nhìn vào trong nhà."
+      },
+      {
+        "key": "ja_story_3_l3",
+        "ja": "おかみさんが まわす いとぐるまの 「キーカラカラ、キークルクル」という おとが、たぬきは 大すきでした。",
+        "romaji": "Okamisan ga mawasu itoguruma no \"Kii-kara-kara, kii-kuru-kuru\" to iu oto ga, tanuki wa daisuki deshita.",
+        "vi": "Chú lửng rất mê âm thanh \"Kii-kara-kara, kii-kuru-kuru\" khi vợ bác tiều phu quay guồng kéo tơ."
+      },
+      {
+        "key": "ja_story_3_l4",
+        "ja": "ある日、たぬきは きこりの わなに かかって しまいました。きこりは おこって、たぬきを はりに つるしました。",
+        "romaji": "Aru hi, tanuki wa kikori no wana ni kakatte shimaimashita. Kikori wa okotte, tanuki o hari ni tsurushimashita.",
+        "vi": "Một hôm, chú lửng chẳng may sập bẫy của bác tiều phu. Bác giận lắm, liền treo chú lên xà nhà."
+      },
+      {
+        "key": "ja_story_3_l5",
+        "ja": "おかみさんは たぬきが かわいそうに なって、なわを ほどいて やりました。たぬきは よろこんで 森へ 帰りました。",
+        "romaji": "Okamisan wa tanuki ga kawaisou ni natte, nawa o hodoite yarimashita. Tanuki wa yorokonde mori e kaerimashita.",
+        "vi": "Thấy chú lửng đáng thương, người vợ lén cởi dây trói cho chú. Chú lửng mừng rỡ chạy về khu rừng."
+      },
+      {
+        "key": "ja_story_3_l6",
+        "ja": "さむい 冬が やって きました。おかみさんは びょうきに なり、きこりも 山へ 行けません。",
+        "romaji": "Samui fuyu ga yatte kimashita. Okamisan wa byouki ni nari, kikori mo yama e ikemasen.",
+        "vi": "Mùa đông giá rét ập tới. Người vợ bị ốm nặng, còn bác tiều phu cũng không thể lên núi đốn củi."
+      },
+      {
+        "key": "ja_story_3_l7",
+        "ja": "ある ばん、月の 光の 中で 「キーカラカラ、キークルクル」と いとぐるまが まわって いました。",
+        "romaji": "Aru ban, tsuki no hikari no naka de \"Kii-kara-kara, kii-kuru-kuru\" to itoguruma ga mawatte imashita.",
+        "vi": "Một đêm nọ, dưới ánh trăng sáng, tiếng guồng quay tơ \"Kii-kara-kara, kii-kuru-kuru\" bỗng vang lên đều đặn."
+      },
+      {
+        "key": "ja_story_3_l8",
+        "ja": "たぬきが 糸の たばを 山ほど つむいで、お礼を して くれたのでした。ふうふは なみだを 流して よろこびました。",
+        "romaji": "Tanuki ga ito no taba o yama hodo tsumuide, orei o shite kureta no deshita. Fuufu wa namida o nagashite yorokobimashita.",
+        "vi": "Hóa ra chú lửng đã quay giúp cả núi cuộn tơ óng mượt để trả ơn cứu mạng! Hai vợ chồng xúc động rơi nước mắt."
+      }
     ],
-    viMeaning: 'Chú lửng nhỏ tinh nghịch ban đầu nhìn qua khe cửa bắt chước cô thợ dệt quay guồng tơ kêu "Ki-ka-ra-ka-ra". Sau khi được cô cứu thoát khỏi bẫy, chú lửng biết ơn đã chăm chỉ quay hết đống tơ trắng trả ơn cô!',
-    question: 'Truyện Chú lửng và guồng quay tơ dạy Bảo Long đức tính tốt đẹp nào?',
-    qKey: 'ja_story_3_q',
-    options: [
-      { key: 'ja_st3_o1', emoji: '💝', text: 'Biết ơn và chăm chỉ trả ơn', isGood: true },
-      { key: 'ja_st3_o2', emoji: '😴', text: 'Lười biếng ngủ cả ngày', isGood: false },
-      { key: 'ja_st3_o3', emoji: '🗯️', text: 'Hay cáu gắt bạn bè', isGood: false },
-      { key: 'ja_st3_o4', emoji: '🙊', text: 'Nói dối người lớn', isGood: false }
-    ]
+    "vocab": [
+      {
+        "audioKey": "ja_story_3_v1",
+        "ja": "たぬき",
+        "romaji": "tanuki",
+        "vi": "chú lửng"
+      },
+      {
+        "audioKey": "ja_story_3_v2",
+        "ja": "いとぐるま",
+        "romaji": "itoguruma",
+        "vi": "guồng quay tơ"
+      },
+      {
+        "audioKey": "ja_story_3_v3",
+        "ja": "おれい",
+        "romaji": "orei",
+        "vi": "sự trả ơn"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_3_q",
+        "question": "Câu chuyện Guồng quay tơ của chú lửng dạy chúng ta bài học gì?",
+        "options": [
+          {
+            "key": "ja_st3_o1",
+            "emoji": "💝",
+            "text": "Biết ơn và chăm chỉ trả ơn",
+            "isGood": true
+          },
+          {
+            "key": "ja_st3_o2",
+            "emoji": "😴",
+            "text": "Lười biếng ngủ cả ngày",
+            "isGood": false
+          },
+          {
+            "key": "ja_st3_o3",
+            "emoji": "🗯️",
+            "text": "Hay cáu gắt bạn bè",
+            "isGood": false
+          },
+          {
+            "key": "ja_st3_o4",
+            "emoji": "🙊",
+            "text": "Nói dối người lớn",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_3_q2",
+        "question": "Khi chú lửng bị mắc bẫy treo lên xà nhà, ai đã thương tình cởi trói giúp chú?",
+        "options": [
+          {
+            "key": "ja_st3_q2_o1",
+            "emoji": "🧶",
+            "text": "Vợ của bác tiều phu",
+            "isGood": true
+          },
+          {
+            "key": "ja_st3_q2_o2",
+            "emoji": "🐺",
+            "text": "Con sói xám trong rừng",
+            "isGood": false
+          },
+          {
+            "key": "ja_st3_q2_o3",
+            "emoji": "🦅",
+            "text": "Chú đại bàng trên núi",
+            "isGood": false
+          },
+          {
+            "key": "ja_st3_q2_o4",
+            "emoji": "👑",
+            "text": "Nhà vua đi ngang qua",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Ngày xưa, trong ngôi nhà lẻ loi sâu trong núi, có hai vợ chồng bác tiều phu sinh sống. Tối nào cũng vậy, một chú lửng tinh nghịch lại núp sau bụi cây lén nhìn vào trong nhà. Chú lửng rất mê âm thanh \"Kii-kara-kara, kii-kuru-kuru\" khi vợ bác tiều phu quay guồng kéo tơ. Một hôm, chú lửng chẳng may sập bẫy của bác tiều phu. Bác giận lắm, liền treo chú lên xà nhà. Thấy chú lửng đáng thương, người vợ lén cởi dây trói cho chú. Chú lửng mừng rỡ chạy về khu rừng. Mùa đông giá rét ập tới. Người vợ bị ốm nặng, còn bác tiều phu cũng không thể lên núi đốn củi. Một đêm nọ, dưới ánh trăng sáng, tiếng guồng quay tơ \"Kii-kara-kara, kii-kuru-kuru\" bỗng vang lên đều đặn. Hóa ra chú lửng đã quay giúp cả núi cuộn tơ óng mượt để trả ơn cứu mạng! Hai vợ chồng xúc động rơi nước mắt."
   },
   {
-    id: 'ja_story_4',
-    title: '🐶 ずうっと ずっと 大すきだよ (Mãi Yêu Chú Chó Elf)',
-    audioKey: 'ja_story_4',
-    jaLines: [
-      'ぼくが 小さい とき、エルフは 元気に いっしょに あそびました。',
-      'まいばん ねる まえに、ぼくは エルフに いいました。',
-      '「エルフ、ぼくは ずうっと ずっと 大すきだよ。」'
+    "id": "ja_story_4",
+    "badge": "📘 Sách 小1 Quốc Ngữ",
+    "title": "🐶 ずうっと ずっと 大すきだよ (Mãi Yêu Chú Chó Elf)",
+    "audioKey": "ja_story_4",
+    "moral": "💡 Hãy luôn nói lời yêu thương chân thành với gia đình và những người bạn thân mỗi ngày!",
+    "jaLines": [
+      {
+        "key": "ja_story_4_l1",
+        "ja": "ぼくと 犬の エルフは、いつも いっしょに おおきく なりました。",
+        "romaji": "Boku to inu no Erufu wa, itsumo issho ni ookiku narimashita.",
+        "vi": "Tớ và chú chó Elf đã cùng nhau lớn lên từng ngày bên nhau."
+      },
+      {
+        "key": "ja_story_4_l2",
+        "ja": "ぼくが せが のびるのに つれて、エルフは だんだん 年を とって いきました。",
+        "romaji": "Boku ga se ga nobiru no ni tsurete, Erufu wa dandan toshi o totte ikimashita.",
+        "vi": "Khi tớ càng cao lớn lên thì chú chó Elf lại càng già đi từng chút một."
+      },
+      {
+        "key": "ja_story_4_l3",
+        "ja": "ある ころから、エルフは 階段を のぼるのも つらく なりました。ぼくは エルフを だきかかえて 部屋へ はこびました。",
+        "romaji": "Aru koro kara, Erufu wa kaidan o noboru no mo tsuraku narimashita. Boku wa Erufu o dakikakaete heya e hakobimashita.",
+        "vi": "Rồi đến một ngày, Elf không còn đủ sức tự leo cầu thang nữa. Tớ nhẹ nhàng ôm bế Elf lên phòng ngủ."
+      },
+      {
+        "key": "ja_story_4_l4",
+        "ja": "おふとんの 横に ねむる エルフの おなかを やさしく なでながら、ぼくは まいばん ささやきました。",
+        "romaji": "Ofuton no yoko ni nemuru Erufu no onaka o yasashiku nadenagara, boku wa maiban sasayakimashita.",
+        "vi": "Ngồi bên chiếc nệm ấm, tớ khẽ vuốt ve Elf rồi thì thầm câu nói quen thuộc mỗi tối trước khi ngủ."
+      },
+      {
+        "key": "ja_story_4_l5",
+        "ja": "「エルフ、ぼくは ずうっと ずっと、おまえが 大すきだよ。」エルフは うれしそうに しっぽを ひとふり しました。",
+        "romaji": "\"Erufu, boku wa zuutto zutto, omae ga daisuki da yo.\" Erufu wa ureshisou ni shippo o hitofuri shimashita.",
+        "vi": "\"Elf ơi, tớ mãi mãi, mãi mãi yêu quý bạn đấy nhé!\" Nghe vậy, Elf mừng rỡ khẽ vẫy đuôi một cái thật hiền."
+      },
+      {
+        "key": "ja_story_4_l6",
+        "ja": "ある あさ、目を さますと、エルフは しずかに 眠るように 旅立って いました。家族みんなが 泣きました。",
+        "romaji": "Aru asa, me o samasu to, Erufu wa shizuka ni nemuru you ni tabidatte imashita. Kazoku minna ga nakimashita.",
+        "vi": "Một buổi sáng kia, khi tớ thức dậy thì Elf đã nhẹ nhàng đi vào giấc ngủ dài. Cả gia đình đều thương nhớ bật khóc."
+      },
+      {
+        "key": "ja_story_4_l7",
+        "ja": "となりの 家の 子が 新しい 子犬を くれようと しましたが、ぼくは 「いまは いいよ」と ことわりました。",
+        "romaji": "Tonari no ie no ko ga atarashii koinu o kureyou to shimashita ga, boku wa \"ima wa ii yo\" to kotowarimashita.",
+        "vi": "Cô bạn hàng xóm ngỏ ý tặng tớ một chú cún con mới, nhưng tớ nhẹ nhàng lắc đầu từ chối."
+      },
+      {
+        "key": "ja_story_4_l8",
+        "ja": "だって ぼくは、まいばん エルフに 「ずうっと 大すきだよ」と 伝えつづけて きたから、心は あったかかったのです。",
+        "romaji": "Datte boku wa, maiban Erufu ni \"zuutto daisuki da yo\" to tsutaetsuzukete kita kara, kokoro wa attakakatta no desu.",
+        "vi": "Bởi vì mỗi tối, tớ đã luôn nói hết lòng mình \"Mãi mãi yêu Elf!\", nên trong tim tớ thật ấm áp và không hề hối tiếc."
+      }
     ],
-    viMeaning: 'Cậu bé nuôi chú chó Elf từ nhỏ. Mỗi tối trước khi đi ngủ, cậu luôn thì thầm nói với Elf: "Elf ơi, tớ mãi mãi yêu quý bạn rất nhiều!". Lời yêu thương chân thành khiến cả hai luôn ấm áp bên nhau.',
-    question: 'Mỗi tối trước khi đi ngủ, cậu bé nói điều ngọt ngào gì với chú chó Elf?',
-    qKey: 'ja_story_4_q',
-    options: [
-      { key: 'ja_st4_o1', emoji: '💖', text: 'Tớ mãi mãi yêu quý bạn!', isGood: true },
-      { key: 'ja_st4_o2', emoji: '🚲', text: 'Đi mua xe đạp mới nhé!', isGood: false },
-      { key: 'ja_st4_o3', emoji: '🌧️', text: 'Ngoài trời đang mưa to!', isGood: false },
-      { key: 'ja_st4_o4', emoji: '🔔', text: 'Chuông đồng hồ kêu đấy!', isGood: false }
-    ]
+    "vocab": [
+      {
+        "audioKey": "ja_story_4_v1",
+        "ja": "大すき",
+        "romaji": "daisuki",
+        "vi": "rất yêu quý"
+      },
+      {
+        "audioKey": "ja_story_4_v2",
+        "ja": "しっぽ",
+        "romaji": "shippo",
+        "vi": "cái đuôi"
+      },
+      {
+        "audioKey": "ja_story_4_v3",
+        "ja": "かぞく",
+        "romaji": "kazoku",
+        "vi": "gia đình"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_4_q",
+        "question": "Cậu bé luôn thì thầm câu nói ấm áp nào với chú chó Elf mỗi tối trước khi đi ngủ?",
+        "options": [
+          {
+            "key": "ja_st4_o1",
+            "emoji": "💖",
+            "text": "Tớ mãi mãi yêu quý bạn!",
+            "isGood": true
+          },
+          {
+            "key": "ja_st4_o2",
+            "emoji": "🚲",
+            "text": "Đi mua xe đạp mới nhé!",
+            "isGood": false
+          },
+          {
+            "key": "ja_st4_o3",
+            "emoji": "🌧️",
+            "text": "Ngoài trời đang mưa to!",
+            "isGood": false
+          },
+          {
+            "key": "ja_st4_o4",
+            "emoji": "🔔",
+            "text": "Chuông đồng hồ kêu đấy!",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_4_q2",
+        "question": "Khi chú chó Elf già yếu không leo nổi cầu thang, cậu bé đã làm gì?",
+        "options": [
+          {
+            "key": "ja_st4_q2_o1",
+            "emoji": "🫂",
+            "text": "Ôm bế Elf lên phòng ngủ và vuốt ve mỗi tối",
+            "isGood": true
+          },
+          {
+            "key": "ja_st4_q2_o2",
+            "emoji": "🌳",
+            "text": "Để Elf ngủ một mình ngoài sân vườn",
+            "isGood": false
+          },
+          {
+            "key": "ja_st4_q2_o3",
+            "emoji": "🏃",
+            "text": "Bỏ đi chơi không quan tâm tới Elf nữa",
+            "isGood": false
+          },
+          {
+            "key": "ja_st4_q2_o4",
+            "emoji": "🐱",
+            "text": "Đem Elf đi đổi một chú mèo mới",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Tớ và chú chó Elf đã cùng nhau lớn lên từng ngày bên nhau. Khi tớ càng cao lớn lên thì chú chó Elf lại càng già đi từng chút một. Rồi đến một ngày, Elf không còn đủ sức tự leo cầu thang nữa. Tớ nhẹ nhàng ôm bế Elf lên phòng ngủ. Ngồi bên chiếc nệm ấm, tớ khẽ vuốt ve Elf rồi thì thầm câu nói quen thuộc mỗi tối trước khi ngủ. \"Elf ơi, tớ mãi mãi, mãi mãi yêu quý bạn đấy nhé!\" Nghe vậy, Elf mừng rỡ khẽ vẫy đuôi một cái thật hiền. Một buổi sáng kia, khi tớ thức dậy thì Elf đã nhẹ nhàng đi vào giấc ngủ dài. Cả gia đình đều thương nhớ bật khóc. Cô bạn hàng xóm ngỏ ý tặng tớ một chú cún con mới, nhưng tớ nhẹ nhàng lắc đầu từ chối. Bởi vì mỗi tối, tớ đã luôn nói hết lòng mình \"Mãi mãi yêu Elf!\", nên trong tim tớ thật ấm áp và không hề hối tiếc."
+  },
+  {
+    "id": "ja_story_5",
+    "badge": "📘 Sách 小1 Quốc Ngữ",
+    "title": "🐸 おてがみ (Bức Thư Của Ếch Và Cóc)",
+    "audioKey": "ja_story_5",
+    "moral": "💡 Sự quan tâm tinh tế dành cho bạn bè khiến những ngày chờ đợi cũng trở nên hạnh phúc.",
+    "jaLines": [
+      {
+        "key": "ja_story_5_l1",
+        "ja": "がまくんは げんかんの 前で、かなしそうに すわって いました。",
+        "romaji": "Gamakun wa genkan no mae de, kanashisou ni suwatte imashita.",
+        "vi": "Cóc con ngồi buồn thiu ngay trước bậc thềm cửa nhà mình."
+      },
+      {
+        "key": "ja_story_5_l2",
+        "ja": "どうしたのかと かえるくんが きくと、「ぼくは いちども おてがみを もらったことが ないんだ」と 言いました。",
+        "romaji": "Doushita no ka to Kaerukun ga kiku to, \"boku wa ichido mo otegami o moratta koto ga nain da\" to iimashita.",
+        "vi": "Bạn Ếch hỏi thăm, Cóc đáp: \"Tớ chưa bao giờ nhận được một bức thư nào cả.\""
+      },
+      {
+        "key": "ja_story_5_l3",
+        "ja": "かえるくんは いそいで 家へ 帰り、がまくんあてに おてがみを 書きました。",
+        "romaji": "Kaerukun wa isoide ie e kaeri, Gamakun ate ni otegami o kakimashita.",
+        "vi": "Bạn Ếch vội vàng chạy về nhà, nắn nót viết ngay một bức thư gửi cho Cóc."
+      },
+      {
+        "key": "ja_story_5_l4",
+        "ja": "そして、かたつむりくんに 「この 手紙を がまくんに とどけてね」と たのみました。",
+        "romaji": "Soshite, Katatsumurikun ni \"kono tegami o Gamakun ni todokete ne\" to tanomimashita.",
+        "vi": "Sau đó, Ếch nhờ chú Ốc Sên: \"Nhờ cậu mang lá thư này đưa tận tay Cóc nhé!\""
+      },
+      {
+        "key": "ja_story_5_l5",
+        "ja": "かえるくんは がまくんの家へ もどり、「きっと きょう 手紙が くるよ」と いっしょに まちました。",
+        "romaji": "Kaerukun wa Gamakun no ie e modori, \"kitto kyou tegami ga kuru yo\" to issho ni machimashita.",
+        "vi": "Ếch quay lại nhà Cóc ngồi cạnh an ủi: \"Chắc chắn hôm nay sẽ có thư gửi tới cho cậu đấy!\""
+      },
+      {
+        "key": "ja_story_5_l6",
+        "ja": "ふたりは よっかも まちましたが、なかなか きません。そこで かえるくんは 内容を そっと 教えて あげました。",
+        "romaji": "Futari wa yokka mo machimashita ga, nakanaka kimasen. Soko de Kaerukun wa naiyou o sotto oshiete agemashita.",
+        "vi": "Hai bạn đợi bốn ngày liền mà thư vẫn chưa tới. Thế là Ếch nhẹ nhàng kể trước những lời trong thư cho Cóc nghe."
+      },
+      {
+        "key": "ja_story_5_l7",
+        "ja": "「しん愛なる がまがえるくん。ぼくは きみが ぼくの しんゆうで あることを うれしく おもっています。」",
+        "romaji": "\"Shin'ai naru Gamagaerukun. Boku wa kimi ga boku no shin'yuu de aru koto o ureshiku omotte imasu.\"",
+        "vi": "\"Cóc thân mến! Tớ rất hạnh phúc vì có cậu là người bạn thân thiết nhất của tớ.\""
+      },
+      {
+        "key": "ja_story_5_l8",
+        "ja": "よっかめの 夜、ようやく かたつむりくんが とどけた 手紙を よんで、ふたりは とても しあわせに なりました。",
+        "romaji": "Yokkame no yoru, youyaku Katatsumurikun ga todoketa tegami o yonde, futari wa totemo shiawase ni narimashita.",
+        "vi": "Tối ngày thứ tư, Ốc Sên cuối cùng cũng đưa thư tới nơi, khiến hai bạn vỡ òa trong niềm vui ấm áp."
+      }
+    ],
+    "vocab": [
+      {
+        "audioKey": "ja_story_5_v1",
+        "ja": "てがみ",
+        "romaji": "tegami",
+        "vi": "lá thư"
+      },
+      {
+        "audioKey": "ja_story_5_v2",
+        "ja": "かたつむり",
+        "romaji": "katatsumuri",
+        "vi": "con ốc sên"
+      },
+      {
+        "audioKey": "ja_story_5_v3",
+        "ja": "しんゆう",
+        "romaji": "shin'yuu",
+        "vi": "bạn thân thiết"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_5_q1",
+        "question": "Vì sao bạn Ếch lại viết thư rồi nhờ chú Ốc Sên mang đến cho Cóc?",
+        "options": [
+          {
+            "key": "ja_st5_q1_o1",
+            "emoji": "💌",
+            "text": "Vì Cóc buồn khi chưa từng nhận được thư bao giờ",
+            "isGood": true
+          },
+          {
+            "key": "ja_st5_q1_o2",
+            "emoji": "🍕",
+            "text": "Để mời Cóc đi ăn bánh pizza phô mai",
+            "isGood": false
+          },
+          {
+            "key": "ja_st5_q1_o3",
+            "emoji": "📚",
+            "text": "Để mượn Cóc quyển vở tập viết",
+            "isGood": false
+          },
+          {
+            "key": "ja_st5_q1_o4",
+            "emoji": "☔",
+            "text": "Để dặn Cóc mang theo ô che mưa",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_5_q2",
+        "question": "Trong bức thư, bạn Ếch đã viết điều gì gửi Cóc?",
+        "options": [
+          {
+            "key": "ja_st5_q2_o1",
+            "emoji": "💛",
+            "text": "Tớ rất vui vì cậu là bạn thân của tớ",
+            "isGood": true
+          },
+          {
+            "key": "ja_st5_q2_o2",
+            "emoji": "🏃",
+            "text": "Nhớ dậy sớm chạy bộ tập thể dục nhé",
+            "isGood": false
+          },
+          {
+            "key": "ja_st5_q2_o3",
+            "emoji": "🎒",
+            "text": "Ngày mai nhớ mang bút chì màu đi học",
+            "isGood": false
+          },
+          {
+            "key": "ja_st5_q2_o4",
+            "emoji": "🎂",
+            "text": "Chúc mừng sinh nhật chú mèo hàng xóm",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Cóc con ngồi buồn thiu ngay trước bậc thềm cửa nhà mình. Bạn Ếch hỏi thăm, Cóc đáp: \"Tớ chưa bao giờ nhận được một bức thư nào cả.\" Bạn Ếch vội vàng chạy về nhà, nắn nót viết ngay một bức thư gửi cho Cóc. Sau đó, Ếch nhờ chú Ốc Sên: \"Nhờ cậu mang lá thư này đưa tận tay Cóc nhé!\" Ếch quay lại nhà Cóc ngồi cạnh an ủi: \"Chắc chắn hôm nay sẽ có thư gửi tới cho cậu đấy!\" Hai bạn đợi bốn ngày liền mà thư vẫn chưa tới. Thế là Ếch nhẹ nhàng kể trước những lời trong thư cho Cóc nghe. \"Cóc thân mến! Tớ rất hạnh phúc vì có cậu là người bạn thân thiết nhất của tớ.\" Tối ngày thứ tư, Ốc Sên cuối cùng cũng đưa thư tới nơi, khiến hai bạn vỡ òa trong niềm vui ấm áp."
+  },
+  {
+    "id": "ja_story_6",
+    "badge": "🏯 Cổ Tích Nhật Bản",
+    "title": "🍑 ももたろう (Cậu Bé Quả Đào Momotaro)",
+    "audioKey": "ja_story_6",
+    "moral": "💡 Lòng dũng cảm, sự sẻ chia và tình đồng đội giúp vượt qua mọi thử thách.",
+    "jaLines": [
+      {
+        "key": "ja_story_6_l1",
+        "ja": "むかし、川で せんたくを していた おばあさんの ところに、大きな ももが どんぶらこと 流れて きました。",
+        "romaji": "Mukashi, kawa de sentaku o shite ita obaasan no tokoro ni, ookina momo ga donburako to nagarete kimashita.",
+        "vi": "Ngày xưa, khi bà lão đang giặt áo bên bờ suối, bỗng có quả đào khổng lồ trôi lềnh bềnh theo dòng nước."
+      },
+      {
+        "key": "ja_story_6_l2",
+        "ja": "ももを わると、中から 元気な 男の子が 生まれ、ふうふは 「ももたろう」と 名づけました。",
+        "romaji": "Momo o waru to, naka kara genki na otokonoko ga umare, fuufu wa \"Momotarou\" to nazukemashita.",
+        "vi": "Bổ quả đào ra, một bé trai khỏe mạnh bước ra, hai ông bà mừng rỡ đặt tên cậu là Momotaro."
+      },
+      {
+        "key": "ja_story_6_l3",
+        "ja": "おおきく そだった ももたろうは、村人を こまらせる 鬼を たいじしに 出かける ことにしました。",
+        "romaji": "Ookiku sodatta Momotarou wa, murabito o komaraseru oni o taiji shi ni dekakeru koto ni shimashita.",
+        "vi": "Khi lớn lên cường tráng, Momotaro quyết tâm lên đường đánh đuổi bọn quỷ chuyên quấy phá dân làng."
+      },
+      {
+        "key": "ja_story_6_l4",
+        "ja": "おばあさんが つくった 日本一の きびだんごを 腰に つけて、ももたろうは 旅に 出ました。",
+        "romaji": "Obaasan ga tsukutta nippon'ichi no kibidango o koshi ni tsukete, Momotarou wa tabi ni demashita.",
+        "vi": "Mang theo túi bánh kê ngon nhất nước Nhật do bà làm, Momotaro hăng hái lên đường."
+      },
+      {
+        "key": "ja_story_6_l5",
+        "ja": "とちゅうで 出会った いぬ、さる、きじは、きびだんごを もらって ももたろうの 仲間に なりました。",
+        "romaji": "Tochuu de deatta inu, saru, kiji wa, kibidango o moratte Momotarou no nakama ni narimashita.",
+        "vi": "Trên đường đi, chú Chó, Khỉ và Chim Trĩ được chia bánh thơm ngon nên đều tình nguyện đồng hành cùng cậu."
+      },
+      {
+        "key": "ja_story_6_l6",
+        "ja": "みんなは 小さな 船に のって、荒い 波を こえて おにがしまへと むかいました。",
+        "romaji": "Minna wa chiisana fune ni notte, arai nami o koete Onigashima e to mukaimashita.",
+        "vi": "Cả nhóm cùng lên chiếc thuyền nhỏ, dũng cảm vượt qua sóng lớn tiến thẳng tới Đảo Quỷ."
+      },
+      {
+        "key": "ja_story_6_l7",
+        "ja": "いぬは かみつき、さるは ひっかき、きじは 空から つっつき、力を 合わせて 鬼たちに 勝ちました。",
+        "romaji": "Inu wa kamitsuki, saru wa hikkaki, kiji wa sora kara tsuttsuki, chikara o awasete onitachi ni kachimashita.",
+        "vi": "Chó xông vào giữ chân, Khỉ nhanh nhẹn nhảy tới, Chim Trĩ bay từ trên cao xuống, cả đội đồng lòng chiến thắng."
+      },
+      {
+        "key": "ja_story_6_l8",
+        "ja": "うばわれた 宝物を とりもどした ももたろうと 仲間たちは、おじいさんと おばあさんの もとへ 帰りました。",
+        "romaji": "Ubawareta takaramono o torimodoshita Momotarou to nakamatachi wa, ojiisan to obaasan no moto e kaerimashita.",
+        "vi": "Giành lại được toàn bộ kho báu cho dân làng, Momotaro và những người bạn hân hoan trở về bên ông bà."
+      }
+    ],
+    "vocab": [
+      {
+        "audioKey": "ja_story_6_v1",
+        "ja": "もも",
+        "romaji": "momo",
+        "vi": "quả đào"
+      },
+      {
+        "audioKey": "ja_story_6_v2",
+        "ja": "きびだんご",
+        "romaji": "kibidango",
+        "vi": "bánh kê dango"
+      },
+      {
+        "audioKey": "ja_story_6_v3",
+        "ja": "なかま",
+        "romaji": "nakama",
+        "vi": "bạn đồng hành"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_6_q1",
+        "question": "Trên đường đi đến Đảo Quỷ, ba người bạn nào đã đi theo giúp đỡ Momotaro?",
+        "options": [
+          {
+            "key": "ja_st6_q1_o1",
+            "emoji": "🐕",
+            "text": "Chó, Khỉ và Chim Trĩ",
+            "isGood": true
+          },
+          {
+            "key": "ja_st6_q1_o2",
+            "emoji": "🐱",
+            "text": "Mèo, Chuột và Rùa",
+            "isGood": false
+          },
+          {
+            "key": "ja_st6_q1_o3",
+            "emoji": "🦁",
+            "text": "Sư tử, Voi và Ngựa vằn",
+            "isGood": false
+          },
+          {
+            "key": "ja_st6_q1_o4",
+            "emoji": "🐟",
+            "text": "Cá heo, Cua và Ốc sên",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_6_q2",
+        "question": "Món bánh nào bà lão đã chuẩn bị cho Momotaro mang theo trên đường?",
+        "options": [
+          {
+            "key": "ja_st6_q2_o1",
+            "emoji": "🍡",
+            "text": "Bánh kê Kibi-dango",
+            "isGood": true
+          },
+          {
+            "key": "ja_st6_q2_o2",
+            "emoji": "🍜",
+            "text": "Mì ramen nóng hổi",
+            "isGood": false
+          },
+          {
+            "key": "ja_st6_q2_o3",
+            "emoji": "🍣",
+            "text": "Cơm cuộn cá hồi",
+            "isGood": false
+          },
+          {
+            "key": "ja_st6_q2_o4",
+            "emoji": "🍰",
+            "text": "Bánh kem dâu tây",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Ngày xưa, khi bà lão đang giặt áo bên bờ suối, bỗng có quả đào khổng lồ trôi lềnh bềnh theo dòng nước. Bổ quả đào ra, một bé trai khỏe mạnh bước ra, hai ông bà mừng rỡ đặt tên cậu là Momotaro. Khi lớn lên cường tráng, Momotaro quyết tâm lên đường đánh đuổi bọn quỷ chuyên quấy phá dân làng. Mang theo túi bánh kê ngon nhất nước Nhật do bà làm, Momotaro hăng hái lên đường. Trên đường đi, chú Chó, Khỉ và Chim Trĩ được chia bánh thơm ngon nên đều tình nguyện đồng hành cùng cậu. Cả nhóm cùng lên chiếc thuyền nhỏ, dũng cảm vượt qua sóng lớn tiến thẳng tới Đảo Quỷ. Chó xông vào giữ chân, Khỉ nhanh nhẹn nhảy tới, Chim Trĩ bay từ trên cao xuống, cả đội đồng lòng chiến thắng. Giành lại được toàn bộ kho báu cho dân làng, Momotaro và những người bạn hân hoan trở về bên ông bà."
+  },
+  {
+    "id": "ja_story_7",
+    "badge": "📘 Sách 小1 Quốc Ngữ",
+    "title": "🚗 じどうしゃ くらべ (So Sánh Các Loại Xe)",
+    "audioKey": "ja_story_7",
+    "moral": "💡 Quan sát cấu tạo giúp bé hiểu mỗi chiếc xe đều được thiết kế khéo léo cho công việc riêng!",
+    "jaLines": [
+      {
+        "key": "ja_story_7_l1",
+        "ja": "道路には、いろいろな しごとの 自動車が はしって います。どんな しごとを するのでしょう。",
+        "romaji": "Douro ni wa, iroiro na shigoto no jidousha ga hashitte imasu. Donna shigoto o suru no deshou.",
+        "vi": "Trên đường phố có rất nhiều loại xe ô tô làm những công việc khác nhau. Hãy cùng khám phá nhé!"
+      },
+      {
+        "key": "ja_story_7_l2",
+        "ja": "これは バスや 乗用車です。人を のせる ために、まどが おおきく つくられて います。",
+        "romaji": "Kore wa basu ya jouyousha desu. Hito o noseru tame ni, mado ga ookiku tsukurarete imasu.",
+        "vi": "Đây là xe buýt và xe chở khách. Để chở mọi người đi lại thoải mái, xe có cửa sổ thật lớn và rộng rãi."
+      },
+      {
+        "key": "ja_story_7_l3",
+        "ja": "つぎは トラックです。おおきな にものを はこぶ ために、うしろに ひろい にだいが あります。",
+        "romaji": "Tsugi wa torakku desu. Ookina nimotsu o hakobu tame ni, ushiro ni hiroi nidai ga arimasu.",
+        "vi": "Tiếp theo là xe tải. Để chở được nhiều hàng hóa cồng kềnh, phía sau xe có thùng hàng rất rộng."
+      },
+      {
+        "key": "ja_story_7_l4",
+        "ja": "トラックの タイヤは、おもい 荷物を ささえる ために、ふとくて たくさん ついて います。",
+        "romaji": "Torakku no taiya wa, omoi nimotsu o sasaeru tame ni, futokute takusan tsuite imasu.",
+        "vi": "Bánh xe tải cũng vừa to bản vừa nhiều bánh hơn để nâng đỡ sức nặng của hàng hóa."
+      },
+      {
+        "key": "ja_story_7_l5",
+        "ja": "こちらは クレーン車です。おもい ものを つりあげる ために、ながく のびる うでが あります。",
+        "romaji": "Kochira wa kureensha desu. Omoi mono o tsuriageru tame ni, nagaku nobiru ude ga arimasu.",
+        "vi": "Còn đây là xe cần cẩu! Để nhấc bổng những vật siêu nặng lên cao, xe có cánh tay cần cẩu vươn rất dài."
+      },
+      {
+        "key": "ja_story_7_l6",
+        "ja": "クレーン車は たおれないように、あしを しっかりと のばして じめんを おさえます。",
+        "romaji": "Kureensha wa taorenai you ni, ashi o shikkari to nobashite jimen o osaemasu.",
+        "vi": "Khi làm việc, xe cần cẩu duỗi bốn chân trụ vững chắc bám xuống mặt đất để không bị nghiêng đổ."
+      },
+      {
+        "key": "ja_story_7_l7",
+        "ja": "ほかに しょうぼう車や パトカーなど、みんなの くらしを まもる 車も かつやくして います。",
+        "romaji": "Hoka ni shoubousha ya patokaa nado, minna no kurashi o mamoru kuruma mo katsuyaku shite imasu.",
+        "vi": "Ngoài ra còn có xe cứu hỏa, xe cảnh sát đang ngày đêm bảo vệ cuộc sống bình yên cho mọi người."
+      },
+      {
+        "key": "ja_story_7_l8",
+        "ja": "どの 自動車も、それぞれの しごとに 合わせた 大切な つくりに なっているのですね。",
+        "romaji": "Dono jidousha mo, sorezore no shigoto ni awaseta taisetsu na tsukuri ni natte iru no desu ne.",
+        "vi": "Thì ra mỗi chiếc xe đều được thiết kế đặc biệt sao cho phù hợp nhất với công việc của mình đấy!"
+      }
+    ],
+    "vocab": [
+      {
+        "audioKey": "ja_story_7_v1",
+        "ja": "じどうしゃ",
+        "romaji": "jidousha",
+        "vi": "xe ô tô"
+      },
+      {
+        "audioKey": "ja_story_7_v2",
+        "ja": "トラック",
+        "romaji": "torakku",
+        "vi": "xe tải"
+      },
+      {
+        "audioKey": "ja_story_7_v3",
+        "ja": "クレーンしゃ",
+        "romaji": "kureensha",
+        "vi": "xe cần cẩu"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_7_q1",
+        "question": "Xe tải (トラック) có bộ phận đặc biệt nào để chở hàng hóa nặng?",
+        "options": [
+          {
+            "key": "ja_st7_q1_o1",
+            "emoji": "📦",
+            "text": "Thùng hàng rộng và bánh xe to khỏe",
+            "isGood": true
+          },
+          {
+            "key": "ja_st7_q1_o2",
+            "emoji": "🪽",
+            "text": "Đôi cánh trắng để bay trên mây",
+            "isGood": false
+          },
+          {
+            "key": "ja_st7_q1_o3",
+            "emoji": "🪜",
+            "text": "Cầu trượt nước ở phía sau",
+            "isGood": false
+          },
+          {
+            "key": "ja_st7_q1_o4",
+            "emoji": "⛵",
+            "text": "Cánh buồm lớn để ra khơi",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_7_q2",
+        "question": "Xe cần cẩu (クレーンしゃ) dùng bộ phận nào để nhấc vật nặng lên cao an toàn?",
+        "options": [
+          {
+            "key": "ja_st7_q2_o1",
+            "emoji": "🏗️",
+            "text": "Cánh tay cần cẩu vươn dài và chân trụ vững",
+            "isGood": true
+          },
+          {
+            "key": "ja_st7_q2_o2",
+            "emoji": "🎺",
+            "text": "Chiếc còi báo thức phát nhạc",
+            "isGood": false
+          },
+          {
+            "key": "ja_st7_q2_o3",
+            "emoji": "🎈",
+            "text": "Chùm bóng bay khổng lồ",
+            "isGood": false
+          },
+          {
+            "key": "ja_st7_q2_o4",
+            "emoji": "🥄",
+            "text": "Chiếc thìa nhỏ xúc kem",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Trên đường phố có rất nhiều loại xe ô tô làm những công việc khác nhau. Hãy cùng khám phá nhé! Đây là xe buýt và xe chở khách. Để chở mọi người đi lại thoải mái, xe có cửa sổ thật lớn và rộng rãi. Tiếp theo là xe tải. Để chở được nhiều hàng hóa cồng kềnh, phía sau xe có thùng hàng rất rộng. Bánh xe tải cũng vừa to bản vừa nhiều bánh hơn để nâng đỡ sức nặng của hàng hóa. Còn đây là xe cần cẩu! Để nhấc bổng những vật siêu nặng lên cao, xe có cánh tay cần cẩu vươn rất dài. Khi làm việc, xe cần cẩu duỗi bốn chân trụ vững chắc bám xuống mặt đất để không bị nghiêng đổ. Ngoài ra còn có xe cứu hỏa, xe cảnh sát đang ngày đêm bảo vệ cuộc sống bình yên cho mọi người. Thì ra mỗi chiếc xe đều được thiết kế đặc biệt sao cho phù hợp nhất với công việc của mình đấy!"
+  },
+  {
+    "id": "ja_story_8",
+    "badge": "📘 Sách 小1 Quốc Ngữ",
+    "title": "🦁 どうぶつの 赤ちゃん (Các Bé Động Vật Sơ Sinh)",
+    "audioKey": "ja_story_8",
+    "moral": "💡 Thế giới tự nhiên thật kỳ diệu: mỗi loài đều có cách bảo vệ và nuôi lớn con non riêng biệt.",
+    "jaLines": [
+      {
+        "key": "ja_story_8_l1",
+        "ja": "どうぶつの 赤ちゃんは、生まれた ばかりの ころ、どんな ようすを しているのでしょうか。",
+        "romaji": "Doubutsu no akachan wa, umareta bakari no koro, donna yousu o shite iru no deshou ka.",
+        "vi": "Các em bé động vật lúc mới chào đời có dáng vẻ như thế nào nhỉ?"
+      },
+      {
+        "key": "ja_story_8_l2",
+        "ja": "ライオンの 赤ちゃんは、とても 小さく 生まれます。まだ 目も 耳も よく 見えません。",
+        "romaji": "Raion no akachan wa, totemo chiisaku umaremasu. Mada me mo mimi mo yoku miemasen.",
+        "vi": "Em bé Sư Tử khi mới sinh rất bé xíu. Lúc này bé còn chưa mở hẳn mắt và tai cũng chưa nghe rõ."
+      },
+      {
+        "key": "ja_story_8_l3",
+        "ja": "お乳を のんで すくすく そだち、いっかげつくらいで ようやく 歩けるように なります。",
+        "romaji": "Ochichi o nonde sukusuku sodachi, ikkagetsu kurai de youyaku arukeru you ni narimasu.",
+        "vi": "Nhờ bú sữa mẹ mà bé lớn nhanh, khoảng một tháng tuổi mới chập chững biết đi."
+      },
+      {
+        "key": "ja_story_8_l4",
+        "ja": "しまうまの 赤ちゃんは、生まれた ばかりでも、とても 大きく 立派な しまもようが あります。",
+        "romaji": "Shimauma no akachan wa, umareta bakari de mo, totemo ookiku rippa na shimamoyou ga arimasu.",
+        "vi": "Còn em bé Ngựa Vằn ngay từ khi mới sinh đã khá cao lớn và có bộ lông sọc vằn tuyệt đẹp."
+      },
+      {
+        "key": "ja_story_8_l5",
+        "ja": "てきに おそわれても すぐ にげられるように、生まれて いちじかんも たたずに 立ちあがって 歩きます。",
+        "romaji": "Teki ni osowarete mo sugu nigerareru you ni, umarete ichijikan mo tatazu ni tachiagatte arukimasu.",
+        "vi": "Để có thể chạy trốn kẻ thù kịp lúc, chưa đầy một giờ sau khi chào đời, bé Ngựa Vằn đã đứng dậy đi được ngay!"
+      },
+      {
+        "key": "ja_story_8_l6",
+        "ja": "カンガルーの 赤ちゃんは、なんと 親指ほどしか ない ほど 小さく 生まれます。",
+        "romaji": "Kangaruu no akachan wa, nanto oyayubi hodo shika nai hodo chiisaku umaremasu.",
+        "vi": "Điều bất ngờ nhất là em bé Chuột Túi Kangaroo khi mới sinh chỉ nhỏ xíu bằng ngón tay cái thôi!"
+      },
+      {
+        "key": "ja_story_8_l7",
+        "ja": "赤ちゃんは じぶんで おかあさんの ふくろの 中へ はいり、その中で お乳を のんで 育ちます。",
+        "romaji": "Akachan wa jibun de okaasan no fukuro no naka e hairi, sono naka de ochichi o nonde sodachimasu.",
+        "vi": "Bé tự trèo vào trong chiếc túi ấm ở bụng mẹ, nằm gọn bên trong uống sữa và lớn khôn."
+      },
+      {
+        "key": "ja_story_8_l8",
+        "ja": "おなじ 赤ちゃんでも、生きる ばしょに 合わせて 生まれたときの すがたが ちがうのですね。",
+        "romaji": "Onaji akachan de mo, ikiru basho ni awasete umareta toki no sugata ga chigau no desu ne.",
+        "vi": "Tuy cùng là các em bé mới sinh, mỗi loài lại có cách lớn lên kỳ diệu phù hợp với môi trường sống của mình!"
+      }
+    ],
+    "vocab": [
+      {
+        "audioKey": "ja_story_8_v1",
+        "ja": "あかちゃん",
+        "romaji": "akachan",
+        "vi": "em bé sơ sinh"
+      },
+      {
+        "audioKey": "ja_story_8_v2",
+        "ja": "しまうま",
+        "romaji": "shimauma",
+        "vi": "con ngựa vằn"
+      },
+      {
+        "audioKey": "ja_story_8_v3",
+        "ja": "ふくろ",
+        "romaji": "fukuro",
+        "vi": "chiếc túi bụng"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_8_q1",
+        "question": "Loài nào mới sinh ra đã đứng dậy đi được trong chưa đầy một giờ để tránh kẻ thù?",
+        "options": [
+          {
+            "key": "ja_st8_q1_o1",
+            "emoji": "🦓",
+            "text": "Em bé Ngựa Vằn (しまうま)",
+            "isGood": true
+          },
+          {
+            "key": "ja_st8_q1_o2",
+            "emoji": "🦁",
+            "text": "Em bé Sư Tử mới sinh",
+            "isGood": false
+          },
+          {
+            "key": "ja_st8_q1_o3",
+            "emoji": "🦘",
+            "text": "Em bé Kangaroo nhỏ xíu",
+            "isGood": false
+          },
+          {
+            "key": "ja_st8_q1_o4",
+            "emoji": "🐧",
+            "text": "Chim cánh cụt bé nhỏ",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_8_q2",
+        "question": "Em bé Kangaroo mới sinh nhỏ chừng nào và lớn lên ở đâu?",
+        "options": [
+          {
+            "key": "ja_st8_q2_o1",
+            "emoji": "🦘",
+            "text": "Nhỏ bằng ngón tay cái và lớn trong túi bụng mẹ",
+            "isGood": true
+          },
+          {
+            "key": "ja_st8_q2_o2",
+            "emoji": "🍉",
+            "text": "To bằng quả dưa hấu và ngủ trên cây cao",
+            "isGood": false
+          },
+          {
+            "key": "ja_st8_q2_o3",
+            "emoji": "🏊",
+            "text": "Bơi ngay xuống biển cùng đàn cá voi",
+            "isGood": false
+          },
+          {
+            "key": "ja_st8_q2_o4",
+            "emoji": "☁️",
+            "text": "Bay ngay lên tận tầng mây xanh",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Các em bé động vật lúc mới chào đời có dáng vẻ như thế nào nhỉ? Em bé Sư Tử khi mới sinh rất bé xíu. Lúc này bé còn chưa mở hẳn mắt và tai cũng chưa nghe rõ. Nhờ bú sữa mẹ mà bé lớn nhanh, khoảng một tháng tuổi mới chập chững biết đi. Còn em bé Ngựa Vằn ngay từ khi mới sinh đã khá cao lớn và có bộ lông sọc vằn tuyệt đẹp. Để có thể chạy trốn kẻ thù kịp lúc, chưa đầy một giờ sau khi chào đời, bé Ngựa Vằn đã đứng dậy đi được ngay! Điều bất ngờ nhất là em bé Chuột Túi Kangaroo khi mới sinh chỉ nhỏ xíu bằng ngón tay cái thôi! Bé tự trèo vào trong chiếc túi ấm ở bụng mẹ, nằm gọn bên trong uống sữa và lớn khôn. Tuy cùng là các em bé mới sinh, mỗi loài lại có cách lớn lên kỳ diệu phù hợp với môi trường sống của mình!"
+  },
+  {
+    "id": "ja_story_9",
+    "badge": "🏯 Cổ Tích Nhật Bản",
+    "title": "🍙 おむすび ころりん (Cơm Nắm Lăn Tròn)",
+    "audioKey": "ja_story_9",
+    "moral": "💡 Sống hiền lành, biết sẻ chia sẽ luôn gặp niềm vui; còn lòng tham lam sẽ khiến mình mất hết.",
+    "jaLines": [
+      {
+        "key": "ja_story_9_l1",
+        "ja": "むかし、心の やさしい おじいさんが 山へ しばかりに 出かけました。",
+        "romaji": "Mukashi, kokoro no yasashii ojiisan ga yama e shibakari ni dekakemashita.",
+        "vi": "Ngày xưa, có một ông lão tốt bụng lên núi đốn củi."
+      },
+      {
+        "key": "ja_story_9_l2",
+        "ja": "おひるに なって おむすびを 食べようとしたら、ひとつ コロコロと あなの 中へ おちて しまいました。",
+        "romaji": "Ohiru ni natte omusubi o tabeyou to shitara, hitotsu korokoro to ana no naka e ochite shimaimashita.",
+        "vi": "Đến bữa trưa, khi ông vừa mở gói cơm nắm ra ăn thì một nắm cơm bỗng lăn tròn rơi tọt xuống cái hang."
+      },
+      {
+        "key": "ja_story_9_l3",
+        "ja": "すると あなの 底から 「おむすび ころりん すっとんとん！」と かわいい 歌声が きこえました。",
+        "romaji": "Suru to ana no soko kara \"omusubi kororin suttonton!\" to kawaii utagoe ga kikoemashita.",
+        "vi": "Ngay lập tức, từ sâu dưới hang vang lên tiếng hát đáng yêu: \"Cơm nắm lăn tròn, lăn tọt xuống đây!\""
+      },
+      {
+        "key": "ja_story_9_l4",
+        "ja": "おじいさんが ふしぎに おもって のぞきこむと、うっかり じぶんも あなに おちて しまいました。",
+        "romaji": "Ojiisan ga fushigi ni omotte nozokikomu to, ukkari jibun mo ana ni ochite shimaimashita.",
+        "vi": "Ông lão lấy làm lạ cúi xuống ngó xem, thế rồi trượt chân rơi luôn vào trong hang."
+      },
+      {
+        "key": "ja_story_9_l5",
+        "ja": "あなの 中では ねずみたちが おむすびの お礼に おもちを ついて、ごちそうして くれました。",
+        "romaji": "Ana no naka de wa nezumitachi ga omusubi no orei ni omochi o tsuite, gochisou shite kuremashita.",
+        "vi": "Ở dưới hang, đàn chuột nhắt mở tiệc giã bánh mochi thơm lừng để cảm ơn ông lão về nắm cơm ngon."
+      },
+      {
+        "key": "ja_story_9_l6",
+        "ja": "帰りぎわ、ねずみたちは おじいさんに こばんの つまった おみやげの つづらを わたしました。",
+        "romaji": "Kaerigiwa, nezumitachi wa ojiisan ni koban no tsumatta omiyage no tsuzura o watashimashita.",
+        "vi": "Lúc tiễn ông về, đàn chuột tặng ông một chiếc rương chứa đầy vàng lấp lánh."
+      },
+      {
+        "key": "ja_story_9_l7",
+        "ja": "それを 聞いた よくばりな となりのおじいさんは、わざと おむすびを おとして 穴へ とびこみました。",
+        "romaji": "Sore o kiita yokubari na tonari no ojiisan wa, wazato omusubi o otoshite ana e tobikomimashita.",
+        "vi": "Nghe chuyện, ông hàng xóm tham lam cũng cố tình thả cơm nắm xuống hang rồi nhảy ùm theo."
+      },
+      {
+        "key": "ja_story_9_l8",
+        "ja": "よくばりおじいさんが ねこの なきまねを したため、ねずみたちは あかりを けし、まっくらに なって しまいました。",
+        "romaji": "Yokubari ojiisan ga neko no nakimane o shita tame, nezumitachi wa akari o keshi, makkura ni natte shimaimashita.",
+        "vi": "Ông ta tham lam bắt chước tiếng mèo kêu dọa nạt để cướp hết vàng, làm đàn chuột tắt phụt đèn bỏ đi hết!"
+      }
+    ],
+    "vocab": [
+      {
+        "audioKey": "ja_story_9_v1",
+        "ja": "おむすび",
+        "romaji": "omusubi",
+        "vi": "cơm nắm tam giác"
+      },
+      {
+        "audioKey": "ja_story_9_v2",
+        "ja": "あな",
+        "romaji": "ana",
+        "vi": "cái hang nhỏ"
+      },
+      {
+        "audioKey": "ja_story_9_v3",
+        "ja": "よくばり",
+        "romaji": "yokubari",
+        "vi": "tính tham lam"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_9_q1",
+        "question": "Đàn chuột nhắt dưới hang đã hát câu gì khi nhận được nắm cơm của ông lão tốt bụng?",
+        "options": [
+          {
+            "key": "ja_st9_q1_o1",
+            "emoji": "🎶",
+            "text": "Cơm nắm lăn tròn, lăn tọt xuống đây!",
+            "isGood": true
+          },
+          {
+            "key": "ja_st9_q1_o2",
+            "emoji": "🚀",
+            "text": "Tên lửa chuẩn bị bay lên mặt trăng!",
+            "isGood": false
+          },
+          {
+            "key": "ja_st9_q1_o3",
+            "emoji": "🌧️",
+            "text": "Trời ngoài kia sắp đổ cơn mưa rào!",
+            "isGood": false
+          },
+          {
+            "key": "ja_st9_q1_o4",
+            "emoji": "🚂",
+            "text": "Tàu hỏa chuẩn bị rời khỏi nhà ga!",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_9_q2",
+        "question": "Vì sao ông hàng xóm tham lam cuối cùng không nhận được phần quà nào?",
+        "options": [
+          {
+            "key": "ja_st9_q2_o1",
+            "emoji": "😿",
+            "text": "Vì tham lam giả tiếng mèo kêu dọa đàn chuột",
+            "isGood": true
+          },
+          {
+            "key": "ja_st9_q2_o2",
+            "emoji": "😴",
+            "text": "Vì ông ấy đi lạc đường trong rừng sâu",
+            "isGood": false
+          },
+          {
+            "key": "ja_st9_q2_o3",
+            "emoji": "🍙",
+            "text": "Vì ông ấy quên mang theo cơm nắm",
+            "isGood": false
+          },
+          {
+            "key": "ja_st9_q2_o4",
+            "emoji": "🌞",
+            "text": "Vì trời đã tối muộn mất rồi",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Ngày xưa, có một ông lão tốt bụng lên núi đốn củi. Đến bữa trưa, khi ông vừa mở gói cơm nắm ra ăn thì một nắm cơm bỗng lăn tròn rơi tọt xuống cái hang. Ngay lập tức, từ sâu dưới hang vang lên tiếng hát đáng yêu: \"Cơm nắm lăn tròn, lăn tọt xuống đây!\" Ông lão lấy làm lạ cúi xuống ngó xem, thế rồi trượt chân rơi luôn vào trong hang. Ở dưới hang, đàn chuột nhắt mở tiệc giã bánh mochi thơm lừng để cảm ơn ông lão về nắm cơm ngon. Lúc tiễn ông về, đàn chuột tặng ông một chiếc rương chứa đầy vàng lấp lánh. Nghe chuyện, ông hàng xóm tham lam cũng cố tình thả cơm nắm xuống hang rồi nhảy ùm theo. Ông ta tham lam bắt chước tiếng mèo kêu dọa nạt để cướp hết vàng, làm đàn chuột tắt phụt đèn bỏ đi hết!"
+  },
+  {
+    "id": "ja_story_10",
+    "badge": "🏯 Cổ Tích Nhật Bản",
+    "title": "🦀 さると かに (Chú Khỉ Và Chú Cua)",
+    "audioKey": "ja_story_10",
+    "moral": "💡 Không nên ích kỷ bắt nạt bạn bè; biết nhận lỗi và sống hòa thuận mọi người sẽ thương yêu!",
+    "jaLines": [
+      {
+        "key": "ja_story_10_l1",
+        "ja": "ある日、かにが ひろった おむすびを、ずるい さるが 「かきの たね」と とりかえました。",
+        "romaji": "Aru hi, kani ga hirotta omusubi o, zurui saru ga \"kaki no tane\" to torikaemashita.",
+        "vi": "Một hôm, chú Cua nhặt được nắm cơm ngon, nhưng Khỉ láu cá lại dụ đổi nắm cơm lấy mỗi một hạt hồng khô."
+      },
+      {
+        "key": "ja_story_10_l2",
+        "ja": "かには たねを うえて、「はやく めを だせ かきの たね」と まいにち 大切に 世話を しました。",
+        "romaji": "Kani wa tane o uete, \"hayaku me o dase kaki no tane\" to mainichi taisetsu ni sewa o shimashita.",
+        "vi": "Cua mang hạt đi trồng, ngày ngày tưới nước chăm sóc: \"Hạt hồng ơi hãy mau nảy mầm nhé!\""
+      },
+      {
+        "key": "ja_story_10_l3",
+        "ja": "やがて りっぱな かきの 木に あまい 実が たくさん なりましたが、かには 木に のぼれません。",
+        "romaji": "Yagate rippa na kaki no ki ni amai mi ga takusan narimashita ga, kani wa ki ni noboremasen.",
+        "vi": "Chẳng bao lâu cây hồng lớn cao vút, sai trĩu quả chín ngọt, nhưng chú Cua nhỏ không biết trèo cây."
+      },
+      {
+        "key": "ja_story_10_l4",
+        "ja": "さるが 木に のぼって、自分だけ あまい 実を 食べ、かたくて 青い 実を かにに ぶつけました。",
+        "romaji": "Saru ga ki ni nobotte, jibun dake amai mi o tabe, katakute aoi mi o kani ni butsukemashita.",
+        "vi": "Khỉ trèo lên cây chỉ ăn hết quả ngọt một mình rồi ném thẳng quả xanh cứng vào người chú Cua!"
+      },
+      {
+        "key": "ja_story_10_l5",
+        "ja": "けがをした かにの ために、うす、くり、はち、どろだんごが 仲間に なって たちあがりました。",
+        "romaji": "Kega o shita kani no tame ni, usu, kuri, hachi, dorodango ga nakama ni natte tachiagarimashita.",
+        "vi": "Thương Cua bị đau, các người bạn tốt gồm Cối Đá, Hạt Dẻ, Ong Vàng và Cục Đất Sét cùng hợp sức đòi công bằng."
+      },
+      {
+        "key": "ja_story_10_l6",
+        "ja": "みんなは さるの 家へ 入り、それぞれの ばしょに かくれて さるが 帰るのを まちました。",
+        "romaji": "Minna wa saru no ie e hairi, sorezore no basho ni kakurete saru ga kaeru no o machimashita.",
+        "vi": "Cả nhóm vào nhà Khỉ, mỗi bạn nấp sẵn ở một góc phòng chờ Khỉ trở về."
+      },
+      {
+        "key": "ja_story_10_l7",
+        "ja": "帰ってきた さるは、くりに おどろき、はちに 追われ、やねから おりた うすに おさえられました。",
+        "romaji": "Kaette kita saru wa, kuri ni odoroki, hachi ni oware, yane kara orita usu ni osaeraremashita.",
+        "vi": "Khỉ vừa về liền bị Hạt Dẻ nổ tách làm giật mình, Ong Vàng bay ra đuổi, rồi Cối Đá nặng giữ chặt lại."
+      },
+      {
+        "key": "ja_story_10_l8",
+        "ja": "さるは 心から ごめんなさいと あやまり、みんなは 仲良く かきの 実を 分け合って 食べました。",
+        "romaji": "Saru wa kokoro kara gomennasai to ayamari, minna wa nakayoku kaki no mi o wakeatte tabemashita.",
+        "vi": "Chú Khỉ hối hận cúi đầu xin lỗi thật lòng, thế là mọi người tha thứ và cùng chia sẻ những quả hồng chín ngọt."
+      }
+    ],
+    "vocab": [
+      {
+        "audioKey": "ja_story_10_v1",
+        "ja": "かに",
+        "romaji": "kani",
+        "vi": "chú cua"
+      },
+      {
+        "audioKey": "ja_story_10_v2",
+        "ja": "かき",
+        "romaji": "kaki",
+        "vi": "quả hồng giòn"
+      },
+      {
+        "audioKey": "ja_story_10_v3",
+        "ja": "なかよく",
+        "romaji": "nakayoku",
+        "vi": "hòa thuận với nhau"
+      }
+    ],
+    "questions": [
+      {
+        "qKey": "ja_story_10_q1",
+        "question": "Chú Khỉ đã đổi thứ gì lấy nắm cơm của chú Cua rồi ném quả xanh làm đau bạn?",
+        "options": [
+          {
+            "key": "ja_st10_q1_o1",
+            "emoji": "🍊",
+            "text": "Hạt hồng khô (かきの たね)",
+            "isGood": true
+          },
+          {
+            "key": "ja_st10_q1_o2",
+            "emoji": "🌻",
+            "text": "Hạt hoa hướng dương",
+            "isGood": false
+          },
+          {
+            "key": "ja_st10_q1_o3",
+            "emoji": "🍉",
+            "text": "Quả dưa hấu tròn to",
+            "isGood": false
+          },
+          {
+            "key": "ja_st10_q1_o4",
+            "emoji": "🎈",
+            "text": "Quả bóng bay màu đỏ",
+            "isGood": false
+          }
+        ]
+      },
+      {
+        "qKey": "ja_story_10_q2",
+        "question": "Những người bạn nào đã hợp sức giúp chú Cua dạy cho Khỉ một bài học?",
+        "options": [
+          {
+            "key": "ja_st10_q2_o1",
+            "emoji": "🐝",
+            "text": "Hạt Dẻ, Ong Vàng và Cối Đá",
+            "isGood": true
+          },
+          {
+            "key": "ja_st10_q2_o2",
+            "emoji": "🦈",
+            "text": "Cá mập và Bạch tuộc đại dương",
+            "isGood": false
+          },
+          {
+            "key": "ja_st10_q2_o3",
+            "emoji": "🦖",
+            "text": "Khủng long và Rồng phun lửa",
+            "isGood": false
+          },
+          {
+            "key": "ja_st10_q2_o4",
+            "emoji": "🚂",
+            "text": "Đoàn tàu hỏa và Xe buýt",
+            "isGood": false
+          }
+        ]
+      }
+    ],
+    "viMeaning": "Một hôm, chú Cua nhặt được nắm cơm ngon, nhưng Khỉ láu cá lại dụ đổi nắm cơm lấy mỗi một hạt hồng khô. Cua mang hạt đi trồng, ngày ngày tưới nước chăm sóc: \"Hạt hồng ơi hãy mau nảy mầm nhé!\" Chẳng bao lâu cây hồng lớn cao vút, sai trĩu quả chín ngọt, nhưng chú Cua nhỏ không biết trèo cây. Khỉ trèo lên cây chỉ ăn hết quả ngọt một mình rồi ném thẳng quả xanh cứng vào người chú Cua! Thương Cua bị đau, các người bạn tốt gồm Cối Đá, Hạt Dẻ, Ong Vàng và Cục Đất Sét cùng hợp sức đòi công bằng. Cả nhóm vào nhà Khỉ, mỗi bạn nấp sẵn ở một góc phòng chờ Khỉ trở về. Khỉ vừa về liền bị Hạt Dẻ nổ tách làm giật mình, Ong Vàng bay ra đuổi, rồi Cối Đá nặng giữ chặt lại. Chú Khỉ hối hận cúi đầu xin lỗi thật lòng, thế là mọi người tha thứ và cùng chia sẻ những quả hồng chín ngọt."
   }
 ];
 
@@ -782,102 +2110,308 @@ function renderJaKanjiTab() {
 }
 
 // ========================================================
-// TAB 5: 4 TRUYỆN QUỐC NGỮ NHẬT LỚP 1 (小1 国語)
+// TAB 5: 10 TRUYỆN ĐỌC QUỐC NGỮ NHẬT LỚP 1 & CỔ TÍCH (小1 国語)
 // ========================================================
+let jaStoryShowRomaji = true;
+const jaStoryQState = {};
+
 function renderJaStoriesTab() {
   const tabs = document.getElementById('jaStoriesTabs');
   const box = document.getElementById('jaStoryReaderBox');
   if (!tabs || !box || typeof JA_STORIES_DATA === 'undefined') return;
 
-  const st = JA_STORIES_DATA.find(s => s.id === currentJaStoryId) || JA_STORIES_DATA[0];
+  const stIdx = Math.max(0, JA_STORIES_DATA.findIndex(s => s.id === currentJaStoryId));
+  const st = JA_STORIES_DATA[stIdx] || JA_STORIES_DATA[0];
+  currentJaStoryId = st.id;
+
+  const isStoryDone = (storyId) =>
+    typeof explorerState !== 'undefined' &&
+    Array.isArray(explorerState.learnedIds) &&
+    explorerState.learnedIds.includes(`ja_story_done_${storyId}`);
+
   tabs.innerHTML = '';
-  JA_STORIES_DATA.forEach(item => {
-    const b = document.createElement('button');
-    b.className = `lesson-tab ${item.id === st.id ? 'active' : ''}`;
-    b.innerText = item.title;
-    b.onclick = () => {
+  JA_STORIES_DATA.forEach((item, idx) => {
+    const done = isStoryDone(item.id);
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `lesson-tab ${item.id === st.id ? 'active' : ''} ${done ? 'is-story-done' : ''}`;
+    btn.innerText = `${done ? '✅ ' : ''}${idx + 1}. ${item.title}`;
+    btn.onclick = () => {
+      stopJaAutoPlay();
+      window.soundMgr.stopAll();
+      jaEpoch++;
       currentJaStoryId = item.id;
       window.soundMgr.playClick();
       renderJaStoriesTab();
     };
-    tabs.appendChild(b);
+    tabs.appendChild(btn);
   });
 
-  const myNav = window.appNavEpoch || 0;
-  const myJa = jaEpoch;
+  if (!jaStoryQState[st.id]) {
+    jaStoryQState[st.id] = {
+      solved: new Set(),
+      shuffledOptions: st.questions.map(q => [...q.options].sort(() => Math.random() - 0.5)),
+    };
+  }
+  const stState = jaStoryQState[st.id];
+  const doneNow = isStoryDone(st.id);
+
+  box.className = `story-reader-card ${jaStoryShowRomaji ? '' : 'hide-romaji'}`;
   box.innerHTML = `
     <div class="story-header-row">
-      <h3 style="margin:0; font-size:20px; font-weight:900; color:#9f1239;">${st.title}</h3>
-      <button class="challenge-btn" id="btnHearJaStory" style="padding:8px 18px; font-size:14px; background:linear-gradient(135deg,#e11d48,#be123c); border-color:#9f1239;">
-        <span>🔊</span> Nghe người Nhật kể truyện
-      </button>
-    </div>
-    <div class="story-ja-lines">
-      ${st.jaLines.map(line => `<p class="story-ja-line">${line}</p>`).join('')}
-    </div>
-    <div class="story-vi-meaning">
-      <strong>🇻🇳 Ý nghĩa tiếng Việt:</strong> ${st.viMeaning}
-    </div>
-    <div class="story-comp-box">
-      <div class="quiz-question-box" style="margin-bottom:12px;">
-        <div class="quiz-question-title" style="font-size:17px;">🎯 ${st.question}</div>
-        <button class="btn-hear-hint" id="btnHearJaStoryQ" style="margin:8px auto 0 auto;"><span>🔊</span> Nghe câu hỏi &amp; 4 đáp án</button>
+      <div class="story-title-meta">
+        <div class="story-badges-row">
+          <span class="story-source-badge">${st.badge || '📘 Truyện 小1'}</span>
+          <span class="story-count-badge">Truyện ${stIdx + 1} / ${JA_STORIES_DATA.length} • ${st.jaLines.length} câu</span>
+          <span class="story-status-badge ${doneNow ? 'done' : ''}" id="jaStoryDonePill">${doneNow ? '✅ Đã hoàn thành đọc hiểu' : '🎁 Đọc & trả lời 2 câu: +5 🪙 +5 ⭐'}</span>
+        </div>
+        <div class="story-title-main">${st.title}</div>
       </div>
-      <div class="quiz-options-grid" id="jaStoryOptionsGrid"></div>
+      <div class="story-header-actions">
+        <button type="button" class="btn-listen" id="btnHearJaStory">
+          <span>🎧</span> Nghe từng câu (Tô sáng)
+        </button>
+        <button type="button" class="btn-outline" id="btnHearJaStoryFull" title="Nghe toàn bộ câu chuyện liền mạch">
+          <span>📖</span> Nghe liền mạch
+        </button>
+        <button type="button" class="btn-outline" id="btnToggleJaStoryRomaji">
+          <span>🔤</span> ${jaStoryShowRomaji ? 'Ẩn Romaji' : 'Hiện Romaji'}
+        </button>
+      </div>
+    </div>
+
+    <div class="story-ja-lines" id="jaStoryLinesHost">
+      ${st.jaLines.map((line, i) => `
+        <div class="story-ja-row" data-line-idx="${i}">
+          <div class="story-ja-row-top">
+            <span class="story-ja-num">${i + 1}</span>
+            <button type="button" class="story-ja-line-btn" data-line-key="${line.key}" aria-label="Nghe câu ${i + 1}">🔊</button>
+            <div class="story-ja-content">
+              <div class="story-ja-text">${line.ja}</div>
+              <div class="story-ja-romaji">${line.romaji}</div>
+              <div class="story-ja-vi-line">${line.vi}</div>
+            </div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    ${Array.isArray(st.vocab) && st.vocab.length ? `
+      <div class="story-vocab-box">
+        <div class="story-vocab-title">✨ Từ vựng hay trong truyện (bấm để nghe):</div>
+        <div class="story-vocab-row">
+          ${st.vocab.map(v => `
+            <button type="button" class="story-vocab-chip" data-vocab-key="${v.audioKey}" data-vocab-label="${v.ja} (${v.romaji}) = ${v.vi}">
+              <span>🔊</span> <strong>${v.ja}</strong> <em>(${v.romaji})</em> — ${v.vi}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    ` : ''}
+
+    ${st.moral ? `<div class="story-moral-banner">${st.moral}</div>` : ''}
+
+    <div class="story-questions-host" id="jaStoryQuestionsHost">
+      ${st.questions.map((q, qi) => `
+        <div class="story-comp-box ${stState.solved.has(qi) ? 'is-solved' : ''}" data-q-idx="${qi}">
+          <div class="story-q-header">
+            <div class="story-comp-q">❓ Câu ${qi + 1}/${st.questions.length}: ${q.question}</div>
+            <button type="button" class="btn-outline story-q-tour-btn" data-q-idx="${qi}">🔊 Nghe câu hỏi & đáp án</button>
+          </div>
+          <div class="story-comp-opts"></div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="story-footer-nav">
+      <button type="button" class="btn-outline" id="btnPrevJaStory">⬅️ Truyện trước</button>
+      <span class="story-footer-pos">📖 ${stIdx + 1} / ${JA_STORIES_DATA.length}</span>
+      <button type="button" class="btn-outline" id="btnNextJaStory">Truyện tiếp theo ➡️</button>
     </div>
   `;
 
-  document.getElementById('btnHearJaStory').onclick = () => {
-    window.soundMgr.playClick();
-    window.soundMgr.playAudioFile(st.audioKey, null, st.jaLines.join(' '));
-    addJaScore(3);
-  };
-
-  const optsGrid = document.getElementById('jaStoryOptionsGrid');
-  const qBoxEl = box.querySelector('.quiz-question-box');
-  const stTour = [{ key: st.qKey, fallbackText: st.question, el: qBoxEl, pauseAfterMs: 180 }];
-  let locked = false;
-  [...st.options].sort(() => Math.random() - 0.5).forEach(opt => {
-    const card = document.createElement('div');
-    card.className = 'quiz-option-card';
-    card.innerHTML = `
-      <button type="button" class="quiz-opt-speak-btn" aria-label="Nghe lựa chọn">🔊</button>
-      <div class="quiz-opt-icon">${opt.emoji}</div>
-      <div class="quiz-opt-name">${opt.text}</div>
-    `;
-    const spk = card.querySelector('.quiz-opt-speak-btn');
-    if (spk) spk.onclick = (e) => {
-      e.stopPropagation();
-      window.soundMgr.playClick();
-      window.soundMgr.playAudioFile(opt.key, null, opt.text);
-    };
-    stTour.push({ key: opt.key, fallbackText: opt.text, el: card, pauseAfterMs: 110 });
-    card.onclick = () => {
-      if (locked || card.classList.contains('correct') || card.classList.contains('wrong')) return;
+  // Wire line click playback
+  const lineRows = Array.from(box.querySelectorAll('.story-ja-row'));
+  lineRows.forEach((row, i) => {
+    const line = st.jaLines[i];
+    const playLine = (e) => {
+      e?.stopPropagation();
+      stopJaAutoPlay();
       window.soundMgr.stopAll();
-      if (opt.isGood) {
-        locked = true;
-        card.classList.add('correct');
-        window.soundMgr.playCorrect();
-        fireConfetti();
-        addJaScore(10);
-        if (typeof awardStars === 'function') awardStars(5, 'Hiểu truyện Quốc ngữ Nhật Lớp 1!');
-        window.soundMgr.speakPraise(true);
-      } else {
-        card.classList.add('wrong');
-        window.soundMgr.playWrong();
-        window.soundMgr.speakTryAgain();
-      }
+      window.soundMgr.playClick();
+      lineRows.forEach(r => r.classList.remove('is-reading-option'));
+      row.classList.add('is-reading-option');
+      window.soundMgr.playAudioFile(line.key, () => {
+        row.classList.remove('is-reading-option');
+      }, line.ja);
     };
-    optsGrid.appendChild(card);
+    row.addEventListener('click', playLine);
+    const btn = row.querySelector('.story-ja-line-btn');
+    if (btn) btn.addEventListener('click', playLine);
   });
 
-  document.getElementById('btnHearJaStoryQ').onclick = () => {
-    window.soundMgr.playClick();
-    if ((window.appNavEpoch || 0) === myNav && jaEpoch === myJa) {
-      window.soundMgr.playChoiceTour(stTour);
+  // Hear line-by-line with live highlight
+  const btnHear = document.getElementById('btnHearJaStory');
+  if (btnHear) {
+    btnHear.onclick = () => {
+      stopJaAutoPlay();
+      window.soundMgr.playClick();
+      const steps = st.jaLines.map((line, i) => ({
+        key: line.key,
+        fallbackText: line.ja,
+        el: lineRows[i],
+        pauseAfterMs: 280,
+      }));
+      window.soundMgr.playChoiceTour(steps, () => {
+        if (typeof showToast === 'function') showToast(`🎧 Đã nghe xong trọn truyện "${st.title}"!`);
+      });
+    };
+  }
+
+  // Hear full continuous narration
+  const btnHearFull = document.getElementById('btnHearJaStoryFull');
+  if (btnHearFull) {
+    btnHearFull.onclick = () => {
+      stopJaAutoPlay();
+      window.soundMgr.playClick();
+      window.soundMgr.playAudioFile(st.audioKey, null, st.jaLines.map(l => l.ja).join(' '));
+      if (typeof showToast === 'function') showToast(`📖 Đang kể trọn câu chuyện ${st.title}...`);
+    };
+  }
+
+  // Toggle Romaji visibility
+  const btnToggleRomaji = document.getElementById('btnToggleJaStoryRomaji');
+  if (btnToggleRomaji) {
+    btnToggleRomaji.onclick = () => {
+      jaStoryShowRomaji = !jaStoryShowRomaji;
+      window.soundMgr.playClick();
+      box.classList.toggle('hide-romaji', !jaStoryShowRomaji);
+      btnToggleRomaji.innerHTML = `<span>🔤</span> ${jaStoryShowRomaji ? 'Ẩn Romaji' : 'Hiện Romaji'}`;
+    };
+  }
+
+  // Vocab chips
+  box.querySelectorAll('.story-vocab-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      window.soundMgr.playClick();
+      const vKey = chip.getAttribute('data-vocab-key');
+      const vLabel = chip.getAttribute('data-vocab-label') || '';
+      window.soundMgr.playAudioFile(vKey, null, vLabel);
+      if (typeof showToast === 'function') showToast(`🇯🇵 ${vLabel}`);
+    });
+  });
+
+  // Render & wire 2 comprehension questions
+  const qCards = Array.from(box.querySelectorAll('.story-comp-box'));
+  qCards.forEach((qCard, qi) => {
+    const q = st.questions[qi];
+    const optsHost = qCard.querySelector('.story-comp-opts');
+    const opts = stState.shuffledOptions[qi];
+    const qTourSteps = [{ key: q.qKey, fallbackText: q.question, el: qCard.querySelector('.story-comp-q'), pauseAfterMs: 220 }];
+
+    opts.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'story-opt-btn';
+      if (stState.solved.has(qi) && opt.isGood) btn.classList.add('correct');
+      btn.innerHTML = `
+        <span class="story-opt-speak" title="Nghe đáp án này">🔊</span>
+        <span class="story-opt-main">${opt.emoji} ${opt.text}</span>
+      `;
+      const spk = btn.querySelector('.story-opt-speak');
+      if (spk) {
+        spk.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.soundMgr.playClick();
+          window.soundMgr.playAudioFile(opt.key, null, opt.text);
+        });
+      }
+      qTourSteps.push({ key: opt.key, fallbackText: opt.text, el: btn, pauseAfterMs: 120 });
+
+      btn.addEventListener('click', () => {
+        if (stState.solved.has(qi) || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
+        window.soundMgr.stopAll();
+        if (opt.isGood) {
+          stState.solved.add(qi);
+          btn.classList.add('correct');
+          qCard.classList.add('is-solved');
+          addJaScore(5);
+          window.recordAnswer?.(`${st.id}_q${qi + 1}`, true, { label: `${st.title} (Câu ${qi + 1})`, mode: 'japanese', audioKey: q.qKey });
+          window.soundMgr.playCorrect();
+          window.soundMgr.speakPraise(stState.solved.size >= st.questions.length);
+
+          if (stState.solved.size >= st.questions.length) {
+            const doneId = `ja_story_done_${st.id}`;
+            const firstTime = typeof explorerState !== 'undefined' && Array.isArray(explorerState.learnedIds) && !explorerState.learnedIds.includes(doneId);
+            if (firstTime) {
+              explorerState.learnedIds.push(doneId);
+              if (typeof saveProgress === 'function') saveProgress();
+              window.awardCoins?.(5);
+              window.awardStars?.(5, `Đọc hiểu ${st.title}`, false, 'learn');
+              window.markDailyStep?.('learn');
+              if (typeof fireConfetti === 'function') fireConfetti();
+              const pill = document.getElementById('jaStoryDonePill');
+              if (pill) {
+                pill.classList.add('done');
+                pill.innerText = '✅ Đã hoàn thành đọc hiểu (+5 🪙 +5 ⭐)';
+              }
+              const activeTab = tabs.querySelector('.lesson-tab.active');
+              if (activeTab && !activeTab.classList.contains('is-story-done')) {
+                activeTab.classList.add('is-story-done');
+                activeTab.innerText = `✅ ${stIdx + 1}. ${st.title}`;
+              }
+            } else if (typeof showToast === 'function') {
+              showToast(`🎉 すごい！Bé trả lời đúng cả ${st.questions.length} câu hỏi truyện "${st.title}"!`);
+            }
+          } else if (typeof showToast === 'function') {
+            showToast(`🌸 Đúng rồi! Trả lời nốt câu còn lại để nhận +5 🪙 +5 ⭐ nhé!`);
+          }
+        } else {
+          btn.classList.add('wrong');
+          window.recordAnswer?.(`${st.id}_q${qi + 1}`, false, { label: `${st.title} (Câu ${qi + 1})`, mode: 'japanese', audioKey: q.qKey });
+          window.soundMgr.playWrong();
+          window.soundMgr.speakTryAgain();
+          if (typeof showToast === 'function') showToast('🤔 Chưa đúng rồi, bé đọc lại các câu phía trên rồi chọn lại nhé!');
+        }
+      });
+      optsHost.appendChild(btn);
+    });
+
+    const tourBtn = qCard.querySelector('.story-q-tour-btn');
+    if (tourBtn) {
+      tourBtn.addEventListener('click', () => {
+        stopJaAutoPlay();
+        window.soundMgr.playClick();
+        window.soundMgr.playChoiceTour(qTourSteps);
+      });
     }
-  };
+  });
+
+  // Footer Prev/Next story navigation
+  const prevBtn = document.getElementById('btnPrevJaStory');
+  const nextBtn = document.getElementById('btnNextJaStory');
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      stopJaAutoPlay();
+      window.soundMgr.stopAll();
+      jaEpoch++;
+      currentJaStoryId = JA_STORIES_DATA[(stIdx - 1 + JA_STORIES_DATA.length) % JA_STORIES_DATA.length].id;
+      window.soundMgr.playClick();
+      renderJaStoriesTab();
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+  }
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      stopJaAutoPlay();
+      window.soundMgr.stopAll();
+      jaEpoch++;
+      currentJaStoryId = JA_STORIES_DATA[(stIdx + 1) % JA_STORIES_DATA.length].id;
+      window.soundMgr.playClick();
+      renderJaStoriesTab();
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+  }
 }
 
 // ========================================================

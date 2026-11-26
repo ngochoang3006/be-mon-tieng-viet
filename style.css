@@ -5501,3 +5501,265 @@ body.focus-hide-games .mode-pill-game {
   margin: 6px 0 8px 0;
   line-height: 1.35;
 }
+
+/* === Upgraded 10 Japanese Stories Reader (小1 国語) === */
+.ja-stories-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.ja-stories-tabs .lesson-tab {
+  white-space: normal;
+  max-width: 100%;
+  text-align: left;
+  line-height: 1.35;
+}
+.ja-stories-tabs .lesson-tab.is-story-done {
+  border-color: #34d399;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  color: #065f46;
+}
+.story-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.story-source-badge,
+.story-count-badge,
+.story-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.story-source-badge {
+  background: #ffe4e6;
+  color: #9f1239;
+}
+.story-count-badge {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+.story-status-badge {
+  background: #fef3c7;
+  color: #92400e;
+}
+.story-status-badge.done {
+  background: #d1fae5;
+  color: #065f46;
+}
+.story-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.story-ja-row {
+  background: #ffffff;
+  border: 2px solid #fecdd3;
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: transform 0.14s ease, border-color 0.14s ease, background-color 0.14s ease, box-shadow 0.14s ease;
+}
+.story-ja-row:hover {
+  border-color: #fb7185;
+  background: #fff1f2;
+  transform: translateY(-1px);
+}
+.story-ja-row.is-reading-option {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.28);
+}
+.story-ja-row-top {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.story-ja-num {
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffe4e6;
+  color: #9f1239;
+  font-weight: 900;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 3px;
+}
+.story-ja-line-btn {
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 1.5px solid #fda4af;
+  background: #fff1f2;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.story-ja-line-btn:hover {
+  background: #ffe4e6;
+}
+.story-ja-content {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.story-ja-text {
+  font-size: 18px;
+  font-weight: 800;
+  color: #881337;
+  line-height: 1.55;
+  word-break: break-word;
+}
+.story-ja-romaji {
+  font-size: 13px;
+  font-weight: 700;
+  color: #4f46e5;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+.hide-romaji .story-ja-romaji {
+  display: none;
+}
+.story-ja-vi-line {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin-top: 3px;
+  line-height: 1.45;
+}
+.story-vocab-box {
+  background: #f5f3ff;
+  border: 2px dashed #c4b5fd;
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin: 12px 0;
+}
+.story-vocab-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #5b21b6;
+  margin-bottom: 8px;
+}
+.story-vocab-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.story-vocab-chip {
+  background: #ffffff;
+  border: 1.5px solid #a78bfa;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #312e81;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.story-vocab-chip:hover {
+  background: #ede9fe;
+}
+.story-moral-banner {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 2px solid #fcd34d;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #92400e;
+  margin-bottom: 12px;
+}
+.story-questions-host {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.story-comp-box.is-solved {
+  border-color: #34d399;
+  background: #f0fdf4;
+}
+.story-q-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.story-opt-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  max-width: 100%;
+  white-space: normal;
+}
+.story-opt-btn.is-reading-option {
+  border-color: #f59e0b !important;
+  background: #fef3c7 !important;
+}
+.story-opt-speak {
+  flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #ffe4e6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.story-footer-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 2px dashed #fecdd3;
+}
+.story-footer-pos {
+  font-weight: 800;
+  color: #9f1239;
+  font-size: 14px;
+}
+@media (max-width: 600px) {
+  .ja-stories-tabs .lesson-tab {
+    width: 100%;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .story-vocab-chip {
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+    border-radius: 14px;
+  }
+  .story-ja-text { font-size: 16px; }
+  .story-ja-row-top { gap: 7px; }
+  .story-ja-num { width: 20px; height: 20px; font-size: 11px; }
+  .story-ja-line-btn { width: 30px; height: 30px; font-size: 14px; }
+  .story-header-actions .btn-listen,
+  .story-header-actions .btn-outline {
+    width: 100%;
+    justify-content: center;
+  }
+  .story-footer-nav {
+    flex-wrap: wrap;
+  }
+}

@@ -149,6 +149,16 @@ def main() -> int:
         used.add(f"vi_{kid}")
     for vid in re.findall(r"id:\s*'(ja_[vn]\d+)'", ja_js):
         used.add(f"vi_{vid}")
+    # Explicit structural & audio-key check for Japanese Grade 1 Stories (JA_STORIES_DATA)
+    story_sec = ja_js[ja_js.index("JA_STORIES_DATA"):ja_js.index("JA_VOCAB_TOPICS")]
+    story_ids = re.findall(r'"id":\s*"(ja_story_\d+)"', story_sec)
+    if len(story_ids) < 10:
+        errors.append(f"Expected >= 10 Japanese stories in JA_STORIES_DATA, found {len(story_ids)}")
+    for k in re.findall(r'"(?:key|qKey|audioKey)":\s*"([^"]+)"', story_sec):
+        used.add(k)
+    line_keys = re.findall(r'"key":\s*"(ja_story_\d+_l\d+)"', story_sec)
+    if len(line_keys) < 80:
+        errors.append(f"Expected >= 80 Japanese story sentence audio keys, found {len(line_keys)}")
     for vid in re.findall(r"id:\s*'(en_v\d+)'", en_js):
         used.add(f"vi_{vid}")
     for ch in "abcdefghijklmnopqrstuvwxyz":

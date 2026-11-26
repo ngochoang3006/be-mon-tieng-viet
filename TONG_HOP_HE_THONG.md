@@ -1,7 +1,7 @@
 # 🦖 Tổng Hợp Hệ Thống Học Tập & Vui Chơi Lớp 1 Việt – Nhật Cho Bảo Long
 
 > **Phiên bản:** Full-Year Grade 1 VN (GDPT 2018) & JP (MEXT 小学1年生) + Đua Xe 4 Nút + Lộ Trình Hôm Nay, Leitner SRS & Góc Phụ Huynh  
-> **Cập nhật:** 26/11/2026 • **Git Branch:** `main` (Nền `ddd56e9` + Sửa Giọng Nam & Nâng cấp 7 Mini-game)
+> **Cập nhật:** 26/11/2026 • **Git Branch:** `main` (Nền `d64b291` + Mở rộng 10 Truyện Đọc 小1)
 
 ---
 
@@ -19,7 +19,7 @@
 | [`science_life.js`](science_life.js) | 421 dòng<br>(23.991 B) | Tự nhiên & Xã hội (VN) + Seikatsuka `生活科` (JP) | **7 functions** |
 | [`ethics.js`](ethics.js) | 826 dòng<br>(41.497 B) | Đạo Đức & GDCD Lớp 1 (nhãn động `12` bài & `8` món rác) | **12 functions** |
 | [`arts_pe.js`](arts_pe.js) | 444 dòng<br>(19.508 B) | Âm nhạc Pianica, Mỹ thuật & Thể dục `音楽・図工・体育` | **9 functions** |
-| [`japanese.js`](japanese.js) | 1.351 dòng<br>(71.411 B) | Tiếng Nhật 小1 Quốc ngữ, 80 Kanji & Tập viết Masume (3 mức gợi ý + kiểm tra nét) | **16 functions** |
+| [`japanese.js`](japanese.js) | 2.885 dòng<br>(147.382 B) | Tiếng Nhật 小1 Quốc ngữ, 80 Kanji, **10 Truyện Đọc 小1 & Cổ tích đầy đủ (`8–9` câu/bài, đọc tô sáng từng câu, bật/tắt Romaji, từ vựng & 2 câu hỏi +5 🪙 +5 ⭐)** & Tập viết Masume (3 mức gợi ý) | **16 functions** |
 | [`english.js`](english.js) | 685 dòng<br>(33.990 B) | Tiếng Anh Lớp 1 (ABC, 8 chủ đề `64` từ & Đánh vần) | **10 functions** |
 | [`dragons.js`](dragons.js) | 471 dòng<br>(21.589 B) | Vương Quốc Rồng (8 loài rồng, Lật thẻ & Đố vui) | **7 functions** |
 | [`arcade.js`](arcade.js) | 1.378 dòng<br>(52.863 B) | Giải Đua 3 Chặng (~60–90s), đếm ngược `3-2-1`, 6 Cổng Chữ MP3 thật, AI bám đuổi, Xưởng Xu nâng cấp & ảnh chụp thật Khủng long / Rồng (`1–3 ⭐` + `🪙 Xu`) | **30 functions:** `getArcadeGear`, `getArcadeHeroImage`, `preloadAllArcadeImages`, `stopArcadeGameLoop`, `renderArcadeHub`, `switchArcadeMode`, `renderArcadeHeroPicker`, `updateArcadeCoinsUI`, `renderArcadeGarage`, `buildStageGates`, `buildInitialTrackItems`, `resetArcadeRace`, `updateGatePromptBar`, `bindArcadeEventsOnce`, `spawnArcadeParticles`, `playArcadeEnginePulse`, `arcadeTick`, `updateArcadeHud`, `finishArcadeRace`, `drawArcadeFrame`, `drawDecorOverlay`, `drawPhotoRacerSprite`, `drawGateBannerVertical`, `drawGateBannerHorizontal`, `drawSupercarSprite`, `drawCarRaceScene`, `drawDinoVectorFallback`, `drawDragonVectorFallback`, `drawDinoRaceScene`, `drawDragonRaceScene` |
@@ -39,6 +39,8 @@
 
 8. **Sửa toàn diện Giọng Nam & Nâng cấp 7 Mini-game Khu Trò Chơi:** Quét PCM sửa `118` key Tiếng Anh Nam sang `en-US-AndrewNeural` (`~118,8 Hz`), sửa `121` file Tiếng Nhật Nam bằng `ja-JP-KeitaNeural` (hết câm tiếng), sửa các file `spell_*`/`tone_ngang`, cắt gọn `1.000,5 KB` khoảng lặng đuôi trên `216` file `math_*`, thêm `normalizeKey` & bỏ double-fetch trong `speech.js`, nâng cấp 7 mini-game tương tác với `🪙 Xu`, gợi ý chữ, Blitz 45s, đèn ga Shinkansen, Lật thẻ 3 độ khó + Soi 2s + Kỷ lục, Sự thật kỷ Jura/Xe cộ & Khảo cổ 2 công cụ Búa/Cọ + vết nứt SVG.
 
+9. **Mở rộng 10 Truyện Đọc 小1 (`japanese.js`, `index.html`, `style.css`):** Nâng từ 4 truyện tóm tắt lên **10 truyện đầy đủ `8–9` câu** (Sách Quốc ngữ 小1 & Cổ tích Nhật), thêm đọc từng câu có nút loa & hiệu ứng tô sáng, nghe liền mạch `47–59s`, bật/tắt Romaji, `30` từ khóa bấm nghe và `2` câu hỏi đọc hiểu mỗi truyện (+`5 🪙 Xu` +`5 ⭐`).
+
 ---
 
 ## 3. Chẩn Đoán & Xử Lý Giọng Đọc "Giả Giọng Windows"
@@ -48,7 +50,7 @@
    - Ngoài ra, `speech.js` trước đây có thể rơi sang `window.speechSynthesis` (giọng Windows *Microsoft An/Hoa*) nếu gặp `AbortError` khi chuyển nhanh.
 2. **Kết quả sau khi sửa & tái tạo:**
    - Trong [`speech.js`](speech.js): chặn `AbortError` không rơi sang `speakTTS`; mặc định `allowSystemTTS = false` (tắt giọng máy Windows, chỉ bật lại nếu phụ huynh chủ động chọn); ưu tiên giọng `Online (Natural)` khi fallback bật; hỗ trợ ưu tiên bản thu giọng Ba/Mẹ cục bộ.
-   - Đã chạy xong [`tools/regen_natural_voices.py`](tools/regen_natural_voices.py) (đã vá `aiohttp.ThreadedResolver()` + ghi `.tmp` nguyên tử) cho đủ **`389/389` key** (`353` key `fff384c4` cũ + `36` câu giải mã `decod_*`) bằng 100% Microsoft Edge Neural Voices. Toàn bộ kho **`4.326` MP3 (`2.163` Nữ + `2.163` Nam = `66,51 MB`)** đạt **`identical_FM = 0`**, **`gtts_fff384c4 = 0`**, **`small = 0`**.
+   - Đã chạy xong [`tools/regen_natural_voices.py`](tools/regen_natural_voices.py) (đã vá `aiohttp.ThreadedResolver()` + ghi `.tmp` nguyên tử) cho đủ **`389/389` key** (`353` key `fff384c4` cũ + `36` câu giải mã `decod_*`) bằng 100% Microsoft Edge Neural Voices. Ngoài ra [`tools/gen_ja_stories_audio.py`](tools/gen_ja_stories_audio.py) đã tạo đủ **`201` cặp Edge Neural** cho 10 Truyện đọc 小1 (`47–59s`/truyện đầy đủ, `81` câu đơn, `30` từ vựng, `80` hỏi–đáp). Toàn bộ kho **`4.720` MP3 (`2.360` Nữ + `2.360` Nam = `81,54 MB`)** đạt **`identical_FM = 0`**, **`gtts_fff384c4 = 0`**, **`small = 0`**.
 
 ---
 
@@ -56,11 +58,11 @@
 
 ### A. Kiểm tra tĩnh tự động ([`tools/audit.py`](tools/audit.py))
 ```text
-DOM IDs: html=557, dyn_js=39, getElementById=499, missing=0
+DOM IDs: html=557, dyn_js=44, getElementById=502, missing=0
 Local Images: 30 referenced, missing=0
-Audio MP3s: female=2163, male=2163, size_mb=66.51, small=0, identical_FM=0, gtts_fff384c4=0
+Audio MP3s: female=2360, male=2360, size_mb=81.54, small=0, identical_FM=0, gtts_fff384c4=0
 Puzzle checks: 200 lesson words + 12 hard cases verified
-Audio Keys: checked=2122, missing=0, orphans=41
+Audio Keys: checked=2319, missing=0, orphans=41
 Node syntax check: skipped (node not installed)
 
 ALL STATIC AUDIT CHECKS PASSED!
@@ -79,9 +81,13 @@ ALL STATIC AUDIT CHECKS PASSED!
 - **Phiên 4 (Kiểm thử Live Giọng Nam & 7 Mini-game nâng cấp, `1280×800` → Mobile `390×844`):**
   - Console errors: `0` | Page errors: `0` | HTTP `>= 400`: `0` | Broken images: `0`.
   - Xác nhận giọng Nam (`word_bố.mp3`, `ort_ck.mp3`, `ja_hira_ん.mp3`, `ja_hira_ほ.mp3`, `en_alpha_a.mp3`, `en_w_goodmorning.mp3` HTTP `200`/`206`), nút `#btnHearVnStory` (`Nghe ba đọc bài văn`), và toàn bộ 7 mini-game mới (`#gameSessionCoins` `+23 🪙`, `#btnPuzzleHint`, `#btnListenBlitz` `45s → 43s`, `#trainSignalLight` `🟢`, `#btnMemEasy` + `#btnMemPeek` `👀 Đã dùng`, `#dinoQuizFactBox`, `#quizFactBox`, Khai quật Búa/Cọ lộ ảnh thật T-Rex `+5 🪙`); Mobile `390×844` bề rộng `375.2 px <= 390 px` không tràn ngang.
+- **Phiên 5 (Kiểm thử Live 10 Truyện Đọc 小1 nâng cấp, `390×844` & `1280×800`):**
+  - Console / page errors: `0` | HTTP `>= 400`: `0` (`50` requests).
+  - Xác nhận đủ `10/10` truyện; Truyện 1 (`9` câu, `3` từ vựng, `#btnToggleJaStoryRomaji`, tô sáng `.is-reading-option`, `ja_story_1_l1..l9.mp3` & `ja_story_1_v1.mp3` HTTP `200`/`206`, trả lời 2 câu tăng `⭐ 97 → 102` & `Điểm Tiếng Nhật 0 → 10` + đánh dấu `✅`); Truyện 3/7/10 (`8` câu, `2` câu hỏi); giọng Nam `male/ja_story_7_l1.mp3` HTTP `200`; kiểm tra lại Mobile `390×844` tất cả `10` nút tab nằm gọn `317,71 px <= 390 px`, không tràn ngang.
 
 ### C. Lịch sử Git (`origin/main`)
 ```text
+d64b291 feat: fix male voices across EN/JA/VI, trim math pauses, and upgrade all 7 mini-games
 ddd56e9 feat: 3-stage racing arcade with letter gates, Xu upgrades, balanced stars, and real dino/dragon photos
 6c59a7e feat: apply review fixes, Leitner SRS roadmap, decodable reading, and 100% Edge Neural voices
 2d07f96 docs: update paths after moving repo to MonhoctiengViet
@@ -89,4 +95,4 @@ ddd56e9 feat: 3-stage racing arcade with letter gates, Xu upgrades, balanced sta
 e776562 feat: add 4-way Racing Arcade tab (Lamborghini/Ferrari, Dino, Dragon)
 ccbe820 feat: full-year Grade 1 VN & JP curriculum, 80 MEXT Kanji, Science/Arts subjects, and dual-voice audio
 ```
-*(Các bản cập nhật trước đã push lên `ddd56e9`; bản sửa Giọng Nam & Nâng cấp 7 Mini-game đã kiểm thử xong và sẵn sàng commit/push lên `origin/main`).*
+*(Bản nâng cấp 10 Truyện Đọc 小1 đã kiểm âm, kiểm thử trình duyệt Desktop + Mobile và sẵn sàng commit/push lên `origin/main`).*
