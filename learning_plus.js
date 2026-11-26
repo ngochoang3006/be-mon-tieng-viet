@@ -4,7 +4,7 @@
 // ========================================================
 
 const LEITNER_INTERVAL_DAYS = [0, 1, 2, 4, 8, 16];
-const DAILY_ARCADE_STAR_CAP = 40;
+const DAILY_ARCADE_STAR_CAP = 25;
 
 const CUSTOM_VOICE_PRESETS = [
   { key: 'alpha_a', label: 'Chữ A (a)' },
@@ -291,7 +291,18 @@ function normalizePlusStateFields(raw) {
     focusHideGames: !!rawSet.focusHideGames,
     dailyArcadeCap: Number(rawSet.dailyArcadeCap) > 0 ? Math.floor(Number(rawSet.dailyArcadeCap)) : DAILY_ARCADE_STAR_CAP
   };
-  return { wordStats: cleanStats, dailyLog: cleanDaily, parentSettings };
+  const rawGear = raw && typeof raw.arcadeGear === 'object' && raw.arcadeGear ? raw.arcadeGear : {};
+  const unlockedDecors = Array.isArray(rawGear.unlockedDecors)
+    ? Array.from(new Set(['none', ...rawGear.unlockedDecors.filter(x => typeof x === 'string')]))
+    : ['none'];
+  const arcadeGear = {
+    speedLv: Math.max(0, Math.min(3, Math.floor(Number(rawGear.speedLv) || 0))),
+    boostLv: Math.max(0, Math.min(3, Math.floor(Number(rawGear.boostLv) || 0))),
+    decor: typeof rawGear.decor === 'string' && unlockedDecors.includes(rawGear.decor) ? rawGear.decor : 'none',
+    unlockedDecors
+  };
+  const coins = typeof raw?.coins === 'number' && Number.isFinite(raw.coins) && raw.coins >= 0 ? Math.floor(raw.coins) : 0;
+  return { wordStats: cleanStats, dailyLog: cleanDaily, parentSettings, coins, arcadeGear };
 }
 
 function ensureTodayLog() {
@@ -367,6 +378,9 @@ function recordAnswer(itemId, isCorrect, meta = {}) {
     existing.level = Math.min(4, prevLevel + 1);
     const interval = LEITNER_INTERVAL_DAYS[existing.level + 1] || 1;
     existing.due = addDaysToDateKey(today, interval);
+    if (meta.mode !== 'arcade' && typeof window.awardCoins === 'function') {
+      window.awardCoins(5);
+    }
   } else {
     existing.wrong += 1;
     existing.level = Math.max(0, prevLevel - 1);
@@ -397,8 +411,9 @@ function markDailyStep(stepName) {
     log.steps[stepName] = true;
     if (log.steps.learn && log.steps.review && log.steps.play && !log.bonusClaimed) {
       log.bonusClaimed = true;
+      if (typeof window.awardCoins === 'function') window.awardCoins(20);
       if (typeof awardStars === 'function') {
-        awardStars(15, 'Hoàn thành trọn vẹn Lộ Trình Hôm Nay!', true, 'learn');
+        awardStars(15, 'Hoàn thành trọn vẹn Lộ Trình Hôm Nay (+20 🪙 Xu)!', true, 'learn');
       }
       if (typeof fireConfetti === 'function') fireConfetti();
     } else if (typeof saveProgress === 'function') {

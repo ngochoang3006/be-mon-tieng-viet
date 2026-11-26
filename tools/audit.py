@@ -179,6 +179,10 @@ def main() -> int:
         used.add(f"ethics_tf_{i}")
     for b in ["organic", "recycle", "hazard"]:
         used.add(f"ethics_bin_{b}")
+    arc_js = all_js.get("arcade.js", "")
+    if "ARCADE_GATE_POOL" in arc_js:
+        for gk in re.findall(r"audioKey:\s*'([^']+)'", arc_js):
+            used.add(gk)
     if "DECODABLE_PHONICS_SENTENCES" in data_js:
         dec_sec = data_js[data_js.index("DECODABLE_PHONICS_SENTENCES"):]
         for k in re.findall(r'"key":\s*"([^"]+)"', dec_sec):

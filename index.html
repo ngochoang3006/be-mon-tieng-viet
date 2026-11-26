@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc &amp; Đánh Vần</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦖</text></svg>">
-  <link rel="stylesheet" href="style.css?v=20261126v4">
+  <link rel="stylesheet" href="style.css?v=20261126v5">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1461,11 +1461,20 @@
       <div class="arcade-top-bar">
         <div class="arcade-hero-picker" id="arcadeHeroPicker"></div>
         <div class="arcade-hud-row">
+          <span class="arcade-hud-pill arcade-stage-pill" id="arcadeStagePill">☀️ Chặng 1: Ngày Nắng</span>
           <span class="arcade-hud-pill" id="arcadeStatusRank">🏆 Hạng 1 / 4</span>
           <span class="arcade-hud-pill" id="arcadeStatusDist">🏁 Đường đua: 0%</span>
-          <span class="arcade-hud-pill" id="arcadeStatusStars">⭐ Nhặt: 0</span>
+          <span class="arcade-hud-pill" id="arcadeStatusStars">⭐ Nhặt: 0 • 🔤 0/6</span>
+          <span class="arcade-hud-pill arcade-coins-pill" id="arcadeStatusCoins">🪙 Xu: 0</span>
         </div>
       </div>
+
+      <div id="arcadeGatePromptBar" class="arcade-gate-prompt" style="display: none;">
+        <span id="arcadeGatePromptText">🔤 CỔNG CHỮ SẮP TỚI!</span>
+        <button type="button" class="tool-chip" id="btnArcadeReplayGate">🔊 Nghe lại chữ</button>
+      </div>
+
+      <div id="arcadeGarageBar" class="arcade-garage-bar"></div>
 
       <div class="arcade-stage-layout">
         <div class="arcade-canvas-wrap">
@@ -1928,9 +1937,9 @@
   <script src="japanese.js?v=20261126v4"></script>
   <script src="science_life.js?v=20261125v4"></script>
   <script src="arts_pe.js?v=20261126v1"></script>
-  <script src="arcade.js?v=20261126v4"></script>
+  <script src="arcade.js?v=20261126v5"></script>
   <script src="dragons.js?v=20261126v1"></script>
-  <script src="learning_plus.js?v=20261126v4"></script>
-  <script src="app.js?v=20261126v4"></script>
+  <script src="learning_plus.js?v=20261126v5"></script>
+  <script src="app.js?v=20261126v5"></script>
 </body>
 </html>

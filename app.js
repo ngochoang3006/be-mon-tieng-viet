@@ -19,7 +19,9 @@ let explorerState = {
   completedGames: 0,
   wordStats: {},
   dailyLog: {},
-  parentSettings: { eyeBreakMinutes: 20, focusHideGames: false, dailyArcadeCap: 40 }
+  coins: 0,
+  arcadeGear: { speedLv: 0, boostLv: 0, decor: 'none', unlockedDecors: ['none'] },
+  parentSettings: { eyeBreakMinutes: 20, focusHideGames: false, dailyArcadeCap: 25 }
 };
 
 // Auto-play audio tour state
@@ -110,7 +112,7 @@ function migrateProgressData(parsed) {
   const rawSticker = typeof parsed?.equippedStickerId === 'string' ? parsed.equippedStickerId : 'stk_trex';
   const plusFields = typeof normalizePlusStateFields === 'function'
     ? normalizePlusStateFields(parsed)
-    : { wordStats: {}, dailyLog: {}, parentSettings: { eyeBreakMinutes: 20, focusHideGames: false, dailyArcadeCap: 40 } };
+    : { wordStats: {}, dailyLog: {}, coins: 0, arcadeGear: { speedLv: 0, boostLv: 0, decor: 'none', unlockedDecors: ['none'] }, parentSettings: { eyeBreakMinutes: 20, focusHideGames: false, dailyArcadeCap: 25 } };
   return {
     schemaVersion: PROGRESS_SCHEMA_VERSION,
     stars: typeof parsed?.stars === 'number' && Number.isFinite(parsed.stars) && parsed.stars >= 0 ? Math.floor(parsed.stars) : 0,
@@ -146,7 +148,7 @@ function awardStars(amount, reasonText = '', countAsGame = amount >= 10, sourceC
   let actual = amount;
   const log = typeof ensureTodayLog === 'function' ? ensureTodayLog() : null;
   if (sourceCategory === 'arcade' && log) {
-    const cap = explorerState.parentSettings?.dailyArcadeCap || 40;
+    const cap = explorerState.parentSettings?.dailyArcadeCap || 25;
     const remain = Math.max(0, cap - (log.arcadeStars || 0));
     actual = Math.min(amount, remain);
     log.arcadeStars = (log.arcadeStars || 0) + actual;
@@ -171,11 +173,20 @@ function awardStars(amount, reasonText = '', countAsGame = amount >= 10, sourceC
   }
 }
 
+function awardCoins(amount) {
+  if (!amount || amount <= 0) return;
+  explorerState.coins = (explorerState.coins || 0) + Math.floor(amount);
+  saveProgress();
+  window.updateArcadeCoinsUI?.();
+}
+window.awardCoins = awardCoins;
+
 function markWordLearned(wordId) {
   if (!wordId) return false;
   if (!explorerState.learnedIds.includes(wordId)) {
     explorerState.learnedIds.push(wordId);
     explorerState.stars += 2;
+    explorerState.coins = (explorerState.coins || 0) + 3;
     const log = typeof ensureTodayLog === 'function' ? ensureTodayLog() : null;
     if (log) {
       log.newWords = (log.newWords || 0) + 1;
