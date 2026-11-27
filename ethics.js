@@ -8,6 +8,7 @@
 const ETHICS_LESSONS_DATA = [
   {
     id: 'eth_1',
+    image: 'images/ethics/eth_1.jpg',
     badge: '🏠 GIA ĐÌNH',
     title: 'Yêu thương & Hiếu thảo với Ba Mẹ, Ông Bà',
     icon: '👨‍👩‍👦',
@@ -18,6 +19,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_2',
+    image: 'images/ethics/eth_2.jpg',
     badge: '🙇 LỄ PHÉP',
     title: 'Chào hỏi, Cảm ơn & Xin lỗi đúng lúc',
     icon: '🙏',
@@ -28,6 +30,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_3',
+    image: 'images/ethics/eth_3.jpg',
     badge: '🪥 TỰ LẬP',
     title: 'Tự giác giữ vệ sinh & Tự soạn đồ dùng',
     icon: '🧼',
@@ -38,6 +41,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_4',
+    image: 'images/ethics/eth_4.svg',
     badge: '🌟 TRUNG THỰC',
     title: 'Thật thà, dũng cảm nhận lỗi & trả đồ nhặt được',
     icon: '💎',
@@ -48,6 +52,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_5',
+    image: 'images/ethics/eth_5.svg',
     badge: '🤝 TÌNH BẠN',
     title: 'Hòa đồng, chia sẻ & Biết xếp hàng chờ tới lượt',
     icon: '🧑‍🤝‍🧑',
@@ -58,6 +63,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_6',
+    image: 'images/ethics/eth_6.svg',
     badge: '🚦 AN TOÀN',
     title: 'Tuân thủ luật giao thông & Trật tự công cộng',
     icon: '🚸',
@@ -68,6 +74,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_7',
+    image: 'images/ethics/eth_7.jpg',
     badge: '🌍 CÔNG DÂN XANH',
     title: 'Bảo vệ thiên nhiên & Phân loại rác sạch đẹp',
     icon: '♻️',
@@ -78,6 +85,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_8',
+    image: 'images/ethics/eth_8.jpg',
     badge: '🇻🇳 NGUỒN CỘI',
     title: 'Chăm chỉ học tập & Tự hào gốc Việt Nam',
     icon: '📚',
@@ -88,6 +96,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_9',
+    image: 'images/ethics/eth_9.svg',
     badge: '⏱️ ĐÚNG GIỜ',
     title: 'Đi ngủ đúng giờ & Giữ lời hứa (HĐTN Lớp 1)',
     icon: '⏰',
@@ -98,6 +107,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_10',
+    image: 'images/ethics/eth_10.svg',
     badge: '🛡️ AN TOÀN',
     title: 'Phòng tránh nguy hiểm & Tự bảo vệ bản thân',
     icon: '🆘',
@@ -108,6 +118,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_11',
+    image: 'images/ethics/eth_11.svg',
     badge: '🎒 TỰ PHỤC VỤ',
     title: 'Tự chuẩn bị cặp sách & Giữ gìn đồ dùng (ランドセル)',
     icon: '🎒',
@@ -118,6 +129,7 @@ const ETHICS_LESSONS_DATA = [
   },
   {
     id: 'eth_12',
+    image: 'images/ethics/eth_12.svg',
     badge: '🍚 TIẾT KIỆM',
     title: 'Quý trọng thức ăn & Tiết kiệm điện nước',
     icon: '🍙',
@@ -131,6 +143,7 @@ const ETHICS_LESSONS_DATA = [
 const ETHICS_SITUATIONS_DATA = [
   {
     id: 'sit1',
+    image: 'images/ethics/eth_5.svg',
     badge: '🛝 Xếp hàng nơi công cộng',
     audioKey: 'ethics_sit_1',
     icon: '🎡',
@@ -142,6 +155,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit2',
+    image: 'images/ethics/eth_6.svg',
     badge: '🚅 Văn minh trên Tàu Shinkansen',
     audioKey: 'ethics_sit_2',
     icon: '🚅',
@@ -153,6 +167,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit3',
+    image: 'images/ethics/eth_4.svg',
     badge: '🌟 Dũng cảm nhận lỗi',
     audioKey: 'ethics_sit_3',
     icon: '🥛',
@@ -164,6 +179,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit4',
+    image: 'images/ethics/eth_2.jpg',
     badge: '🎁 Lễ phép khi nhận quà',
     audioKey: 'ethics_sit_4',
     icon: '🎁',
@@ -175,6 +191,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit5',
+    image: 'images/ethics/eth_6.svg',
     badge: '🚦 An toàn qua đường',
     audioKey: 'ethics_sit_5',
     icon: '🚦',
@@ -186,6 +203,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit6',
+    image: 'images/ethics/eth_3.jpg',
     badge: '🧸 Tự lập thu dọn đồ chơi',
     audioKey: 'ethics_sit_6',
     icon: '🦖',
@@ -197,6 +215,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit7',
+    image: 'images/ethics/eth_5.svg',
     badge: '🤕 Yêu thương bạn bè',
     audioKey: 'ethics_sit_7',
     icon: '🩹',
@@ -208,6 +227,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit8',
+    image: 'images/ethics/eth_7.jpg',
     badge: '♻️ Giữ gìn môi trường sạch đẹp',
     audioKey: 'ethics_sit_8',
     icon: '🧃',
@@ -219,6 +239,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit9',
+    image: 'images/ethics/eth_10.svg',
     badge: '🆘 An toàn với người lạ',
     audioKey: 'ethics_sit_9',
     icon: '🚪',
@@ -230,6 +251,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit10',
+    image: 'images/ethics/eth_11.svg',
     badge: '🎒 Tự chuẩn bị đi học',
     audioKey: 'ethics_sit_10',
     icon: '🎒',
@@ -241,6 +263,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit11',
+    image: 'images/ethics/eth_10.svg',
     badge: '⚡ An toàn điện nước ở nhà',
     audioKey: 'ethics_sit_11',
     icon: '🔌',
@@ -252,6 +275,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit12',
+    image: 'images/ethics/eth_4.svg',
     badge: '💎 Trả lại đồ nhặt được',
     audioKey: 'ethics_sit_12',
     icon: '👛',
@@ -353,6 +377,7 @@ function stopEthicsAutoPlay() {
 
 function switchEthicsSubTab(subtab) {
   stopEthicsAutoPlay();
+  window.soundMgr?.stopAll?.();
   ethicsEpoch++;
   currentEthicsTab = subtab;
 
@@ -393,7 +418,7 @@ function renderEthicsLessonsTab() {
         <span class="ethics-badge">${item.badge}</span>
         <span class="ethics-star">${learned ? '⭐' : '☆'}</span>
       </div>
-      <div class="ethics-icon">${item.icon}</div>
+      ${item.image ? `<div class="ethics-card-illus"><img src="${item.image}" alt="${item.title}" loading="lazy"></div>` : `<div class="ethics-icon">${item.icon}</div>`}
       <h4 class="ethics-title">${item.title}</h4>
       <div class="ethics-ja">🇯🇵 ${item.ja}</div>
       <p class="ethics-summary">${item.summary}</p>
@@ -480,6 +505,7 @@ function loadEthicsSituationQuestion() {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_ethics_win', null, 'Hoan hô Bảo Long công dân nhí ngoan ngoãn!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Chuyên gia Xử Lý Tình Huống Đạo Đức!');
 
     document.getElementById('ethicsSitPlayStage').style.display = 'none';
@@ -494,7 +520,12 @@ function loadEthicsSituationQuestion() {
   document.getElementById('ethicsSitScoreText').innerText = `⭐ ${ethicsSitScore} điểm`;
 
   document.getElementById('ethicsSitBadge').innerText = q.badge;
-  document.getElementById('ethicsSitIcon').innerText = q.icon;
+  const sitIconEl = document.getElementById('ethicsSitIcon');
+  if (sitIconEl) {
+    sitIconEl.innerHTML = q.image
+      ? `<div class="ethics-sit-illus"><img src="${q.image}" alt="${q.badge}" loading="lazy"></div>`
+      : q.icon;
+  }
   document.getElementById('ethicsSitQuestion').innerText = q.question;
 
   const myNav = window.appNavEpoch || 0;
@@ -509,10 +540,12 @@ function loadEthicsSituationQuestion() {
 
   choices.forEach(opt => {
     const optKey = `ethics_${q.id}_${opt.isGood ? 'good' : 'bad'}`;
-    const btn = document.createElement('div');
+    const row = document.createElement('div');
+    row.className = 'ethics-sit-opt-row';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'ethics-sit-option';
-    btn.setAttribute('role', 'button');
-    btn.setAttribute('tabindex', '0');
 
     const textSpan = document.createElement('span');
     textSpan.innerText = opt.text;
@@ -528,7 +561,6 @@ function loadEthicsSituationQuestion() {
       window.soundMgr.playClick();
       window.soundMgr.playAudioFile(optKey, null, opt.text);
     });
-    btn.appendChild(spkBtn);
 
     tourSteps.push({ key: optKey, fallbackText: opt.text, el: btn, pauseAfterMs: 140 });
 
@@ -540,6 +572,7 @@ function loadEthicsSituationQuestion() {
         btn.classList.add('correct');
         ethicsSitScore += 10;
         addEthicsScore(10);
+        window.recordAnswer?.(`eth_${q.id}`, true, { label: q.badge, mode: 'ethics', audioKey: q.audioKey });
         document.getElementById('ethicsSitScoreText').innerText = `⭐ ${ethicsSitScore} điểm`;
         window.soundMgr.playCorrect();
         if (typeof fireConfetti === 'function') fireConfetti();
@@ -554,12 +587,15 @@ function loadEthicsSituationQuestion() {
         );
       } else {
         btn.classList.add('wrong');
+        window.recordAnswer?.(`eth_${q.id}`, false, { label: q.badge, mode: 'ethics', audioKey: q.audioKey });
         window.soundMgr.playWrong();
         window.soundMgr.speakTryAgain();
         if (typeof showToast === 'function') showToast(`💡 ${opt.feedback}`);
       }
     });
-    optsWrap.appendChild(btn);
+    row.appendChild(btn);
+    row.appendChild(spkBtn);
+    optsWrap.appendChild(row);
   });
 
   const playSitTour = () => window.soundMgr.playChoiceTour(tourSteps);
@@ -593,6 +629,7 @@ function loadEthicsTfQuestion() {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_ethics_win', null, 'Hoan hô Bảo Long!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Hoàn thành Game Nên hay Không Nên!');
 
     document.getElementById('ethicsTfPlayStage').style.display = 'none';
@@ -659,6 +696,7 @@ function loadEthicsTfQuestion() {
       const pts = ethicsTfStreak >= 3 ? 15 : 10;
       ethicsTfScore += pts;
       addEthicsScore(pts);
+      window.recordAnswer?.(`eth_${q.id}`, true, { label: q.text, mode: 'ethics', audioKey: q.audioKey });
       document.getElementById('ethicsTfStreakBadge').innerText = `🔥 Chuỗi x${ethicsTfStreak}`;
       document.getElementById('ethicsTfScoreText').innerText = `⭐ ${ethicsTfScore} điểm`;
 
@@ -677,23 +715,47 @@ function loadEthicsTfQuestion() {
       ethicsTfStreak = 0;
       document.getElementById('ethicsTfStreakBadge').innerText = `🔥 Chuỗi x0`;
       btnEl.classList.add('wrong');
+      window.recordAnswer?.(`eth_${q.id}`, false, { label: q.text, mode: 'ethics', audioKey: q.audioKey });
       window.soundMgr.playWrong();
       window.soundMgr.speakTryAgain();
       if (typeof showToast === 'function') showToast(`💡 Nghĩ kỹ nhé: ${q.reason}`);
     }
   }
 
-  btnYes.onclick = () => answer(true, btnYes);
-  btnNo.onclick = () => answer(false, btnNo);
+  const bindKeyActivate = (el, fn) => {
+    el.onclick = fn;
+    el.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        fn();
+      }
+    };
+  };
+  bindKeyActivate(btnYes, () => answer(true, btnYes));
+  bindKeyActivate(btnNo, () => answer(false, btnNo));
 }
 
 // ========================================================
 // TAB 4: ĐÈN GIAO THÔNG THÔNG MINH & PHÂN LOẠI RÁC XANH
 // ========================================================
+const TL_CAR_SVG = '<svg width="58" height="32" viewBox="0 0 64 36" aria-hidden="true"><rect x="6" y="14" width="48" height="14" rx="5" fill="#ef4444"/><path d="M16 14 L22 5 H42 L48 14 Z" fill="#fca5a5"/><rect x="20" y="7" width="10" height="6" rx="1.5" fill="#e0f2fe"/><rect x="33" y="7" width="11" height="6" rx="1.5" fill="#e0f2fe"/><circle cx="17" cy="29" r="5" fill="#0f172a"/><circle cx="17" cy="29" r="2" fill="#cbd5e1"/><circle cx="44" cy="29" r="5" fill="#0f172a"/><circle cx="44" cy="29" r="2" fill="#cbd5e1"/><circle cx="53" cy="19" r="2.5" fill="#fef08a"/></svg>';
+
 function renderTrafficEcoTab() {
-  // Interactive Traffic Light
+  // Interactive Traffic Light with white stop-line & forward-facing SVG car
+  const lane = document.querySelector('.tl-road-lane');
+  if (lane && !lane.querySelector('.tl-stop-line')) {
+    const stopLine = document.createElement('div');
+    stopLine.className = 'tl-stop-line';
+    const crosswalk = document.createElement('div');
+    crosswalk.className = 'tl-crosswalk';
+    lane.insertBefore(crosswalk, lane.firstChild);
+    lane.insertBefore(stopLine, crosswalk);
+  }
   const btns = document.querySelectorAll('.tl-light-btn');
   const carEl = document.getElementById('trafficSimCar');
+  if (carEl && !carEl.querySelector('svg')) {
+    carEl.innerHTML = TL_CAR_SVG;
+  }
   const statusEl = document.getElementById('trafficSimStatus');
 
   btns.forEach(btn => {
@@ -746,6 +808,7 @@ function loadNextEcoItem() {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('ethics_eco_correct', null, 'Bảo Long phân loại rác chuẩn quá!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(12, 'Chiến Binh Môi Trường Xanh!');
 
     const descEl = document.getElementById('ecoVictoryDesc');
@@ -784,18 +847,19 @@ function loadNextEcoItem() {
     if ((window.appNavEpoch || 0) === myNav && ethicsEpoch === myEth) playEcoTour();
   }, 60);
 
+  const binLabelsVi = { organic: 'Rác hữu cơ, rác đốt được', recycle: 'Rác tái chế', hazard: 'Pin và rác đặc biệt' };
   document.querySelectorAll('.quiz-opt-speak-btn[data-bin-speak]').forEach(sb => {
     sb.onclick = (e) => {
       e.stopPropagation();
       const b = sb.dataset.binSpeak;
       window.soundMgr.playClick();
-      window.soundMgr.playAudioFile(`ethics_bin_${b}`, null, b);
+      window.soundMgr.playAudioFile(`ethics_bin_${b}`, null, binLabelsVi[b] || 'Thùng rác');
     };
   });
 
   document.querySelectorAll('.eco-bin-btn').forEach(btn => {
     btn.classList.remove('correct', 'wrong');
-    btn.onclick = () => {
+    const chooseBin = () => {
       if (ecoLocked || btn.classList.contains('correct') || btn.classList.contains('wrong')) return;
       window.soundMgr.stopAll();
       if (btn.dataset.bin === item.bin) {
@@ -803,6 +867,7 @@ function loadNextEcoItem() {
         btn.classList.add('correct');
         ecoScore += 10;
         addEthicsScore(10);
+        window.recordAnswer?.(`eth_${item.id}`, true, { label: item.name, mode: 'ethics', audioKey: `ethics_${item.id}` });
         document.getElementById('ecoScoreText').innerText = `⭐ ${ecoScore} điểm`;
         window.soundMgr.playCorrect();
         if (typeof fireConfetti === 'function') fireConfetti();
@@ -817,9 +882,17 @@ function loadNextEcoItem() {
         );
       } else {
         btn.classList.add('wrong');
+        window.recordAnswer?.(`eth_${item.id}`, false, { label: item.name, mode: 'ethics', audioKey: `ethics_${item.id}` });
         window.soundMgr.playWrong();
         window.soundMgr.speakTryAgain();
-        if (typeof showToast === 'function') showToast(`💡 Chưa đúng thùng rồi! "${item.name}" cần bỏ vào thùng ${item.binName}!`);
+        if (typeof showToast === 'function') showToast(`💡 Chưa đúng rồi! Gợi ý: "${item.name}" — hãy xem vỏ chai, thức ăn thừa hay pin nhé!`);
+      }
+    };
+    btn.onclick = chooseBin;
+    btn.onkeydown = (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        chooseBin();
       }
     };
   });

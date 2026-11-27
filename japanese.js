@@ -125,6 +125,29 @@ const JA_KATAKANA_DATA = [
   { kata: 'ン', romaji: 'n', word: 'パンダ (Gấu trúc)', emoji: '🐼' }
 ];
 
+const JA_KANJI_STROKES = {
+  '一': 1, '二': 2, '三': 3, '四': 5, '五': 4, '六': 4, '七': 2, '八': 2, '九': 2, '十': 2,
+  '百': 6, '千': 3, '円': 4, '日': 4, '月': 4, '火': 4, '水': 4, '木': 4, '金': 8, '土': 3,
+  '上': 3, '下': 3, '左': 5, '右': 5, '中': 4, '大': 3, '小': 3, '口': 3, '目': 5, '耳': 6,
+  '手': 4, '足': 7, '人': 2, '男': 7, '女': 3, '子': 3, '犬': 4, '虫': 6, '貝': 7, '力': 2,
+  '山': 3, '川': 3, '田': 5, '森': 12, '林': 8, '草': 9, '花': 7, '竹': 6, '石': 5, '雨': 8,
+  '空': 8, '天': 4, '気': 6, '夕': 3, '音': 9, '早': 6, '村': 7, '町': 7, '車': 7, '玉': 5,
+  '学': 8, '校': 10, '先': 6, '生': 5, '字': 6, '文': 4, '本': 5, '名': 6, '年': 6, '休': 6,
+  '入': 2, '出': 5, '立': 5, '見': 7, '正': 5, '赤': 7, '青': 8, '白': 5, '王': 4, '糸': 6
+};
+const JA_YOON_SOKUON_DATA = [
+  { key: 'ja_hira_きゃ', label: 'きゃ', romaji: 'kya', ex: 'きゃく (khách)' },
+  { key: 'ja_hira_きゅ', label: 'きゅ', romaji: 'kyu', ex: 'きゅう (số 9)' },
+  { key: 'ja_hira_きょ', label: 'きょ', romaji: 'kyo', ex: 'きょう (hôm nay)' },
+  { key: 'ja_hira_しゃ', label: 'しゃ', romaji: 'sha', ex: 'でんしゃ (tàu điện)' },
+  { key: 'ja_hira_しゅ', label: 'しゅ', romaji: 'shu', ex: 'しゅくだい (bài tập)' },
+  { key: 'ja_hira_しょ', label: 'しょ', romaji: 'sho', ex: 'しょうぼうしゃ (cứu hỏa)' },
+  { key: 'ja_hira_ちゃ', label: 'ちゃ', romaji: 'cha', ex: 'おちゃ (nước trà)' },
+  { key: 'ja_hira_ちゅ', label: 'ちゅ', romaji: 'chu', ex: 'うちゅう (vũ trụ)' },
+  { key: 'ja_hira_ちょ', label: 'ちょ', romaji: 'cho', ex: 'ちょうちょ (con bướm)' },
+  { key: 'ja_hira_sokuon', label: 'っ (Âm ngắt)', romaji: 'nhân đôi', ex: 'きって (con tem)' }
+];
+
 // ĐÚNG 80 CHỮ KANJI LỚP 1 CHUẨN MEXT (一年生の漢字 80字)
 const JA_KANJI_80_DATA = [
   // Bài 1 (20 chữ): Số đếm & Ngũ hành / Thiên nhiên
@@ -138,7 +161,7 @@ const JA_KANJI_80_DATA = [
   { id: 'ja_kanji_08', unit: 1, char: '八', kun: 'やっ(つ)', on: 'ハチ', vi: 'Số 8 (Tám)', word: '八 (はち)', emoji: '8️⃣' },
   { id: 'ja_kanji_09', unit: 1, char: '九', kun: 'ここの(つ)', on: 'キュウ', vi: 'Số 9 (Chín)', word: '九 (きゅう)', emoji: '9️⃣' },
   { id: 'ja_kanji_10', unit: 1, char: '十', kun: 'とお', on: 'ジュウ', vi: 'Số 10 (Mười)', word: '十 (じゅう)', emoji: '🔟' },
-  { id: 'ja_kanji_11', unit: 1, char: '百', kun: 'もも', on: 'ヒャク', vi: 'Một trăm (100)', word: '百 (ひゃく)', emoji: '💯' },
+  { id: 'ja_kanji_11', unit: 1, char: '百', kun: '— (chỉ On)', on: 'ヒャク', vi: 'Một trăm (100)', word: '百 (ひゃく)', emoji: '💯' },
   { id: 'ja_kanji_12', unit: 1, char: '千', kun: 'ち', on: 'セン', vi: 'Một nghìn (1000)', word: '千 (せん)', emoji: '🔢' },
   { id: 'ja_kanji_13', unit: 1, char: '円', kun: 'まる(い)', on: 'エン', vi: 'Đồng Yên / Tròn', word: '百円 (ひゃくえん)', emoji: '🪙' },
   { id: 'ja_kanji_14', unit: 1, char: '日', kun: 'ひ・か', on: 'ニチ', vi: 'Mặt Trời / Ngày', word: '日曜日 (にちようび)', emoji: '☀️' },
@@ -182,17 +205,17 @@ const JA_KANJI_80_DATA = [
   { id: 'ja_kanji_50', unit: 3, char: '雨', kun: 'あめ', on: 'ウ', vi: 'Cơn mưa', word: '雨 (あめ)', emoji: '☔' },
   { id: 'ja_kanji_51', unit: 3, char: '空', kun: 'そら・あ(く)', on: 'クウ', vi: 'Bầu trời', word: '青空 (あおぞら)', emoji: '🌤️' },
   { id: 'ja_kanji_52', unit: 3, char: '天', kun: 'あめ・あま', on: 'テン', vi: 'Bầu trời cao', word: '天気 (てんき)', emoji: '🌈' },
-  { id: 'ja_kanji_53', unit: 3, char: '気', kun: 'いき', on: 'キ・ケ', vi: 'Khí trời / Tinh thần', word: '元気 (げんき)', emoji: '⚡' },
+  { id: 'ja_kanji_53', unit: 3, char: '気', kun: '— (âm Hán: Khí)', on: 'キ・ケ', vi: 'Khí trời / Tinh thần', word: '元気 (げんき)', emoji: '⚡' },
   { id: 'ja_kanji_54', unit: 3, char: '夕', kun: 'ゆう', on: 'セキ', vi: 'Buổi chiều tà', word: '夕方 (ゆうがた)', emoji: '🌆' },
   { id: 'ja_kanji_55', unit: 3, char: '音', kun: 'おと・ね', on: 'オン', vi: 'Âm thanh', word: '音 (おと)', emoji: '🎵' },
   { id: 'ja_kanji_56', unit: 3, char: '早', kun: 'はや(い)', on: 'ソウ', vi: 'Sớm / Nhanh', word: '早い (はやい)', emoji: '⏰' },
   { id: 'ja_kanji_57', unit: 3, char: '村', kun: 'むら', on: 'ソン', vi: 'Ngôi làng', word: '村 (むら)', emoji: '🏡' },
   { id: 'ja_kanji_58', unit: 3, char: '町', kun: 'まち', on: 'チョウ', vi: 'Khu phố / Thị trấn', word: '町 (まち)', emoji: '🏘️' },
   { id: 'ja_kanji_59', unit: 3, char: '車', kun: 'くるま', on: 'シャ', vi: 'Xe ô tô', word: '車 (くるま)', emoji: '🚗' },
-  { id: 'ja_kanji_60', unit: 3, char: '玉', kun: 'たま', on: 'ギョク', vi: 'Viên ngọc / Bóng tròn', word: 'シャボン玉', emoji: '🔮' },
+  { id: 'ja_kanji_60', unit: 3, char: '玉', kun: 'たま', on: 'ギョク', vi: 'Viên ngọc / Bóng tròn', word: 'シャボン玉 (しゃぼんだま)', emoji: '🔮' },
   // Bài 4 (20 chữ): Trường học, Màu sắc & Hành động
   { id: 'ja_kanji_61', unit: 4, char: '学', kun: 'まな(ぶ)', on: 'ガク', vi: 'Học tập', word: '学校 (がっこう)', emoji: '🎒' },
-  { id: 'ja_kanji_62', unit: 4, char: '校', kun: 'こう', on: 'コウ', vi: 'Trường học', word: '小学校 (しょうがっこう)', emoji: '🏫' },
+  { id: 'ja_kanji_62', unit: 4, char: '校', kun: '— (âm Hán: Hiệu)', on: 'コウ', vi: 'Trường học', word: '小学校 (しょうがっこう)', emoji: '🏫' },
   { id: 'ja_kanji_63', unit: 4, char: '先', kun: 'さき', on: 'セン', vi: 'Trước / Thầy cô', word: '先生 (せんせい)', emoji: '👩‍🏫' },
   { id: 'ja_kanji_64', unit: 4, char: '生', kun: 'い(きる)・う(まれる)', on: 'セイ・ショウ', vi: 'Cuộc sống / Học sinh', word: '一年生 (いちねんせい)', emoji: '🌱' },
   { id: 'ja_kanji_65', unit: 4, char: '字', kun: 'あざ', on: 'ジ', vi: 'Chữ viết', word: '漢字 (かんじ)', emoji: '🔤' },
@@ -201,7 +224,7 @@ const JA_KANJI_80_DATA = [
   { id: 'ja_kanji_68', unit: 4, char: '名', kun: 'な', on: 'メイ', vi: 'Tên gọi', word: '名前 (なまえ)', emoji: '🪪' },
   { id: 'ja_kanji_69', unit: 4, char: '年', kun: 'とし', on: 'ネン', vi: 'Năm (Thời gian)', word: '今年 (ことし)', emoji: '📅' },
   { id: 'ja_kanji_70', unit: 4, char: '休', kun: 'やす(む)', on: 'キュウ', vi: 'Nghỉ ngơi', word: '休み (やすみ)', emoji: '🛌' },
-  { id: 'ja_kanji_71', unit: 4, char: '入', kun: 'はい(る)・い(れる)', on: 'ニュウ', vi: 'Đi vào', word: '入り口 (いりぐち)', emoji: '🚪' },
+  { id: 'ja_kanji_71', unit: 4, char: '入', kun: 'い(る)・はい(る)・い(れる)', on: 'ニュウ', vi: 'Đi vào', word: '入り口 (いりぐち)', emoji: '🚪' },
   { id: 'ja_kanji_72', unit: 4, char: '出', kun: 'で(る)・だ(す)', on: 'シュツ', vi: 'Đi ra', word: '出口 (でぐち)', emoji: '🚶' },
   { id: 'ja_kanji_73', unit: 4, char: '立', kun: 'た(つ)', on: 'リツ', vi: 'Đứng lên', word: '立つ (たつ)', emoji: '🧍' },
   { id: 'ja_kanji_74', unit: 4, char: '見', kun: 'み(る)', on: 'ケン', vi: 'Nhìn / Ngắm xem', word: '見る (みる)', emoji: '👀' },
@@ -209,7 +232,7 @@ const JA_KANJI_80_DATA = [
   { id: 'ja_kanji_76', unit: 4, char: '赤', kun: 'あか', on: 'セキ', vi: 'Màu đỏ', word: '赤 (あか)', emoji: '🔴' },
   { id: 'ja_kanji_77', unit: 4, char: '青', kun: 'あお', on: 'セイ', vi: 'Màu xanh dương', word: '青 (あお)', emoji: '🔵' },
   { id: 'ja_kanji_78', unit: 4, char: '白', kun: 'しろ', on: 'ハク', vi: 'Màu trắng', word: '白 (しろ)', emoji: '⚪' },
-  { id: 'ja_kanji_79', unit: 4, char: '王', kun: 'おう', on: 'オウ', vi: 'Vị vua / Chúa tể', word: '王さま (おうさま)', emoji: '👑' },
+  { id: 'ja_kanji_79', unit: 4, char: '王', kun: '— (âm Hán: Vương)', on: 'オウ', vi: 'Vị vua / Chúa tể', word: '王さま (おうさま)', emoji: '👑' },
   { id: 'ja_kanji_80', unit: 4, char: '糸', kun: 'いと', on: 'シ', vi: 'Sợi chỉ / Sợi tơ', word: '糸 (いと)', emoji: '🧵' }
 ];
 
@@ -217,6 +240,7 @@ const JA_KANJI_80_DATA = [
 const JA_STORIES_DATA = [
   {
     "id": "ja_story_1",
+    "image": "images/stories/ja_story_1.jpg",
     "badge": "📘 Sách 小1 Quốc Ngữ",
     "title": "🥕 おおきな かぶ (Củ Cải Khổng Lồ)",
     "audioKey": "ja_story_1",
@@ -363,6 +387,7 @@ const JA_STORIES_DATA = [
   },
   {
     "id": "ja_story_2",
+    "image": "images/stories/ja_story_2.jpg",
     "badge": "📘 Sách 小1 Quốc Ngữ",
     "title": "🐋 くじらぐも (Đám Mây Cá Voi)",
     "audioKey": "ja_story_2",
@@ -503,6 +528,7 @@ const JA_STORIES_DATA = [
   },
   {
     "id": "ja_story_3",
+    "image": "images/stories/ja_story_3.svg",
     "badge": "📘 Sách 小1 Quốc Ngữ",
     "title": "🦝 たぬきの いとぐるま (Guồng Quay Tơ Của Chú Lửng)",
     "audioKey": "ja_story_3",
@@ -643,6 +669,7 @@ const JA_STORIES_DATA = [
   },
   {
     "id": "ja_story_4",
+    "image": "images/stories/ja_story_4.svg",
     "badge": "📘 Sách 小1 Quốc Ngữ",
     "title": "🐶 ずうっと ずっと 大すきだよ (Mãi Yêu Chú Chó Elf)",
     "audioKey": "ja_story_4",
@@ -656,8 +683,8 @@ const JA_STORIES_DATA = [
       },
       {
         "key": "ja_story_4_l2",
-        "ja": "ぼくが せが のびるのに つれて、エルフは だんだん 年を とって いきました。",
-        "romaji": "Boku ga se ga nobiru no ni tsurete, Erufu wa dandan toshi o totte ikimashita.",
+        "ja": "ぼくが せが のびるに つれて、エルフは だんだん 年を とって いきました。",
+        "romaji": "Boku ga se ga nobiru ni tsurete, Erufu wa dandan toshi o totte ikimashita.",
         "vi": "Khi tớ càng cao lớn lên thì chú chó Elf lại càng già đi từng chút một."
       },
       {
@@ -783,6 +810,7 @@ const JA_STORIES_DATA = [
   },
   {
     "id": "ja_story_5",
+    "image": "images/stories/ja_story_5.svg",
     "badge": "📘 Sách 小1 Quốc Ngữ",
     "title": "🐸 おてがみ (Bức Thư Của Ếch Và Cóc)",
     "audioKey": "ja_story_5",
@@ -923,6 +951,7 @@ const JA_STORIES_DATA = [
   },
   {
     "id": "ja_story_6",
+    "image": "images/stories/ja_story_6.svg",
     "badge": "🏯 Cổ Tích Nhật Bản",
     "title": "🍑 ももたろう (Cậu Bé Quả Đào Momotaro)",
     "audioKey": "ja_story_6",
@@ -1063,6 +1092,7 @@ const JA_STORIES_DATA = [
   },
   {
     "id": "ja_story_7",
+    "image": "images/stories/ja_story_7.jpg",
     "badge": "📘 Sách 小1 Quốc Ngữ",
     "title": "🚗 じどうしゃ くらべ (So Sánh Các Loại Xe)",
     "audioKey": "ja_story_7",
@@ -1203,6 +1233,7 @@ const JA_STORIES_DATA = [
   },
   {
     "id": "ja_story_8",
+    "image": "images/stories/ja_story_8.jpg",
     "badge": "📘 Sách 小1 Quốc Ngữ",
     "title": "🦁 どうぶつの 赤ちゃん (Các Bé Động Vật Sơ Sinh)",
     "audioKey": "ja_story_8",
@@ -1216,9 +1247,9 @@ const JA_STORIES_DATA = [
       },
       {
         "key": "ja_story_8_l2",
-        "ja": "ライオンの 赤ちゃんは、とても 小さく 生まれます。まだ 目も 耳も よく 見えません。",
-        "romaji": "Raion no akachan wa, totemo chiisaku umaremasu. Mada me mo mimi mo yoku miemasen.",
-        "vi": "Em bé Sư Tử khi mới sinh rất bé xíu. Lúc này bé còn chưa mở hẳn mắt và tai cũng chưa nghe rõ."
+        "ja": "ライオンの 赤ちゃんは、とても 小さく 生まれます。まだ 目も 見えず、耳も よく きこえません。",
+        "romaji": "Raion no akachan wa, totemo chiisaku umaremasu. Mada me mo miezu, mimi mo yoku kikoemasen.",
+        "vi": "Em bé Sư Tử khi mới sinh rất bé xíu. Lúc này mắt bé chưa nhìn rõ và tai cũng chưa nghe rõ."
       },
       {
         "key": "ja_story_8_l3",
@@ -1343,6 +1374,7 @@ const JA_STORIES_DATA = [
   },
   {
     "id": "ja_story_9",
+    "image": "images/stories/ja_story_9.jpg",
     "badge": "🏯 Cổ Tích Nhật Bản",
     "title": "🍙 おむすび ころりん (Cơm Nắm Lăn Tròn)",
     "audioKey": "ja_story_9",
@@ -1483,6 +1515,7 @@ const JA_STORIES_DATA = [
   },
   {
     "id": "ja_story_10",
+    "image": "images/stories/ja_story_10.svg",
     "badge": "🏯 Cổ Tích Nhật Bản",
     "title": "🦀 さると かに (Chú Khỉ Và Chú Cua)",
     "audioKey": "ja_story_10",
@@ -1514,9 +1547,9 @@ const JA_STORIES_DATA = [
       },
       {
         "key": "ja_story_10_l5",
-        "ja": "けがをした かにの ために、うす、くり、はち、どろだんごが 仲間に なって たちあがりました。",
-        "romaji": "Kega o shita kani no tame ni, usu, kuri, hachi, dorodango ga nakama ni natte tachiagarimashita.",
-        "vi": "Thương Cua bị đau, các người bạn tốt gồm Cối Đá, Hạt Dẻ, Ong Vàng và Cục Đất Sét cùng hợp sức đòi công bằng."
+        "ja": "けがをした かにの ために、うす、くり、はちが 仲間に なって たちあがりました。",
+        "romaji": "Kega o shita kani no tame ni, usu, kuri, hachi ga nakama ni natte tachiagarimashita.",
+        "vi": "Thương Cua bị đau, các người bạn tốt gồm Cối Đá, Hạt Dẻ và Ong Vàng cùng hợp sức đòi công bằng."
       },
       {
         "key": "ja_story_10_l6",
@@ -1619,7 +1652,7 @@ const JA_STORIES_DATA = [
         ]
       }
     ],
-    "viMeaning": "Một hôm, chú Cua nhặt được nắm cơm ngon, nhưng Khỉ láu cá lại dụ đổi nắm cơm lấy mỗi một hạt hồng khô. Cua mang hạt đi trồng, ngày ngày tưới nước chăm sóc: \"Hạt hồng ơi hãy mau nảy mầm nhé!\" Chẳng bao lâu cây hồng lớn cao vút, sai trĩu quả chín ngọt, nhưng chú Cua nhỏ không biết trèo cây. Khỉ trèo lên cây chỉ ăn hết quả ngọt một mình rồi ném thẳng quả xanh cứng vào người chú Cua! Thương Cua bị đau, các người bạn tốt gồm Cối Đá, Hạt Dẻ, Ong Vàng và Cục Đất Sét cùng hợp sức đòi công bằng. Cả nhóm vào nhà Khỉ, mỗi bạn nấp sẵn ở một góc phòng chờ Khỉ trở về. Khỉ vừa về liền bị Hạt Dẻ nổ tách làm giật mình, Ong Vàng bay ra đuổi, rồi Cối Đá nặng giữ chặt lại. Chú Khỉ hối hận cúi đầu xin lỗi thật lòng, thế là mọi người tha thứ và cùng chia sẻ những quả hồng chín ngọt."
+    "viMeaning": "Một hôm, chú Cua nhặt được nắm cơm ngon, nhưng Khỉ láu cá lại dụ đổi nắm cơm lấy mỗi một hạt hồng khô. Cua mang hạt đi trồng, ngày ngày tưới nước chăm sóc: \"Hạt hồng ơi hãy mau nảy mầm nhé!\" Chẳng bao lâu cây hồng lớn cao vút, sai trĩu quả chín ngọt, nhưng chú Cua nhỏ không biết trèo cây. Khỉ trèo lên cây chỉ ăn hết quả ngọt một mình rồi ném thẳng quả xanh cứng vào người chú Cua! Thương Cua bị đau, các người bạn tốt gồm Cối Đá, Hạt Dẻ và Ong Vàng cùng hợp sức đòi công bằng. Cả nhóm vào nhà Khỉ, mỗi bạn nấp sẵn ở một góc phòng chờ Khỉ trở về. Khỉ vừa về liền bị Hạt Dẻ nổ tách làm giật mình, Ong Vàng bay ra đuổi, rồi Cối Đá nặng giữ chặt lại. Chú Khỉ hối hận cúi đầu xin lỗi thật lòng, thế là mọi người tha thứ và cùng chia sẻ những quả hồng chín ngọt."
   }
 ];
 
@@ -1879,8 +1912,9 @@ function renderJaHiraganaTab() {
       let idx = 0;
       const cards = document.querySelectorAll('#jaHiraGrid .ja-hira-card');
 
+      const myEp = ++jaEpoch;
       function nextHira() {
-        if (!jaAutoRunning) return;
+        if (!jaAutoRunning || myEp !== jaEpoch) return;
         if (idx >= JA_HIRAGANA_DATA.length) {
           stopJaAutoPlay();
           if (typeof showToast === 'function') showToast('🎉 すごい! Bảo Long đã nghe xong 46 chữ Hiragana!');
@@ -1893,7 +1927,7 @@ function renderJaHiraganaTab() {
         }
         const cur = JA_HIRAGANA_DATA[idx];
         window.soundMgr.playAudioFile(`ja_hira_${cur.hira}`, () => {
-          if (!jaAutoRunning) return;
+          if (!jaAutoRunning || myEp !== jaEpoch) return;
           idx++;
           jaAutoTimer = setTimeout(nextHira, 400);
         }, cur.hira);
@@ -1921,6 +1955,38 @@ function renderJaHiraganaTab() {
       });
       dakuonGrid.appendChild(card);
     });
+
+    if (!document.getElementById('jaYoonSection')) {
+      const yoonBox = document.createElement('div');
+      yoonBox.id = 'jaYoonSection';
+      yoonBox.innerHTML = `
+        <h3 class="section-blue-title" style="color: #7c3aed; margin: 20px 0 10px 0;">
+          <span>✨</span> Âm Ghép (拗音: きゃ・しゅ・ちょ) &amp; Âm Ngắt (促音: っ)
+        </h3>
+        <div class="ja-hira-grid" id="jaYoonGrid"></div>
+      `;
+      dakuonGrid.parentElement.appendChild(yoonBox);
+    }
+    const yoonGrid = document.getElementById('jaYoonGrid');
+    if (yoonGrid) {
+      yoonGrid.innerHTML = '';
+      JA_YOON_SOKUON_DATA.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'alpha-card ja-hira-card';
+        card.innerHTML = `
+          <div class="alpha-letter" style="color: #6d28d9; font-size: ${item.label.length > 3 ? '20px' : '28px'};">${item.label}</div>
+          <div class="alpha-phonetic-pill" style="background:#ede9fe; color:#5b21b6;">${item.romaji}</div>
+          <div class="alpha-ja" style="font-weight:700; color:#475569; margin-top:4px;">${item.ex}</div>
+        `;
+        card.addEventListener('click', () => {
+          stopJaAutoPlay();
+          window.soundMgr.playClick();
+          window.soundMgr.playAudioFile(item.key, null, item.label);
+          if (typeof showToast === 'function') showToast(`✨ ${item.label} (${item.romaji}) — ví dụ: ${item.ex}`);
+        });
+        yoonGrid.appendChild(card);
+      });
+    }
   }
 }
 
@@ -1978,8 +2044,9 @@ function renderJaKatakanaTab() {
       btnAuto.innerHTML = '<span>⏹️</span> Dừng đọc';
       let idx = 0;
       const cards = document.querySelectorAll('#jaKataGrid .ja-hira-card');
+      const myEp = ++jaEpoch;
       function nextKata() {
-        if (!jaAutoRunning) return;
+        if (!jaAutoRunning || myEp !== jaEpoch) return;
         if (idx >= JA_KATAKANA_DATA.length) {
           stopJaAutoPlay();
           if (typeof showToast === 'function') showToast('⚡ Tuyệt vời! Bảo Long đã nghe xong 46 chữ Katakana!');
@@ -1992,7 +2059,7 @@ function renderJaKatakanaTab() {
         }
         const cur = JA_KATAKANA_DATA[idx];
         window.soundMgr.playAudioFile(`ja_kata_${cur.kata}`, () => {
-          if (!jaAutoRunning) return;
+          if (!jaAutoRunning || myEp !== jaEpoch) return;
           idx++;
           jaAutoTimer = setTimeout(nextKata, 400);
         }, cur.kata);
@@ -2020,6 +2087,7 @@ function renderJaKanjiTab() {
   track.innerHTML = '';
   units.forEach(u => {
     const b = document.createElement('button');
+    b.type = 'button';
     b.className = `lesson-tab ${u.id === currentJaKanjiUnit ? 'active' : ''}`;
     b.innerText = u.title;
     b.onclick = () => {
@@ -2040,6 +2108,7 @@ function renderJaKanjiTab() {
     card.innerHTML = `
       <div class="kanji-top-row">
         <span class="kanji-emoji">${item.emoji}</span>
+        <span class="kanji-strokes-badge">${JA_KANJI_STROKES[item.char] || 4} nét</span>
         <button type="button" class="kanji-write-mini-btn" title="Tập viết chữ ${item.char}">✍️ Viết</button>
       </div>
       <div class="kanji-big-char">${item.char}</div>
@@ -2085,8 +2154,9 @@ function renderJaKanjiTab() {
       btnAuto.innerHTML = '<span>⏹️</span> Dừng đọc';
       let idx = 0;
       const cards = document.querySelectorAll('#jaKanjiGrid .ja-kanji-card');
+      const myEp = ++jaEpoch;
       function nextKanji() {
-        if (!jaAutoRunning) return;
+        if (!jaAutoRunning || myEp !== jaEpoch) return;
         if (idx >= list.length) {
           stopJaAutoPlay();
           if (typeof showToast === 'function') showToast('⛩️ Tuyệt vời! Bé đã nghe xong 20 chữ Kanji của bài!');
@@ -2099,7 +2169,7 @@ function renderJaKanjiTab() {
         }
         const cur = list[idx];
         window.soundMgr.playAudioFile(cur.id, () => {
-          if (!jaAutoRunning) return;
+          if (!jaAutoRunning || myEp !== jaEpoch) return;
           idx++;
           jaAutoTimer = setTimeout(nextKanji, 450);
         }, cur.word);
@@ -2180,6 +2250,7 @@ function renderJaStoriesTab() {
       </div>
     </div>
 
+    ${st.image ? `<div class="story-cover-frame"><img src="${st.image}" alt="${st.title}" loading="lazy"></div>` : ''}
     <div class="story-ja-lines" id="jaStoryLinesHost">
       ${st.jaLines.map((line, i) => `
         <div class="story-ja-row" data-line-idx="${i}">
@@ -2336,7 +2407,7 @@ function renderJaStoriesTab() {
           btn.classList.add('correct');
           qCard.classList.add('is-solved');
           addJaScore(5);
-          window.recordAnswer?.(`${st.id}_q${qi + 1}`, true, { label: `${st.title} (Câu ${qi + 1})`, mode: 'japanese', audioKey: q.qKey });
+          window.recordAnswer?.(`${st.id}_q${qi + 1}`, true, { label: `${st.title} (Câu ${qi + 1})`, mode: 'japanese', audioKey: q.qKey, noAutoCoin: true });
           window.soundMgr.playCorrect();
           window.soundMgr.speakPraise(stState.solved.size >= st.questions.length);
 
@@ -2424,6 +2495,7 @@ function renderJaVocabTab() {
 
   JA_VOCAB_TOPICS.forEach((topic, idx) => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `lesson-tab ${idx === currentJaTopicIdx ? 'active' : ''}`;
     btn.innerText = topic.title;
     btn.onclick = () => {
@@ -2550,6 +2622,7 @@ function renderJaWritingTab() {
 
     items.forEach(it => {
       const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = `ja-pick-char-btn ${it.ch === jaWriteChar ? 'active' : ''}`;
       btn.innerText = it.ch;
       btn.title = it.tip;
@@ -2592,24 +2665,39 @@ function renderJaWritingTab() {
   });
 }
 
+let jaHasInkDrawn = false;
+const jaAwardedWriteChars = new Set();
+
 function initJaCanvasEvents() {
   jaCanvas = document.getElementById('jaWritingCanvas');
   if (!jaCanvas) return;
   jaCtx = jaCanvas.getContext('2d');
-  jaCanvas.width = 260;
-  jaCanvas.height = 260;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const cssSize = 260;
+  jaCanvas.style.width = `${cssSize}px`;
+  jaCanvas.style.height = `${cssSize}px`;
+  jaCanvas.width = cssSize * dpr;
+  jaCanvas.height = cssSize * dpr;
+  jaCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   function coords(e) {
     const r = jaCanvas.getBoundingClientRect();
     return {
-      x: (e.clientX - r.left) * (jaCanvas.width / r.width),
-      y: (e.clientY - r.top) * (jaCanvas.height / r.height)
+      x: (e.clientX - r.left) * (cssSize / (r.width || cssSize)),
+      y: (e.clientY - r.top) * (cssSize / (r.height || cssSize))
     };
   }
 
   jaCanvas.addEventListener('mousedown', (e) => {
     jaDrawing = true;
+    jaHasInkDrawn = true;
     const c = coords(e);
+    jaCtx.save();
+    jaCtx.fillStyle = jaBrushColor;
+    jaCtx.beginPath();
+    jaCtx.arc(c.x, c.y, 6, 0, Math.PI * 2);
+    jaCtx.fill();
+    jaCtx.restore();
     jaCtx.beginPath();
     jaCtx.moveTo(c.x, c.y);
   });
@@ -2623,15 +2711,18 @@ function initJaCanvasEvents() {
     jaCtx.lineTo(c.x, c.y);
     jaCtx.stroke();
   });
-  jaCanvas.addEventListener('mouseup', () => { jaDrawing = false; jaCtx.closePath(); });
-  jaCanvas.addEventListener('mouseleave', () => { jaDrawing = false; jaCtx.closePath(); });
+  const stopJaDraw = () => { jaDrawing = false; jaCtx.closePath(); };
+  jaCanvas.addEventListener('mouseup', stopJaDraw);
+  jaCanvas.addEventListener('mouseleave', stopJaDraw);
 
   jaCanvas.addEventListener('touchstart', (e) => {
+    if (!e.touches || !e.touches[0]) return;
     e.preventDefault();
     const t = e.touches[0];
     jaCanvas.dispatchEvent(new MouseEvent('mousedown', { clientX: t.clientX, clientY: t.clientY }));
   }, { passive: false });
   jaCanvas.addEventListener('touchmove', (e) => {
+    if (!e.touches || !e.touches[0]) return;
     e.preventDefault();
     const t = e.touches[0];
     jaCanvas.dispatchEvent(new MouseEvent('mousemove', { clientX: t.clientX, clientY: t.clientY }));
@@ -2639,6 +2730,7 @@ function initJaCanvasEvents() {
   jaCanvas.addEventListener('touchend', () => {
     jaCanvas.dispatchEvent(new MouseEvent('mouseup', {}));
   });
+  jaCanvas.addEventListener('touchcancel', stopJaDraw);
 
   document.getElementById('btnJaClear')?.addEventListener('click', () => {
     window.soundMgr.playClick();
@@ -2646,11 +2738,21 @@ function initJaCanvasEvents() {
   });
 
   document.getElementById('btnJaFinish')?.addEventListener('click', () => {
+    if (!jaHasInkDrawn) {
+      window.soundMgr.playPop();
+      if (typeof showToast === 'function') showToast('✍️ Bảo Long thử tô nét chữ Nhật vào ô vuông trước nhé!');
+      return;
+    }
     window.soundMgr.playCorrect();
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playAudioFile('cheer_ja_good', null, 'Yoku dekimashita!');
-    if (typeof awardStars === 'function') awardStars(2, `Viết đẹp chữ Nhật "${jaWriteChar}"!`);
-    addJaScore(2);
+    if (!jaAwardedWriteChars.has(jaWriteChar)) {
+      jaAwardedWriteChars.add(jaWriteChar);
+      if (typeof awardStars === 'function') awardStars(2, `Viết đẹp chữ Nhật "${jaWriteChar}"!`);
+      addJaScore(2);
+    } else if (typeof showToast === 'function') {
+      showToast(`✍️ Nét chữ "${jaWriteChar}" đẹp lắm Bảo Long ơi!`);
+    }
   });
 
   document.querySelectorAll('.ja-color-dot').forEach(dot => {
@@ -2675,12 +2777,17 @@ function initJaCanvasEvents() {
   document.getElementById('btnJaCheck')?.addEventListener('click', () => {
     if (!jaCanvas || typeof evaluateCanvasGuideMatch !== 'function') return;
     window.soundMgr.playClick();
-    const res = evaluateCanvasGuideMatch(jaCanvas, (gCtx, w, h) => {
+    const res = evaluateCanvasGuideMatch(jaCanvas, (gCtx, w) => {
+      const cssSize = 260;
+      const dpr = Math.max(1, w / cssSize);
+      gCtx.save();
+      gCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       gCtx.font = 'bold 170px "Hiragino Kaku Gothic Pro", "Yu Gothic", "Meiryo", sans-serif';
       gCtx.fillStyle = '#000';
       gCtx.textAlign = 'center';
       gCtx.textBaseline = 'middle';
-      gCtx.fillText(jaWriteChar, w / 2, h / 2 + 8);
+      gCtx.fillText(jaWriteChar, cssSize / 2, cssSize / 2 + 8);
+      gCtx.restore();
     });
     if (typeof showToast === 'function') showToast(res.hintText);
     if (res.matchedPct >= 45) window.soundMgr.playPop();
@@ -2689,8 +2796,9 @@ function initJaCanvasEvents() {
 
 function drawJaMasumeGuide() {
   if (!jaCtx || !jaCanvas) return;
-  const w = jaCanvas.width;
-  const h = jaCanvas.height;
+  jaHasInkDrawn = false;
+  const w = 260;
+  const h = 260;
   jaCtx.clearRect(0, 0, w, h);
 
   // Ô vuông chữ thập nét đứt chuẩn tiểu học Nhật Bản (マス目)
@@ -2746,7 +2854,7 @@ function buildJaQuizPool(filterMode) {
   const kanjiPool = JA_KANJI_80_DATA.map(kj => ({
     id: kj.id,
     ja: kj.char,
-    romaji: kj.kun,
+    romaji: kj.word,
     vi: kj.vi,
     emoji: kj.emoji,
     audioKey: kj.id
@@ -2796,6 +2904,7 @@ function loadJaQuizQuestion() {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_ja_win', null, 'Sugoi! Bao Long');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Siêu sao Tiếng Nhật Song Ngữ 小1!');
 
     document.getElementById('jaQuizPlayStage').style.display = 'none';

@@ -3,9 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ứng dụng học Tiếng Việt, Toán, Đạo đức, Tự nhiên Đời sống, Âm nhạc, Mỹ thuật, Tiếng Nhật Tiểu học và Tiếng Anh cho bé Bảo Long hoàn toàn offline.">
+  <meta name="theme-color" content="#0284c7">
   <title>Bảo Long Thám Hiểm Tiếng Việt - Học Đọc &amp; Đánh Vần</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦖</text></svg>">
-  <link rel="stylesheet" href="style.css?v=20261126v8">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="images/icons/icon-192.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="images/icons/icon-192.png">
+  <link rel="stylesheet" href="style.css?v=20261127v10">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -138,8 +142,8 @@
     <!-- Tiêu đề lớn & Thanh Danh Hiệu Nhà Thám Hiểm Bảo Long -->
     <section class="expedition-header">
       <div class="expedition-title-badge">
-        <span class="compass-icon">🧭</span>
-        <span>Bản Đồ Thám Hiểm Của Bảo Long</span>
+        <span class="compass-icon" aria-hidden="true">🧭</span>
+        <h1 class="expedition-h1">Bản Đồ Thám Hiểm Của Bảo Long</h1>
       </div>
       <div class="explorer-status-strip">
         <div class="explorer-rank-pill" id="btnOpenStickersBanner" title="Nhấn để mở Kho Sticker">
@@ -856,15 +860,19 @@
           </div>
 
           <div class="ethics-tf-buttons">
-            <div role="button" tabindex="0" class="tf-choice-btn tf-btn-good" id="btnEthicsShouldDo">
+            <div class="tf-choice-wrap">
+              <button type="button" class="tf-choice-btn tf-btn-good" id="btnEthicsShouldDo">
+                <span>👍 NÊN LÀM</span>
+                <span class="tf-choice-sub">Hành động đẹp</span>
+              </button>
               <button type="button" class="quiz-opt-speak-btn" id="btnSpeakTfYes" aria-label="Nghe lựa chọn Nên làm">🔊</button>
-              <span>👍 NÊN LÀM</span>
-              <span style="font-size: 12px; opacity: 0.85;">Hành động đẹp</span>
             </div>
-            <div role="button" tabindex="0" class="tf-choice-btn tf-btn-bad" id="btnEthicsShouldNot">
+            <div class="tf-choice-wrap">
+              <button type="button" class="tf-choice-btn tf-btn-bad" id="btnEthicsShouldNot">
+                <span>👎 KHÔNG NÊN</span>
+                <span class="tf-choice-sub">Cần tránh nhé</span>
+              </button>
               <button type="button" class="quiz-opt-speak-btn" id="btnSpeakTfNo" aria-label="Nghe lựa chọn Không nên làm">🔊</button>
-              <span>👎 KHÔNG NÊN</span>
-              <span style="font-size: 12px; opacity: 0.85;">Cần tránh nhé</span>
             </div>
           </div>
         </div>
@@ -919,23 +927,29 @@
               </button>
             </div>
             <div class="eco-bins-grid">
-              <div role="button" tabindex="0" class="eco-bin-btn eco-bin-organic" data-bin="organic">
+              <div class="eco-bin-wrap">
+                <button type="button" class="eco-bin-btn eco-bin-organic" data-bin="organic">
+                  <span style="font-size: 28px;" aria-hidden="true">🥬</span>
+                  <span>Rác Hữu Cơ / Đốt được</span>
+                  <span class="eco-bin-sub">Thức ăn thừa, vỏ quả, lá cây</span>
+                </button>
                 <button type="button" class="quiz-opt-speak-btn" data-bin-speak="organic" aria-label="Nghe Rác Hữu Cơ">🔊</button>
-                <span style="font-size: 28px;">🥬</span>
-                <span>Rác Hữu Cơ / Đốt được</span>
-                <span style="font-size: 11px; opacity: 0.8;">Thức ăn thừa, vỏ quả, lá cây</span>
               </div>
-              <div role="button" tabindex="0" class="eco-bin-btn eco-bin-recycle" data-bin="recycle">
+              <div class="eco-bin-wrap">
+                <button type="button" class="eco-bin-btn eco-bin-recycle" data-bin="recycle">
+                  <span style="font-size: 28px;" aria-hidden="true">♻️</span>
+                  <span>Rác Tái Chế</span>
+                  <span class="eco-bin-sub">Chai nhựa PET, lon, báo giấy</span>
+                </button>
                 <button type="button" class="quiz-opt-speak-btn" data-bin-speak="recycle" aria-label="Nghe Rác Tái Chế">🔊</button>
-                <span style="font-size: 28px;">♻️</span>
-                <span>Rác Tái Chế</span>
-                <span style="font-size: 11px; opacity: 0.8;">Chai nhựa PET, lon, báo giấy</span>
               </div>
-              <div role="button" tabindex="0" class="eco-bin-btn eco-bin-hazard" data-bin="hazard">
+              <div class="eco-bin-wrap">
+                <button type="button" class="eco-bin-btn eco-bin-hazard" data-bin="hazard">
+                  <span style="font-size: 28px;" aria-hidden="true">🔋</span>
+                  <span>Pin &amp; Rác Đặc Biệt</span>
+                  <span class="eco-bin-sub">Pin cũ, bóng đèn hỏng</span>
+                </button>
                 <button type="button" class="quiz-opt-speak-btn" data-bin-speak="hazard" aria-label="Nghe Pin và Rác Đặc Biệt">🔊</button>
-                <span style="font-size: 28px;">🔋</span>
-                <span>Pin &amp; Rác Đặc Biệt</span>
-                <span style="font-size: 11px; opacity: 0.8;">Pin cũ, bóng đèn hỏng</span>
               </div>
             </div>
           </div>
@@ -957,7 +971,7 @@
       <div class="en-banner-box">
         <div class="dino-badge">🇬🇧 ENGLISH KIDS CLUB • CHUẨN MỸ BẢN XỨ 🇺🇸</div>
         <h2 class="dino-banner-title">Vương Quốc Tiếng Anh Của Bảo Long</h2>
-        <p class="dino-banner-desc" id="enBannerDesc">Học bảng 26 chữ cái A–Z, 8 chủ đề (64 từ vựng &amp; câu giao tiếp quen thuộc), chơi Nghe chọn hình và Ghép từ tiếng Anh cùng giọng đọc chuẩn Jenny &amp; Guy!</p>
+        <p class="dino-banner-desc" id="enBannerDesc">Học bảng 26 chữ cái A–Z, 8 chủ đề (64 từ vựng &amp; câu giao tiếp quen thuộc), chơi Nghe chọn hình và Ghép từ tiếng Anh cùng giọng đọc chuẩn Jenny &amp; Andrew!</p>
         <div class="math-session-badge" id="enSessionStars">⭐ English Stars: 0</div>
       </div>
 
@@ -1829,7 +1843,7 @@
   </div><!-- /.app-shell -->
 
   <!-- Modal Chi Tiết Từ Vựng & Đánh Vần & Tập Viết Ô Ly -->
-  <div class="modal-overlay" id="modalOverlay">
+  <div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true" aria-labelledby="modalWord">
     <div class="modal-content">
       <div class="modal-nav-header">
         <button type="button" class="modal-step-btn" id="modalPrevBtn" title="Từ trước (Phím mũi tên trái)">◀ Trước</button>
@@ -1883,11 +1897,11 @@
   </div>
 
   <!-- MỚI: Modal Kho Sticker & Thành Tích Của Bảo Long -->
-  <div class="modal-overlay" id="stickerModalOverlay">
+  <div class="modal-overlay" id="stickerModalOverlay" role="dialog" aria-modal="true" aria-labelledby="stickerModalTitle">
     <div class="modal-content" style="max-width: 560px; border-color: #fde047;">
       <div class="modal-nav-header" style="justify-content: space-between;">
-        <span style="font-size: 18px; font-weight: 900; color: #b45309;">🏆 Kho Báu Sao &amp; Sticker Của Bảo Long</span>
-        <button type="button" class="modal-close-btn" id="stickerModalCloseBtn">✕</button>
+        <span id="stickerModalTitle" style="font-size: 18px; font-weight: 900; color: #b45309;">🏆 Kho Báu Sao &amp; Sticker Của Bảo Long</span>
+        <button type="button" class="modal-close-btn" id="stickerModalCloseBtn" aria-label="Đóng Kho Sticker">✕</button>
       </div>
 
       <div class="profile-summary-card">
@@ -1925,6 +1939,7 @@
             <div class="parent-gate-title">🔒 Xác nhận người lớn (tránh bé bấm nhầm)</div>
             <div class="parent-gate-row">
               <span id="parentGateQuestion" class="parent-gate-q">7 × 8 = ?</span>
+              <label for="parentGateInput" class="sr-only">Đáp án xác nhận người lớn</label>
               <input type="number" id="parentGateInput" class="parent-gate-input" inputmode="numeric" placeholder="Đáp án">
               <button type="button" class="tool-chip" id="btnParentUnlock">Mở khóa</button>
             </div>
@@ -1950,7 +1965,7 @@
   </div>
 
   <!-- Thông báo Toast dưới đáy màn hình -->
-  <div class="toast-notice" id="toastNotice">
+  <div class="toast-notice" id="toastNotice" role="status" aria-live="polite">
     Chào mừng Bảo Long đến với Tiếng Việt kỳ thú! 🦖
   </div>
 
@@ -1958,17 +1973,24 @@
   <canvas id="confettiCanvas"></canvas>
 
   <!-- Scripts -->
-  <script src="data.js?v=20261126v8"></script>
-  <script src="speech.js?v=20261126v8"></script>
-  <script src="math.js?v=20261126v8"></script>
-  <script src="ethics.js?v=20261126v8"></script>
-  <script src="english.js?v=20261126v8"></script>
-  <script src="japanese.js?v=20261126v8"></script>
-  <script src="science_life.js?v=20261126v8"></script>
-  <script src="arts_pe.js?v=20261126v8"></script>
-  <script src="arcade.js?v=20261126v8"></script>
-  <script src="dragons.js?v=20261126v8"></script>
-  <script src="learning_plus.js?v=20261126v8"></script>
-  <script src="app.js?v=20261126v8"></script>
+  <script src="data.js?v=20261127v10"></script>
+  <script src="speech.js?v=20261127v10"></script>
+  <script src="math.js?v=20261127v10"></script>
+  <script src="ethics.js?v=20261127v10"></script>
+  <script src="english.js?v=20261127v10"></script>
+  <script src="japanese.js?v=20261127v10"></script>
+  <script src="science_life.js?v=20261127v10"></script>
+  <script src="arts_pe.js?v=20261127v10"></script>
+  <script src="arcade.js?v=20261127v10"></script>
+  <script src="dragons.js?v=20261127v10"></script>
+  <script src="learning_plus.js?v=20261127v10"></script>
+  <script src="app.js?v=20261127v10"></script>
+  <script>
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js?v=20261127v10').catch(() => {});
+      });
+    }
+  </script>
 </body>
 </html>

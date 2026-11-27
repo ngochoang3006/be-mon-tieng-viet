@@ -3,7 +3,16 @@
 // LUYỆN TAI THANH ĐIỆU, PHẢN HỒI NÉT VIẾT & GÓC PHỤ HUYNH MỞ RỘNG
 // ========================================================
 
-const LEITNER_INTERVAL_DAYS = [0, 1, 2, 4, 8, 16];
+const LEITNER_INTERVAL_DAYS = [0, 1, 1, 3, 7, 14];
+
+function escapeHtmlPlus(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 const DAILY_ARCADE_STAR_CAP = 25;
 
 const CUSTOM_VOICE_PRESETS = [
@@ -32,6 +41,8 @@ const customVoiceStore = (() => {
   const syncUrls = new Map();
   let mediaRecorder = null;
   let mediaStream = null;
+  let autoStopTimer = null;
+  let localPreviewAudio = null;
 
   function openDb() {
     if (dbPromise) return dbPromise;
@@ -143,6 +154,12 @@ const customVoiceStore = (() => {
     }
   }
 
+  function pickSupportedMime() {
+    if (typeof MediaRecorder === 'undefined' || typeof MediaRecorder.isTypeSupported !== 'function') return '';
+    const candidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/aac'];
+    return candidates.find(m => { try { return MediaRecorder.isTypeSupported(m); } catch (e) { return false; } }) || '';
+  }
+
   async function startRecording(key, onFinish) {
     if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === 'undefined') {
       if (typeof showToast === 'function') {
@@ -151,34 +168,40 @@ const customVoiceStore = (() => {
       return false;
     }
     try {
-      stopMicStream();
+      stopRecording();
+      window.soundMgr?.stopAll?.();
       mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const chunks = [];
-      mediaRecorder = new MediaRecorder(mediaStream);
-      const autoStop = setTimeout(() => {
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-          mediaRecorder.stop();
+      const mimeType = pickSupportedMime();
+      const rec = mimeType ? new MediaRecorder(mediaStream, { mimeType }) : new MediaRecorder(mediaStream);
+      mediaRecorder = rec;
+      const timer = setTimeout(() => {
+        if (rec.state === 'recording') {
+          try { rec.stop(); } catch (e) {}
         }
       }, 10000);
-      mediaRecorder.ondataavailable = (e) => {
+      autoStopTimer = timer;
+      rec.ondataavailable = (e) => {
         if (e.data && e.data.size > 0) chunks.push(e.data);
       };
-      mediaRecorder.onstop = async () => {
-        clearTimeout(autoStop);
+      rec.onstop = async () => {
+        clearTimeout(timer);
+        if (autoStopTimer === timer) autoStopTimer = null;
         stopMicStream();
+        if (mediaRecorder === rec) mediaRecorder = null;
         if (chunks.length > 0) {
-          const blob = new Blob(chunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+          const blob = new Blob(chunks, { type: rec.mimeType || mimeType || 'audio/webm' });
           await saveClip(key, blob);
           if (onFinish) onFinish(true, blob);
         } else if (onFinish) {
           onFinish(false, null);
         }
-        mediaRecorder = null;
       };
-      mediaRecorder.start();
+      rec.start();
       return true;
     } catch (e) {
       stopMicStream();
+      mediaRecorder = null;
       if (typeof showToast === 'function') {
         showToast('🔒 Chưa được cấp quyền Micro hoặc thiết bị không có micro.');
       }
@@ -187,19 +210,34 @@ const customVoiceStore = (() => {
   }
 
   function stopRecording() {
+    if (autoStopTimer) {
+      clearTimeout(autoStopTimer);
+      autoStopTimer = null;
+    }
     if (mediaRecorder && mediaRecorder.state === 'recording') {
-      try { mediaRecorder.stop(); } catch (e) {}
+      try { mediaRecorder.stop(); } catch (e) { stopMicStream(); mediaRecorder = null; }
     } else {
       stopMicStream();
+      mediaRecorder = null;
     }
   }
 
   function playLocalClip(key) {
     const url = syncUrls.get(key);
     if (!url) return false;
+    if (window.soundMgr?.isMuted) return true;
     try {
+      window.soundMgr?.stopAll?.();
+      if (localPreviewAudio) {
+        try { localPreviewAudio.pause(); } catch (e) {}
+      }
       const a = new Audio(url);
       a.setAttribute('playsinline', '');
+      a.playbackRate = window.soundMgr?.speedRate || 1;
+      a.onerror = () => {
+        if (typeof showToast === 'function') showToast('🔊 Bản thu chưa tương thích, dùng giọng mẫu nhé!');
+      };
+      localPreviewAudio = a;
       a.play().catch(() => {});
       return true;
     } catch (e) {
@@ -260,13 +298,16 @@ function normalizePlusStateFields(raw) {
       lastSeen: typeof st.lastSeen === 'string' ? st.lastSeen : getLocalDateKey(0),
       label: typeof st.label === 'string' ? st.label : k,
       mode: typeof st.mode === 'string' ? st.mode : 'vocab',
-      audioKey: typeof st.audioKey === 'string' ? st.audioKey : ''
+      audioKey: typeof st.audioKey === 'string' ? st.audioKey : '',
+      lastCoinDate: typeof st.lastCoinDate === 'string' ? st.lastCoinDate : ''
     };
   });
 
+  const cutoff90 = addDaysToDateKey(getLocalDateKey(0), -90);
   const rawDaily = raw && typeof raw.dailyLog === 'object' && raw.dailyLog ? raw.dailyLog : {};
   const cleanDaily = {};
   Object.keys(rawDaily).forEach(dKey => {
+    if (dKey < cutoff90) return;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(dKey)) return;
     const row = rawDaily[dKey] || {};
     const steps = row.steps && typeof row.steps === 'object' ? row.steps : {};
@@ -289,7 +330,7 @@ function normalizePlusStateFields(raw) {
   const parentSettings = {
     eyeBreakMinutes: [0, 15, 20, 30].includes(Number(rawSet.eyeBreakMinutes)) ? Number(rawSet.eyeBreakMinutes) : 20,
     focusHideGames: !!rawSet.focusHideGames,
-    dailyArcadeCap: Number(rawSet.dailyArcadeCap) > 0 ? Math.floor(Number(rawSet.dailyArcadeCap)) : DAILY_ARCADE_STAR_CAP
+    dailyArcadeCap: Number(rawSet.dailyArcadeCap) >= 10 ? Math.min(100, Math.floor(Number(rawSet.dailyArcadeCap))) : DAILY_ARCADE_STAR_CAP
   };
   const rawGear = raw && typeof raw.arcadeGear === 'object' && raw.arcadeGear ? raw.arcadeGear : {};
   const unlockedDecors = Array.isArray(rawGear.unlockedDecors)
@@ -378,7 +419,8 @@ function recordAnswer(itemId, isCorrect, meta = {}) {
     existing.level = Math.min(4, prevLevel + 1);
     const interval = LEITNER_INTERVAL_DAYS[existing.level + 1] || 1;
     existing.due = addDaysToDateKey(today, interval);
-    if (meta.mode !== 'arcade' && typeof window.awardCoins === 'function') {
+    if (!meta.noAutoCoin && meta.mode !== 'arcade' && existing.lastCoinDate !== today && typeof window.awardCoins === 'function') {
+      existing.lastCoinDate = today;
       window.awardCoins(5);
     }
   } else {
@@ -424,14 +466,15 @@ function markDailyStep(stepName) {
 }
 window.markDailyStep = markDailyStep;
 
-function getDueReviewItems(limit = 6) {
+function getDueReviewItems(limit = 6, forceSampleOnly = false) {
   if (typeof explorerState === 'undefined') return [];
   const today = getLocalDateKey(0);
   const stats = explorerState.wordStats || {};
   const list = [];
+  if (!forceSampleOnly) {
   Object.keys(stats).forEach(id => {
     const st = stats[id];
-    const isDue = !st.due || st.due <= today || st.wrong > 0 || st.level < 2;
+    const isDue = !st.due || st.due <= today;
     if (isDue) {
       const m = getWordMetaById(id) || {};
       list.push({
@@ -446,24 +489,22 @@ function getDueReviewItems(limit = 6) {
       });
     }
   });
+  }
   // Thêm từ đã mở nhưng chưa từng kiểm tra vào hàng đợi ôn nhẹ
-  if (list.length < limit && Array.isArray(explorerState.learnedIds)) {
+  if (!forceSampleOnly && list.length < limit && Array.isArray(explorerState.learnedIds)) {
     for (const id of explorerState.learnedIds) {
       if (list.length >= limit) break;
       if (stats[id]) continue;
       const m = getWordMetaById(id);
       if (m) {
-        list.push({
-          id,
-          label: m.label,
-          ja: m.ja,
-          icon: m.icon,
-          audioKey: m.audioKey,
-          level: 0,
-          wrong: 0,
-          due: today
-        });
+        list.push({ id, label: m.label, ja: m.ja, icon: m.icon, audioKey: m.audioKey, level: 0, wrong: 0, due: today });
       }
+    }
+  }
+  if (forceSampleOnly && list.length === 0 && typeof VOCAB_LESSONS !== 'undefined' && VOCAB_LESSONS[0]?.words) {
+    for (const w of VOCAB_LESSONS[0].words.slice(0, limit)) {
+      const m = getWordMetaById(w.id);
+      if (m) list.push({ id: w.id, label: m.label, ja: m.ja, icon: m.icon, audioKey: m.audioKey, level: 0, wrong: 0, due: today });
     }
   }
   list.sort((a, b) => (b.wrong - a.wrong) || (a.level - b.level));
@@ -555,13 +596,28 @@ function openDueReviewDeck() {
   if (!stage) return;
   dueReviewQueue = getDueReviewItems(6);
   if (dueReviewQueue.length === 0) {
+    const todayLog = ensureTodayLog();
+    const warmup = getDueReviewItems(3, true);
     stage.style.display = 'block';
     stage.innerHTML = `
       <div class="due-empty-box">
-        <span>🌟 Tuyệt vời! Bảo Long chưa có từ nào cần ôn. Chạm vào thẻ bài học hoặc chơi Ghép chữ để hệ thống ghi nhớ tiến độ nhé!</span>
-        <button type="button" class="tool-chip" id="btnCloseDueEmpty">Đóng</button>
+        <span>🌟 Tuyệt vời! Bảo Long chưa có từ nào đến hạn ôn hôm nay.</span>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${warmup.length > 0 ? '<button type="button" class="tool-chip" id="btnStartWarmupDue">🔁 Ôn nhanh 3 từ mẫu</button>' : ''}
+          ${todayLog && !todayLog.steps.review ? '<button type="button" class="tool-chip" id="btnMarkReviewEmpty">✅ Hoàn thành bước Ôn tập</button>' : ''}
+          <button type="button" class="tool-chip" id="btnCloseDueEmpty">Đóng</button>
+        </div>
       </div>
     `;
+    document.getElementById('btnStartWarmupDue')?.addEventListener('click', () => {
+      dueReviewQueue = warmup;
+      dueReviewIndex = 0;
+      renderDueReviewCard();
+    });
+    document.getElementById('btnMarkReviewEmpty')?.addEventListener('click', () => {
+      markDailyStep('review');
+      stage.style.display = 'none';
+    });
     document.getElementById('btnCloseDueEmpty')?.addEventListener('click', () => { stage.style.display = 'none'; });
     return;
   }
@@ -594,9 +650,9 @@ function renderDueReviewCard() {
         <button type="button" class="tool-chip" id="btnCloseDueCard">✕ Đóng</button>
       </div>
       <div class="due-card-main">
-        <div class="due-word-display">${item.label}</div>
+        <div class="due-word-display">${escapeHtmlPlus(item.label)}</div>
         <div class="due-hint-box" id="dueHintBox" style="${hideHintInitially ? 'display:none;' : ''}">
-          <span>${item.icon}</span> ${item.ja ? `<span>🇯🇵 ${item.ja}</span>` : ''}
+          <span>${item.icon}</span> ${item.ja ? `<span>🇯🇵 ${escapeHtmlPlus(item.ja)}</span>` : ''}
         </div>
         <div class="due-btn-row">
           ${hideHintInitially ? '<button type="button" class="tool-chip" id="btnDueReveal">👁️ Xem gợi ý</button>' : ''}
@@ -615,8 +671,13 @@ function renderDueReviewCard() {
   });
   document.getElementById('btnDueHear')?.addEventListener('click', () => {
     window.soundMgr?.playClick();
-    if (item.audioKey) window.soundMgr?.playAudioFile(item.audioKey, null, '');
-    else window.soundMgr?.speakWord(item.label);
+    if (item.audioKey && item.audioKey.includes(',')) {
+      window.soundMgr?.playAudioSequence(item.audioKey.split(','), null, item.label);
+    } else if (item.audioKey) {
+      window.soundMgr?.playAudioFile(item.audioKey, null, '');
+    } else {
+      window.soundMgr?.speakWord(item.label);
+    }
   });
   document.getElementById('btnDueRemembered')?.addEventListener('click', () => {
     window.soundMgr?.playCorrect();
@@ -637,6 +698,11 @@ function renderDueReviewCard() {
 // ========================================================
 let selfReadMode = false;
 let karaokeSentenceEpoch = 0;
+function stopKaraokePlayback() {
+  karaokeSentenceEpoch++;
+  document.querySelectorAll('.karaoke-word.is-active').forEach(el => el.classList.remove('is-active'));
+}
+window.stopKaraokePlayback = stopKaraokePlayback;
 
 function playDecodableKaraoke(sentenceObj, cardEl) {
   if (!sentenceObj || !Array.isArray(sentenceObj.tokens) || !window.soundMgr) return;
@@ -808,10 +874,15 @@ window.renderPhonicsDecodableSection = renderPhonicsDecodableSection;
 // 5. LUYỆN TAI THANH ĐIỆU & CẶP TỐI THIỂU VIỆT – NHẬT
 // ========================================================
 let minimalPairState = { index: 0, score: 0, currentTarget: null };
+let mpEpoch = 0;
+window.stopMinimalPairPlayback = () => { mpEpoch++; };
 
 function renderMinimalPairDrill() {
   const host = document.getElementById('minimalPairHost');
   if (!host || typeof MINIMAL_PAIR_DRILLS === 'undefined') return;
+  mpEpoch++;
+  const myMpEp = mpEpoch;
+  const myNav = window.appNavEpoch || 0;
   const drill = MINIMAL_PAIR_DRILLS[minimalPairState.index % MINIMAL_PAIR_DRILLS.length];
   const opts = drill.options;
   const target = opts[Math.floor(Math.random() * opts.length)];
@@ -861,14 +932,18 @@ function renderMinimalPairDrill() {
         recordAnswer(drillItemId, true, { label: `${opt.label} (${drill.title})`, mode: 'alphabet', audioKey: target.audioKey });
         if (typeof showToast === 'function') showToast(`🎉 Thính tai quá! Đúng tiếng "${target.label}"!`);
         setTimeout(() => {
+          if (mpEpoch !== myMpEp || (window.appNavEpoch || 0) !== myNav) return;
           minimalPairState.index = (minimalPairState.index + 1) % MINIMAL_PAIR_DRILLS.length;
           renderMinimalPairDrill();
         }, 700);
       } else {
         btn.classList.add('wrong');
         window.soundMgr?.playWrong();
-        recordAnswer(drillItemId, false, { label: `${target.label} (${drill.title})`, mode: 'alphabet', audioKey: target.audioKey });
-        setTimeout(() => window.soundMgr?.playAudioFile(target.audioKey, null, ''), 200);
+        recordAnswer(drillItemId, false, { label: `${target.label} (${drill.title})`, mode: 'alphabet', audioKey: target.audioKey, noAutoCoin: true });
+        setTimeout(() => {
+          if (mpEpoch !== myMpEp || (window.appNavEpoch || 0) !== myNav) return;
+          window.soundMgr?.playAudioFile(target.audioKey, null, '');
+        }, 200);
       }
     });
     row.appendChild(btn);
@@ -899,10 +974,13 @@ function drawHintByLevel(targetCtx, width, height, text, level, fontSpec, baseli
     targetCtx.setLineDash([4, 5]);
     targetCtx.strokeText(text, width / 2, height / 2 + baselineYOffset);
     targetCtx.setLineDash([]);
-    targetCtx.fillStyle = '#f43f5e';
+    targetCtx.strokeStyle = '#94a3b8';
+    targetCtx.fillStyle = '#cbd5e1';
+    targetCtx.lineWidth = 2;
     targetCtx.beginPath();
-    targetCtx.arc(leftX, height / 2 - 12, 6, 0, Math.PI * 2);
+    targetCtx.arc(leftX, height / 2 - 14, 6, 0, Math.PI * 2);
     targetCtx.fill();
+    targetCtx.stroke();
   }
   targetCtx.restore();
 }
@@ -929,9 +1007,9 @@ function evaluateCanvasGuideMatch(userCanvas, drawHiddenGuideFn) {
 
   let guidePixels = 0;
   let coveredPixels = 0;
+  let offGuidePixels = 0;
   let userInkPixels = 0;
 
-  // Lấy mẫu bước 2px để mượt 0ms; nét vẽ người dùng thường có màu xanh/đỏ/vàng/tím (không phải nền trắng/grid nhạt)
   for (let y = 0; y < h; y += 2) {
     for (let x = 0; x < w; x += 2) {
       const idx = (y * w + x) * 4;
@@ -939,13 +1017,15 @@ function evaluateCanvasGuideMatch(userCanvas, drawHiddenGuideFn) {
       const uAlpha = uData[idx + 3];
       const r = uData[idx], g = uData[idx + 1], b = uData[idx + 2];
       const isBlueGrid = b > 220 && r > 110 && g > 195;
-      const isGrayGuide = Math.abs(r - g) < 14 && Math.abs(g - b) < 14 && r > 175;
+      const isGrayGuide = Math.abs(r - g) < 22 && Math.abs(g - b) < 22 && r > 135;
       const isPinkCross = r > 235 && g > 145 && g < 195 && b > 155 && b < 205;
       const isUserInk = uAlpha > 140 && !isBlueGrid && !isGrayGuide && !isPinkCross;
       if (isUserInk) userInkPixels++;
       if (gAlpha > 60) {
         guidePixels++;
         if (isUserInk) coveredPixels++;
+      } else if (isUserInk) {
+        offGuidePixels++;
       }
     }
   }
@@ -953,7 +1033,12 @@ function evaluateCanvasGuideMatch(userCanvas, drawHiddenGuideFn) {
   if (userInkPixels < 40) {
     return { matchedPct: 0, totalInk: userInkPixels, hintText: '✏️ Bảo Long thử tô thêm nét chữ vào ô trước khi kiểm tra nhé!' };
   }
-  const pct = guidePixels > 0 ? Math.min(100, Math.round((coveredPixels / guidePixels) * 100)) : 0;
+  const recall = guidePixels > 0 ? coveredPixels / guidePixels : 0;
+  const precision = coveredPixels / Math.max(1, userInkPixels);
+  if (offGuidePixels > Math.max(guidePixels * 1.4, 150) || precision < 0.16) {
+    return { matchedPct: Math.min(25, Math.round(recall * precision * 100)), totalInk: userInkPixels, hintText: '🧹 Bé vẽ hơi tràn ra ngoài nét chữ mẫu — thử Xóa rồi đồ sát theo đường mờ nhé!' };
+  }
+  const pct = Math.min(100, Math.round(recall * Math.min(1, precision / 0.28) * 100));
   if (pct >= 45) {
     return { matchedPct: pct, totalInk: userInkPixels, hintText: `🌟 Tuyệt vời! Nét chữ của Bảo Long khớp ${pct}% vùng mẫu!` };
   }
@@ -977,6 +1062,14 @@ window.setJaWritingHintLevel = setJaWritingHintLevel;
 // 7. GÓC PHỤ HUYNH MỞ RỘNG, TẬP TRUNG, NHẮC NGHỈ MẮT & PHÒNG THU
 // ========================================================
 let eyeBreakPromptShownAtSec = 0;
+let lastStudyDateKey = getLocalDateKey(0);
+let studyTimerStarted = false;
+let lastParentVoiceKey = CUSTOM_VOICE_PRESETS[0].key;
+
+window.resetLearningPlusSessionFlags = () => {
+  eyeBreakPromptShownAtSec = 0;
+  lastStudyDateKey = getLocalDateKey(0);
+};
 
 function applyParentFocusMode() {
   const hide = !!(typeof explorerState !== 'undefined' && explorerState.parentSettings?.focusHideGames);
@@ -985,8 +1078,17 @@ function applyParentFocusMode() {
 window.applyParentFocusMode = applyParentFocusMode;
 
 function startStudyActivityTimer() {
+  if (studyTimerStarted) return;
+  studyTimerStarted = true;
   setInterval(() => {
     if (document.visibilityState === 'hidden' || typeof explorerState === 'undefined') return;
+    const today = getLocalDateKey(0);
+    if (today !== lastStudyDateKey) {
+      lastStudyDateKey = today;
+      eyeBreakPromptShownAtSec = 0;
+      ensureTodayLog();
+      renderDailyRoadmapHost();
+    }
     const log = ensureTodayLog();
     if (!log) return;
     log.seconds += 30;
@@ -1033,13 +1135,13 @@ function renderParentPlusSection() {
       <div class="parent-sub-title">📊 Báo cáo tuần gần nhất</div>
       <div class="parent-kpi-row">
         <span>📅 ${daysActive}/7 ngày học</span>
-        <span>⏱️ ${Math.max(1, Math.round(totalSec / 60))} phút</span>
+        <span>⏱️ ${Math.round(totalSec / 60)} phút</span>
         <span>🧠 ${mastered} từ nhớ vững (mức ≥3)</span>
         <span>🏎️ Sao đua xe hôm nay: ${todayArcade}/${set.dailyArcadeCap || DAILY_ARCADE_STAR_CAP}⭐</span>
       </div>
       <div class="parent-weak-list">
         <strong>Từ hay nhầm cần ôn thêm:</strong>
-        ${weakList.length ? weakList.map(([, s]) => `<span class="weak-pill">${s.label} (${s.wrong} lần)</span>`).join('') : '<span>Chưa có lỗi nào 🎉</span>'}
+        ${weakList.length ? weakList.map(([, w]) => `<span class="weak-pill">${escapeHtmlPlus(w.label)} (${w.wrong} lần)</span>`).join('') : '<span>Chưa có lỗi nào 🎉</span>'}
       </div>
     </div>
 
@@ -1055,8 +1157,17 @@ function renderParentPlusSection() {
         </select>
       </label>
       <label class="parent-check-row">
+        <span>🏎️ Trần Sao Đua Xe mỗi ngày:</span>
+        <select id="parentArcadeCapSelect">
+          <option value="15" ${(set.dailyArcadeCap || 25) === 15 ? 'selected' : ''}>15 ⭐/ngày</option>
+          <option value="25" ${(set.dailyArcadeCap || 25) === 25 ? 'selected' : ''}>25 ⭐/ngày</option>
+          <option value="35" ${(set.dailyArcadeCap || 25) === 35 ? 'selected' : ''}>35 ⭐/ngày</option>
+          <option value="50" ${(set.dailyArcadeCap || 25) === 50 ? 'selected' : ''}>50 ⭐/ngày</option>
+        </select>
+      </label>
+      <label class="parent-check-row">
         <input type="checkbox" id="parentFocusModeChk" ${set.focusHideGames ? 'checked' : ''}>
-        <span>Chế độ Tập Trung (tạm ẩn tab Đua Xe &amp; Khu Trò Chơi)</span>
+        <span>Chế độ Tập Trung (tạm ẩn Đua Xe &amp; Khu Trò Chơi)</span>
       </label>
       <label class="parent-check-row">
         <input type="checkbox" id="parentNoSysTtsChk" ${sysDisabled ? 'checked' : ''}>
@@ -1088,6 +1199,12 @@ function renderParentPlusSection() {
     if (typeof saveProgress === 'function') saveProgress();
     if (typeof showToast === 'function') showToast('⏰ Đã cập nhật hẹn giờ nhắc nghỉ mắt.');
   });
+  document.getElementById('parentArcadeCapSelect')?.addEventListener('change', (e) => {
+    explorerState.parentSettings.dailyArcadeCap = Number(e.target.value) || DAILY_ARCADE_STAR_CAP;
+    if (typeof saveProgress === 'function') saveProgress();
+    renderParentPlusSection();
+    if (typeof showToast === 'function') showToast(`🏎️ Đã đặt giới hạn Sao Đua Xe: ${explorerState.parentSettings.dailyArcadeCap} ⭐/ngày.`);
+  });
   document.getElementById('parentFocusModeChk')?.addEventListener('change', (e) => {
     explorerState.parentSettings.focusHideGames = !!e.target.checked;
     applyParentFocusMode();
@@ -1100,6 +1217,10 @@ function renderParentPlusSection() {
   });
 
   const sel = document.getElementById('parentVoiceKeySelect');
+  if (sel && CUSTOM_VOICE_PRESETS.some(p => p.key === lastParentVoiceKey)) {
+    sel.value = lastParentVoiceKey;
+  }
+  sel?.addEventListener('change', () => { lastParentVoiceKey = sel.value; });
   const recBtn = document.getElementById('btnParentRecStart');
   let parentRecording = false;
   recBtn?.addEventListener('click', async () => {
@@ -1144,8 +1265,12 @@ function renderParentPlusSection() {
 }
 window.renderParentPlusSection = renderParentPlusSection;
 
-document.addEventListener('DOMContentLoaded', () => {
+let learningPlusInited = false;
+function initLearningPlus() {
+  if (learningPlusInited) return;
+  learningPlusInited = true;
   applyParentFocusMode();
   startStudyActivityTimer();
   renderDailyRoadmapHost();
-});
+}
+window.initLearningPlus = initLearningPlus;

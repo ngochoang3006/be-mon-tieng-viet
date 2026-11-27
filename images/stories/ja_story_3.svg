@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="18" fill="url(#sky)"/>
+  
+  <circle cx="515" cy="82" r="44" fill="#fef08a"/>
+  <circle cx="110" cy="70" r="3" fill="#ffffff"/><circle cx="240" cy="52" r="2.5" fill="#ffffff"/><circle cx="390" cy="88" r="3" fill="#ffffff"/>
+  <rect x="0" y="250" width="640" height="110" fill="#78350f"/>
+  <!-- Shoji screen window -->
+  <rect x="55" y="75" width="150" height="145" rx="8" fill="#fef9c3" stroke="#92400e" stroke-width="6"/>
+  <line x1="130" y1="75" x2="130" y2="220" stroke="#92400e" stroke-width="3"/><line x1="55" y1="147" x2="205" y2="147" stroke="#92400e" stroke-width="3"/>
+  <!-- Wooden spinning wheel (Itoguruma) -->
+  <g transform="translate(415, 195)">
+    <circle cx="0" cy="0" r="56" fill="none" stroke="#f59e0b" stroke-width="8"/>
+    <line x1="0" y1="0" x2="54.0" y2="0.0" stroke="#fbbf24" stroke-width="4"/><line x1="0" y1="0" x2="38.2" y2="38.2" stroke="#fbbf24" stroke-width="4"/><line x1="0" y1="0" x2="0.0" y2="54.0" stroke="#fbbf24" stroke-width="4"/><line x1="0" y1="0" x2="-38.2" y2="38.2" stroke="#fbbf24" stroke-width="4"/><line x1="0" y1="0" x2="-54.0" y2="0.0" stroke="#fbbf24" stroke-width="4"/><line x1="0" y1="0" x2="-38.2" y2="-38.2" stroke="#fbbf24" stroke-width="4"/><line x1="0" y1="0" x2="-0.0" y2="-54.0" stroke="#fbbf24" stroke-width="4"/><line x1="0" y1="0" x2="38.2" y2="-38.2" stroke="#fbbf24" stroke-width="4"/>
+    <circle cx="0" cy="0" r="10" fill="#b45309"/>
+    <rect x="-80" y="55" width="155" height="16" rx="6" fill="#b45309"/>
+  </g>
+  <!-- Cute Tanuki spinning yarn -->
+  <g transform="translate(270, 206)">
+    <ellipse cx="0" cy="36" rx="34" ry="30" fill="#a16207"/>
+    <ellipse cx="0" cy="38" rx="18" ry="20" fill="#fef3c7"/>
+    <circle cx="0" cy="-6" r="28" fill="#a16207"/>
+    <ellipse cx="-11" cy="-8" rx="10" ry="8" fill="#451a03"/><ellipse cx="11" cy="-8" rx="10" ry="8" fill="#451a03"/>
+    <circle cx="-10" cy="-9" r="3" fill="#ffffff"/><circle cx="10" cy="-9" r="3" fill="#ffffff"/>
+    <ellipse cx="0" cy="3" rx="6" ry="4" fill="#1e293b"/>
+    <ellipse cx="-44" cy="48" rx="26" ry="12" fill="#854d0e"/>
+  </g>
+
+</svg>

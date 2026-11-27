@@ -79,6 +79,12 @@ let dinoQuizEpoch = 0;
 let dinoDigCurrentIndex = 0;
 let dinoDigHits = 0;
 let dinoDigBadges = 0;
+let dinoDigEpoch = 0;
+let orthoQuizEpoch = 0;
+let listenAnsweredCount = 0;
+let lastFocusedBeforeModal = null;
+let storageQuotaWarned = false;
+let lastCanvasCssWidth = 0;
 
 // Game 7: Vehicle Quiz State
 let quizQuestions = [];
@@ -97,6 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initEventListeners();
   syncTopControlsUI();
   updateProfileHUD();
+  window.initLearningPlus?.();
   renderCurrentView();
   initCanvas();
 });
@@ -130,7 +137,16 @@ function loadProgress() {
       explorerState = migrateProgressData(JSON.parse(raw));
     }
   } catch (e) {
-    // Ignore storage error
+    console.error('Lỗi đọc dữ liệu tiến độ:', e);
+    try {
+      const corrupt = localStorage.getItem(PROGRESS_KEY);
+      if (corrupt) localStorage.setItem(`${PROGRESS_KEY}_corrupt_backup`, corrupt);
+    } catch (e2) {}
+    setTimeout(() => {
+      if (typeof showToast === 'function') {
+        showToast('⚠️ Dữ liệu lưu cũ gặp lỗi định dạng — hệ thống đã tạo bản dự phòng an toàn.');
+      }
+    }, 600);
   }
 }
 
@@ -139,7 +155,10 @@ function saveProgress() {
     explorerState.schemaVersion = PROGRESS_SCHEMA_VERSION;
     localStorage.setItem(PROGRESS_KEY, JSON.stringify(explorerState));
   } catch (e) {
-    // Ignore storage error
+    if (!storageQuotaWarned && typeof showToast === 'function') {
+      storageQuotaWarned = true;
+      showToast('⚠️ Bộ nhớ trình duyệt đang bị giới hạn — hãy Export sao lưu trong Góc Phụ Huynh nhé.');
+    }
   }
 }
 
@@ -196,17 +215,13 @@ function markWordLearned(wordId) {
   if (!wordId) return false;
   if (!explorerState.learnedIds.includes(wordId)) {
     explorerState.learnedIds.push(wordId);
-    explorerState.stars += 2;
-    explorerState.coins = (explorerState.coins || 0) + 3;
     const log = typeof ensureTodayLog === 'function' ? ensureTodayLog() : null;
     if (log) {
       log.newWords = (log.newWords || 0) + 1;
-      log.starsEarned = (log.starsEarned || 0) + 2;
       if (log.newWords >= 2 && typeof markDailyStep === 'function') markDailyStep('learn');
     }
-    saveProgress();
-    updateProfileHUD();
-    if (typeof renderDailyRoadmapHost === 'function') renderDailyRoadmapHost();
+    awardStars(2, '', false, 'learn');
+    awardCoins(3, false);
     return true;
   }
   return false;
@@ -238,6 +253,9 @@ function updateProfileHUD() {
 }
 
 function openStickerModal() {
+  if (!document.getElementById('stickerModalOverlay')?.classList.contains('active')) {
+    lastFocusedBeforeModal = document.activeElement;
+  }
   window.soundMgr.playClick();
   const rank = getCurrentRank(explorerState.stars);
   const nextRank = EXPLORER_RANKS.find(r => r.minStars > explorerState.stars);
@@ -299,6 +317,7 @@ function openStickerModal() {
   resetParentCornerUI();
   initParentCornerOnce();
   document.getElementById('stickerModalOverlay').classList.add('active');
+  setTimeout(() => document.getElementById('stickerModalCloseBtn')?.focus(), 40);
 }
 
 // ========================================================
@@ -336,11 +355,11 @@ function initEventListeners() {
   document.getElementById('btnOpenStickersBanner')?.addEventListener('click', openStickerModal);
   document.getElementById('stickerModalCloseBtn')?.addEventListener('click', () => {
     window.soundMgr.playClick();
-    document.getElementById('stickerModalOverlay').classList.remove('active');
+    closeStickerModalHelper();
   });
   document.getElementById('stickerModalOverlay')?.addEventListener('click', (e) => {
     if (e.target.id === 'stickerModalOverlay') {
-      document.getElementById('stickerModalOverlay').classList.remove('active');
+      closeStickerModalHelper();
     }
   });
 
@@ -357,6 +376,8 @@ function initEventListeners() {
   });
 
   document.getElementById('btnVoiceGender')?.addEventListener('click', () => {
+    stopAutoPlay();
+    window.soundMgr.stopAll();
     if (window.soundMgr.gender === 'female') {
       window.soundMgr.setGender('male');
       showToast('Đã đổi sang Giọng Nam (Ba Nam Minh) ấm áp!');
@@ -384,6 +405,7 @@ function initEventListeners() {
   });
 
   document.getElementById('btnMute')?.addEventListener('click', () => {
+    stopAutoPlay();
     window.soundMgr.setMuted(!window.soundMgr.isMuted);
     syncTopControlsUI();
     showToast(window.soundMgr.isMuted ? '🔇 Đã tắt âm thanh' : '🔊 Đã bật âm thanh');
@@ -409,13 +431,33 @@ function initEventListeners() {
   document.getElementById('modalPrevBtn')?.addEventListener('click', () => navigateModal(-1));
   document.getElementById('modalNextBtn')?.addEventListener('click', () => navigateModal(1));
 
+  const trapFocusInOverlay = (overlayEl, e) => {
+    const focusables = Array.from(overlayEl.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'))
+      .filter(el => el.offsetParent !== null);
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+
   document.addEventListener('keydown', (e) => {
-    const modalOpen = document.getElementById('modalOverlay')?.classList.contains('active');
-    const stkOpen = document.getElementById('stickerModalOverlay')?.classList.contains('active');
+    const modalOv = document.getElementById('modalOverlay');
+    const stkOv = document.getElementById('stickerModalOverlay');
+    const modalOpen = modalOv?.classList.contains('active');
+    const stkOpen = stkOv?.classList.contains('active');
     if (e.key === 'Escape') {
       closeMobileSidebar();
       if (modalOpen) closeModal();
-      if (stkOpen) document.getElementById('stickerModalOverlay').classList.remove('active');
+      if (stkOpen) closeStickerModalHelper();
+    } else if (e.key === 'Tab') {
+      if (modalOpen && modalOv) trapFocusInOverlay(modalOv, e);
+      else if (stkOpen && stkOv) trapFocusInOverlay(stkOv, e);
     } else if (modalOpen) {
       if (e.key === 'ArrowLeft') navigateModal(-1);
       if (e.key === 'ArrowRight') navigateModal(1);
@@ -464,9 +506,10 @@ function initEventListeners() {
     }
     const box = document.getElementById('canvasDrawingBox');
     if (box && box.classList.contains('active')) {
-      resizeCanvasToFit();
-      clearCanvas();
-      if (currentWordModal) drawLetterGuide(currentWordModal.word);
+      const targetW = box.clientWidth > 100 ? Math.max(260, Math.min(400, box.clientWidth - 20)) : 340;
+      if (Math.abs(targetW - lastCanvasCssWidth) >= 20) {
+        resizeCanvasToFit(true);
+      }
     }
   });
 }
@@ -497,6 +540,11 @@ function stopAutoPlay() {
   if (typeof stopEnAutoPlay === 'function') stopEnAutoPlay();
   if (typeof stopJaAutoPlay === 'function') stopJaAutoPlay();
   if (typeof stopDragonAutoPlay === 'function') stopDragonAutoPlay();
+  if (typeof window.stopScienceAutoPlay === 'function') window.stopScienceAutoPlay();
+  if (typeof window.stopArtsSongPlayback === 'function') window.stopArtsSongPlayback();
+  if (typeof window.stopKaraokePlayback === 'function') window.stopKaraokePlayback();
+  if (typeof window.stopMinimalPairPlayback === 'function') window.stopMinimalPairPlayback();
+  window.customVoiceStore?.stopRecording?.();
   if (autoPlayTimer) {
     clearTimeout(autoPlayTimer);
     autoPlayTimer = null;
@@ -564,6 +612,10 @@ let phonicsShowStories = false;
 let currentVnStoryIdx = 0;
 
 function switchMode(mode) {
+  if (explorerState.parentSettings?.focusHideGames && (mode === 'game' || mode === 'arcade')) {
+    showToast('📚 Đang bật Chế độ Tập Trung — vào Góc Phụ Huynh để mở lại Trò chơi & Đua xe nhé!');
+    return;
+  }
   stopAutoPlay();
   window.soundMgr.stopAll();
   if (typeof stopArcadeGameLoop === 'function') stopArcadeGameLoop();
@@ -778,6 +830,7 @@ function renderRoadmapHeader(lessonsList, tagLabel, challengeLabel) {
     const doneCount = les.words.filter(w => explorerState.learnedIds.includes(w.id)).length;
     const isComplete = doneCount === les.words.length;
     const tab = document.createElement('button');
+    tab.type = 'button';
     tab.className = `lesson-tab ${idx === currentLessonIdx ? 'active' : ''}`;
     tab.innerHTML = `<span>Bài ${les.id}</span> <span style="font-size:11px; opacity:0.88">${isComplete ? '✅' : `${doneCount}/${les.words.length}`}</span>`;
     tab.addEventListener('click', () => {
@@ -829,7 +882,7 @@ function renderAlphabetView() {
       <div class="alpha-letter">${item.char} ${item.lower}</div>
       <div class="alpha-phonetic-pill">"${item.phonetic}"</div>
       <div class="alpha-icon">${item.icon}</div>
-      <button class="alpha-example-btn" title="Chạm để nghe từ ví dụ: ${item.example}">
+      <button type="button" class="alpha-example-btn" title="Chạm để nghe từ ví dụ: ${item.example}">
         <div class="alpha-word">🔊 ${item.word}</div>
         <div class="alpha-ja">${item.ja}</div>
       </button>
@@ -886,7 +939,7 @@ function renderAlphabetView() {
         <div class="alpha-letter" style="color: #6d28d9; font-size: 28px;">${dg.char} <span style="font-size:20px; opacity:0.8">(${dg.lower})</span></div>
         <div class="alpha-phonetic-pill" style="background:#ede9fe; color:#5b21b6;">Đọc: "${dg.phonetic}"</div>
         <div style="font-size: 26px; margin: 4px 0;">${dg.icon}</div>
-        <button class="alpha-example-btn" style="background:#f5f3ff; border-color:#ddd6fe;">
+        <button type="button" class="alpha-example-btn" style="background:#f5f3ff; border-color:#ddd6fe;">
           <div class="alpha-word" style="color:#6d28d9;">🔊 ${dg.word}</div>
           <div class="alpha-ja">${dg.ja}</div>
         </button>
@@ -967,6 +1020,7 @@ function renderAlphabetView() {
   }
   if (btnCloseOrtho && orthoStage) {
     btnCloseOrtho.onclick = () => {
+      orthoQuizEpoch++;
       window.soundMgr.stopAll();
       orthoStage.style.display = 'none';
     };
@@ -982,6 +1036,7 @@ let orthoQuizScore = 0;
 
 function initOrthographyQuiz() {
   if (typeof ORTHOGRAPHY_QUIZ_DATA === 'undefined') return;
+  orthoQuizEpoch++;
   orthoQuizList = [...ORTHOGRAPHY_QUIZ_DATA].sort(() => Math.random() - 0.5);
   orthoQuizIdx = 0;
   orthoQuizScore = 0;
@@ -991,6 +1046,8 @@ function initOrthographyQuiz() {
 function loadOrthoQuizQuestion() {
   const optsGrid = document.getElementById('orthoQuizOptionsGrid');
   if (!optsGrid) return;
+  orthoQuizEpoch++;
+  const myOrthoEp = orthoQuizEpoch;
   if (orthoQuizIdx >= orthoQuizList.length) {
     fireConfetti();
     window.soundMgr.playVictory();
@@ -1043,7 +1100,7 @@ function loadOrthoQuizQuestion() {
         fireConfetti();
         showToast(`✅ Chuẩn luôn "${q.fullWord}"! ${q.ruleNote}`);
         window.soundMgr.playPraiseThen(false,
-          () => (window.appNavEpoch || 0) === myNav && currentMode === 'alphabet',
+          () => (window.appNavEpoch || 0) === myNav && orthoQuizEpoch === myOrthoEp && currentMode === 'alphabet',
           () => {
             orthoQuizIdx++;
             loadOrthoQuizQuestion();
@@ -1085,17 +1142,18 @@ function renderVnStoriesView() {
       <div class="lesson-tabs-track" id="vnStoriesTrack" style="margin-bottom: 14px;"></div>
       <div class="story-header-row">
         <h3 style="margin:0; font-size:20px; font-weight:900; color:#be123c;">${st.icon} ${st.title}</h3>
-        <button class="challenge-btn" id="btnHearVnStory" style="padding:8px 18px; font-size:14px;">
+        <button type="button" class="challenge-btn" id="btnHearVnStory" style="padding:8px 18px; font-size:14px;">
           <span>🔊</span> Nghe ${window.soundMgr?.gender === 'male' ? 'ba' : 'cô'} đọc bài văn
         </button>
       </div>
+      ${st.image ? `<div class="story-cover-frame"><img src="${st.image}" alt="${st.title}" loading="lazy"></div>` : ''}
       <div class="story-vn-lines">
         ${st.lines.map(l => `<p class="story-vn-line">${l}</p>`).join('')}
       </div>
       <div class="story-comp-box">
         <div class="quiz-question-box" style="margin-bottom:12px;">
           <div class="quiz-question-title" style="font-size:17px;">🎯 ${st.question}</div>
-          <button class="btn-hear-hint" id="btnHearVnStoryQ" style="margin:8px auto 0 auto;"><span>🔊</span> Nghe câu hỏi &amp; đáp án</button>
+          <button type="button" class="btn-hear-hint" id="btnHearVnStoryQ" style="margin:8px auto 0 auto;"><span>🔊</span> Nghe câu hỏi &amp; đáp án</button>
         </div>
         <div class="quiz-options-grid" id="vnStoryOptionsGrid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));"></div>
       </div>
@@ -1105,6 +1163,7 @@ function renderVnStoriesView() {
   const track = document.getElementById('vnStoriesTrack');
   VIET_STORIES_DATA.forEach((item, idx) => {
     const pill = document.createElement('button');
+    pill.type = 'button';
     pill.className = `lesson-tab ${idx === currentVnStoryIdx ? 'active' : ''}`;
     pill.innerText = `${item.icon} Bài ${idx + 1}`;
     pill.onclick = () => {
@@ -1148,7 +1207,14 @@ function renderVnStoriesView() {
         card.classList.add('correct');
         window.soundMgr.playCorrect();
         fireConfetti();
-        awardStars(5, 'Đọc hiểu Tiếng Việt HK2 siêu giỏi!');
+        const vnQuizKey = `vn_story_done_${st.id}`;
+        const alreadyDone = !!explorerState.wordStats?.[vnQuizKey];
+        window.recordAnswer?.(vnQuizKey, true, { label: st.title, mode: 'phonics', audioKey: st.qAudioKey, noAutoCoin: true });
+        if (!alreadyDone) {
+          awardStars(5, 'Đọc hiểu Tiếng Việt HK2 siêu giỏi!');
+        } else {
+          showToast('🌟 Đọc hiểu chính xác! Bảo Long nhớ bài rất kỹ!');
+        }
         markWordLearned(st.id);
         window.soundMgr.speakPraise(true);
       } else {
@@ -1259,6 +1325,9 @@ function renderVehicleView() {
 // MODAL FLASHCARD LIÊN HOÀN (◀ / ▶) & TẬP VIẾT 4 Ô LY
 // ========================================================
 function openModal(wordObj, list = null, index = 0) {
+  if (!document.getElementById('modalOverlay')?.classList.contains('active')) {
+    lastFocusedBeforeModal = document.activeElement;
+  }
   stopAutoPlay();
   if (list && Array.isArray(list)) {
     modalPlaylist = list;
@@ -1328,6 +1397,7 @@ function openModal(wordObj, list = null, index = 0) {
 
   document.getElementById('canvasDrawingBox').classList.remove('active');
   document.getElementById('modalOverlay').classList.add('active');
+  setTimeout(() => document.getElementById('modalCloseBtn')?.focus(), 40);
 }
 
 function navigateModal(delta) {
@@ -1375,8 +1445,23 @@ function refreshCurrentGridStarsOnly(newlyLearnedId = null) {
 }
 
 function closeModal() {
-  document.getElementById('modalOverlay').classList.remove('active');
+  window.customVoiceStore?.stopRecording?.();
+  document.getElementById('modalOverlay')?.classList.remove('active');
+  window.soundMgr.stopAll();
   window.soundMgr.playClick();
+  if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+    try { lastFocusedBeforeModal.focus(); } catch (e) {}
+  }
+  lastFocusedBeforeModal = null;
+}
+
+function closeStickerModalHelper() {
+  window.customVoiceStore?.stopRecording?.();
+  document.getElementById('stickerModalOverlay')?.classList.remove('active');
+  if (lastFocusedBeforeModal && typeof lastFocusedBeforeModal.focus === 'function') {
+    try { lastFocusedBeforeModal.focus(); } catch (e) {}
+  }
+  lastFocusedBeforeModal = null;
 }
 
 // ========================================================
@@ -1394,17 +1479,22 @@ function initCanvas() {
   canvas.addEventListener('mouseleave', stopDraw);
 
   canvas.addEventListener('touchstart', (e) => {
+    if (!e.touches || !e.touches[0]) return;
     e.preventDefault();
     const touch = e.touches[0];
     canvas.dispatchEvent(new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY }));
   }, { passive: false });
   canvas.addEventListener('touchmove', (e) => {
+    if (!e.touches || !e.touches[0]) return;
     e.preventDefault();
     const touch = e.touches[0];
     canvas.dispatchEvent(new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY }));
   }, { passive: false });
   canvas.addEventListener('touchend', () => {
     canvas.dispatchEvent(new MouseEvent('mouseup', {}));
+  });
+  canvas.addEventListener('touchcancel', () => {
+    stopDraw();
   });
 
   document.getElementById('btnCanvasClear')?.addEventListener('click', () => {
@@ -1448,42 +1538,72 @@ function initCanvas() {
   document.getElementById('btnCanvasCheck')?.addEventListener('click', () => {
     if (!canvas || !currentWordModal || typeof evaluateCanvasGuideMatch !== 'function') return;
     window.soundMgr?.playClick();
-    const res = evaluateCanvasGuideMatch(canvas, (gCtx, w, h) => {
+    const res = evaluateCanvasGuideMatch(canvas, (gCtx, w) => {
+      const cssW = lastCanvasCssWidth || 340;
+      const cssH = 165;
+      const dpr = Math.max(1, w / cssW);
+      gCtx.save();
+      gCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
       let fontSize = 86;
       gCtx.font = `bold ${fontSize}px Nunito, sans-serif`;
-      while (gCtx.measureText(currentWordModal.word).width > w - 28 && fontSize > 26) {
+      while (gCtx.measureText(currentWordModal.word).width > cssW - 28 && fontSize > 26) {
         fontSize -= 4;
         gCtx.font = `bold ${fontSize}px Nunito, sans-serif`;
       }
       gCtx.fillStyle = '#000';
       gCtx.textAlign = 'center';
       gCtx.textBaseline = 'middle';
-      gCtx.fillText(currentWordModal.word, w / 2, h / 2 + 2);
+      gCtx.fillText(currentWordModal.word, cssW / 2, cssH / 2 + 2);
+      gCtx.restore();
     });
     showToast(res.hintText);
     if (res.matchedPct >= 45) window.soundMgr?.playPop();
   });
 }
 
-function resizeCanvasToFit() {
-  if (!canvas) return;
+function resizeCanvasToFit(preserveInk = false) {
+  if (!canvas || !ctx) return;
   const box = document.getElementById('canvasDrawingBox');
-  const w = box && box.clientWidth > 100 ? Math.min(400, box.clientWidth - 20) : 340;
-  canvas.width = Math.max(260, w);
-  canvas.height = 165;
+  const cssW = box && box.clientWidth > 100 ? Math.max(260, Math.min(400, box.clientWidth - 20)) : 340;
+  const cssH = 165;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  let snapshot = null;
+  if (preserveInk && canvas.width > 0 && canvas.height > 0) {
+    snapshot = document.createElement('canvas');
+    snapshot.width = canvas.width;
+    snapshot.height = canvas.height;
+    snapshot.getContext('2d').drawImage(canvas, 0, 0);
+  }
+  lastCanvasCssWidth = cssW;
+  canvas.style.width = `${cssW}px`;
+  canvas.style.height = `${cssH}px`;
+  canvas.width = Math.round(cssW * dpr);
+  canvas.height = Math.round(cssH * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (snapshot) {
+    ctx.drawImage(snapshot, 0, 0, cssW, cssH);
+  }
 }
 
 function getCanvasCoords(e) {
   const rect = canvas.getBoundingClientRect();
+  const cssW = lastCanvasCssWidth || rect.width || 340;
+  const cssH = 165;
   return {
-    x: (e.clientX - rect.left) * (canvas.width / rect.width),
-    y: (e.clientY - rect.top) * (canvas.height / rect.height)
+    x: (e.clientX - rect.left) * (cssW / (rect.width || cssW)),
+    y: (e.clientY - rect.top) * (cssH / (rect.height || cssH))
   };
 }
 
 function startDraw(e) {
   isDrawing = true;
   const coords = getCanvasCoords(e);
+  ctx.save();
+  ctx.fillStyle = drawColor;
+  ctx.beginPath();
+  ctx.arc(coords.x, coords.y, 4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
   ctx.beginPath();
   ctx.moveTo(coords.x, coords.y);
 }
@@ -1506,14 +1626,16 @@ function stopDraw() {
 
 function clearCanvas() {
   if (!ctx || !canvas) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const w = lastCanvasCssWidth || 340;
+  const h = 165;
+  ctx.clearRect(0, 0, w, h);
   drawPrimaryGridLines();
 }
 
 function drawPrimaryGridLines() {
   if (!ctx || !canvas) return;
-  const w = canvas.width;
-  const h = canvas.height;
+  const w = lastCanvasCssWidth || 340;
+  const h = 165;
   ctx.save();
   // Đường kẻ 4 ô ly chuẩn tiểu học nhẹ nhàng
   ctx.strokeStyle = '#bae6fd';
@@ -1546,10 +1668,12 @@ function drawPrimaryGridLines() {
 
 function drawLetterGuide(word) {
   if (!ctx || !canvas || !word) return;
+  const cssW = lastCanvasCssWidth || 340;
+  const cssH = 165;
   let fontSize = 86;
   ctx.save();
   ctx.font = `bold ${fontSize}px Nunito, sans-serif`;
-  while (ctx.measureText(word).width > canvas.width - 28 && fontSize > 26) {
+  while (ctx.measureText(word).width > cssW - 28 && fontSize > 26) {
     fontSize -= 4;
     ctx.font = `bold ${fontSize}px Nunito, sans-serif`;
   }
@@ -1557,14 +1681,14 @@ function drawLetterGuide(word) {
   ctx.restore();
   const lvl = typeof getVnWritingHintLevel === 'function' ? getVnWritingHintLevel() : 'guide';
   if (typeof drawHintByLevel === 'function') {
-    drawHintByLevel(ctx, canvas.width, canvas.height, word, lvl, fontSpec, 2);
+    drawHintByLevel(ctx, cssW, cssH, word, lvl, fontSpec, 2);
   } else {
     ctx.save();
     ctx.font = fontSpec;
     ctx.fillStyle = '#cbd5e1';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(word, canvas.width / 2, canvas.height / 2 + 2);
+    ctx.fillText(word, cssW / 2, cssH / 2 + 2);
     ctx.restore();
   }
 }
@@ -1622,7 +1746,7 @@ function switchSubGame(subgame) {
 // GAME 1: GHÉP CHỮ VUI (ĐỘNG + GỢI Ý TỪNG CHỮ + COMBO XU)
 // ========================================================
 function splitVietnameseWordToPuzzle(word) {
-  const lower = (word || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const lower = (word || '').normalize('NFC').trim().toLowerCase().replace(/\s+/g, ' ');
   if (!lower) return [];
   if (lower.includes(' ')) {
     return lower.split(' ');
@@ -1652,36 +1776,49 @@ function buildDynamicPuzzlesForLesson(lesson) {
   if (!lesson || !lesson.words) return [...SPELL_BUILDER_DATA];
 
   const poolHeads = ['b', 'c', 'd', 'đ', 'g', 'h', 'k', 'l', 'm', 'n', 's', 't', 'v', 'x', 'ch', 'nh', 'tr'];
-  const allLessonWords = lesson.words.map(w => w.word.toLowerCase());
-  const allTails = lesson.words.map(w => splitVietnameseWordToPuzzle(w.word)[1]).filter(Boolean);
+  const allLessonPieces = lesson.words.flatMap(x => splitVietnameseWordToPuzzle(x.word));
+  const allTails = lesson.words.map(x => splitVietnameseWordToPuzzle(x.word)[1]).filter(Boolean);
 
   return lesson.words.map(w => {
     const puzzle = splitVietnameseWordToPuzzle(w.word);
-    const distractors = new Set(puzzle);
+    const options = [...puzzle];
+    const usedSet = new Set(puzzle);
+    const targetExtraCount = Math.min(3, Math.max(2, 5 - puzzle.length));
+    let added = 0;
     let guard = 0;
-    while (distractors.size < Math.min(5, puzzle.length + 3) && guard < 40) {
+    while (added < targetExtraCount && guard < 40) {
       guard++;
+      let cand = '';
       if (puzzle.length === 2 && Math.random() < 0.5 && allTails.length > 1) {
-        distractors.add(allTails[Math.floor(Math.random() * allTails.length)]);
-      } else if (w.word.includes(' ') && allLessonWords.length > 2) {
-        const randOther = allLessonWords[Math.floor(Math.random() * allLessonWords.length)].split(' ')[0];
-        if (randOther) distractors.add(randOther);
+        cand = allTails[Math.floor(Math.random() * allTails.length)];
+      } else if (w.word.includes(' ') && allLessonPieces.length > 2) {
+        cand = allLessonPieces[Math.floor(Math.random() * allLessonPieces.length)] || '';
       } else {
-        distractors.add(poolHeads[Math.floor(Math.random() * poolHeads.length)]);
+        cand = poolHeads[Math.floor(Math.random() * poolHeads.length)];
+      }
+      if (cand && !usedSet.has(cand)) {
+        usedSet.add(cand);
+        options.push(cand);
+        added++;
       }
     }
     return {
+      id: w.id,
       target: w.word,
       meaning: `${w.example} (${w.ja})`,
       ja: w.ja,
       icon: w.icon,
       puzzle,
-      options: Array.from(distractors)
+      options
     };
   });
 }
 
 function startMiniGame(source = 'default') {
+  if (explorerState.parentSettings?.focusHideGames) {
+    showToast('📚 Đang bật Chế độ Tập Trung — vào Góc Phụ Huynh để mở lại Trò chơi nhé!');
+    return;
+  }
   stopAutoPlay();
   clearListenBlitzTimer();
   window.soundMgr.stopAll();
@@ -1710,6 +1847,7 @@ function startMiniGame(source = 'default') {
   if (document.getElementById('artsContainer')) document.getElementById('artsContainer').style.display = 'none';
   if (document.getElementById('vnStoriesContainer')) document.getElementById('vnStoriesContainer').style.display = 'none';
   if (document.getElementById('arcadeContainer')) document.getElementById('arcadeContainer').style.display = 'none';
+  if (document.getElementById('phonicsDecodableHost')) document.getElementById('phonicsDecodableHost').style.display = 'none';
   document.getElementById('gameViewContainer').style.display = 'block';
 
   document.querySelectorAll('#gameViewContainer .game-view').forEach(p => { p.style.display = 'none'; });
@@ -1861,14 +1999,14 @@ function checkPuzzleResult() {
   const q = gameQuestions[gameCurrentIndex];
   const currentWord = gameSlots.map(s => s.char).join(q.target.includes(' ') ? ' ' : '');
 
-  if (currentWord === q.target) {
+  if (currentWord.toLowerCase() === q.target.toLowerCase()) {
     puzzleStreak++;
     const bonusCoins = puzzleStreak >= 3 ? 3 : 2;
     window.soundMgr.playCorrect();
     fireConfetti();
     gameScore += puzzleStreak >= 3 ? 15 : 10;
     awardCoins(bonusCoins, true);
-    window.recordAnswer?.(q.id || `puz_${q.target}`, true, { label: q.target, mode: 'game', audioKey: `word_${q.target.toLowerCase()}` });
+    window.recordAnswer?.(q.id || `puz_${q.target}`, true, { label: q.target, mode: 'game', audioKey: `word_${q.target.toLowerCase()}`, noAutoCoin: true });
     document.getElementById('gameStarsCount').innerText = `⭐ ${gameScore} sao`;
     const stEl = document.getElementById('puzzleStreakBadge');
     if (stEl) stEl.innerText = `🔥 Chuỗi x${puzzleStreak}`;
@@ -1884,7 +2022,7 @@ function checkPuzzleResult() {
     puzzleStreak = 0;
     const stEl = document.getElementById('puzzleStreakBadge');
     if (stEl) stEl.innerText = `🔥 Chuỗi x0`;
-    window.recordAnswer?.(q.id || `puz_${q.target}`, false, { label: q.target, mode: 'game', audioKey: `word_${q.target.toLowerCase()}` });
+    window.recordAnswer?.(q.id || `puz_${q.target}`, false, { label: q.target, mode: 'game', audioKey: `word_${q.target.toLowerCase()}`, noAutoCoin: true });
     window.soundMgr.playWrong();
     showToast(`Chưa khớp "${q.target}" rồi (ra "${currentWord}"), thử xếp lại nhé! ❤️`);
     window.soundMgr.speakTryAgain();
@@ -1948,6 +2086,7 @@ function initListenCatchGame(mode = listenMode) {
   listenScore = 0;
   listenStreak = 0;
   listenBestStreak = 0;
+  listenAnsweredCount = 0;
 
   const tBadge = document.getElementById('listenTimerBadge');
   if (mode === 'blitz') {
@@ -1957,15 +2096,15 @@ function initListenCatchGame(mode = listenMode) {
       tBadge.innerText = `⏱️ 45s`;
     }
     const myNav = window.appNavEpoch;
-    const startEp = listenEpoch + 1;
     listenBlitzTimer = setInterval(() => {
-      if (window.appNavEpoch !== myNav || currentSubGame !== 'listen_catch' || listenMode !== 'blitz') {
+      if (window.appNavEpoch !== myNav || currentMode !== 'game' || currentSubGame !== 'listen_catch' || listenMode !== 'blitz') {
         clearListenBlitzTimer();
         return;
       }
       listenBlitzSec--;
       if (tBadge) tBadge.innerText = `⏱️ ${Math.max(0, listenBlitzSec)}s`;
       if (listenBlitzSec <= 0) {
+        listenEpoch++;
         clearListenBlitzTimer();
         showListenCatchVictory();
       }
@@ -2032,8 +2171,9 @@ function loadListenCatchQuestion() {
         const pts = listenStreak >= 3 ? 15 : 10;
         const coinBonus = listenMode === 'blitz' ? 3 : 2;
         listenScore += pts;
+        listenAnsweredCount++;
         awardCoins(coinBonus, true);
-        window.recordAnswer?.(`lc_${q.target}`, true, { label: q.target, mode: 'game', audioKey: q.audioKey });
+        window.recordAnswer?.(`lc_${q.target}`, true, { label: q.target, mode: 'game', audioKey: q.audioKey, noAutoCoin: true });
         document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x${listenStreak}`;
         document.getElementById('listenScoreText').innerText = `⭐ ${listenScore} sao`;
 
@@ -2060,8 +2200,9 @@ function loadListenCatchQuestion() {
           );
         }
       } else {
+        listenAnsweredCount++;
         card.classList.add('wrong');
-        window.recordAnswer?.(`lc_${q.target}`, false, { label: q.target, mode: 'game', audioKey: q.audioKey });
+        window.recordAnswer?.(`lc_${q.target}`, false, { label: q.target, mode: 'game', audioKey: q.audioKey, noAutoCoin: true });
         listenStreak = 0;
         document.getElementById('listenStreakBadge').innerText = `🔥 Chuỗi x0`;
         window.soundMgr.playWrong();
@@ -2079,15 +2220,23 @@ function loadListenCatchQuestion() {
 
 function showListenCatchVictory() {
   clearListenBlitzTimer();
+  window.soundMgr.stopAll();
+  document.getElementById('listenCatchPlayStage').style.display = 'none';
+  document.getElementById('listenCatchVictoryStage').style.display = 'block';
+
+  if (listenMode === 'blitz' && listenAnsweredCount === 0) {
+    window.soundMgr.playPop();
+    document.getElementById('listenVictoryScore').innerText =
+      '⏱️ Hết 45 giây rồi! Bảo Long bấm Chơi lại để nghe và chọn nhanh thật nhiều chữ nhé!';
+    return;
+  }
+
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
   window.markDailyStep?.('play');
   awardCoins(10, true);
   awardStars(15, 'Siêu thính giác Nghe Âm Bắt Chữ (+10 🪙 Xu)!');
-
-  document.getElementById('listenCatchPlayStage').style.display = 'none';
-  document.getElementById('listenCatchVictoryStage').style.display = 'block';
   document.getElementById('listenVictoryScore').innerText =
     `Bảo Long ghi được ${listenScore} điểm (Chuỗi dài nhất: x${listenBestStreak})! (+15 ⭐ & +10 🪙 Xu)`;
 }
@@ -2201,7 +2350,7 @@ function updateTrainAssembly(q) {
     if (combined === q.word) {
       shinkansenScore += 10;
       awardCoins(2, true);
-      window.recordAnswer?.(`shin_${q.word}`, true, { label: q.word, mode: 'game', audioKey: `word_${q.word.toLowerCase()}` });
+      window.recordAnswer?.(`shin_${q.word}`, true, { label: q.word, mode: 'game', audioKey: `word_${q.word.toLowerCase()}`, noAutoCoin: true });
       document.getElementById('shinkansenScoreText').innerText = `⭐ ${shinkansenScore} sao`;
       if (sigEl) {
         sigEl.innerText = '🟢 ĐÈN XANH • TÀU CHẠY!';
@@ -2230,7 +2379,7 @@ function updateTrainAssembly(q) {
       }, 220);
       setTimeout(goNextShin, window.soundMgr.isMuted ? 500 : 1850);
     } else {
-      window.recordAnswer?.(`shin_${q.word}`, false, { label: q.word, mode: 'game', audioKey: `word_${q.word.toLowerCase()}` });
+      window.recordAnswer?.(`shin_${q.word}`, false, { label: q.word, mode: 'game', audioKey: `word_${q.word.toLowerCase()}`, noAutoCoin: true });
       window.soundMgr.playWrong();
       window.soundMgr.speakTryAgain();
       if (bannerEl) bannerEl.innerText = `⚠️ "${selectedTrainHead} + ${selectedTrainTail}" ghép thành "${combined}", chưa đúng "${q.word}" rồi!`;
@@ -2272,6 +2421,9 @@ function getMemoryBestKey(pairsCount) {
 }
 
 function initDinoMemoryGame(pairCount = memoryTargetPairs) {
+  memoryEpoch++;
+  const myMemEp = memoryEpoch;
+  const myNav = window.appNavEpoch;
   memoryTargetPairs = Math.min(8, Math.max(4, pairCount || 6));
   memoryPeekUsed = false;
   memoryStreak = 0;
@@ -2303,6 +2455,7 @@ function initDinoMemoryGame(pairCount = memoryTargetPairs) {
       cards.forEach(c => c.classList.add('is-flipped'));
       showToast('👀 Nhìn nhanh để ghi nhớ trong 2 giây nhé!');
       setTimeout(() => {
+        if (memoryEpoch !== myMemEp || window.appNavEpoch !== myNav) return;
         cards.forEach(c => {
           if (!memoryFlippedCards.some(fc => fc.el === c)) c.classList.remove('is-flipped');
         });
@@ -2368,9 +2521,12 @@ function updateMemoryStats() {
   if (pairsEl) pairsEl.innerText = `⭐ Đã ghép: ${memoryMatchedCount} / ${memoryTargetPairs} cặp`;
   if (streakEl) streakEl.innerText = `🔥 Chuỗi x${memoryStreak}`;
   if (bestEl) {
-    let best = null;
-    try { best = localStorage.getItem(getMemoryBestKey(memoryTargetPairs)); } catch (e) {}
-    bestEl.innerText = best ? `🏆 Kỷ lục: ${best} lượt` : '🏆 Kỷ lục: --';
+    let bestNum = null;
+    try {
+      const parsedBest = parseInt(localStorage.getItem(getMemoryBestKey(memoryTargetPairs)) || '', 10);
+      if (Number.isFinite(parsedBest) && parsedBest > 0) bestNum = parsedBest;
+    } catch (e) {}
+    bestEl.innerText = bestNum ? `🏆 Kỷ lục: ${bestNum} lượt` : '🏆 Kỷ lục: --';
   }
 }
 
@@ -2378,6 +2534,8 @@ function handleMemoryCardClick(cardData, cardEl) {
   if (memoryIsLocked) return;
   if (cardEl.classList.contains('is-flipped') || cardEl.classList.contains('is-matched')) return;
 
+  const myMemEp = memoryEpoch;
+  const myNav = window.appNavEpoch;
   window.soundMgr.playClick();
   cardEl.classList.add('is-flipped');
   memoryFlippedCards.push({ data: cardData, el: cardEl });
@@ -2390,12 +2548,14 @@ function handleMemoryCardClick(cardData, cardEl) {
     const [first, second] = memoryFlippedCards;
     if (first.data.id === second.data.id) {
       setTimeout(() => {
+        if (memoryEpoch !== myMemEp || window.appNavEpoch !== myNav) return;
         first.el.classList.add('is-matched');
         second.el.classList.add('is-matched');
         memoryMatchedCount++;
         memoryStreak++;
         const pairCoins = memoryStreak >= 2 ? 3 : 2;
         awardCoins(pairCoins, true);
+        window.recordAnswer?.(first.data.id, true, { label: first.data.name, mode: 'game', audioKey: first.data.audioKey, noAutoCoin: true });
         updateMemoryStats();
 
         window.soundMgr.playCorrect();
@@ -2410,14 +2570,17 @@ function handleMemoryCardClick(cardData, cardEl) {
         if (memoryMatchedCount === memoryTargetPairs) {
           try {
             const k = getMemoryBestKey(memoryTargetPairs);
-            const prev = Number(localStorage.getItem(k) || '999');
+            const parsedPrev = parseInt(localStorage.getItem(k) || '', 10);
+            const prev = Number.isFinite(parsedPrev) && parsedPrev > 0 ? parsedPrev : 999;
             if (memoryFlips < prev) localStorage.setItem(k, String(memoryFlips));
           } catch (e) {}
           updateMemoryStats();
           setTimeout(() => {
+            if (memoryEpoch !== myMemEp || window.appNavEpoch !== myNav || currentMode !== 'game' || currentSubGame !== 'dino_memory') return;
             fireConfetti();
             window.soundMgr.playVictory();
             window.soundMgr.playAudioFile('cheer_flip_win');
+            window.markDailyStep?.('play');
             awardCoins(10, true);
             awardStars(15, 'Chiến thắng Lật Thẻ Khủng Long (+10 🪙 Xu)!');
             document.getElementById('memoryPlayStage').style.display = 'none';
@@ -2431,6 +2594,7 @@ function handleMemoryCardClick(cardData, cardEl) {
       memoryStreak = 0;
       updateMemoryStats();
       setTimeout(() => {
+        if (memoryEpoch !== myMemEp || window.appNavEpoch !== myNav) return;
         first.el.classList.remove('is-flipped');
         second.el.classList.remove('is-flipped');
         memoryFlippedCards = [];
@@ -2532,7 +2696,7 @@ function checkDinoQuizAnswer(chosenId, cardEl, q, item, myNav, myEpoch) {
     fireConfetti();
     dinoQuizScore += 10;
     awardCoins(2, true);
-    window.recordAnswer?.(item.id, true, { label: item.word, mode: 'game', audioKey: item.audioKey });
+    window.recordAnswer?.(item.id, true, { label: item.word, mode: 'game', audioKey: item.audioKey, noAutoCoin: true });
     document.getElementById('dinoQuizScoreText').innerText = `⭐ ${dinoQuizScore} sao`;
     if (factEl) {
       factEl.style.display = 'block';
@@ -2549,7 +2713,7 @@ function checkDinoQuizAnswer(chosenId, cardEl, q, item, myNav, myEpoch) {
     );
   } else {
     cardEl.classList.add('wrong');
-    window.recordAnswer?.(q.correctId, false, { label: q.hint || item.word, mode: 'game', audioKey: q.audioKey });
+    window.recordAnswer?.(q.correctId, false, { label: q.hint || item.word, mode: 'game', audioKey: q.audioKey, noAutoCoin: true });
     window.soundMgr.playWrong();
     window.soundMgr.speakTryAgain();
     if (factEl) {
@@ -2564,6 +2728,7 @@ function showDinoQuizVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
+  window.markDailyStep?.('play');
   awardCoins(10, true);
   awardStars(15, 'Chuyên gia Đố Vui Khủng Long (+10 🪙 Xu)!');
 
@@ -2611,6 +2776,7 @@ function spawnDigParticles(x, y, isBrush) {
 }
 
 function initDinoDig() {
+  dinoDigEpoch++;
   dinoDigCurrentIndex = 0;
   dinoDigBadges = 0;
 
@@ -2621,6 +2787,7 @@ function initDinoDig() {
 }
 
 function loadDinoDigStage() {
+  dinoDigEpoch++;
   const total = DINO_DIG_DATA.length;
   if (dinoDigCurrentIndex >= total) {
     showDinoDigVictory();
@@ -2721,7 +2888,10 @@ function hitExcavationRock(stage, ev) {
   overlay.style.opacity = `${Math.max(0.28, (stage.hitsRequired - dinoDigHits) / stage.hitsRequired)}`;
 
   if (dinoDigHits >= stage.hitsRequired) {
+    const myNav = window.appNavEpoch;
+    const myDigEp = dinoDigEpoch;
     setTimeout(() => {
+      if (window.appNavEpoch !== myNav || dinoDigEpoch !== myDigEp || currentMode !== 'game' || currentSubGame !== 'dino_dig') return;
       overlay.style.display = 'none';
       const dinoInfo = typeof DINO_LESSONS !== 'undefined'
         ? DINO_LESSONS.find(d => d.audioKey === stage.audioKey)
@@ -2736,9 +2906,11 @@ function hitExcavationRock(stage, ev) {
       document.getElementById('dinoDigRevivedDino').style.display = 'flex';
 
       awardCoins(5, true);
+      window.recordAnswer?.(`dig_${stage.audioKey}`, true, { label: stage.name, mode: 'game', audioKey: stage.audioKey, noAutoCoin: true });
       window.soundMgr.playMagicalRevive();
       fireConfetti();
       setTimeout(() => {
+        if (window.appNavEpoch !== myNav || dinoDigEpoch !== myDigEp) return;
         if (stage.audioKey) window.soundMgr.playAudioFile(stage.audioKey, null, stage.name);
       }, 450);
 
@@ -2753,6 +2925,7 @@ function showDinoDigVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
+  window.markDailyStep?.('play');
   awardCoins(15, true);
   awardStars(20, 'Nhà Khảo Cổ Vĩ Đại Bảo Long (+15 🪙 Xu)!');
 
@@ -2860,7 +3033,7 @@ function handleQuizChoice(chosen, target, cardEl, myNav, myEpoch) {
     fireConfetti();
     quizScore += 10;
     awardCoins(2, true);
-    window.recordAnswer?.(target.id, true, { label: target.word, mode: 'game', audioKey: target.audioKey });
+    window.recordAnswer?.(target.id, true, { label: target.word, mode: 'game', audioKey: target.audioKey, noAutoCoin: true });
     document.getElementById('quizScoreText').innerText = `⭐ ${quizScore} sao`;
     if (factEl) {
       factEl.style.display = 'block';
@@ -2877,7 +3050,7 @@ function handleQuizChoice(chosen, target, cardEl, myNav, myEpoch) {
     );
   } else {
     cardEl.classList.add('wrong');
-    window.recordAnswer?.(target.id, false, { label: target.word, mode: 'game', audioKey: target.audioKey });
+    window.recordAnswer?.(target.id, false, { label: target.word, mode: 'game', audioKey: target.audioKey, noAutoCoin: true });
     window.soundMgr.playWrong();
     window.soundMgr.speakTryAgain();
     if (factEl) {
@@ -2892,6 +3065,7 @@ function showQuizVictory() {
   fireConfetti();
   window.soundMgr.playVictory();
   window.soundMgr.speakCheer('win');
+  window.markDailyStep?.('play');
   awardCoins(10, true);
   awardStars(15, 'Bác tài xuất sắc Đố Vui Xe Cộ (+10 🪙 Xu)!');
 
@@ -2920,19 +3094,26 @@ let confettiPieces = [];
 let confettiRafId = null;
 
 function fireConfetti() {
+  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
   const confCanvas = document.getElementById('confettiCanvas');
   if (!confCanvas) return;
   const confCtx = confCanvas.getContext('2d');
-  if (confCanvas.width !== window.innerWidth || confCanvas.height !== window.innerHeight) {
-    confCanvas.width = window.innerWidth;
-    confCanvas.height = window.innerHeight;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const targetW = Math.round(window.innerWidth * dpr);
+  const targetH = Math.round(window.innerHeight * dpr);
+  if (confCanvas.width !== targetW || confCanvas.height !== targetH) {
+    confCanvas.style.width = `${window.innerWidth}px`;
+    confCanvas.style.height = `${window.innerHeight}px`;
+    confCanvas.width = targetW;
+    confCanvas.height = targetH;
   }
+  confCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
   const colors = ['#f43f5e', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
   for (let i = 0; i < 55; i++) {
     confettiPieces.push({
-      x: confCanvas.width / 2 + (Math.random() - 0.5) * 200,
-      y: confCanvas.height / 2,
+      x: window.innerWidth / 2 + (Math.random() - 0.5) * 200,
+      y: window.innerHeight / 2,
       w: Math.random() * 11 + 5,
       h: Math.random() * 7 + 4,
       vx: (Math.random() - 0.5) * 16,
@@ -2950,7 +3131,7 @@ function fireConfetti() {
   if (confettiRafId !== null) return;
 
   function updateConfetti() {
-    confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+    confCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
     for (let i = confettiPieces.length - 1; i >= 0; i--) {
       const p = confettiPieces[i];
       p.x += p.vx;
@@ -2973,7 +3154,7 @@ function fireConfetti() {
     if (confettiPieces.length > 0) {
       confettiRafId = requestAnimationFrame(updateConfetti);
     } else {
-      confCtx.clearRect(0, 0, confCanvas.width, confCanvas.height);
+      confCtx.clearRect(0, 0, window.innerWidth, window.innerHeight);
       confettiRafId = null;
     }
   }
@@ -3152,8 +3333,17 @@ function initParentCornerOnce() {
       const reader = new FileReader();
       reader.onload = () => {
         try {
-          const data = JSON.parse(String(reader.result || '{}'));
-          const candidate = data.progress && typeof data.progress === 'object' ? data.progress : data;
+          const data = JSON.parse(String(reader.result || ''));
+          if (!data || typeof data !== 'object' || Array.isArray(data)) {
+            throw new Error('Dữ liệu gốc không phải Object hợp lệ');
+          }
+          const candidate = (data.progress && typeof data.progress === 'object' && !Array.isArray(data.progress))
+            ? data.progress
+            : data;
+          const hasExpectedKey = 'stars' in candidate || 'learnedIds' in candidate || 'wordStats' in candidate || 'dailyLog' in candidate || 'schemaVersion' in candidate;
+          if (!hasExpectedKey) {
+            throw new Error('File không chứa trường tiến độ của Bảo Long');
+          }
           explorerState = migrateProgressData(candidate);
           saveProgress();
           if (data.audioPrefs && typeof data.audioPrefs === 'object') {
@@ -3193,15 +3383,30 @@ function initParentCornerOnce() {
     btnResetCancel.onclick = () => { confirmRow.style.display = 'none'; };
   }
   if (btnResetOk) {
-    btnResetOk.onclick = () => {
+    btnResetOk.onclick = async () => {
       explorerState = migrateProgressData({});
+      gameSessionCoinsEarned = 0;
+      try {
+        ['baolong_mem_best_4', 'baolong_mem_best_6', 'baolong_mem_best_8',
+         'baolong_dragon_mem_best', 'baolong_science_asagao_v1', 'baolong_audio_prefs_v1',
+         `${PROGRESS_KEY}_corrupt_backup`].forEach(k => localStorage.removeItem(k));
+      } catch (e) {}
+      await window.customVoiceStore?.clearAll?.();
+      window.resetLearningPlusSessionFlags?.();
+      window.soundMgr.gender = 'female';
+      window.soundMgr.speedRate = 1.0;
+      window.soundMgr.isMuted = false;
+      window.soundMgr.allowSystemTTS = false;
+      window.soundMgr.savePrefs();
+      syncTopControlsUI();
       saveProgress();
       updateProfileHUD();
+      updateGameCoinsHUD();
       window.applyParentFocusMode?.();
       window.renderDailyRoadmapHost?.();
       renderCurrentView();
       openStickerModal();
-      showToast('🗑️ Đã đặt lại toàn bộ tiến độ về ban đầu!');
+      showToast('🗑️ Đã đặt lại toàn bộ dữ liệu và bản thu về ban đầu!');
     };
   }
 }

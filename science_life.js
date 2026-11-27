@@ -6,6 +6,7 @@
 const SCIENCE_TOPICS_DATA = [
   {
     id: 'family_home',
+    image: 'images/science/sc_topic_1.jpg',
     badge: '🏠 Chủ đề 1: Gia Đình',
     title: 'Gia Đình & Ngôi Nhà An Toàn',
     cards: [
@@ -17,6 +18,7 @@ const SCIENCE_TOPICS_DATA = [
   },
   {
     id: 'school_seikatsu',
+    image: 'images/science/sc_topic_2.jpg',
     badge: '🏫 Chủ đề 2: Trường Học',
     title: 'Trường Lớp & Đường Tới Trường (学校探検)',
     cards: [
@@ -28,6 +30,7 @@ const SCIENCE_TOPICS_DATA = [
   },
   {
     id: 'community',
+    image: 'images/science/sc_topic_3.jpg',
     badge: '🚒 Chủ đề 3: Cộng Đồng',
     title: 'Các Nghề Quanh Bé & An Toàn Cộng Đồng',
     cards: [
@@ -39,6 +42,7 @@ const SCIENCE_TOPICS_DATA = [
   },
   {
     id: 'plants_animals',
+    image: 'images/science/sc_topic_4.svg',
     badge: '🌻 Chủ đề 4: Sinh Vật',
     title: 'Cây Cối, Khủng Long & Muông Thú Quanh Bé',
     cards: [
@@ -50,6 +54,7 @@ const SCIENCE_TOPICS_DATA = [
   },
   {
     id: 'body_health',
+    image: 'images/science/sc_topic_5.svg',
     badge: '🫀 Chủ đề 5: Cơ Thể Bé',
     title: '5 Giác Quan, Rửa Tay 6 Bước & Tự Bảo Vệ',
     cards: [
@@ -61,6 +66,7 @@ const SCIENCE_TOPICS_DATA = [
   },
   {
     id: 'earth_seasons',
+    image: 'images/science/sc_topic_6.svg',
     badge: '☀️ Chủ đề 6: Bầu Trời',
     title: 'Ngày Đêm, Thời Tiết & 4 Mùa Việt – Nhật',
     cards: [
@@ -165,12 +171,43 @@ const SCIENCE_QUIZ_DATA = [
 
 let currentScienceTab = 'topics';
 let currentScienceTopicId = SCIENCE_TOPICS_DATA[0].id;
-let scienceAsagaoStage = 1;
+const SCIENCE_ASAGAO_STORAGE_KEY = 'baolong_science_asagao_v1';
+let scienceAsagaoState = (() => {
+  try {
+    const d = JSON.parse(localStorage.getItem(SCIENCE_ASAGAO_STORAGE_KEY) || '{}');
+    return {
+      stage: Math.max(1, Math.min(5, Number(d.stage) || 1)),
+      watered: !!d.watered,
+      sunned: !!d.sunned,
+      bloomRewarded: !!d.bloomRewarded
+    };
+  } catch (e) {
+    return { stage: 1, watered: false, sunned: false, bloomRewarded: false };
+  }
+})();
+function saveAsagaoState() {
+  try { localStorage.setItem(SCIENCE_ASAGAO_STORAGE_KEY, JSON.stringify(scienceAsagaoState)); } catch (e) {}
+}
+let scienceAutoTimer = null;
+let scienceAutoRunning = false;
 let scienceSessionScore = 0;
 let scienceEpoch = 0;
 let scienceQuizList = [];
 let scienceQuizIdx = 0;
 let scienceQuizScore = 0;
+let senseMatchTargetIdx = 0;
+
+function stopScienceAutoPlay() {
+  scienceAutoRunning = false;
+  if (scienceAutoTimer) { clearTimeout(scienceAutoTimer); scienceAutoTimer = null; }
+  const btn = document.getElementById('btnAutoPlayScienceTopic');
+  if (btn) {
+    btn.classList.remove('playing');
+    btn.innerHTML = '<span>🎧</span> Nghe cả chủ đề';
+  }
+  document.querySelectorAll('#scienceCardsGrid .active-pulse').forEach(el => el.classList.remove('active-pulse'));
+}
+window.stopScienceAutoPlay = stopScienceAutoPlay;
 
 function addScienceScore(pts) {
   scienceSessionScore += pts;
@@ -185,6 +222,8 @@ function renderScienceLifeHub() {
 }
 
 function switchScienceSubTab(subtab) {
+  stopScienceAutoPlay();
+  window.soundMgr?.stopAll?.();
   scienceEpoch++;
   currentScienceTab = subtab;
   const map = {
@@ -213,9 +252,13 @@ function renderScienceTopicsTab() {
   track.innerHTML = '';
   SCIENCE_TOPICS_DATA.forEach(t => {
     const pill = document.createElement('button');
+    pill.type = 'button';
     pill.className = `lesson-pill ${t.id === topic.id ? 'active' : ''}`;
     pill.innerText = t.badge;
     pill.onclick = () => {
+      stopScienceAutoPlay();
+      window.soundMgr?.stopAll?.();
+      scienceEpoch++;
       window.soundMgr.playClick();
       currentScienceTopicId = t.id;
       renderScienceTopicsTab();
@@ -224,23 +267,40 @@ function renderScienceTopicsTab() {
   });
 
   if (titleEl) titleEl.innerText = topic.title;
+  let coverEl = document.getElementById('scienceTopicCoverBox');
+  if (!coverEl) {
+    coverEl = document.createElement('div');
+    coverEl.id = 'scienceTopicCoverBox';
+    coverEl.className = 'subject-topic-cover';
+    grid.parentElement.insertBefore(coverEl, grid);
+  }
+  coverEl.innerHTML = topic.image
+    ? `<img src="${topic.image}" alt="${topic.title}" loading="lazy"><div class="subject-topic-caption">${topic.badge} — ${topic.title}</div>`
+    : '';
+
   grid.innerHTML = '';
   topic.cards.forEach(c => {
+    const learned = typeof explorerState !== 'undefined' && explorerState.learnedIds?.includes(c.id);
     const card = document.createElement('div');
-    card.className = 'vocab-card';
+    card.className = `vocab-card ${learned ? 'is-learned' : ''}`;
     card.style.borderColor = '#86efac';
     card.innerHTML = `
-      <div class="card-badge">${topic.badge.split(':')[0]}</div>
+      <div class="card-badge">${topic.badge.split(':')[0]} ${learned ? '⭐' : ''}</div>
       <div class="card-icon">${c.icon}</div>
       <div class="card-word" style="font-size: 19px;">${c.title}</div>
       <div class="card-phonetic" style="color: #059669;">🇯🇵 ${c.ja}</div>
       <div style="font-size: 12.5px; color: #475569; font-weight: 700; line-height: 1.45; margin-top: 6px;">${c.desc}</div>
     `;
     card.onclick = () => {
+      stopScienceAutoPlay();
       window.soundMgr.playPop();
       window.soundMgr.playAudioFile(c.id, null, `${c.title}. ${c.desc}`);
       addScienceScore(2);
-      if (typeof markWordLearned === 'function') markWordLearned(c.id);
+      if (typeof markWordLearned === 'function' && markWordLearned(c.id)) {
+        card.classList.add('is-learned');
+        const badge = card.querySelector('.card-badge');
+        if (badge && !badge.innerText.includes('⭐')) badge.innerText += ' ⭐';
+      }
       if (typeof showToast === 'function') showToast(`🌿 ${c.title}!`);
     };
     grid.appendChild(card);
@@ -249,19 +309,34 @@ function renderScienceTopicsTab() {
   const btnAuto = document.getElementById('btnAutoPlayScienceTopic');
   if (btnAuto) {
     btnAuto.onclick = () => {
+      if (scienceAutoRunning || btnAuto.classList.contains('playing')) {
+        stopScienceAutoPlay();
+        window.soundMgr?.stopAll?.();
+        return;
+      }
+      stopScienceAutoPlay();
       window.soundMgr.playClick();
+      scienceAutoRunning = true;
+      btnAuto.classList.add('playing');
+      btnAuto.innerHTML = '<span>⏹️</span> Dừng đọc';
       const myEpoch = scienceEpoch;
       const myNav = window.appNavEpoch || 0;
       let idx = 0;
       const next = () => {
-        if (idx >= topic.cards.length || myEpoch !== scienceEpoch || (window.appNavEpoch || 0) !== myNav) return;
+        if (!scienceAutoRunning || myEpoch !== scienceEpoch || (window.appNavEpoch || 0) !== myNav) return;
+        if (idx >= topic.cards.length) {
+          stopScienceAutoPlay();
+          if (typeof showToast === 'function') showToast(`🎉 Đã nghe hết chủ đề "${topic.title}"!`);
+          return;
+        }
         const c = topic.cards[idx];
         const cardEl = grid.children[idx];
         if (cardEl) { cardEl.classList.add('active-pulse'); cardEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
         window.soundMgr.playAudioFile(c.id, () => {
           if (cardEl) cardEl.classList.remove('active-pulse');
+          if (!scienceAutoRunning || myEpoch !== scienceEpoch || (window.appNavEpoch || 0) !== myNav) return;
           idx++;
-          setTimeout(next, 400);
+          scienceAutoTimer = setTimeout(next, 400);
         }, `${c.title}. ${c.desc}`);
       };
       next();
@@ -269,36 +344,94 @@ function renderScienceTopicsTab() {
   }
 }
 
+const SENSE_MATCH_ITEMS = [
+  { organId: 'sight', prompt: '🌈 Ngắm cầu vồng bảy sắc và đọc sách tranh', label: 'Đôi Mắt' },
+  { organId: 'hear', prompt: '🚅 Nghe tiếng tàu Shinkansen & giọng ba mẹ', label: 'Đôi Tai' },
+  { organId: 'smell', prompt: '🌸 Ngửi hương hoa sen thơm ngát ban mai', label: 'Chiếc Mũi' },
+  { organId: 'taste', prompt: '🍓 Nếm vị dâu tây ngọt lịm & cam chua dịu', label: 'Chiếc Lưỡi' },
+  { organId: 'touch', prompt: '🧊 Chạm viên đá lạnh hay bộ lông mèo êm ái', label: 'Bàn Tay & Da' }
+];
+
 function renderScienceLabTab() {
   const stageBox = document.getElementById('scienceAsagaoStageCard');
   const stepBtns = document.getElementById('scienceAsagaoSteps');
   const sensesGrid = document.getElementById('scienceSensesGrid');
 
   if (stageBox && stepBtns) {
-    const st = SCIENCE_ASAGAO_STAGES.find(s => s.step === scienceAsagaoStage) || SCIENCE_ASAGAO_STAGES[0];
+    const curStep = scienceAsagaoState.stage || 1;
+    const st = SCIENCE_ASAGAO_STAGES.find(s => s.step === curStep) || SCIENCE_ASAGAO_STAGES[0];
+    const canGrow = curStep < 5 && scienceAsagaoState.watered && scienceAsagaoState.sunned;
     stageBox.innerHTML = `
-      <div class="asagao-visual-hero">${st.emoji}</div>
+      <div class="asagao-illus-wrap"><img src="images/science/asagao_${st.step}.svg" alt="${st.title}" loading="lazy"></div>
       <div class="asagao-stage-title">${st.title}</div>
       <div class="asagao-stage-desc">${st.desc}</div>
-      <button class="btn-hear-hint" id="btnHearAsagaoStage" style="margin: 10px auto 0 auto;"><span>🔊</span> Nghe giải thích bước này</button>
+      <div class="asagao-care-bar">
+        <button type="button" class="tool-chip ${scienceAsagaoState.watered ? 'active-filter' : ''}" id="btnAsagaoWater">
+          ${scienceAsagaoState.watered ? '💧 Đã tưới nước ✓' : '💧 Tưới nước'}
+        </button>
+        <button type="button" class="tool-chip ${scienceAsagaoState.sunned ? 'active-filter' : ''}" id="btnAsagaoSun">
+          ${scienceAsagaoState.sunned ? '☀️ Đã tắm nắng ✓' : '☀️ Đón nắng ấm'}
+        </button>
+        ${curStep < 5 ? `<button type="button" class="challenge-btn" id="btnAsagaoGrow" style="padding:7px 14px; font-size:13px;" ${canGrow ? '' : 'disabled'}>🌱 Lớn lên bước ${curStep + 1}!</button>` : '<span class="story-status-badge done">🌺 Hoa đã nở rộ!</span>'}
+        ${curStep > 1 ? '<button type="button" class="tool-chip" id="btnAsagaoReset">🔄 Gieo lại</button>' : ''}
+      </div>
+      <button type="button" class="btn-hear-hint" id="btnHearAsagaoStage" style="margin: 10px auto 0 auto;"><span>🔊</span> Nghe giải thích bước này</button>
     `;
-    const btnHear = document.getElementById('btnHearAsagaoStage');
-    if (btnHear) {
-      btnHear.onclick = () => {
-        window.soundMgr.playClick();
-        window.soundMgr.playAudioFile(st.key, null, `${st.title}. ${st.desc}`);
-      };
-    }
+    document.getElementById('btnHearAsagaoStage')?.addEventListener('click', () => {
+      window.soundMgr.playClick();
+      window.soundMgr.playAudioFile(st.key, null, `${st.title}. ${st.desc}`);
+    });
+    document.getElementById('btnAsagaoWater')?.addEventListener('click', () => {
+      scienceAsagaoState.watered = true;
+      saveAsagaoState();
+      window.soundMgr.playPop();
+      renderScienceLabTab();
+    });
+    document.getElementById('btnAsagaoSun')?.addEventListener('click', () => {
+      scienceAsagaoState.sunned = true;
+      saveAsagaoState();
+      window.soundMgr.playPop();
+      renderScienceLabTab();
+    });
+    document.getElementById('btnAsagaoGrow')?.addEventListener('click', () => {
+      if (!(scienceAsagaoState.watered && scienceAsagaoState.sunned)) return;
+      scienceAsagaoState.stage = Math.min(5, curStep + 1);
+      scienceAsagaoState.watered = false;
+      scienceAsagaoState.sunned = false;
+      if (scienceAsagaoState.stage === 5) {
+        if (typeof fireConfetti === 'function') fireConfetti();
+        if (!scienceAsagaoState.bloomRewarded && typeof awardStars === 'function') {
+          scienceAsagaoState.bloomRewarded = true;
+          awardStars(5, 'Chăm sóc hoa Asagao nở rộ tuyệt đẹp!');
+        }
+      }
+      saveAsagaoState();
+      window.soundMgr.playCorrect();
+      renderScienceLabTab();
+      const ns = SCIENCE_ASAGAO_STAGES[scienceAsagaoState.stage - 1];
+      if (ns) window.soundMgr.playAudioFile(ns.key, null, `${ns.title}. ${ns.desc}`);
+      addScienceScore(3);
+    });
+    document.getElementById('btnAsagaoReset')?.addEventListener('click', () => {
+      scienceAsagaoState.stage = 1;
+      scienceAsagaoState.watered = false;
+      scienceAsagaoState.sunned = false;
+      saveAsagaoState();
+      window.soundMgr.playClick();
+      renderScienceLabTab();
+    });
 
     stepBtns.innerHTML = '';
     SCIENCE_ASAGAO_STAGES.forEach(s => {
       const b = document.createElement('button');
-      b.className = `tool-chip ${s.step === scienceAsagaoStage ? 'active-filter' : ''}`;
+      b.type = 'button';
+      b.className = `tool-chip ${s.step === curStep ? 'active-filter' : ''}`;
       b.innerText = `${s.emoji} Bước ${s.step}`;
       b.onclick = () => {
-        scienceAsagaoStage = s.step;
+        scienceAsagaoState.stage = s.step;
+        saveAsagaoState();
         window.soundMgr.playPop();
-        if (s.step === 5) fireConfetti();
+        if (s.step === 5 && typeof fireConfetti === 'function') fireConfetti();
         renderScienceLabTab();
         window.soundMgr.playAudioFile(s.key, null, `${s.title}. ${s.desc}`);
         addScienceScore(2);
@@ -308,7 +441,19 @@ function renderScienceLabTab() {
   }
 
   if (sensesGrid) {
+    const task = SENSE_MATCH_ITEMS[senseMatchTargetIdx % SENSE_MATCH_ITEMS.length];
     sensesGrid.innerHTML = '';
+    let challengeBox = document.getElementById('scienceSensesChallenge');
+    if (!challengeBox) {
+      challengeBox = document.createElement('div');
+      challengeBox.id = 'scienceSensesChallenge';
+      challengeBox.className = 'sense-challenge-bar';
+      sensesGrid.parentElement.insertBefore(challengeBox, sensesGrid);
+    }
+    challengeBox.innerHTML = `
+      <span>🧩 <strong>Thử thách Giác Quan:</strong> "${task.prompt}" — Chạm đúng giác quan bên dưới nhé!</span>
+    `;
+
     SCIENCE_SENSES_DATA.forEach(sn => {
       const card = document.createElement('div');
       card.className = 'vocab-card';
@@ -320,9 +465,19 @@ function renderScienceLabTab() {
         <div style="font-size: 12.5px; color: #334155; font-weight: 700; margin-top: 6px;">${sn.job}</div>
       `;
       card.onclick = () => {
-        window.soundMgr.playPop();
         window.soundMgr.playAudioFile(sn.key, null, `${sn.organ}. ${sn.job}`);
-        addScienceScore(2);
+        if (sn.id === task.organId) {
+          card.classList.add('is-learned');
+          window.soundMgr.playCorrect();
+          addScienceScore(4);
+          if (typeof showToast === 'function') showToast(`🌟 Chuẩn xác! ${sn.organ} giúp bé thực hiện điều đó!`);
+          senseMatchTargetIdx = (senseMatchTargetIdx + 1) % SENSE_MATCH_ITEMS.length;
+          const nt = SENSE_MATCH_ITEMS[senseMatchTargetIdx];
+          challengeBox.innerHTML = `<span>🧩 <strong>Thử thách Giác Quan:</strong> "${nt.prompt}" — Chạm đúng giác quan bên dưới nhé!</span>`;
+        } else {
+          window.soundMgr.playPop();
+          addScienceScore(2);
+        }
       };
       sensesGrid.appendChild(card);
     });
@@ -343,6 +498,7 @@ function loadScienceQuizQuestion() {
     fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_vn_win', null, 'Hoan hô Bảo Long siêu giỏi!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Nhà Thám Hiểm Khoa Học & Đời Sống!');
     document.getElementById('scienceQuizPlayStage').style.display = 'none';
     document.getElementById('scienceQuizVictoryStage').style.display = 'block';
@@ -388,6 +544,7 @@ function loadScienceQuizQuestion() {
         card.classList.add('correct');
         scienceQuizScore += 10;
         addScienceScore(10);
+        window.recordAnswer?.(q.id, true, { label: q.ans, mode: 'science', audioKey: q.id });
         document.getElementById('scienceQuizScore').innerText = `⭐ ${scienceQuizScore} điểm`;
         window.soundMgr.playCorrect();
         fireConfetti();
@@ -401,6 +558,7 @@ function loadScienceQuizQuestion() {
         );
       } else {
         card.classList.add('wrong');
+        window.recordAnswer?.(q.id, false, { label: q.ans, mode: 'science', audioKey: q.id });
         window.soundMgr.playWrong();
         window.soundMgr.speakTryAgain();
       }

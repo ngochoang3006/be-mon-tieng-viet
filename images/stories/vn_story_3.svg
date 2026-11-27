@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#bae6fd"/>
+      <stop offset="100%" stop-color="#dcfce7"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="18" fill="url(#sky)"/>
+  
+  
+    <g fill="#ffffff" opacity="0.88">
+      <circle cx="110" cy="48" r="22"/><circle cx="136" cy="40" r="26"/><circle cx="164" cy="48" r="20"/>
+      <rect x="108" y="48" width="58" height="22" rx="11"/>
+      <circle cx="470" cy="62" r="18"/><circle cx="494" cy="54" r="24"/><circle cx="520" cy="62" r="18"/>
+      <rect x="468" y="62" width="54" height="18" rx="9"/>
+    </g>
+  <path d="M0 250 Q320 222 640 250 L640 360 L0 360 Z" fill="url(#grass)"/>
+  <!-- Lush sugar-apple tree branch -->
+  <path d="M0 190 Q240 165 490 195" stroke="#78350f" stroke-width="20" stroke-linecap="round" fill="none"/>
+  <ellipse cx="140" cy="145" rx="52" ry="26" fill="#22c55e"/><ellipse cx="380" cy="150" rx="56" ry="28" fill="#16a34a"/>
+  <!-- Green na fruit -->
+  <circle cx="430" cy="215" r="24" fill="#4ade80" stroke="#15803d" stroke-width="3"/>
+  <!-- Cute tailorbird catching caterpillar -->
+  <g transform="translate(275, 134)">
+    <ellipse cx="0" cy="10" rx="34" ry="24" fill="#facc15"/>
+    <circle cx="24" cy="-12" r="18" fill="#fde047"/>
+    <circle cx="29" cy="-15" r="3.5" fill="#0f172a"/>
+    <path d="M40 -12 L56 -8 L40 -4 Z" fill="#f97316"/>
+    <path d="M-30 14 L-60 -2 L-54 18 Z" fill="#ca8a04"/>
+  </g>
+
+</svg>

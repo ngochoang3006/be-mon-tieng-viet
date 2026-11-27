@@ -22,9 +22,15 @@ const ART_SONGS_DATA = [
   },
   {
     id: 'butterfly',
-    title: '🦋 Kìa Con Bướm Vàng (ちょうちょう / Tổ Quốc)',
+    title: '🦋 Kìa Con Bướm Vàng (Frère Jacques)',
     notes: [0, 1, 2, 0, 0, 1, 2, 0, 2, 3, 4, -1, 2, 3, 4],
     labels: 'Đô - Rê - Mi - Đô • Đô - Rê - Mi - Đô • Mi - Pha - Son'
+  },
+  {
+    id: 'choucho',
+    title: '🌸 Hoa Bướm Nhật Bản (ちょうちょう / Lightly Row)',
+    notes: [4, 2, 2, -1, 3, 1, 1, -1, 0, 1, 2, 3, 4, 4, 4],
+    labels: 'Son - Mi - Mi • Pha - Rê - Rê • Đô - Rê - Mi - Pha - Son - Son - Son'
   },
   {
     id: 'mary',
@@ -113,6 +119,24 @@ let artsEpoch = 0;
 let artDrawColor = '#e11d48';
 let artDrawSticker = null;
 let artCanvasInited = false;
+let artSongTimers = [];
+let artSongActiveBtn = null;
+let artHasDrawnInk = false;
+let artAwardedThisSession = false;
+let artUndoStack = [];
+let mixerSelection = [];
+
+function stopArtsSongPlayback() {
+  artSongTimers.forEach(t => clearTimeout(t));
+  artSongTimers = [];
+  if (artSongActiveBtn) {
+    artSongActiveBtn.classList.remove('playing');
+    artSongActiveBtn.innerText = '▶️ Nghe đàn Pianica';
+    artSongActiveBtn = null;
+  }
+  document.querySelectorAll('#pianicaKeysRow .pianica-key-btn.pressed').forEach(b => b.classList.remove('pressed'));
+}
+window.stopArtsSongPlayback = stopArtsSongPlayback;
 let artsQuizList = [];
 let artsQuizIdx = 0;
 let artsQuizScore = 0;
@@ -130,6 +154,8 @@ function renderArtsPeHub() {
 }
 
 function switchArtsSubTab(subtab) {
+  stopArtsSongPlayback();
+  window.soundMgr?.stopAll?.();
   artsEpoch++;
   currentArtsTab = subtab;
   const map = {
@@ -158,6 +184,7 @@ function renderArtsMusicTab() {
   keysRow.innerHTML = '';
   PIANICA_NOTES.forEach((n, idx) => {
     const keyBtn = document.createElement('button');
+    keyBtn.type = 'button';
     keyBtn.className = 'pianica-key-btn';
     keyBtn.dataset.noteIdx = String(idx);
     keyBtn.style.setProperty('--note-color', n.color);
@@ -166,12 +193,14 @@ function renderArtsMusicTab() {
       <span class="p-vi">${n.vi}</span>
       <span class="p-dot" style="background:${n.color};"></span>
     `;
-    keyBtn.onclick = () => {
+    const playNote = () => {
       window.soundMgr.playToneFreq(n.freq, 'triangle', 0.42, 0, 0.28);
       keyBtn.classList.add('pressed');
       setTimeout(() => keyBtn.classList.remove('pressed'), 260);
       addArtsScore(1);
     };
+    keyBtn.addEventListener('pointerdown', (e) => { e.preventDefault(); playNote(); });
+    keyBtn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); playNote(); } });
     keysRow.appendChild(keyBtn);
   });
 
@@ -183,13 +212,22 @@ function renderArtsMusicTab() {
       card.innerHTML = `
         <div class="art-song-title">${song.title}</div>
         <div class="art-song-notes">${song.labels}</div>
-        <button class="tool-chip tool-chip-listen" style="margin-top:8px;">▶️ Nghe đàn Pianica</button>
+        <button type="button" class="tool-chip tool-chip-listen" style="margin-top:8px;">▶️ Nghe đàn Pianica</button>
       `;
-      card.querySelector('button').onclick = () => {
+      const playBtn = card.querySelector('button');
+      playBtn.onclick = () => {
+        if (artSongActiveBtn === playBtn) {
+          stopArtsSongPlayback();
+          return;
+        }
+        stopArtsSongPlayback();
+        artSongActiveBtn = playBtn;
+        playBtn.classList.add('playing');
+        playBtn.innerText = '⏹️ Dừng đàn';
         const myEpoch = artsEpoch;
         const myNav = window.appNavEpoch || 0;
         song.notes.forEach((ni, stepIdx) => {
-          setTimeout(() => {
+          const tid = setTimeout(() => {
             if (myEpoch !== artsEpoch || (window.appNavEpoch || 0) !== myNav) return;
             if (ni >= 0 && PIANICA_NOTES[ni]) {
               window.soundMgr.playToneFreq(PIANICA_NOTES[ni].freq, 'triangle', 0.36, 0, 0.25);
@@ -200,7 +238,12 @@ function renderArtsMusicTab() {
               }
             }
           }, stepIdx * 340);
+          artSongTimers.push(tid);
         });
+        const endTid = setTimeout(() => {
+          if (artSongActiveBtn === playBtn) stopArtsSongPlayback();
+        }, song.notes.length * 340 + 350);
+        artSongTimers.push(endTid);
         addArtsScore(3);
       };
       songsList.appendChild(card);
@@ -208,12 +251,72 @@ function renderArtsMusicTab() {
   }
 }
 
+const MIXER_POTS = [
+  { id: 'red', name: 'Đỏ', hex: '#ef4444' },
+  { id: 'yellow', name: 'Vàng', hex: '#eab308' },
+  { id: 'blue', name: 'Xanh dương', hex: '#3b82f6' },
+  { id: 'white', name: 'Trắng', hex: '#ffffff' }
+];
+const MIXER_RECIPES = {
+  'red+yellow': ART_COLOR_MIXES[0],
+  'yellow+red': ART_COLOR_MIXES[0],
+  'blue+yellow': ART_COLOR_MIXES[1],
+  'yellow+blue': ART_COLOR_MIXES[1],
+  'blue+red': ART_COLOR_MIXES[2],
+  'red+blue': ART_COLOR_MIXES[2],
+  'red+white': ART_COLOR_MIXES[3],
+  'white+red': ART_COLOR_MIXES[3]
+};
+
 function renderArtsPaintTab() {
   const mixGrid = document.getElementById('artColorMixGrid');
   if (mixGrid) {
     mixGrid.innerHTML = '';
+    let labEl = document.getElementById('artInteractiveMixerBox');
+    if (!labEl) {
+      labEl = document.createElement('div');
+      labEl.id = 'artInteractiveMixerBox';
+      labEl.className = 'art-mixer-lab';
+      mixGrid.parentElement.insertBefore(labEl, mixGrid);
+    }
+    const drawMixerLab = () => {
+      const first = MIXER_POTS.find(p => p.id === mixerSelection[0]);
+      const second = MIXER_POTS.find(p => p.id === mixerSelection[1]);
+      const recipe = first && second ? MIXER_RECIPES[`${first.id}+${second.id}`] : null;
+      labEl.innerHTML = `
+        <div style="font-weight:900; color:#be185d; margin-bottom:6px;">🧪 Chọn 2 hũ màu để Bảo Long tự pha thử nhé:</div>
+        <div class="art-mixer-pots">
+          ${MIXER_POTS.map(p => `<button type="button" class="tool-chip art-pot-btn ${mixerSelection.includes(p.id) ? 'active-filter' : ''}" data-pot="${p.id}"><span class="mix-circle" style="width:16px;height:16px;background:${p.hex};border:1px solid #cbd5e1;display:inline-block;vertical-align:middle;margin-right:4px;"></span>${p.name}</button>`).join('')}
+        </div>
+        <div class="art-mixer-result">
+          ${recipe ? `🎉 <strong>${first.name} + ${second.name} = ${recipe.rn}</strong> (${recipe.ja}) <span class="mix-circle" style="width:22px;height:22px;background:${recipe.res};display:inline-block;vertical-align:middle;margin-left:6px;"></span>` : (first ? `👆 Đã chọn hũ <strong>${first.name}</strong> — chọn thêm 1 màu nữa!` : '🎨 Chạm 2 hũ màu bất kỳ ở trên!')}
+        </div>
+      `;
+      labEl.querySelectorAll('.art-pot-btn').forEach(pb => {
+        pb.onclick = () => {
+          const pid = pb.dataset.pot;
+          if (mixerSelection.length >= 2) mixerSelection = [pid];
+          else if (!mixerSelection.includes(pid)) mixerSelection.push(pid);
+          window.soundMgr.playPop();
+          if (mixerSelection.length === 2) {
+            const rec = MIXER_RECIPES[`${mixerSelection[0]}+${mixerSelection[1]}`];
+            if (rec) {
+              window.soundMgr.playCorrect();
+              window.soundMgr.playAudioFile(rec.id, null, rec.rn);
+              addArtsScore(2);
+            } else if (typeof showToast === 'function') {
+              showToast('🎨 Hai màu này trộn tạo sắc thái nhạt hơn! Thử Đỏ + Vàng, Đỏ + Xanh dương hoặc Xanh dương + Vàng nhé!');
+            }
+          }
+          drawMixerLab();
+        };
+      });
+    };
+    drawMixerLab();
+
     ART_COLOR_MIXES.forEach(m => {
       const card = document.createElement('button');
+      card.type = 'button';
       card.className = 'art-mix-card';
       card.innerHTML = `
         <div class="art-mix-dots">
@@ -248,36 +351,55 @@ function initArtCanvasOnce() {
     const w = 520, h = 280;
     cv.width = w * dpr;
     cv.height = h * dpr;
-    ctx.scale(dpr, dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, w, h);
+
+    const pushUndo = () => {
+      try {
+        artUndoStack.push(ctx.getImageData(0, 0, cv.width, cv.height));
+        if (artUndoStack.length > 10) artUndoStack.shift();
+      } catch (e) {}
+    };
 
     let drawing = false;
     const getPt = (ev) => {
       const r = cv.getBoundingClientRect();
-      const src = ev.touches ? ev.touches[0] : ev;
-      return { x: ((src.clientX - r.left) / r.width) * w, y: ((src.clientY - r.top) / r.height) * h };
+      const src = ev.touches && ev.touches[0] ? ev.touches[0] : (ev.changedTouches && ev.changedTouches[0] ? ev.changedTouches[0] : ev);
+      return { x: ((src.clientX - r.left) / (r.width || 1)) * w, y: ((src.clientY - r.top) / (r.height || 1)) * h };
     };
     const start = (ev) => {
       const p = getPt(ev);
+      pushUndo();
+      artHasDrawnInk = true;
       if (artDrawSticker) {
+        ctx.save();
+        ctx.fillStyle = '#0f172a';
         ctx.font = '34px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(artDrawSticker, p.x, p.y);
+        ctx.restore();
         window.soundMgr.playPop();
         addArtsScore(1);
         return;
       }
       drawing = true;
+      ctx.save();
+      ctx.fillStyle = artDrawColor;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, artDrawColor === '#ffffff' ? 9 : 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
       ctx.beginPath();
       ctx.moveTo(p.x, p.y);
     };
     const move = (ev) => {
       if (!drawing || artDrawSticker) return;
       const p = getPt(ev);
-      ctx.lineWidth = 7;
+      ctx.lineWidth = artDrawColor === '#ffffff' ? 18 : 7;
       ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
       ctx.strokeStyle = artDrawColor;
       ctx.lineTo(p.x, p.y);
       ctx.stroke();
@@ -287,14 +409,15 @@ function initArtCanvasOnce() {
     cv.addEventListener('mousedown', start);
     cv.addEventListener('mousemove', move);
     window.addEventListener('mouseup', stop);
-    cv.addEventListener('touchstart', (e) => { e.preventDefault(); start(e); }, { passive: false });
-    cv.addEventListener('touchmove', (e) => { e.preventDefault(); move(e); }, { passive: false });
+    cv.addEventListener('touchstart', (e) => { if (!e.touches?.[0]) return; e.preventDefault(); start(e); }, { passive: false });
+    cv.addEventListener('touchmove', (e) => { if (!e.touches?.[0]) return; e.preventDefault(); move(e); }, { passive: false });
     cv.addEventListener('touchend', stop);
+    cv.addEventListener('touchcancel', stop);
 
     document.querySelectorAll('.art-color-dot').forEach(dot => {
       dot.onclick = () => {
         artDrawSticker = null;
-        document.querySelectorAll('.art-sticker-btn.active-filter').forEach(b => b.classList.remove('active-filter'));
+        document.querySelectorAll('.art-sticker-btn.active-filter, #btnArtEraser.active-filter').forEach(b => b.classList.remove('active-filter'));
         document.querySelectorAll('.art-color-dot').forEach(d => d.classList.remove('active-dot'));
         dot.classList.add('active-dot');
         artDrawColor = dot.dataset.color;
@@ -304,7 +427,7 @@ function initArtCanvasOnce() {
     document.querySelectorAll('.art-sticker-btn').forEach(sb => {
       sb.onclick = () => {
         const already = sb.classList.contains('active-filter');
-        document.querySelectorAll('.art-sticker-btn.active-filter').forEach(b => b.classList.remove('active-filter'));
+        document.querySelectorAll('.art-sticker-btn.active-filter, #btnArtEraser.active-filter').forEach(b => b.classList.remove('active-filter'));
         if (already) {
           artDrawSticker = null;
         } else {
@@ -314,18 +437,96 @@ function initArtCanvasOnce() {
         window.soundMgr.playClick();
       };
     });
+
     const btnClr = document.getElementById('btnArtCanvasClear');
-    if (btnClr) btnClr.onclick = () => {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, w, h);
-      window.soundMgr.playClick();
-    };
+    if (btnClr) {
+      // Inject Undo, Eraser & Download controls once alongside Clear
+      const ctrlWrap = btnClr.parentElement;
+      if (ctrlWrap && !document.getElementById('btnArtCanvasUndo')) {
+        const mk = (id, label) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'tool-chip';
+          b.id = id;
+          b.innerText = label;
+          return b;
+        };
+        const btnEraser = mk('btnArtEraser', '🧽 Tẩy');
+        const btnUndo = mk('btnArtCanvasUndo', '↩️ Quay lại');
+        const btnDownload = mk('btnArtCanvasSaveImg', '💾 Tải tranh PNG');
+        ctrlWrap.insertBefore(btnEraser, btnClr);
+        ctrlWrap.insertBefore(btnUndo, btnClr);
+        ctrlWrap.appendChild(btnDownload);
+        btnEraser.onclick = () => {
+          artDrawSticker = null;
+          artDrawColor = '#ffffff';
+          document.querySelectorAll('.art-sticker-btn.active-filter').forEach(b => b.classList.remove('active-filter'));
+          document.querySelectorAll('.art-color-dot').forEach(d => d.classList.remove('active-dot'));
+          btnEraser.classList.add('active-filter');
+          window.soundMgr.playClick();
+        };
+        btnUndo.onclick = () => {
+          const prev = artUndoStack.pop();
+          if (prev) {
+            ctx.putImageData(prev, 0, 0);
+            if (artUndoStack.length === 0) artHasDrawnInk = false;
+            window.soundMgr.playPop();
+          }
+        };
+        btnDownload.onclick = () => {
+          const a = document.createElement('a');
+          a.href = cv.toDataURL('image/png');
+          a.download = `tranh-bao-long-${new Date().toISOString().slice(0, 10)}.png`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          window.soundMgr.playCorrect();
+          if (typeof showToast === 'function') showToast('💾 Đã lưu bức tranh của Bảo Long về máy!');
+        };
+      }
+      btnClr.onclick = () => {
+        pushUndo();
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+        artHasDrawnInk = false;
+        const st = document.getElementById('artCanvasStatusMsg');
+        if (st) { st.innerText = ''; st.classList.remove('is-warn'); }
+        window.soundMgr.playClick();
+      };
+    }
+
     const btnDone = document.getElementById('btnArtCanvasSave');
+    const setStatus = (msg, isWarn = false) => {
+      let st = document.getElementById('artCanvasStatusMsg');
+      if (!st && btnDone?.parentElement?.parentElement) {
+        st = document.createElement('p');
+        st.id = 'artCanvasStatusMsg';
+        st.className = 'art-canvas-status';
+        btnDone.parentElement.parentElement.appendChild(st);
+      }
+      if (st) {
+        st.innerText = msg;
+        st.classList.toggle('is-warn', isWarn);
+      }
+    };
     if (btnDone) btnDone.onclick = () => {
-      fireConfetti();
+      if (!artHasDrawnInk) {
+        window.soundMgr.playPop();
+        const warn = '🎨 Bảo Long vẽ hoặc dán thêm hình lên bảng trước khi hoàn thành nhé!';
+        setStatus(warn, true);
+        if (typeof showToast === 'function') showToast(warn);
+        return;
+      }
+      setStatus('🖼️ Tuyệt tác của Bảo Long hoàn thành rực rỡ!', false);
+      if (typeof fireConfetti === 'function') fireConfetti();
       window.soundMgr.playCorrect();
       window.soundMgr.speakPraise(true);
-      if (typeof awardStars === 'function') awardStars(5, 'Họa sĩ nhí Bảo Long vẽ tranh siêu đẹp!');
+      if (!artAwardedThisSession && typeof awardStars === 'function') {
+        artAwardedThisSession = true;
+        awardStars(5, 'Họa sĩ nhí Bảo Long vẽ tranh siêu đẹp!');
+      } else if (typeof showToast === 'function') {
+        showToast('🖼️ Tác phẩm tuyệt đẹp! Bấm "💾 Tải tranh PNG" để lưu kỷ niệm nhé!');
+      }
     };
   }
 }
@@ -366,6 +567,7 @@ function loadArtsQuizQuestion() {
     fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_vn_win', null, 'Hoan hô nghệ sĩ nhí Bảo Long!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Nghệ Sĩ & Vận Động Viên Nhí Bảo Long!');
     document.getElementById('artsQuizPlayStage').style.display = 'none';
     document.getElementById('artsQuizVictoryStage').style.display = 'block';
@@ -411,6 +613,7 @@ function loadArtsQuizQuestion() {
         card.classList.add('correct');
         artsQuizScore += 10;
         addArtsScore(10);
+        window.recordAnswer?.(q.id, true, { label: q.ans, mode: 'arts', audioKey: q.id });
         document.getElementById('artsQuizScore').innerText = `⭐ ${artsQuizScore} điểm`;
         window.soundMgr.playCorrect();
         fireConfetti();
@@ -424,6 +627,7 @@ function loadArtsQuizQuestion() {
         );
       } else {
         card.classList.add('wrong');
+        window.recordAnswer?.(q.id, false, { label: q.ans, mode: 'arts', audioKey: q.id });
         window.soundMgr.playWrong();
         window.soundMgr.speakTryAgain();
       }

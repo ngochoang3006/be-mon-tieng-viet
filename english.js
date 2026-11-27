@@ -5,7 +5,7 @@
 // 2. 8 Chủ đề Từ vựng & Giao tiếp hàng ngày (64 từ/câu)
 // 3. Game Nghe Tiếng Anh Chọn Hình (10 câu)
 // 4. Game Ghép Chữ Tiếng Anh Vui (pool 16 từ, 10 từ/lượt)
-// Đồng bộ giọng đọc Anh-Mỹ Nữ (Jenny) / Nam (Guy) & Kho Sao Bảo Long!
+// Đồng bộ giọng đọc Anh-Mỹ Nữ (Jenny) / Nam (Andrew) & Kho Sao Bảo Long!
 // ========================================================
 
 const EN_ALPHABET_DATA = [
@@ -231,7 +231,7 @@ function renderEnglishHub() {
   const descEl = document.getElementById('enBannerDesc');
   if (descEl) {
     const totalWords = EN_VOCAB_TOPICS.reduce((sum, t) => sum + t.words.length, 0);
-    descEl.innerText = `Học bảng ${EN_ALPHABET_DATA.length} chữ cái A–Z, ${EN_VOCAB_TOPICS.length} chủ đề (${totalWords} từ vựng & câu giao tiếp quen thuộc), chơi Nghe chọn hình và Ghép từ tiếng Anh cùng giọng đọc chuẩn Jenny & Guy!`;
+    descEl.innerText = `Học bảng ${EN_ALPHABET_DATA.length} chữ cái A–Z, ${EN_VOCAB_TOPICS.length} chủ đề (${totalWords} từ vựng & câu giao tiếp quen thuộc), chơi Nghe chọn hình và Ghép từ tiếng Anh cùng giọng đọc chuẩn Jenny & Andrew!`;
   }
   switchEnglishSubTab(currentEnTab);
 }
@@ -312,8 +312,9 @@ function renderEnAbcTab() {
       let idx = 0;
       const cards = document.querySelectorAll('#enAbcGrid .en-abc-card');
 
+      const myEp = ++enEpoch;
       function nextAbc() {
-        if (!enAutoRunning) return;
+        if (!enAutoRunning || myEp !== enEpoch) return;
         if (idx >= EN_ALPHABET_DATA.length) {
           stopEnAutoPlay();
           if (typeof showToast === 'function') showToast('🎉 Good job! Đã nghe xong bảng chữ cái A–Z!');
@@ -326,7 +327,7 @@ function renderEnAbcTab() {
         }
         const cur = EN_ALPHABET_DATA[idx];
         window.soundMgr.playAudioFile(cur.audioKey, () => {
-          if (!enAutoRunning) return;
+          if (!enAutoRunning || myEp !== enEpoch) return;
           idx++;
           enAutoTimer = setTimeout(nextAbc, 450);
         }, `${cur.upper}, ${cur.word}`);
@@ -346,6 +347,7 @@ function renderEnVocabTab() {
 
   EN_VOCAB_TOPICS.forEach((topic, idx) => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `lesson-tab ${idx === currentEnTopicIdx ? 'active' : ''}`;
     btn.innerText = `${topic.title}`;
     btn.onclick = () => {
@@ -409,8 +411,9 @@ function renderEnVocabTab() {
       const words = activeTopic.words;
       const cards = document.querySelectorAll('#enVocabGrid .en-vocab-card');
 
+      const myEp = ++enEpoch;
       function nextWord() {
-        if (!enAutoRunning) return;
+        if (!enAutoRunning || myEp !== enEpoch) return;
         if (idx >= words.length) {
           stopEnAutoPlay();
           if (typeof showToast === 'function') showToast('🎉 Tuyệt vời! Bảo Long đã nghe xong chủ đề!');
@@ -422,7 +425,7 @@ function renderEnVocabTab() {
           cards[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         window.soundMgr.playAudioFile(words[idx].audioKey, () => {
-          if (!enAutoRunning) return;
+          if (!enAutoRunning || myEp !== enEpoch) return;
           idx++;
           enAutoTimer = setTimeout(nextWord, 550);
         }, words[idx].en);
@@ -463,6 +466,7 @@ function loadEnQuizQuestion() {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_en_win', null, 'Awesome job Bảo Long!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Siêu sao Nghe Tiếng Anh!');
 
     document.getElementById('enQuizPlayStage').style.display = 'none';
@@ -573,6 +577,7 @@ function loadEnSpellRound() {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_en_win', null, 'Awesome job Bảo Long!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Hoàn thành Ghép Chữ Tiếng Anh!');
 
     document.getElementById('enSpellPlayStage').style.display = 'none';
@@ -620,7 +625,7 @@ function loadEnSpellRound() {
         if (b) b.classList.remove('used');
         enSpellSlots[idx] = null;
         slot.innerText = '';
-        slot.classList.remove('filled');
+        slot.classList.remove('filled', 'slot-wrong');
         window.soundMgr.playPop();
       }
     });
@@ -632,6 +637,7 @@ function loadEnSpellRound() {
   bankBox.innerHTML = '';
   bank.forEach((ch, idx) => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'letter-option-btn';
     btn.innerText = ch;
     btn.id = `en-opt-${idx}`;
@@ -647,15 +653,17 @@ function loadEnSpellRound() {
       sEl.classList.add('filled');
 
       if (enSpellSlots.every(s => s !== null)) {
-        enSpellLocked = true;
         const built = enSpellSlots.map(s => s.ch).join('');
         if (built === q.word) {
+          enSpellLocked = true;
           enSpellScore += 10;
           addEnScore(10);
+          window.awardCoins?.(2);
+          window.recordAnswer?.(`en_sp_${q.word.toLowerCase()}`, true, { label: `${q.word} (${q.vi})`, mode: 'english', audioKey: q.audioKey, noAutoCoin: true });
           document.getElementById('enSpellScoreText').innerText = `⭐ ${enSpellScore} điểm`;
           window.soundMgr.playCorrect();
           if (typeof fireConfetti === 'function') fireConfetti();
-          if (typeof showToast === 'function') showToast(`🌟 Excellent! "${q.word}" = ${q.vi}!`);
+          if (typeof showToast === 'function') showToast(`🌟 Excellent! "${q.word}" = ${q.vi}! (+2 🪙)`);
           let spellDone = false;
           const goNextSpell = () => {
             if (spellDone) return;
@@ -669,14 +677,17 @@ function loadEnSpellRound() {
               window.soundMgr.playAudioFile(q.audioKey, () => setTimeout(goNextSpell, 220), q.word);
             }
           }, 180);
-          setTimeout(goNextSpell, window.soundMgr.isMuted ? 450 : 1850);
+          setTimeout(goNextSpell, window.soundMgr.isMuted ? 450 : 2100);
         } else {
+          // Đánh dấu từng ô sai để bé tự chạm sửa thay vì xóa sạch!
+          enSpellLocked = false;
+          enSpellSlots.forEach((slotObj, si) => {
+            const sEl = document.getElementById(`en-slot-${si}`);
+            if (sEl) sEl.classList.toggle('slot-wrong', !slotObj || slotObj.ch !== letters[si]);
+          });
+          window.recordAnswer?.(`en_sp_${q.word.toLowerCase()}`, false, { label: `${q.word} (${q.vi})`, mode: 'english', audioKey: q.audioKey, noAutoCoin: true });
           window.soundMgr.playWrong();
-          if (typeof showToast === 'function') showToast(`Chạm vào ô sai để sửa hoặc thử lại nhé Bảo Long! ❤️`);
-          setTimeout(() => {
-            if ((window.appNavEpoch || 0) !== myNav || enEpoch !== myEn) return;
-            loadEnSpellRound();
-          }, 1100);
+          if (typeof showToast === 'function') showToast('🔴 Chạm vào ô viền đỏ để sửa chữ sai nhé Bảo Long!');
         }
       }
     });

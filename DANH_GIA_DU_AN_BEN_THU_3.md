@@ -2,100 +2,83 @@
 
 > **Tên ứng dụng:** Bảo Long Thám Hiểm Tiếng Việt – Hệ Thống Học Tập & Vui Chơi Lớp 1 Song Ngữ Việt – Nhật  
 > **Repository Git:** https://github.com/ngochoang3006/be-mon-tieng-viet.git  
-> **Nhánh hiện tại:** `main` (nền `d64b291` + nâng cấp 10 Truyện Đọc 小1 ngày 26/11/2026)  
-> **Ngày lập hồ sơ & chạy kiểm thử:** 26/11/2026
+> **Nhánh hiện tại:** `main` (nền `8333273` + đợt tổng kiểm & nâng cấp toàn diện từ 100 quan điểm `27/11/2026`, `v20261127v10`)  
+> **Ngày lập hồ sơ & chạy kiểm thử:** 27/11/2026
 
-Tài liệu này tổng hợp kiến trúc hàm, nội dung học tập, chẩn đoán giọng đọc, các cải tiến đã triển khai từ `DE_XUAT_CAI_THIEN_HE_THONG.md` và log kiểm thử thực tế sau chỉnh sửa cuối.
+Tài liệu này tổng hợp kiến trúc hàm, nội dung học tập, kho ảnh minh họa & PWA, kết quả sửa toàn bộ lỗi từ 100 quan điểm kiểm tra tổng quan (`P0–P3`) và log kiểm thử thực tế sau chỉnh sửa cuối.
 
 ---
 
 ## 1. Tóm Tắt Các `class` & `function` Trong Dự Án
 
-Ứng dụng chạy hoàn toàn phía client (**HTML5 + CSS3 + Vanilla JavaScript**, không framework, không bundler, không backend). Tổng cộng có **12 file JS** gồm **1 class (`SoundManager` với 43 methods)** và **222 top-level functions** (**265 hàm/phương thức** ở cấp top-level).
+Ứng dụng chạy hoàn toàn phía client (**HTML5 + CSS3 + Vanilla JavaScript + Service Worker PWA**, không framework, không bundler, không backend). Tổng cộng có **12 module JS ứng dụng + `sw.js`** gồm **1 class (`SoundManager` với `46` methods)** và **`230` top-level functions** (**`276` hàm/phương thức**).
 
 | File | Kích thước | Vai trò chính | Tổng `class` / `function` |
 | :--- | :---: | :--- | :--- |
-| [`data.js`](data.js) | 2.489 dòng<br>(130.498 B) | Kho dữ liệu Tiếng Việt, `DECODABLE_PHONICS_SENTENCES` (36 câu), `MINIMAL_PAIR_DRILLS` (12 nhóm), Khủng long, Xe cộ, Chính tả, Truyện đọc HK2, Sticker & Danh hiệu | *(0 function — 23 hằng dữ liệu)* |
-| [`speech.js`](speech.js) | 651 dòng<br>(21.492 B) | Bộ điều phối âm thanh 3 tầng: `normalizeKey` cho mọi chuỗi phát âm, bỏ tải trùng 2 lần, thông báo theo giọng Nam/Nữ, 1 `HTMLAudioElement` iOS, ưu tiên bản thu gia đình (IndexedDB), chặn giọng Windows & WebAudio SFX | **Class `SoundManager` (43 methods)** *(chi tiết xem [`TONG_HOP_HE_THONG.md`](TONG_HOP_HE_THONG.md))* |
-| [`learning_plus.js`](learning_plus.js) | 1.151 dòng<br>(47.697 B) | Lộ trình hôm nay (10–15 phút, `+20 🪙 Xu`/bước), Lịch 7 ngày không phạt, Leitner SRS (`recordAnswer` + `+5 🪙 Xu`), Ôn tập hôm nay, Câu giải mã Karaoke + Tự đọc (`MediaRecorder` + IndexedDB), Luyện tai thanh điệu, Phản hồi độ phủ nét, trần sao Đua xe `25 ⭐/ngày` & Góc Phụ Huynh | **23 top-level functions** + `customVoiceStore` |
-| [`app.js`](app.js) | 3.207 dòng<br>(125.549 B) | Điều hướng 14 tab sidebar, gamification (`schemaVersion: 3`, `coins`/`awardCoins`, `arcadeGear`, trần Đua `25 ⭐/ngày`), Tiếng Việt, Khủng long, Xe cộ, Canvas 4 ô ly & **7 Mini-game nâng cấp** (gợi ý, Blitz 45s, ga Shinkansen, 3 độ khó Memory + Soi 2s + kỷ lục, sự thật Quiz, Khảo cổ 2 công cụ Búa/Cọ + vết nứt SVG) | **81 top-level functions** |
-| [`math.js`](math.js) | 1.799 dòng<br>(76.524 B) | Toán Lớp 1 VN & JP (0–100, Sakura, Bảng 100, Tách/Gộp, Hình 2D/3D, Thước cm, Đồng hồ, Thứ) | **27 top-level functions** |
-| [`science_life.js`](science_life.js) | 421 dòng<br>(23.991 B) | Tự nhiên & Xã hội (VN) + Seikatsuka `生活科` (6 chủ đề, trồng Asagao, 5 Giác quan, Đố vui) | **7 top-level functions** |
-| [`ethics.js`](ethics.js) | 826 dòng<br>(41.497 B) | Đạo Đức Lớp 1: 12 bài học, tình huống, Nên/Không nên, Đèn giao thông & Phân loại rác (8 món) | **12 top-level functions** |
-| [`arts_pe.js`](arts_pe.js) | 444 dòng<br>(19.508 B) | Âm nhạc Pianica 8 phím, Pha màu, Vẽ tranh & Thể dục (`音楽・図工・体育`) | **9 top-level functions** |
-| [`japanese.js`](japanese.js) | 2.885 dòng<br>(147.382 B) | Tiếng Nhật 小1 (46+25 Hiragana, 46 Katakana, 80 MEXT Kanji, 8 chủ đề từ vựng, **10 truyện đọc 小1 & cổ tích Nhật đầy đủ `8–9` câu/bài, đọc tô sáng từng câu, bật/tắt Romaji, từ vựng & 2 câu hỏi/bài +5 🪙 +5 ⭐**, Masume 3 mức) | **16 top-level functions** |
-| [`english.js`](english.js) | 685 dòng<br>(33.990 B) | Tiếng Anh Lớp 1: 26 ABC, 8 chủ đề (`64` từ), Nghe chọn hình & Ghép chữ | **10 top-level functions** |
-| [`dragons.js`](dragons.js) | 471 dòng<br>(21.589 B) | Vương Quốc Rồng: 8 loài rồng ảnh thật, Đố vui & Lật thẻ | **7 top-level functions** |
-| [`arcade.js`](arcade.js) | 1.378 dòng<br>(52.863 B) | Giải Đua 3 Chặng (~60–90s) Xe / Khủng Long / Rồng: đếm ngược `3-2-1`, 6 Cổng Chữ MP3 thật, AI bám đuổi, Xưởng Xu nâng cấp Speed/Nitro Lv0–3 & Trang trí, ảnh thật JPG Khủng long & Rồng, thưởng `1–3 ⭐` + `🪙 Xu` | **30 top-level functions** |
+| [`data.js`](data.js) | 2.466 dòng<br>(132.191 B) | Kho dữ liệu Tiếng Việt đã chuẩn hóa chính tả/vần (`G → Gỗ`, Bài 7 đủ 10 từ, `NG/UY/SX/CH-TR` đồng bộ), `DECODABLE_PHONICS_SENTENCES` (36 câu, sửa `Mùa xuân, hoa huệ nở`), `MINIMAL_PAIR_DRILLS` (12 nhóm, bỏ lộ tên dấu ở bài luyện 6 thanh), Khủng long, Xe cộ, `VIET_STORIES_DATA` (6 truyện kèm ảnh bìa) | *(0 function — hằng dữ liệu)* |
+| [`speech.js`](speech.js) | 774 dòng<br>(25.947 B) | Bộ điều phối âm thanh 3 tầng: mở khóa iOS an toàn (`pointerup`/`touchend`/`click`/`keydown` không dính mute), đồng bộ `defaultPlaybackRate`, `maxFallbackMs = 6500` + hủy sạch hẹn giờ trong `stopAll()`, true LRU cache (800 mục), `prefetchKeys` giới hạn 4, chuẩn hóa NFC `normalizeKey`, `DynamicsCompressorNode`, ưu tiên ghi âm gia đình (IndexedDB) & chặn giọng máy Windows | **Class `SoundManager` (46 methods)** *(chi tiết xem [`TONG_HOP_HE_THONG.md`](TONG_HOP_HE_THONG.md))* |
+| [`learning_plus.js`](learning_plus.js) | 1.276 dòng<br>(53.562 B) | Lộ trình hôm nay (`+20 🪙 Xu`/bước, `dailyLog` tỉa 90 ngày, dò qua nửa đêm), Leitner SRS (`[0,1,1,3,7,14]`, `getDueReviewItems` + `btnDueHear` phát chuỗi phẩy), `escapeHtmlPlus` chống XSS, `customVoiceStore` khóa theo từng recorder (hỗ trợ MIME Safari, dọn mic khi đóng modal), Karaoke & `drawHintByLevel` không đụng mực đỏ, Góc Phụ Huynh (`#parentArcadeCapSelect`) | **26 top-level functions** + `customVoiceStore` |
+| [`app.js`](app.js) | 3.412 dòng<br>(134.971 B) | Khởi tạo tuần tự `initLearningPlus()` sau `loadProgress()`, kiểm tra schema JSON Import & Reset sạch sub-key/IndexedDB, sửa Puzzle tách từ trùng (`chuồn chuồn`) & chống nhiễu vô lý, bẫy tiêu điểm ARIA cho Modal, HiDPI Canvas ô ly giữ nét khi resize nhẹ, chặn spoiler ở Ô chữ/Blitz/Memory/DinoDig (`noAutoCoin`), tắt âm sạch khi đổi tab/giọng | **82 top-level functions** |
+| [`math.js`](math.js) | 1.861 dòng<br>(78.827 B) | Toán Lớp 1 VN & JP (0–100, Sakura, Bảng 1–100, Tách/Gộp, `max100` tròn phạm vi, đồng hồ 12 giờ không tô đỏ đáp án khi đố, hình 2D/3D với ID SVG không trùng, thước cm, Thứ), có `type="button"` & `recordAnswer` | **27 top-level functions** |
+| [`science_life.js`](science_life.js) | 579 dòng<br>(31.960 B) | Tự nhiên & Xã hội + Seikatsuka `生活科`: **6 ảnh bìa chủ đề** (`sc_topic_1..6`), **trồng cây Bìm Bìm (`あさがお`) 5 giai đoạn minh họa SVG tương tác tưới nước/phơi nắng lưu `localStorage`**, trò chơi 5 Giác quan + Nghe cả chủ đề & Đố vui | **9 top-level functions** |
+| [`ethics.js`](ethics.js) | 899 dòng<br>(45.282 B) | Đạo Đức Lớp 1: **12 ảnh minh họa thẻ bài & tình huống** (`eth_1..12`), chuyển toàn bộ nút lồng nhau sang nút `<button type="button">` anh em đúng chuẩn ARIA, Đèn giao thông có vạch dừng trắng, vạch qua đường & SVG ô tô quay đầu đúng chiều, Phân loại rác 8 món gợi ý không lộ đáp án | **12 top-level functions** |
+| [`arts_pe.js`](arts_pe.js) | 648 dòng<br>(28.676 B) | Âm nhạc Pianica 8 phím, **phòng thí nghiệm Pha màu tương tác** (`#artInteractiveMixerBox`), Bảng vẽ HiDPI có Tẩy/Quay lại/Lưu PNG & cảnh báo khi nộp bảng trống (`#artCanvasStatusMsg` + toast), & Thể dục (`音楽・図工・体育`) | **10 top-level functions** |
+| [`japanese.js`](japanese.js) | 2.994 dòng<br>(153.018 B) | Tiếng Nhật 小1 (Hiragana + Âm ghép `Yoon/Sokuon`, Katakana, 80 Kanji kèm **huy hiệu số nét `.kanji-strokes-badge`**, **10 truyện đọc 小1 kèm 10 ảnh bìa** `ja_story_1..10`, sửa văn bản/âm thanh chuẩn cho Truyện 4, 8, 10, Masume 3 mức) | **16 top-level functions** |
+| [`english.js`](english.js) | 696 dòng<br>(34.831 B) | Tiếng Anh Lớp 1: 26 ABC, 8 chủ đề (`64` từ, đồng bộ nhãn giọng **Jenny & Andrew**), Nghe chọn hình và Ghép từ đánh dấu ô sai viền đỏ `.slot-wrong` cho phép chạm sửa từng chữ không xóa trắng | **10 top-level functions** |
+| [`dragons.js`](dragons.js) | 491 dòng<br>(22.895 B) | Vương Quốc Rồng: 8 loài rồng ảnh thật (sửa mô tả Rồng Đá `drquiz_6` khớp hình thật & không lộ tên Nhật trong Đố vui Rồng), Đố vui & Lật thẻ | **7 top-level functions** |
+| [`arcade.js`](arcade.js) | 1.504 dòng<br>(58.543 B) | Giải Đua 3 Chặng Xe / Khủng Long / Rồng (`~60–90s`): đếm ngược `3-2-1` khóa trạng thái `ready`, Cổng Chữ MP3 thật, nút Tạm dừng `#btnArcadePause`, AI bám đuổi, Xưởng Xu nâng cấp Speed/Nitro & Trang trí, thưởng `1–3 ⭐` + `🪙 Xu` | **31 top-level functions** |
+| [`sw.js`](sw.js) | 72 dòng<br>(2.120 B) | Service Worker PWA (`baolong-v20261127v10`): precache lõi ứng dụng và cache động toàn bộ MP3 + ảnh đã tải để học tập 100% offline trên Chrome/Edge/iOS | *(Service Worker lifecycle)* |
 
 ---
 
-## 2. Chẩn Đoán & Cập Nhật Hệ Thống Giọng Đọc (`4.720` MP3 = `81,54 MB`)
+## 2. Chẩn Đoán & Cập Nhật Hệ Thống Giọng Đọc (`4.506` MP3 = `78,25 MB`)
 
-### A. Chẩn đoán & Xử lý dứt điểm giọng đọc "giống Windows / giả giả"
-1. **Nguyên nhân phát hiện trước đó:**
-   - Khi quét header nhị phân kho MP3 cũ, có **`353` key (`207` file Nữ + `216` file Nam = `423` file MP3)** mang header `fff384c4` (Google Translate TTS fallback `64 kbps`), nghe khô và đơn giọng nữ cả khi chọn Ba (Nam).
-   - Khi ngắt phát nhanh (`AbortError`) hoặc lỗi tải MP3, `speech.js` trước đây còn rơi vào `window.speechSynthesis` (giọng desktop mặc định của Windows).
-2. **Đã sửa & tái tạo triệt để 100%:**
-   - [`speech.js`](speech.js): Mặc định **`allowSystemTTS = false`** (chặn hẳn giọng máy Windows tự phát), chặn `AbortError` rơi vào `speakTTS()`, ưu tiên giọng `Online / Natural / Google` nếu phụ huynh bật lại fallback, và ưu tiên phát **bản thu giọng Ba/Mẹ cục bộ (IndexedDB)**.
-   - [`tools/regen_natural_voices.py`](tools/regen_natural_voices.py) (cũng đã vá `aiohttp.ThreadedResolver()` tránh lỗi `aiodns` trên Python 3.14 Windows và ghi tạm nguyên tử `.tmp`): Đã chạy hoàn tất **`389/389` key** (`353` key `fff384c4` cũ + `36` câu giải mã `decod_1_1..decod_12_3`) bằng 100% Microsoft Edge Neural (`vi-VN-HoaiMyNeural`, `vi-VN-NamMinhNeural`, `ja-JP-NanamiNeural`, `ja-JP-KeitaNeural`).
-   - Tiếp tục bổ sung [`tools/gen_ja_stories_audio.py`](tools/gen_ja_stories_audio.py) tạo trọn bộ **`201` cặp MP3 Edge Neural** (`ja_story_1..10` dài `47–59s`/truyện, `81` câu từng dòng `ja_story_*_l*`, `30` từ khóa truyện `ja_story_*_v*` và `80` câu hỏi/đáp án tiếng Việt). Kết quả kiểm tra toàn bộ **`2.360` MP3 Nữ + `2.360` MP3 Nam = `4.720` file (`81,54 MB`)**: **`identical_FM = 0`**, **`gtts_fff384c4 = 0`**, **`small = 0`**, cùng kiểm âm PCM `0` file câm tiếng trên toàn bộ truyện đọc.
+1. **Chuẩn hóa giọng Edge Neural 100% & vá toàn bộ lỗ hổng âm thanh:**
+   - [`speech.js`](speech.js): Mặc định `allowSystemTTS = false`, tránh fallback giọng desktop Windows khi `AbortError`, sửa mở khóa âm thanh iOS không bị kẹt tắt tiếng, và bổ sung kiểm soát bộ nhớ đệm LRU (`800` mục) + `prefetchKeys` giới hạn `4` luồng.
+   - [`tools/fix_all_audio.py`](tools/fix_all_audio.py) (cũng dùng `aiohttp.ThreadedResolver()` cho Python 3.14 Windows): Tái tạo & bổ sung **`47` cặp F/M** còn thiếu/sai lệch (`syl_*`, `word_*`, `spell_*`, `mp_tone_ba*`, `math_blank`, `decod_10_3`, `drquiz_6`, `word_tàu hỏa`, nhóm Yoon/Sokuon `ja_hira_きゃ..sokuon`, sửa lời chuẩn Truyện Nhật 4/8/10) và **dọn sạch `146` cặp MP3 thừa (`43` đợt 1 + `103` đợt 2 = `292` file chết)**.
+   - Kết quả quét toàn bộ kho **`2.253` MP3 Nữ + `2.253` MP3 Nam = `4.506` file (`78,25 MB`)**: **`small = 0`**, **`identical_FM = 0`**, **`gtts_fff384c4 = 0`**, **`missing = 0`**, **`orphans = 0`**.
 
 ---
 
-## 3. Các Cải Tiến Đã Triển Khai Từ `DE_XUAT_CAI_THIEN_HE_THONG.md`
+## 3. Tổng Hợp Các Điểm Nâng Cấp & Sửa Lỗi Từ 100 Quan Điểm (`27/11/2026`)
 
-- **Nhóm 1 (Đã hoàn tất trước đó):** Đồng bộ nhãn động Ethics/English, sửa resize sidebar Desktop → Mobile, mở khóa 4/4 hero Arcade, 1 player iOS + silent unlock, `completedGames` & Góc Phụ Huynh Export/Import/Reset 2 bước, xóa 50 cặp MP3 rác.
-- **Nhóm nâng cấp từ `DE_XUAT_CAI_THIEN_HE_THONG.md` (vừa hoàn tất):**
-  1. **Lộ Trình Hôm Nay (10–15 phút) & Lịch 7 Ngày Không Phạt** (`#dailyHubHost`).
-  2. **Leitner SRS (`schemaVersion: 3`, `wordStats`, `dailyLog`) & Ôn Tập Hôm Nay:** Hàm `recordAnswer(id, isCorrect, meta)` theo dõi mức nhớ `0–4`, hẹn ngày ôn `[1, 2, 4, 8, 16]`, giảm gợi ý dần (`level >= 2`), thưởng `+3 ⭐` khi nhớ vững (`level >= 3`), trần sao Đua xe `25 ⭐/ngày`.
-  3. **Cầu nối "Con Tự Đọc" (`#phonicsDecodableHost`):** `36` câu ngắn trên `12` bài đánh vần dùng 100% từ có sẵn MP3 thật; chế độ **Karaoke sáng từng tiếng** và chế độ **"🎤 Con tự đọc"** (`MediaRecorder` cục bộ IndexedDB, không tải ra ngoài).
-  4. **Luyện Tai 6 Thanh & Âm Khó Việt–Nhật (`#minimalPairHost`):** `12` nhóm cặp tối thiểu thanh điệu & phụ âm đầu (`eo/èo/éo/ẹo`, `hoa/hóa/hỏa`, `s/x`, `tr/ch`, `l/n`, 6 thanh).
-  5. **Tập viết 3 cấp độ & Phản hồi độ phủ nét:** `Nét mờ → Chấm đầu → Ô trống` và nút `✨ Kiểm tra nét` trên cả 4 ô ly Tiếng Việt và Masume Tiếng Nhật.
-  6. **Góc Phụ Huynh Mở Rộng (`#parentPlusHost`):** Báo cáo tuần (`ngày học`, `phút`, `từ mức ≥3`, `Top 5 từ hay nhầm`), nhắc nghỉ mắt (`0/15/20/30 phút`), `Chế độ Tập trung` ẩn tab Đua xe/Trò chơi, `Chặn giọng Windows`, và **Phòng thu giọng Ba/Mẹ cục bộ**.
+1. **Thư viện ảnh minh họa đầy đủ (`71` file ảnh trong `images/`, `66` tham chiếu UI):**
+   - Bổ sung **`12` tranh minh họa Đạo đức** (`images/ethics/eth_{1,2,3,7,8}.jpg`, `eth_{4,5,6,9,10,11,12}.svg`) hiển thị trên cả 12 thẻ bài và màn xử lý tình huống.
+   - Bổ sung **`6` ảnh bìa Tự nhiên & Đời sống** (`sc_topic_{1..3}.jpg`, `sc_topic_{4..6}.svg`) và **`5` ảnh SVG quá trình phát triển cây Bìm Bìm `あさがお`** (`asagao_{1..5}.svg`) kèm thanh tưới nước/phơi nắng lưu `localStorage`.
+   - Bổ sung ảnh bìa cho **`6` Truyện Đọc VN** (`vn_story_1.jpg`, `vn_story_{2..6}.svg`), **`10` Truyện Đọc 小1** (`ja_story_{1,2,7,8,9}.jpg`, `ja_story_{3..6,10}.svg`) và **`2` icon PWA** (`icon-192.png`, `icon-512.png`).
+2. **Sửa triệt để các lỗi logic & sư phạm (`app.js`, `data.js`, `learning_plus.js`, `math.js`, `dragons.js`, `english.js`, `arcade.js`, `arts_pe.js`):**
+   - Sửa lỗi phân tách puzzle từ lặp (`chuồn chuồn`), ô chữ Tiếng Anh cho phép chạm sửa ô đỏ `.slot-wrong`, ẩn số giờ đáp án đỏ ở Đố Đồng Hồ, ẩn tên Nhật lộ đáp án ở Đố Vui Rồng, dọn `#phonicsDecodableHost` khỏi Khu Trò Chơi, chống trừ nhầm xu tự động trong mini-game (`noAutoCoin`), sửa chuỗi `Jenny & Andrew`, giữ trạng thái `ready` đến hết đếm ngược `3-2-1` và thêm nút Tạm dừng trong Arcade.
+3. **Truy cập (Accessibility), CSS & PWA (`index.html`, `style.css`, `manifest.webmanifest`, `sw.js`, `404.html`, `LICENSE`, `CREDITS.md`):**
+   - Gỡ toàn bộ `<div role="button">` lồng nút loa bên trong sang các nút `<button type="button">` anh em chuẩn HTML, thêm `<h1>` ngữ nghĩa (`expedition-h1`), `role="dialog" aria-modal="true"`, `<label for="parentGateInput">`, `:focus-visible`, `@media (prefers-reduced-motion: reduce)`, nâng tương phản WCAG AA trên mọi thẻ/nhãn phụ, bổ sung toàn bộ CSS còn thiếu (`CSS Classes missing = 0`), mở khóa Chế độ Tập trung hoàn toàn, vá lỗi nền ngăn kéo Mobile & chia lưới `2×2` cho 4 tab Đạo đức trên `390×844`.
+4. **Nâng cấp kiểm thử tĩnh ([`tools/audit.py`](tools/audit.py)):**
+   - Gỡ bỏ hoàn toàn vòng lặp kiểm tra giả (tautology) cũ ở `check_used_audio_keys()`, trích xuất trực tiếp key từ cấu trúc dữ liệu/hàm cả 12 module, đồng thời kiểm tra thêm CSS thiếu lớp, `<button type="button">`, `<div role="button">`, và cân bằng ngoặc/chuỗi JS bằng Python.
 
-- **Nâng cấp Khu Đua 3 Chặng, Cổng Chữ, Xưởng Xu & Ảnh thật (`arcade.js`, `learning_plus.js`, `app.js`, `index.html`, `style.css`):**
-  1. **Giải đua 3 chặng (`60–90s`) & Đếm ngược `3-2-1`:** Xe (`Ngày Nắng → Hoàng Hôn → Đêm Đèn Pha`), Khủng Long (`Rừng Xanh → Hẻm Núi → Núi Lửa`), Rồng (`Biển Mây → Bão Sấm → Cầu Vồng`), kèm hiệu ứng slow-motion kịch tính lúc về đích.
-  2. **6 Cổng Chữ ôn bài trên đường đua:** Dùng lại `14` file `alpha_*.mp3` thật (`ARCADE_GATE_POOL`), ưu tiên chữ bé hay sai trong `wordStats`, kèm thanh nhắc chữ + nút `🔊 Nghe lại chữ` (`#btnArcadeReplayGate`); vào đúng cổng tăng tốc Nitro + `+10 🪙 Xu` + `recordAnswer(true)`, vào sai chậm nhẹ + lưu vào *Ôn tập hôm nay*.
-  3. **Đối thủ bám đuổi & Cảm giác tốc độ:** AI tự điều chỉnh tốc độ bám sát (`0.78×–1.24×`), kết hợp vạch gió, rung nhẹ khi Nitro/va chạm, hạt tia lửa/bụi (`<= 48`) và xung động cơ WebAudio (tôn trọng công tắc tắt tiếng).
-  4. **Kinh tế `🪙 Xu`, Xưởng Xu (`#arcadeGarageBar`) & Cân bằng sao (`1–3 ⭐`):** Học từ mới (`+3 Xu`), trả lời đúng ngoài Arcade (`+5 Xu`), hoàn thành bước Lộ trình (`+20 Xu`), qua Cổng Chữ (`+10 Xu`) và về đích (`+12..25+ Xu`) dùng để nâng cấp Tốc độ/Nitro `Lv0–3` và trang trí (`👑 Vương miện`, `🔥 Đuôi lửa`, `🌈 Cầu vồng`). Đua chỉ thưởng **`1–3 ⭐`** (`25 ⭐/ngày`) để việc học & nhớ từ giữ vai trò nguồn sao chính.
-  5. **Hình thật Khủng long & Rồng (`images/dinos/*`, `images/dragons/*`):** Toàn bộ `8` nhân vật Khủng long & Rồng hiển thị ảnh chụp thật cả ở `#arcadeHeroPicker` lẫn khung tròn chuyển động có cánh/vương miện/hào quang trên Canvas (`drawPhotoRacerSprite()`).
-
-- **Mở rộng & Hoàn thiện Truyện Đọc 小1 (`japanese.js`, `index.html`, `style.css`, `tools/gen_ja_stories_audio.py`, `tools/audit.py`):**
-  1. Mở rộng từ `4` truyện tóm tắt lên **`10` truyện kinh điển sách Quốc ngữ lớp 1 Nhật Bản (`光村図書・東京書籍`) & Cổ tích Nhật** (`ja_story_1..10`), mỗi truyện đầy đủ `8–9` câu liền mạch từ mở đầu đến kết thúc.
-  2. Giao diện đọc từng câu có số thứ tự, nút loa `🔊` riêng từng câu, chế độ **Nghe từng câu tô sáng** (`playChoiceTour`), **Nghe liền mạch**, bật/tắt **Romaji** (`#btnToggleJaStoryRomaji`), **30 từ khóa truyện** bấm nghe trực tiếp, bài học ý nghĩa và **`2` câu hỏi đọc hiểu/truyện** thưởng **`+5 🪙 Xu` + `+5 ⭐`** (`recordAnswer` + đánh dấu `✅` đã đọc).
-
-- **Sửa Giọng Nam & Nâng cấp 7 Mini-Game thực tế (`tools/regen_male_fixes.py`, `speech.js`, `app.js`, `index.html`, `style.css`):**
-  1. **Sửa kho giọng Nam bằng quét PCM thực tế:** Đổi toàn bộ `118` key Tiếng Anh Nam từ `GuyNeural` (bị cao `157–235 Hz`) sang `en-US-AndrewNeural` (`~118,8 Hz` trung bình); tái tạo `117` kana Tiếng Nhật + `4` key `ja_n_2`/`ja_n_5`/`ja_kanji_02`/`ja_kanji_31` bằng `ja-JP-KeitaNeural` với dấu kéo/chuẩn `を→おー` xóa sạch `104` file câm/bé tiếng; sửa các file đánh vần & vần lệch độ dài (`spell_ổi`, `spell_cờ`, `spell_ăn`, `spell_xôi`, `spell_tàu`, `spell_mặt trời`, `spell_dragon_earth`, `tone_ngang`); cắt gọn `1.000,5 KB` khoảng lặng đuôi thừa trên `216` file ghép phép tính `math_*`.
-  2. **Sửa `speech.js` & nhãn UI:** Thêm `normalizeKey()`, bỏ double-fetch ở `resolveAudioUrl()`, cập nhật nhãn động theo giọng `Nam (Ba)` / `Nữ (Cô)` và bổ sung `type="button"` trong `index.html`.
-  3. **Nâng cấp 7 Mini-Game Khu Trò Chơi (`#gameViewContainer`):** Thanh thưởng `🪙 Xu` nối với Xưởng Đua; **Ghép Chữ** (Combo + Gợi ý từng chữ), **Nghe Âm** (+ chế độ Phản xạ nhanh 45s), **Shinkansen** (Đèn tín hiệu ga + giải thích lỗi ghép + câu thực tế), **Lật Thẻ Khủng Long** (3 độ khó 4/6/8 cặp, nút Soi 2s, Combo, Kỷ lục `localStorage`), **Đố Vui Khủng Long & Xe** (hiện `funFact` thực tế & lưu `recordAnswer`), **Khai Quật Hóa Thạch** (2 công cụ `⛏️ Búa Đá` & `🖌️ Cọ Quét Cát`, vết nứt SVG, mảnh đá văng và hồ sơ thực tế).
 ---
 
-## 4. Log Kiểm Thử Sau Bản Cập Nhật Cuối (Ngày 26/11/2026)
+## 4. Log Kiểm Thử Sau Bản Cập Nhật Cuối (Ngày 27/11/2026)
 
 ### A. Kiểm tra tĩnh tự động ([`tools/audit.py`](tools/audit.py))
 ```text
-DOM IDs: html=557, dyn_js=44, getElementById=502, missing=0
-Local Images: 30 referenced, missing=0
-Audio MP3s: female=2360, male=2360, size_mb=81.54, small=0, identical_FM=0, gtts_fff384c4=0
-Puzzle checks: 200 lesson words + 12 hard cases verified
-Audio Keys: checked=2319, missing=0, orphans=41
+DOM IDs: html=558, dyn_js=62, getElementById=517, missing=0
+Local Images: 66 referenced, missing=0
+CSS Classes: used=631, defined=656, missing=0
+A11y & Button types: checked 14 files, issues=0
+Audio MP3s: female=2253, male=2253, size_mb=78.25, small=0, identical_FM=0, gtts_fff384c4=0
+Puzzle checks: 229 lesson words + 12 hard cases verified
+Audio Keys: checked=2253, missing=0, orphans=0
 Node syntax check: skipped (node not installed)
+Python JS structure check: 13 files checked
 
-ALL STATIC AUDIT CHECKS PASSED!
+AUDIT PASSED: All DOM, CSS, A11y, Image, Audio, Puzzle & JS checks clean!
 ```
 
-### B. Kiểm thử trình duyệt Live (`http://127.0.0.1:8080/`)
-- **Phiên 1 (7 khu vực tính năng mới, `1440×900` → `390×844`):** `42` HTTP requests, `0` lỗi `>= 400`, `0` console/page errors; đã xác minh Daily Hub + lịch 7 ngày, Ôn tập Leitner `#dueReviewInlineStage`, kiểm tra nét 3 mức trên 4 ô ly & Masume, Luyện tai thanh điệu `#minimalPairHost`, Góc Phụ Huynh mở rộng (Báo cáo tuần, Chế độ Tập trung ẩn/hiện tab Arcade, `parentNoSysTtsChk = true`), và Mobile `390×844` (`375.2 px <= 390 px`, không tràn ngang).
-- **Phiên 2 (Kiểm tra lại Step 3 sau bản vá `lessonId` trong `learning_plus.js`, `1440×900`):** `50` network buffer requests, `0` lỗi `>= 400`, `0` console/page errors; xác minh `#phonicsDecodableHost` hiển thị `3` câu/bài (`Bài 1`, `Bài 2`, `Bài 8`), Karaoke tải chuẩn MP3 (`word_tập.mp3`, `word_bé.mp3`, `word_đọc.mp3`, `word_sach.mp3` HTTP `200`/`206`), chế độ `🎤 Con tự đọc` và tiến độ Lộ trình `2/3 bước`.
-- **Phiên 3 (Kiểm thử Live Khu Đua 3 Chặng & Xưởng Xu, Desktop `1280×800` → Mobile `390×844`):** `0` lỗi console HUD, `0` HTTP `>= 400`, `8/8` ảnh thật Khủng long & Rồng tải HTTP `200`; học `9` thẻ từ tăng `⭐ 49 → 67` và tích `🪙 Xu: 27`; nâng cấp `Tốc độ Lv0/3 → Lv1/3` (`20 🪙`, còn `7 🪙`); đua Rồng `Rồng Lửa Đỏ` qua đếm ngược `3-2-1`, qua Cổng Chữ `"S"` nhận Nitro + `+10 🪙 Xu`, sang `Chặng 2: Bão Sấm` kích hoạt Cổng Chữ `"Ă"` (`alpha_*.mp3` HTTP `200`/`206`) & nút `#btnArcadeReplayGate`, sang `Chặng 3: Cầu Vồng` (`67%`); kiểm tra Mobile `390×844` bề rộng `375.2 px <= 390 px` không tràn ngang.
-- **Phiên 4 (Kiểm thử Live Giọng Nam & 7 Mini-Game nâng cấp, `1280×800` → Mobile `390×844`):** `0` lỗi console, `0` page errors, `0` HTTP `>= 400`, `0` ảnh lỗi; bật `👨 Nam (Ba)` (`word_bố.mp3`, `ort_ck.mp3`, `ja_hira_ん.mp3`, `ja_hira_ほ.mp3`, `en_alpha_a.mp3`, `en_w_goodmorning.mp3` HTTP `200`/`206`), `#btnHearVnStory` đổi đúng thành `Nghe ba đọc bài văn`; test đủ 7 mini-game (`#btnPuzzleHint`, `#btnListenBlitz` đếm ngược `45s → 43s`, `#trainSignalLight` đổi `🟢`, `#btnMemEasy` 8 thẻ + `#btnMemPeek` -> `👀 Đã dùng`, `#dinoQuizFactBox`, `#quizFactBox`, Khai quật 5 lần Búa/Cọ lộ ảnh thật T-Rex + `+5 🪙 Xu`), `#gameSessionCoins` tăng `+23 🪙`; Mobile `390×844` giữ `375.2 px <= 390 px` không tràn ngang.
-- **Phiên 5 (Kiểm thử Live 10 Truyện Đọc 小1 nâng cấp, `390×844` & `1280×800`):** `50` HTTP requests, `0` lỗi `>= 400`, `0` console errors; xác minh `10/10` tab truyện trong `#jaStoriesTabs`, Truyện 1 (`9` câu, `3` từ vựng, `#btnToggleJaStoryRomaji`, tô sáng `.is-reading-option`, `ja_story_1_l1..l9.mp3` & `ja_story_1_v1.mp3` HTTP `200`/`206`, trả lời 2 câu tăng `⭐ 97 → 102` & `Điểm Tiếng Nhật 0 → 10` + đánh dấu `✅`), Truyện 3/7/10 (`8` câu & `2` câu hỏi), giọng Nam `male/ja_story_7_l1.mp3` HTTP `200`, và kiểm tra lại Mobile `390×844` toàn bộ `10` nút tab gói gọn trong `317,71 px <= 390 px`, không tràn ngang.
+### B. Kiểm thử trình duyệt Live (`http://127.0.0.1:8080/`, `1280×800` & `390×844`)
+- **Đợt 1 (Quét toàn bộ module Desktop `1280×800` & Mobile `390×844`):** `50` HTTP requests (`0` lỗi `>= 400`), `0` console errors, `0` ảnh vỡ (`12/12` ảnh Đạo đức, ảnh tình huống `eth_10.svg`, vạch dừng/vạch qua đường/xe Đèn giao thông, ảnh bìa Tự nhiên & 5 giai đoạn cây Bìm Bìm, ảnh bìa Truyện Việt & 10/10 Truyện Nhật, `.kanji-strokes-badge`, đồng hồ Toán không tô đỏ giờ đáp án, `.slot-wrong` Tiếng Anh, ẩn gợi ý Nhật Đố vui Rồng, Pha màu Mỹ thuật & Undo canvas, đếm ngược/Tạm dừng Arcade, Góc Phụ Huynh & Chế độ Tập trung ẩn toàn bộ nút trò chơi). *(Ghi nhận `page.evaluate` / `serviceWorker` bị sandbox trình duyệt chặn truy cập trực tiếp và phát hiện 4 điểm nhỏ về chuỗi Guy, toast bảng vẽ, nền drawer active Mobile và tab Đạo đức Mobile).*
+- **Đợt 2 (Kiểm tra lại sau bản vá `v=20261127v10`):** `50` HTTP requests, `0` lỗi `>= 400`, `0` console errors; xác minh **`#enBannerDesc`** hiển thị chuẩn **`Jenny & Andrew!`**, **`#btnArtCanvasClear → #btnArtCanvasSave`** hiện cả **`#artCanvasStatusMsg.is-warn`** lẫn **`#toastNotice.show`**, **`.ethics-subnav`** xếp lưới **`2×2`** gọn đẹp không cắt chữ (`347,2 px` trên màn `390 px`, không tràn ngang), và **ngăn kéo Mobile `☰ Môn học`** hiển thị nút active `🌱 Đạo Đức Lớp 1` nền cam chữ trắng sắc nét (`final_step_173.png`).
 
 ---
 
 ## 5. Việc Còn Lại & Điểm Mở
 
-1. **Đồng bộ GitHub (`origin/main`):** Các mốc trước (`6c59a7e`, `ddd56e9`, `d64b291`) đã lên `origin/main`; bản mở rộng 10 Truyện Đọc 小1 đã kiểm thử xong và được commit/push trong phiên này.
-2. **Kiểm tra trên thiết bị iOS thật (iPad/iPhone Safari):** Kiểm thử `MediaRecorder` và audio player trong Safari thực tế.
-3. **Các câu hỏi định hướng từ `DE_XUAT` Mục 14:** Chưa tự ý thêm `LICENSES.md`/PWA/tách ES module để chờ bạn chốt mục tiêu cuối năm lớp 1, thời lượng học mỗi ngày và chế độ công khai/riêng tư của repo.
+1. **Đồng bộ GitHub (`origin/main`):** Toàn bộ bản nâng cấp toàn diện ngày 27/11/2026 đã kiểm thử tĩnh + trình duyệt sạch và sẵn sàng/hoặc đã đẩy lên `origin/main`.
+2. **Kiểm tra trên thiết bị iOS thật (iPad/iPhone Safari) & `node --check`:** `Node.js` chưa cài trên máy này (nên bước `node --check` trong `audit.py` được bỏ qua); nên test thực tế `MediaRecorder` và PWA trên Safari iOS khi có thiết bị thật.

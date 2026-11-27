@@ -12,7 +12,7 @@ const DRAGON_PHOTOS = {
   gold: '<img src="images/dragons/dragon_gold.jpg" class="real-photo" alt="Rồng Vàng Phương Đông">',
   stone: '<img src="images/dragons/dragon_stone.jpg" class="real-photo" alt="Rồng Đá Cầu Cổ">',
   earth: '<img src="images/dragons/dragon_earth.jpg" class="real-photo" alt="Rồng Komodo Hoang Dã">',
-  baby: '<img src="images/dragons/dragon_baby.jpg" class="real-photo" alt="Rồng Úc Con Đáng Yêu">'
+  baby: '<img src="images/dragons/dragon_baby.jpg" class="real-photo" alt="Rồng Râu Con Đáng Yêu">'
 };
 
 const DRAGON_LESSONS = [
@@ -91,7 +91,7 @@ const DRAGON_LESSONS = [
     spellText: 'Rờ - ông - rông - huyền - rồng, đờ - a - đa - sắc - đá -> rồng đá',
     icon: DRAGON_PHOTOS.stone,
     ja: 'ストーンドラゴン (Rồng Đá)',
-    funFact: 'Đôi cánh lớn, móng vuốt sắc và đuôi mũi tên đứng uy nghiêm trên bệ đá cổ!',
+    funFact: 'Thân xám chạm khắc tinh xảo, đôi cánh lớn và móng vuốt oai nghiêm canh giữ bệ đá cầu cổ!',
     example: 'Chú rồng đá canh giữ cây cầu cổ tuyệt đẹp'
   },
   {
@@ -128,7 +128,7 @@ const DRAGON_QUIZ_DATA = [
   { question: 'Chú rồng nào được tạc bằng khối băng tuyết trong suốt lấp lánh tại Nhật Bản?', correctId: 'dragon3', options: ['dragon3', 'dragon6', 'dragon4', 'dragon1'] },
   { question: 'Loài rồng nào có thân màu xanh ngọc bích nâng viên ngọc sáng giữa rừng cây xanh?', correctId: 'dragon4', options: ['dragon4', 'dragon2', 'dragon7', 'dragon8'] },
   { question: 'Tượng rồng nào toàn thân óng ánh màu vàng rực rỡ — biểu tượng may mắn phương Đông?', correctId: 'dragon5', options: ['dragon5', 'dragon1', 'dragon6', 'dragon3'] },
-  { question: 'Chú rồng nào đứng trên bệ đá cổ với đôi cánh rộng và chiếc đuôi hình mũi tên?', correctId: 'dragon6', options: ['dragon6', 'dragon3', 'dragon5', 'dragon2'] },
+  { question: 'Chú rồng nào bằng đá xám đứng canh trên bệ cầu cổ với đôi cánh rộng và móng vuốt oai nghiêm?', correctId: 'dragon6', options: ['dragon6', 'dragon3', 'dragon5', 'dragon2'] },
   { question: 'Đâu là Rồng Komodo khổng lồ có thật bước đi oai vệ trên mặt đất với da vảy cứng?', correctId: 'dragon7', options: ['dragon7', 'dragon4', 'dragon1', 'dragon5'] },
   { question: 'Bảo Long hãy tìm chú Rồng Con nhỏ xíu đáng yêu đang sưởi nắng trên cát vàng nhé!', correctId: 'dragon8', options: ['dragon8', 'dragon3', 'dragon2', 'dragon6'] }
 ];
@@ -286,6 +286,7 @@ function loadDragonQuizQuestion() {
     if (typeof fireConfetti === 'function') fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_dragon_win', null, 'Chúc mừng Bảo Long chiến thắng!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Chiến binh Vương Quốc Rồng!');
 
     document.getElementById('dragonQuizPlayStage').style.display = 'none';
@@ -302,8 +303,8 @@ function loadDragonQuizQuestion() {
   document.getElementById('dragonQuizProgressText').innerText = `Câu ${dragonQuizIdx + 1} / ${dragonQuizList.length}`;
   document.getElementById('dragonQuizScoreText').innerText = `⭐ ${dragonQuizScore} điểm`;
   document.getElementById('dragonQuizQuestionTitle').innerText = q.question;
-  const jaOnly = targetObj ? targetObj.ja.replace(/\s*\([^)]*\)/g, '').trim() : '';
-  document.getElementById('dragonQuizHintJa').innerText = jaOnly ? `🇯🇵 ${jaOnly}` : '';
+  const hintEl = document.getElementById('dragonQuizHintJa');
+  if (hintEl) hintEl.innerText = '🔍 Nghe mô tả và quan sát thật kỹ từng bức ảnh rồng nhé!';
 
   const grid = document.getElementById('dragonQuizOptionsGrid');
   grid.innerHTML = '';
@@ -340,9 +341,12 @@ function loadDragonQuizQuestion() {
         card.classList.add('correct');
         dragonQuizScore += 10;
         document.getElementById('dragonQuizScoreText').innerText = `⭐ ${dragonQuizScore} điểm`;
+        if (hintEl) hintEl.innerText = `🇯🇵 ${item.ja}`;
+        window.awardCoins?.(2);
+        window.recordAnswer?.(item.id, true, { label: item.word, mode: 'dragons', audioKey: item.audioKey, noAutoCoin: true });
         window.soundMgr.playCorrect();
         if (typeof fireConfetti === 'function') fireConfetti();
-        if (typeof showToast === 'function') showToast(`🔥 Tuyệt đỉnh! Chính là ${item.dinoName}!`);
+        if (typeof showToast === 'function') showToast(`🔥 Tuyệt đỉnh! Chính là ${item.dinoName} (+2 🪙)!`);
         window.soundMgr.playPraiseThen(false,
           () => (window.appNavEpoch || 0) === myNav && dragonEpoch === myEp,
           () => {
@@ -352,6 +356,7 @@ function loadDragonQuizQuestion() {
         );
       } else {
         card.classList.add('wrong');
+        window.recordAnswer?.(q.correctId, false, { label: targetObj?.word || q.correctId, mode: 'dragons', audioKey: riddleKey, noAutoCoin: true });
         window.soundMgr.playWrong();
         window.soundMgr.speakTryAgain();
         if (typeof showToast === 'function') showToast('🐉 Chú Rồng này chưa đúng rồi, chọn lại nhé Bảo Long!');
@@ -392,7 +397,12 @@ function initDragonMemoryGame() {
   dragonMemFlipped = [];
   dragonMemLocked = false;
   document.getElementById('dragonMemFlipsText').innerText = '👀 Lượt lật: 0';
-  document.getElementById('dragonMemPairsText').innerText = '⭐ Đã ghép: 0 / 6 cặp';
+  let drBestTxt = '';
+  try {
+    const bv = parseInt(localStorage.getItem('baolong_dragon_mem_best') || '', 10);
+    if (Number.isFinite(bv) && bv > 0) drBestTxt = ` • 🏆 Kỷ lục: ${bv}`;
+  } catch (e) {}
+  document.getElementById('dragonMemPairsText').innerText = `⭐ Đã ghép: 0 / 6 cặp${drBestTxt}`;
 
   const picked = [...DRAGON_LESSONS].sort(() => Math.random() - 0.5).slice(0, 6);
   const deck = [];
@@ -435,19 +445,29 @@ function initDragonMemoryGame() {
             a.el.classList.add('is-matched');
             b.el.classList.add('is-matched');
             dragonMemMatched++;
+            window.awardCoins?.(2);
+            window.recordAnswer?.(a.data.id, true, { label: a.data.word, mode: 'dragons', audioKey: a.data.audioKey, noAutoCoin: true });
             document.getElementById('dragonMemPairsText').innerText = `⭐ Đã ghép: ${dragonMemMatched} / 6 cặp`;
             window.soundMgr.playCorrect();
-            if (typeof showToast === 'function') showToast(`🔥 Tuyệt! Đã tìm thấy cặp ${a.data.word}!`);
+            if (typeof showToast === 'function') showToast(`🔥 Tuyệt! Đã tìm thấy cặp ${a.data.word} (+2 🪙)!`);
             window.soundMgr.playAudioFile(a.data.audioKey);
             dragonMemFlipped = [];
             dragonMemLocked = false;
             if (dragonMemMatched === 6) {
+              try {
+                const prevB = parseInt(localStorage.getItem('baolong_dragon_mem_best') || '', 10);
+                if (!Number.isFinite(prevB) || prevB <= 0 || dragonMemFlips < prevB) {
+                  localStorage.setItem('baolong_dragon_mem_best', String(dragonMemFlips));
+                }
+              } catch (e) {}
               setTimeout(() => {
                 if ((window.appNavEpoch || 0) !== myNav || dragonEpoch !== myEp) return;
                 if (typeof fireConfetti === 'function') fireConfetti();
                 window.soundMgr.playVictory();
                 window.soundMgr.playAudioFile('cheer_dragon_win', null, 'Hoan hô Bảo Long!');
-                if (typeof awardStars === 'function') awardStars(15, 'Chiến thắng Lật Thẻ Rồng Thần!');
+                window.markDailyStep?.('play');
+                window.awardCoins?.(10);
+                if (typeof awardStars === 'function') awardStars(15, 'Chiến thắng Lật Thẻ Rồng Thần (+10 🪙 Xu)!');
                 document.getElementById('dragonMemoryPlayStage').style.display = 'none';
                 document.getElementById('dragonMemoryVictoryStage').style.display = 'block';
                 document.getElementById('dragonMemoryVictoryFlips').innerText =

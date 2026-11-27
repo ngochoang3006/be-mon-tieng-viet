@@ -93,6 +93,7 @@ let arcadeSelectedHero = { car: 'lambo', dino: 'trex', dragon: 'fire' };
 let arcadeRafId = null;
 let arcadeLastTs = 0;
 let arcadeEventsBound = false;
+let arcadeAutoGas = false;
 const arcadeKeys = { up: false, down: false, left: false, right: false };
 
 let arcadeState = {
@@ -156,13 +157,33 @@ function preloadAllArcadeImages() {
   });
 }
 
-function stopArcadeGameLoop() {
+function stopArcadeGameLoop(clearKeys = true) {
   if (arcadeRafId) {
     cancelAnimationFrame(arcadeRafId);
     arcadeRafId = null;
   }
-  arcadeKeys.up = arcadeKeys.down = arcadeKeys.left = arcadeKeys.right = false;
-  document.querySelectorAll('.dpad-btn.active').forEach(b => b.classList.remove('active'));
+  if (clearKeys) {
+    arcadeKeys.up = arcadeKeys.down = arcadeKeys.left = arcadeKeys.right = false;
+    document.querySelectorAll('.dpad-btn.active').forEach(b => b.classList.remove('active'));
+  }
+}
+
+function toggleArcadePause(forcePause = null) {
+  if (arcadeState.phase !== 'running' && arcadeState.phase !== 'countdown' && arcadeState.phase !== 'paused') return;
+  const pauseBtn = document.getElementById('btnArcadePause');
+  if (forcePause === true || arcadeState.phase !== 'paused') {
+    if (arcadeState.phase === 'paused') return;
+    arcadeState._resumePhase = arcadeState.phase;
+    arcadeState.phase = 'paused';
+    stopArcadeGameLoop(true);
+    if (pauseBtn) pauseBtn.innerHTML = '<span>▶️</span> Tiếp tục';
+    drawArcadeFrame();
+  } else {
+    arcadeState.phase = arcadeState._resumePhase || 'running';
+    if (pauseBtn) pauseBtn.innerHTML = '<span>⏸️</span> Tạm dừng';
+    arcadeLastTs = performance.now();
+    arcadeRafId = requestAnimationFrame(arcadeTick);
+  }
 }
 
 function renderArcadeHub() {
@@ -204,17 +225,23 @@ function renderArcadeHeroPicker() {
   wrap.innerHTML = '';
   cfg.heroes.forEach(hero => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `arcade-hero-chip ${hero.id === chosenId ? 'active' : ''}`;
     btn.style.setProperty('--hero-col', hero.color);
     const thumb = hero.imgSrc
       ? `<img src="${hero.imgSrc}" class="arcade-hero-thumb" alt="${hero.name}">`
       : `<span class="hero-dot" style="background:${hero.color};"></span><span>${currentArcadeMode === 'car' ? '🏎️' : hero.icon}</span>`;
     btn.innerHTML = `${thumb}<span>${hero.name}</span>`;
+    btn.type = 'button';
     btn.onclick = () => {
+      if (arcadeState.phase === 'running' || arcadeState.phase === 'countdown' || arcadeState.phase === 'paused') {
+        window.showToast?.('🏁 Đua hết chặng này rồi đổi nhân vật nhé Bảo Long!');
+        return;
+      }
       arcadeSelectedHero[currentArcadeMode] = hero.id;
       window.soundMgr?.playPop();
       renderArcadeHeroPicker();
-      if (arcadeState.phase === 'ready' || arcadeState.phase === 'finished') resetArcadeRace(false);
+      resetArcadeRace(false);
     };
     wrap.appendChild(btn);
   });
@@ -322,8 +349,8 @@ function renderArcadeGarage() {
 
 function buildStageGates(mode, finishDist) {
   const carLanes = [205, 320, 440, 555];
-  const sideLanes = [110, 215, 320];
-  const lanePositions = mode === 'car' ? [carLanes[0], carLanes[1], carLanes[3]] : sideLanes;
+  const sideLanes = [143, 247, 351];
+  const lanePositions = mode === 'car' ? carLanes : sideLanes;
 
   // Ưu tiên cổng chữ mà bé từng sai trong wordStats
   const stats = (typeof explorerState !== 'undefined' && explorerState.wordStats) || {};
@@ -335,9 +362,15 @@ function buildStageGates(mode, finishDist) {
   });
 
   const fractions = [0.16, 0.30, 0.46, 0.60, 0.75, 0.88];
+  const allChars = Array.from(new Set(ARCADE_GATE_POOL.map(x => x.target)));
   return fractions.map((frac, idx) => {
     const q = sortedPool[idx % sortedPool.length];
-    const shuffled = [...q.choices].sort(() => Math.random() - 0.5);
+    const baseChoices = [...q.choices];
+    if (mode === 'car' && baseChoices.length < 4) {
+      const extra = allChars.find(c => !baseChoices.includes(c)) || 'a';
+      baseChoices.push(extra);
+    }
+    const shuffled = baseChoices.sort(() => Math.random() - 0.5);
     return {
       id: `g_${idx}`,
       dist: Math.round(finishDist * frac),
@@ -353,7 +386,7 @@ function buildStageGates(mode, finishDist) {
 function buildInitialTrackItems(mode, finishDist, gates = []) {
   const list = [];
   const carLanes = [205, 320, 440, 555];
-  const sideLanes = [110, 215, 320];
+  const sideLanes = [143, 247, 351];
 
   for (let d = 240; d < finishDist - 240; d += 235) {
     // Chừa khoảng trống sạch ngay cạnh Cổng Chữ để bé lái lách chính xác
@@ -373,8 +406,9 @@ function buildInitialTrackItems(mode, finishDist, gates = []) {
   return list;
 }
 
-function resetArcadeRace(autoStart = false) {
-  stopArcadeGameLoop();
+function resetArcadeRace(autoStart = false, preserveKeys = false) {
+  stopArcadeGameLoop(!preserveKeys);
+  if (autoStart) window.soundMgr?.stopAll?.();
   const cfg = ARCADE_MODES[currentArcadeMode];
   const chosenId = arcadeSelectedHero[currentArcadeMode];
   const hero = cfg.heroes.find(h => h.id === chosenId) || cfg.heroes[0];
@@ -382,7 +416,7 @@ function resetArcadeRace(autoStart = false) {
 
   const isVerticalCar = currentArcadeMode === 'car';
   const carLanes = [205, 320, 440, 555];
-  const sideLanes = [115, 220, 325];
+  const sideLanes = [143, 247, 351];
   const gates = buildStageGates(currentArcadeMode, cfg.finishDist);
 
   const speedLines = Array.from({ length: 16 }, () => ({
@@ -430,6 +464,11 @@ function resetArcadeRace(autoStart = false) {
   if (resBanner) resBanner.style.display = 'none';
   const btnStart = document.getElementById('btnArcadeStart');
   if (btnStart) btnStart.innerHTML = autoStart ? '<span>🔄</span> Chơi lại ván mới' : '<span>🏁</span> BẮT ĐẦU ĐUA!';
+  const btnPause = document.getElementById('btnArcadePause');
+  if (btnPause) {
+    btnPause.style.display = autoStart ? 'inline-flex' : 'none';
+    btnPause.innerHTML = '<span>⏸️</span> Tạm dừng';
+  }
   updateGatePromptBar(null);
   updateArcadeHud();
   drawArcadeFrame();
@@ -475,6 +514,68 @@ function bindArcadeEventsOnce() {
     }
   });
 
+  // Inject Pause & Auto-Gas controls cleanly into arcade actions panel
+  const actPanel = document.querySelector('.arcade-action-btns');
+  if (actPanel && !document.getElementById('btnArcadePause')) {
+    const pBtn = document.createElement('button');
+    pBtn.type = 'button';
+    pBtn.id = 'btnArcadePause';
+    pBtn.className = 'tool-chip';
+    pBtn.style.display = 'none';
+    pBtn.innerHTML = '<span>⏸️</span> Tạm dừng';
+    pBtn.onclick = () => { window.soundMgr?.playClick(); toggleArcadePause(); };
+    actPanel.appendChild(pBtn);
+
+    const gBtn = document.createElement('button');
+    gBtn.type = 'button';
+    gBtn.id = 'btnArcadeAutoGas';
+    gBtn.className = 'tool-chip';
+    gBtn.innerHTML = '<span>🚀</span> Ga tự động: TẮT';
+    gBtn.onclick = () => {
+      arcadeAutoGas = !arcadeAutoGas;
+      gBtn.classList.toggle('active-filter', arcadeAutoGas);
+      gBtn.innerHTML = arcadeAutoGas ? '<span>🚀</span> Ga tự động: BẬT' : '<span>🚀</span> Ga tự động: TẮT';
+      window.soundMgr?.playPop();
+    };
+    actPanel.appendChild(gBtn);
+  }
+
+  // Canvas click/tap to steer directly to lane/height (mobile ergonomics)
+  const cvEl = document.getElementById('arcadeCanvas');
+  if (cvEl) {
+    cvEl.addEventListener('pointerdown', (e) => {
+      if (typeof currentMode === 'undefined' || currentMode !== 'arcade') return;
+      if (arcadeState.phase === 'ready') {
+        resetArcadeRace(true, false);
+        return;
+      }
+      if (arcadeState.phase !== 'running') return;
+      const r = cvEl.getBoundingClientRect();
+      const lx = ((e.clientX - r.left) / (r.width || 1)) * 760;
+      const ly = ((e.clientY - r.top) / (r.height || 1)) * 420;
+      if (currentArcadeMode === 'car') {
+        arcadeState.playerX = Math.max(175, Math.min(585, lx));
+      } else {
+        const minY = currentArcadeMode === 'dragon' ? 76 : 128;
+        const maxY = currentArcadeMode === 'dragon' ? 355 : 356;
+        arcadeState.playerY = Math.max(minY, Math.min(maxY, ly));
+      }
+    });
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden' && typeof currentMode !== 'undefined' && currentMode === 'arcade') {
+      if (arcadeState.phase === 'running' || arcadeState.phase === 'countdown') toggleArcadePause(true);
+      else arcadeKeys.up = arcadeKeys.down = arcadeKeys.left = arcadeKeys.right = false;
+    }
+  });
+  window.addEventListener('blur', () => {
+    if (typeof currentMode !== 'undefined' && currentMode === 'arcade') {
+      arcadeKeys.up = arcadeKeys.down = arcadeKeys.left = arcadeKeys.right = false;
+      if (arcadeState.phase === 'running' || arcadeState.phase === 'countdown') toggleArcadePause(true);
+    }
+  });
+
   const bindPad = (id, dir) => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -482,7 +583,7 @@ function bindArcadeEventsOnce() {
       if (e) e.preventDefault();
       arcadeKeys[dir] = true;
       el.classList.add('active');
-      if (arcadeState.phase === 'ready') resetArcadeRace(true);
+      if (arcadeState.phase === 'ready') resetArcadeRace(true, true);
     };
     const release = (e) => {
       if (e) e.preventDefault();
@@ -509,7 +610,7 @@ function bindArcadeEventsOnce() {
     if (!dir) return;
     e.preventDefault();
     arcadeKeys[dir] = true;
-    if (arcadeState.phase === 'ready') resetArcadeRace(true);
+    if (arcadeState.phase === 'ready') resetArcadeRace(true, true);
   });
   window.addEventListener('keyup', (e) => {
     const map = { ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down', ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right' };
@@ -548,7 +649,7 @@ function arcadeTick(ts) {
     return;
   }
 
-  const rawDt = Math.min(2.2, Math.max(0.4, (ts - arcadeLastTs) / 16.67));
+  const rawDt = Math.min(2.2, Math.max(0.15, (ts - arcadeLastTs) / 16.67));
   arcadeLastTs = ts;
   arcadeState.tick += rawDt;
 
@@ -594,32 +695,32 @@ function arcadeTick(ts) {
       arcadeState.playerX = Math.max(175, Math.min(585, arcadeState.playerX));
     }
     let targetSpd = effectiveBase;
-    if (arcadeKeys.up) targetSpd = effectiveBase * 1.42;
+    if (arcadeKeys.up || arcadeAutoGas) targetSpd = effectiveBase * 1.42;
     else if (arcadeKeys.down) targetSpd = effectiveBase * 0.62;
     targetSpd *= boostMult * stunMult;
 
     arcadeState.playerSpeed += (targetSpd - arcadeState.playerSpeed) * 0.12 * dt;
     arcadeState.playerDist += arcadeState.playerSpeed * dt;
     arcadeState.bgOffset = (arcadeState.bgOffset + arcadeState.playerSpeed * 2.8 * dt) % 160;
-    arcadeState.playerY = 330 - (arcadeKeys.up ? 28 : (arcadeKeys.down ? -14 : 0));
+    arcadeState.playerY = 330 - ((arcadeKeys.up || arcadeAutoGas) ? 28 : (arcadeKeys.down ? -14 : 0));
   } else {
     const vertSpd = (currentArcadeMode === 'dragon' ? 4.9 : 4.5) * rawDt;
     if (arcadeState.phase === 'running') {
       if (arcadeKeys.up) arcadeState.playerY -= vertSpd;
       if (arcadeKeys.down) arcadeState.playerY += vertSpd;
-      const minY = currentArcadeMode === 'dragon' ? 76 : 98;
-      const maxY = currentArcadeMode === 'dragon' ? 355 : 340;
+      const minY = currentArcadeMode === 'dragon' ? 76 : 128;
+      const maxY = currentArcadeMode === 'dragon' ? 355 : 356;
       arcadeState.playerY = Math.max(minY, Math.min(maxY, arcadeState.playerY));
     }
     let targetSpd = effectiveBase;
-    if (arcadeKeys.right) targetSpd = effectiveBase * 1.42;
+    if (arcadeKeys.right || arcadeAutoGas) targetSpd = effectiveBase * 1.42;
     else if (arcadeKeys.left) targetSpd = effectiveBase * 0.64;
     targetSpd *= boostMult * stunMult;
 
     arcadeState.playerSpeed += (targetSpd - arcadeState.playerSpeed) * 0.12 * dt;
     arcadeState.playerDist += arcadeState.playerSpeed * dt;
     arcadeState.bgOffset = (arcadeState.bgOffset + arcadeState.playerSpeed * 2.4 * dt) % 160;
-    arcadeState.playerX = 180 + (arcadeKeys.right ? 42 : (arcadeKeys.left ? -36 : 0));
+    arcadeState.playerX = 180 + ((arcadeKeys.right || arcadeAutoGas) ? 42 : (arcadeKeys.left ? -36 : 0));
   }
 
   // Stage transitions (Chặng 1 -> Chặng 2 -> Chặng 3)
@@ -652,7 +753,7 @@ function arcadeTick(ts) {
   });
 
   // Particles & Speed lines & Engine sound pulse
-  const isBoosting = arcadeState.boostTimer > 0 || (currentArcadeMode === 'car' ? arcadeKeys.up : arcadeKeys.right);
+  const isBoosting = arcadeState.boostTimer > 0 || arcadeAutoGas || (currentArcadeMode === 'car' ? arcadeKeys.up : arcadeKeys.right);
   if (arcadeState.phase === 'running' && (isBoosting || Math.random() < 0.35)) {
     const px = currentArcadeMode === 'car' ? arcadeState.playerX : arcadeState.playerX - 32;
     const py = currentArcadeMode === 'car' ? arcadeState.playerY + 34 : arcadeState.playerY + 12;
@@ -761,10 +862,12 @@ function arcadeTick(ts) {
     arcadeState.activeGate = currentPromptGate;
   }
 
-  // Compute rank
-  let ahead = 0;
-  arcadeState.rivals.forEach(rv => { if (rv.dist > arcadeState.playerDist) ahead++; });
-  arcadeState.rank = ahead + 1;
+  // Freeze rank once player crosses finish line (don't let rivals steal during slow-mo!)
+  if (arcadeState.phase === 'running') {
+    let ahead = 0;
+    arcadeState.rivals.forEach(rv => { if (rv.dist > arcadeState.playerDist) ahead++; });
+    arcadeState.rank = ahead + 1;
+  }
 
   updateArcadeHud();
   drawArcadeFrame();
@@ -807,11 +910,17 @@ function finishArcadeRace() {
   updateGatePromptBar(null);
   drawArcadeFrame();
 
-  // Sửa phần thưởng (Mục 6): Đua chỉ cho 1-3 ⭐, phần lớn là 🪙 Xu để nâng cấp xe/rồng/khủng long!
+  // Đua chỉ cho 1-3 ⭐ (theo trần ngày), phần lớn là 🪙 Xu để nâng cấp!
   const rank = arcadeState.rank;
   const starReward = rank === 1 ? 3 : (rank === 2 ? 2 : 1);
+  const log = typeof ensureTodayLog === 'function' ? ensureTodayLog() : null;
+  const cap = (typeof explorerState !== 'undefined' && explorerState.parentSettings?.dailyArcadeCap) || 25;
+  const actualStars = log ? Math.min(starReward, Math.max(0, cap - (log.arcadeStars || 0))) : starReward;
   const rankCoins = rank === 1 ? 25 : (rank === 2 ? 18 : 12);
   const totalCoins = rankCoins + arcadeState.starsPicked + arcadeState.gatesCorrect * 8;
+
+  const pauseBtn = document.getElementById('btnArcadePause');
+  if (pauseBtn) pauseBtn.style.display = 'none';
 
   const resBanner = document.getElementById('arcadeResultBanner');
   const resTitle = document.getElementById('arcadeResultTitle');
@@ -825,7 +934,8 @@ function finishArcadeRace() {
   };
   if (resTitle) resTitle.innerText = medals[rank] || medals[4];
   if (resDesc) {
-    resDesc.innerText = `Hạng ${rank}/4 • Qua đúng ${arcadeState.gatesCorrect}/${arcadeState.gatesTotal} Cổng Chữ • Nhận +${starReward} ⭐ & +${totalCoins} 🪙 Xu!`;
+    const starTxt = actualStars > 0 ? `+${actualStars} ⭐` : '0 ⭐ (đạt trần đua hôm nay)';
+    resDesc.innerText = `Hạng ${rank}/4 • Qua đúng ${arcadeState.gatesCorrect}/${arcadeState.gatesTotal} Cổng Chữ • Nhận ${starTxt} & +${totalCoins} 🪙 Xu!`;
   }
   if (resBanner) resBanner.style.display = 'flex';
 
@@ -844,7 +954,13 @@ function drawArcadeFrame() {
   const cv = document.getElementById('arcadeCanvas');
   if (!cv) return;
   const ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
+  const W = 760, H = 420;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  if (cv.width !== W * dpr || cv.height !== H * dpr) {
+    cv.width = W * dpr;
+    cv.height = H * dpr;
+  }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, W, H);
 
   ctx.save();
@@ -922,6 +1038,17 @@ function drawArcadeFrame() {
     ctx.fillStyle = '#ffffff';
     ctx.font = '800 22px Nunito, sans-serif';
     ctx.fillText('CHUẨN BỊ XUẤT PHÁT!', W / 2, H / 2 + 56);
+  } else if (arcadeState.phase === 'paused') {
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.52)';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#fde047';
+    ctx.font = '900 42px Nunito, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('⏸️ ĐANG TẠM DỪNG', W / 2, H / 2 - 14);
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 18px Nunito, sans-serif';
+    ctx.fillText('Bấm "▶️ Tiếp tục" để đua tiếp nhé!', W / 2, H / 2 + 34);
   } else if (arcadeState.phase === 'finishing') {
     ctx.fillStyle = 'rgba(15, 23, 42, 0.35)';
     ctx.fillRect(0, H / 2 - 44, W, 88);
@@ -1039,7 +1166,7 @@ function drawPhotoRacerSprite(ctx, x, y, hero, mode, tick, isBoosting, isPlayer)
 }
 
 function drawGateBannerVertical(ctx, gate, playerY, playerDist, H) {
-  const screenY = playerY - (gate.dist - playerDist) * 1.45;
+  const screenY = playerY - (gate.dist - playerDist) * 0.72;
   if (screenY < -60 || screenY > H + 60) return;
 
   ctx.save();
@@ -1064,15 +1191,14 @@ function drawGateBannerVertical(ctx, gate, playerY, playerDist, H) {
 }
 
 function drawGateBannerHorizontal(ctx, gate, playerX, playerDist, W) {
-  const sx = playerX + (gate.dist - playerDist) * 1.45;
+  const sx = playerX + (gate.dist - playerDist) * 0.95;
   if (sx < -60 || sx > W + 60) return;
 
-  const yOff = currentArcadeMode === 'dino' ? 18 : 0;
   ctx.save();
   ctx.fillStyle = 'rgba(15, 23, 42, 0.48)';
-  ctx.fillRect(sx - 24, 92 + yOff * 0.4, 48, 285);
+  ctx.fillRect(sx - 24, 96, 48, 298);
   gate.lanes.forEach(ln => {
-    const cy = ln.lanePos + yOff;
+    const cy = ln.lanePos;
     ctx.fillStyle = '#fef08a';
     ctx.strokeStyle = '#ca8a04';
     ctx.lineWidth = 3;
@@ -1178,7 +1304,7 @@ function drawCarRaceScene(ctx, W, H) {
   });
 
   const cfg = ARCADE_MODES.car;
-  const finishY = arcadeState.playerY - (cfg.finishDist - arcadeState.playerDist) * 1.45;
+  const finishY = arcadeState.playerY - (cfg.finishDist - arcadeState.playerDist) * 0.72;
   if (finishY > -60 && finishY < H + 60) {
     for (let cx = 140; cx < 620; cx += 24) {
       for (let r = 0; r < 2; r++) {
@@ -1194,7 +1320,7 @@ function drawCarRaceScene(ctx, W, H) {
 
   arcadeState.items.forEach(it => {
     if (it.collected) return;
-    const screenY = arcadeState.playerY - (it.dist - arcadeState.playerDist) * 1.45;
+    const screenY = arcadeState.playerY - (it.dist - arcadeState.playerDist) * 0.72;
     if (screenY < -40 || screenY > H + 40) return;
     ctx.font = '28px sans-serif';
     ctx.textAlign = 'center';
@@ -1203,7 +1329,7 @@ function drawCarRaceScene(ctx, W, H) {
   });
 
   arcadeState.rivals.forEach(rv => {
-    const ry = arcadeState.playerY - (rv.dist - arcadeState.playerDist) * 1.45;
+    const ry = arcadeState.playerY - (rv.dist - arcadeState.playerDist) * 0.72;
     if (ry > -70 && ry < H + 70) {
       drawSupercarSprite(ctx, rv.x, ry, rv.hero, false, false);
     }
@@ -1275,7 +1401,7 @@ function drawDinoRaceScene(ctx, W, H) {
   });
 
   const cfg = ARCADE_MODES.dino;
-  const finishX = arcadeState.playerX + (cfg.finishDist - arcadeState.playerDist) * 1.45;
+  const finishX = arcadeState.playerX + (cfg.finishDist - arcadeState.playerDist) * 0.95;
   if (finishX > -40 && finishX < W + 60) {
     for (let cy = 96; cy < H; cy += 22) {
       ctx.fillStyle = ((cy / 22) % 2 === 0) ? '#0f172a' : '#ffffff';
@@ -1289,23 +1415,23 @@ function drawDinoRaceScene(ctx, W, H) {
 
   arcadeState.items.forEach(it => {
     if (it.collected) return;
-    const sx = arcadeState.playerX + (it.dist - arcadeState.playerDist) * 1.45;
+    const sx = arcadeState.playerX + (it.dist - arcadeState.playerDist) * 0.95;
     if (sx < -40 || sx > W + 40) return;
     ctx.font = '28px sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(it.icon, sx, it.lanePos + 20);
+    ctx.fillText(it.icon, sx, it.lanePos);
   });
 
   arcadeState.rivals.forEach(rv => {
-    const rx = arcadeState.playerX + (rv.dist - arcadeState.playerDist) * 1.45;
+    const rx = arcadeState.playerX + (rv.dist - arcadeState.playerDist) * 0.95;
     if (rx > -70 && rx < W + 70) {
-      drawPhotoRacerSprite(ctx, rx, rv.y + 18, rv.hero, 'dino', arcadeState.tick + rv.wobbleSeed * 5, false, false);
+      drawPhotoRacerSprite(ctx, rx, rv.y, rv.hero, 'dino', arcadeState.tick + rv.wobbleSeed * 5, false, false);
     }
   });
 
   const hero = cfg.heroes.find(h => h.id === arcadeSelectedHero.dino) || cfg.heroes[0];
-  drawPhotoRacerSprite(ctx, arcadeState.playerX, arcadeState.playerY + 18, hero, 'dino', arcadeState.tick, arcadeState.boostTimer > 0 || arcadeKeys.right, true);
+  drawPhotoRacerSprite(ctx, arcadeState.playerX, arcadeState.playerY, hero, 'dino', arcadeState.tick, arcadeState.boostTimer > 0 || arcadeAutoGas || arcadeKeys.right, true);
 }
 
 function drawDragonRaceScene(ctx, W, H) {
@@ -1342,7 +1468,7 @@ function drawDragonRaceScene(ctx, W, H) {
   }
 
   const cfg = ARCADE_MODES.dragon;
-  const finishX = arcadeState.playerX + (cfg.finishDist - arcadeState.playerDist) * 1.45;
+  const finishX = arcadeState.playerX + (cfg.finishDist - arcadeState.playerDist) * 0.95;
   if (finishX > -40 && finishX < W + 80) {
     ctx.font = '64px sans-serif';
     ctx.fillText('🏰', finishX, 220);
@@ -1358,7 +1484,7 @@ function drawDragonRaceScene(ctx, W, H) {
 
   arcadeState.items.forEach(it => {
     if (it.collected) return;
-    const sx = arcadeState.playerX + (it.dist - arcadeState.playerDist) * 1.45;
+    const sx = arcadeState.playerX + (it.dist - arcadeState.playerDist) * 0.95;
     if (sx < -40 || sx > W + 40) return;
     ctx.font = '30px sans-serif';
     ctx.textAlign = 'center';
@@ -1367,12 +1493,12 @@ function drawDragonRaceScene(ctx, W, H) {
   });
 
   arcadeState.rivals.forEach(rv => {
-    const rx = arcadeState.playerX + (rv.dist - arcadeState.playerDist) * 1.45;
+    const rx = arcadeState.playerX + (rv.dist - arcadeState.playerDist) * 0.95;
     if (rx > -70 && rx < W + 70) {
       drawPhotoRacerSprite(ctx, rx, rv.y, rv.hero, 'dragon', arcadeState.tick + rv.wobbleSeed * 4, false, false);
     }
   });
 
   const hero = cfg.heroes.find(h => h.id === arcadeSelectedHero.dragon) || cfg.heroes[0];
-  drawPhotoRacerSprite(ctx, arcadeState.playerX, arcadeState.playerY, hero, 'dragon', arcadeState.tick, arcadeState.boostTimer > 0 || arcadeKeys.right, true);
+  drawPhotoRacerSprite(ctx, arcadeState.playerX, arcadeState.playerY, hero, 'dragon', arcadeState.tick, arcadeState.boostTimer > 0 || arcadeAutoGas || arcadeKeys.right, true);
 }

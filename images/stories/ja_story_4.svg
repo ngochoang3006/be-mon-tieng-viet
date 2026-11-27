@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffedd5"/>
+      <stop offset="100%" stop-color="#fecdd3"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="18" fill="url(#sky)"/>
+  
+  <rect x="0" y="250" width="640" height="110" fill="#fed7aa"/>
+  <rect x="115" y="220" width="410" height="70" rx="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="4"/>
+  <!-- Cute gentle golden dog Elf -->
+  <g transform="translate(365, 205)">
+    <ellipse cx="0" cy="24" rx="52" ry="30" fill="#d97706"/>
+    <circle cx="-42" cy="-6" r="26" fill="#d97706"/>
+    <ellipse cx="-58" cy="2" rx="10" ry="18" fill="#92400e"/>
+    <ellipse cx="-26" cy="2" rx="10" ry="18" fill="#92400e"/>
+    <circle cx="-49" cy="-10" r="3.5" fill="#0f172a"/><circle cx="-35" cy="-10" r="3.5" fill="#0f172a"/>
+    <ellipse cx="-42" cy="0" rx="6" ry="4" fill="#1e293b"/>
+    <path d="M48 18 Q74 0 68 -14" stroke="#d97706" stroke-width="11" stroke-linecap="round" fill="none"/>
+  </g>
+  <g transform="translate(235,194) scale(1.0)">
+      <ellipse cx="0" cy="84" rx="28" ry="8" fill="rgba(15,23,42,0.12)"/>
+      <rect x="-15" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <rect x="3" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <path d="M-24 14 Q0 6 24 14 L20 60 L-20 60 Z" fill="#38bdf8"/>
+      <path d="M-22 20 Q-38 35 -28 50" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <path d="M22 20 Q34 36 28 52" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <circle cx="0" cy="-14" r="24" fill="#fde68a"/>
+      <path d="M-25 -16 Q-24 -42 0 -42 Q24 -42 25 -16 Q16 -24 6 -20 Q-4 -26 -14 -20 Z" fill="#1e293b"/>
+      <circle cx="-8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="-13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <circle cx="13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <path d="M-7 -6 Q0 2 7 -6" stroke="#be123c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+    </g>
+  <!-- Floating warm heart -->
+  <path d="M300 92 C282 70 250 86 266 112 L300 144 L334 112 C350 86 318 70 300 92 Z" fill="#f43f5e"/>
+
+</svg>

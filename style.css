@@ -34,6 +34,7 @@ body {
   /* Gradient Kỷ Jura & Bầu trời phiêu lưu rực rỡ, cá tính */
   background: linear-gradient(180deg, #10b981 0%, #06b6d4 18%, #38bdf8 45%, #e0f2fe 75%, #f0fdf4 100%);
   min-height: 100vh;
+  min-height: 100dvh;
   color: var(--text-main);
   position: relative;
   overflow-x: hidden;
@@ -169,26 +170,8 @@ body {
 }
 
 /* ========================================================
-   CATEGORY MODE PILLS (THANH CHUYỂN CHẾ ĐỘ CUỘN NGANG)
+   CATEGORY MODE PILLS
    ======================================================== */
-.nav-modes-container {
-  max-width: 1140px;
-  margin: 8px auto 0 auto;
-  overflow-x: auto;
-  padding: 4px 2px 6px 2px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.nav-modes-container::-webkit-scrollbar {
-  display: none;
-}
-
-.mode-pills-row {
-  display: flex;
-  gap: 8px;
-  width: max-content;
-}
-
 .mode-pill {
   border: 2px solid #e2e8f0;
   border-bottom: 4px solid #cbd5e1;
@@ -489,7 +472,7 @@ body {
   position: absolute;
   top: 8px;
   right: 10px;
-  color: #fbbf24;
+  color: #b45309;
   font-size: 15px;
 }
 
@@ -535,7 +518,7 @@ body {
 
 .word-card .word-ja-sub {
   font-size: 11px;
-  color: #64748b;
+  color: #475569;
   margin-top: 4px;
   font-weight: 700;
 }
@@ -689,7 +672,7 @@ body {
 }
 .alpha-card .alpha-ja {
   font-size: 10px;
-  color: #64748b;
+  color: #475569;
   margin-top: 2px;
 }
 
@@ -1003,7 +986,7 @@ body {
 .game-stars {
   font-size: 19px;
   font-weight: 900;
-  color: #eab308;
+  color: #b45309;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -1156,6 +1139,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   pointer-events: none;
   z-index: 9999;
 }
@@ -1468,7 +1452,7 @@ body {
 .quiz-opt-ja {
   font-size: 12px;
   font-weight: 700;
-  color: #64748b;
+  color: #475569;
   margin-top: 2px;
 }
 .quiz-option-card.correct {
@@ -1739,18 +1723,9 @@ body {
    (Được ghép nối mượt mà với style.css hiện có)
    ======================================================== */
 
-/* Căn giữa 6 tab chế độ vừa khít Desktop, cuộn ngang mượt trên Mobile */
-.mode-pills-row {
-  margin: 0 auto;
-}
 .mode-pill {
   padding: 7px 14px;
   font-size: 13.5px;
-}
-@media (max-width: 780px) {
-  .mode-pills-row {
-    margin: 0;
-  }
 }
 
 .modal-overlay {
@@ -1828,7 +1803,7 @@ button.long-avatar-pill:hover {
   transform: translateY(-2px);
 }
 .rank-sep {
-  color: #94a3b8;
+  color: #475569;
 }
 .rank-cta {
   background: #fef3c7;
@@ -1890,7 +1865,7 @@ button.long-avatar-pill:hover {
   background: linear-gradient(180deg, #ffffff 0%, #fefce8 100%);
 }
 .word-card.is-learned .star-corner {
-  color: #eab308;
+  color: #b45309;
   transform: scale(1.2);
 }
 .word-card.is-speaking-active,
@@ -1928,7 +1903,7 @@ button.long-avatar-pill:hover {
   gap: 8px;
 }
 .section-sub-desc {
-  color: #64748b;
+  color: #475569;
   font-size: 13px;
   margin-bottom: 14px;
   line-height: 1.5;
@@ -2032,7 +2007,7 @@ button.long-avatar-pill:hover {
 .modal-step-info {
   font-size: 12px;
   font-weight: 900;
-  color: #64748b;
+  color: #475569;
 }
 .modal-learned-badge {
   display: inline-block;
@@ -2088,7 +2063,7 @@ button.long-avatar-pill:hover {
 .slot-tip-text {
   font-size: 12px;
   font-weight: 700;
-  color: #64748b;
+  color: #475569;
   margin-bottom: 10px;
 }
 .puzzle-slot.filled {
@@ -2412,14 +2387,6 @@ button.long-avatar-pill:hover {
 }
 
 @media (min-width: 900px) {
-  .nav-modes-container {
-    overflow-x: visible;
-  }
-  .mode-pills-row {
-    width: 100%;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
   .mode-pill {
     padding: 7px 13px;
     font-size: 13px;
@@ -2686,7 +2653,7 @@ button.long-avatar-pill:hover {
 .math-eq-op {
   font-size: 36px;
   font-weight: 900;
-  color: #ec4899;
+  color: #be185d;
 }
 .math-eq-ans {
   min-width: 78px;
@@ -3085,10 +3052,20 @@ button.long-avatar-pill:hover {
   margin-bottom: 16px;
 }
 @media (max-width: 600px) {
+  .ethics-subnav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
   .ethics-subnav .game-tab-btn {
-    padding: 7px 11px;
-    font-size: 12.5px;
+    width: 100%;
+    justify-content: center;
+    padding: 8px 8px;
+    font-size: 12px;
     gap: 5px;
+    white-space: normal;
+    line-height: 1.25;
+    text-align: center;
     border-radius: 15px;
   }
 }
@@ -3193,7 +3170,7 @@ button.long-avatar-pill:hover {
 .ethics-hear-hint {
   font-size: 11px;
   font-weight: 800;
-  color: #d97706;
+  color: #92400e;
   text-align: right;
   margin-top: 2px;
 }
@@ -3423,7 +3400,7 @@ button.long-avatar-pill:hover {
   transition: all 0.15s;
 }
 .eco-bin-organic { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
-.eco-bin-recycle { background: #fefce8; border-color: #eab308; color: #a16207; }
+.eco-bin-recycle { background: #fefce8; border-color: #eab308; color: #854d0e; }
 .eco-bin-hazard { background: #fff1f2; border-color: #f43f5e; color: #be123c; }
 .eco-bin-btn.correct { transform: scale(1.06); box-shadow: 0 0 16px rgba(16, 185, 129, 0.5); }
 .eco-bin-btn.wrong { opacity: 0.55; }
@@ -3442,49 +3419,14 @@ html, body {
   max-width: 100%;
   overflow-x: clip;
 }
-.nav-modes-container {
-  width: 100%;
-  max-width: 100%;
-}
 #enTopicsTrack, #jaTopicsTrack {
   flex-wrap: wrap;
   overflow-x: visible;
   justify-content: center;
 }
-
-/* Căn 11 tab điều hướng cân đối: 6+5 ở màn vừa (900-1199px) và 1 hàng duy nhất gọn đẹp ở Desktop >= 1200px */
-@media (min-width: 900px) {
-  .nav-modes-container {
-    overflow-x: visible;
-    max-width: 1240px;
-  }
-  .mode-pills-row {
-    width: 100%;
-    max-width: 780px;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 5px;
-  }
-  .mode-pill {
-    padding: 5px 10px;
-    font-size: 12px;
-    gap: 4px;
-  }
-}
 @media (min-width: 1200px) {
-  .top-nav-inner,
-  .nav-modes-container,
-  .mode-pills-row {
+  .top-nav-inner {
     max-width: 1260px;
-  }
-  .mode-pills-row {
-    flex-wrap: nowrap;
-    gap: 5px;
-  }
-  .mode-pill {
-    padding: 5px 8px;
-    font-size: 11.5px;
-    gap: 4px;
   }
 }
 
@@ -4104,6 +4046,7 @@ button,
   position: sticky;
   top: 14px;
   max-height: calc(100vh - 28px);
+  max-height: calc(100dvh - 28px);
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
@@ -4167,7 +4110,7 @@ button,
 .side-group-label {
   font-size: 10.5px;
   font-weight: 900;
-  color: #64748b;
+  color: #475569;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   padding: 2px 8px 1px 8px;
@@ -4189,9 +4132,10 @@ button,
   color: #334155 !important;
   box-shadow: none !important;
 }
-.side-nav .mode-pill:hover {
+.side-nav .mode-pill:not(.active):hover {
   transform: translateX(2px);
-  background: #f8fafc !important;
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
   border-color: #94a3b8 !important;
 }
 .side-nav .mode-ico {
@@ -4238,11 +4182,27 @@ button,
   border-bottom-color: #9d174d !important;
   box-shadow: 0 5px 14px rgba(236, 72, 153, 0.35) !important;
 }
-.side-nav .mode-pill-ethics.active {
+.side-nav .mode-pill-ethics.active,
+.side-nav .mode-pill-ethics.active:hover {
   background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
+  color: #ffffff !important;
   border-color: #d97706 !important;
   border-bottom-color: #9a3412 !important;
   box-shadow: 0 5px 14px rgba(245, 158, 11, 0.35) !important;
+}
+.side-nav .mode-pill-science.active,
+.side-nav .mode-pill-science.active:hover {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+  border-bottom-color: #047857 !important;
+}
+.side-nav .mode-pill-arts.active,
+.side-nav .mode-pill-arts.active:hover {
+  background: linear-gradient(135deg, #9333ea 0%, #7e22ce 100%) !important;
+  color: #ffffff !important;
+  border-color: #7e22ce !important;
+  border-bottom-color: #581c87 !important;
 }
 .side-nav .mode-pill-english.active {
   background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
@@ -4324,6 +4284,7 @@ button,
     bottom: 12px;
     width: 262px;
     max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
     z-index: 320;
   }
 }
@@ -4353,8 +4314,11 @@ button,
     width: 270px;
     max-width: 82vw;
     max-height: 100vh;
+    max-height: 100dvh;
     border-radius: 0 24px 24px 0;
     z-index: 320;
+    background: #ffffff;
+    backdrop-filter: none;
     transform: translateX(-110%);
     transition: transform 0.2s ease;
   }
@@ -4575,7 +4539,7 @@ button,
 .math-day-card.active .day-ja, .math-day-card.active .day-name, .math-day-card.active .day-short { color: #ffffff; }
 .day-short { font-size: 16px; font-weight: 900; color: #c2410c; }
 .day-name { font-size: 13px; font-weight: 900; color: #1e293b; margin: 2px 0; }
-.day-ja { font-size: 11px; font-weight: 700; color: #64748b; }
+.day-ja { font-size: 11px; font-weight: 700; color: #475569; }
 
 /* Chính tả & Đọc hiểu Tiếng Việt */
 .orthography-rules-grid {
@@ -5010,7 +4974,11 @@ button,
    LEARNING PLUS: DAILY ROADMAP, KARAOKE, SRS & PARENT PLUS
    ======================================================== */
 body.focus-hide-games .mode-pill-arcade,
-body.focus-hide-games .mode-pill-game {
+body.focus-hide-games .mode-pill-game,
+body.focus-hide-games #btnDragonModeQuiz,
+body.focus-hide-games #btnDragonModeMemory,
+body.focus-hide-games #btnGoArcadeGarage,
+body.focus-hide-games .banner-action-row button[onclick*="switchMode('game')"] {
   display: none !important;
 }
 
@@ -5070,7 +5038,7 @@ body.focus-hide-games .mode-pill-game {
   font-size: 10px;
   font-weight: 800;
   background: #ffffff;
-  color: #64748b;
+  color: #475569;
   border: 1px solid #cbd5e1;
 }
 .week-dot.active {
@@ -5128,7 +5096,7 @@ body.focus-hide-games .mode-pill-game {
 }
 .ds-txt small {
   font-size: 11px;
-  color: #64748b;
+  color: #475569;
   font-weight: 700;
 }
 
@@ -5254,7 +5222,7 @@ body.focus-hide-games .mode-pill-game {
 .decodable-privacy {
   font-size: 11px;
   font-weight: 700;
-  color: #64748b;
+  color: #475569;
 }
 
 .mp-controls-row {
@@ -5762,4 +5730,450 @@ body.focus-hide-games .mode-pill-game {
   .story-footer-nav {
     flex-wrap: wrap;
   }
+}
+
+/* ========================================================
+   WAVE 3: A11Y, COVERS, COLOR MIXER, VOCAB CARDS & MISSING CLASSES
+   ======================================================== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 3px solid #0284c7;
+  outline-offset: 2px;
+}
+
+.expedition-h1 {
+  font: inherit;
+  margin: 0;
+  color: inherit;
+  display: inline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud,
+  .active-pulse,
+  .tool-chip-listen.playing,
+  .dino-card .real-photo,
+  .arcade-gate-banner {
+    animation: none !important;
+  }
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Unified Subject Vocab Cards (Science & Arts) */
+.vocab-card {
+  background: #ffffff;
+  border-radius: 24px;
+  border: 2.5px solid #10b981;
+  border-bottom: 6px solid #059669;
+  padding: 16px 12px 14px 12px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(16, 185, 129, 0.16);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  min-height: 175px;
+}
+.vocab-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(5, 150, 105, 0.25);
+}
+.vocab-card:active {
+  transform: translateY(3px);
+  border-bottom-width: 3px;
+}
+.vocab-card.is-learned {
+  background: linear-gradient(180deg, #ffffff 0%, #fefce8 100%);
+  border-color: #f59e0b;
+  border-bottom-color: #d97706;
+}
+.vocab-card.active-pulse,
+.active-pulse {
+  outline: 4px solid #f97316;
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 12px 26px rgba(249, 115, 22, 0.36);
+  z-index: 4;
+}
+.vocab-card .card-badge {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 13px;
+  font-weight: 900;
+  color: #b45309;
+}
+.vocab-card .card-icon {
+  font-size: 46px;
+  line-height: 1.05;
+  margin-top: 6px;
+}
+.vocab-card .card-word {
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.25;
+}
+.vocab-card .card-phonetic {
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 3px 10px;
+  border-radius: 12px;
+}
+
+/* Illustrations: Ethics, Science Topics, Asagao & Stories */
+.ethics-card-illus,
+.ethics-sit-illus,
+.subject-topic-cover,
+.story-cover-frame {
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid #cbd5e1;
+  background: #f8fafc;
+}
+.ethics-card-illus {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  margin: 4px 0 8px 0;
+  border-color: #bbf7d0;
+}
+.ethics-card-illus img,
+.ethics-sit-illus img,
+.subject-topic-cover img,
+.story-cover-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ethics-sit-illus {
+  width: 240px;
+  max-width: 100%;
+  aspect-ratio: 16 / 10;
+  margin: 6px auto 10px auto;
+  border-color: #f59e0b;
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.2);
+}
+.subject-topic-cover {
+  max-width: 440px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto 14px auto;
+  border: 3px solid #6ee7b7;
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.18);
+  position: relative;
+}
+.subject-topic-caption {
+  background: rgba(15, 23, 42, 0.78);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 5px 12px;
+  text-align: center;
+}
+.story-cover-frame {
+  max-width: 460px;
+  aspect-ratio: 16 / 9;
+  margin: 10px auto 14px auto;
+  border: 3px solid #fda4af;
+  box-shadow: 0 8px 20px rgba(244, 63, 94, 0.16);
+}
+.asagao-illus-wrap {
+  width: 180px;
+  height: 180px;
+  margin: 4px auto 10px auto;
+  border-radius: 22px;
+  background: #ffffff;
+  border: 2.5px solid #86efac;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(34, 197, 94, 0.15);
+}
+.asagao-illus-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.asagao-care-bar,
+.sense-challenge-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  background: #ecfdf5;
+  border: 2px solid #86efac;
+  font-size: 13px;
+  font-weight: 800;
+  color: #14532d;
+}
+
+/* Ethics Accessible Sibling Wrappers */
+.ethics-sit-opt-row,
+.tf-choice-wrap,
+.eco-bin-wrap {
+  position: relative;
+}
+.ethics-sit-opt-row {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+}
+.ethics-sit-opt-row .ethics-sit-option,
+.tf-choice-wrap .tf-choice-btn,
+.eco-bin-wrap .eco-bin-btn {
+  width: 100%;
+  height: 100%;
+}
+.tf-choice-wrap .quiz-opt-speak-btn,
+.eco-bin-wrap .quiz-opt-speak-btn,
+.ethics-sit-opt-row .quiz-opt-speak-btn {
+  z-index: 2;
+}
+.tf-choice-sub {
+  font-size: 12px;
+  font-weight: 700;
+}
+.eco-bin-sub {
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* Traffic Light Stop Line, Crosswalk & Car */
+.tl-stop-line {
+  position: absolute;
+  left: 72px;
+  top: 4px;
+  bottom: 4px;
+  width: 6px;
+  border-radius: 3px;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+}
+.tl-crosswalk {
+  position: absolute;
+  left: 84px;
+  top: 6px;
+  bottom: 6px;
+  width: 34px;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, 0.9) 0 6px,
+    transparent 6px 12px
+  );
+  border-radius: 3px;
+  pointer-events: none;
+}
+.tl-car {
+  z-index: 2;
+  line-height: 1;
+}
+
+/* Arts Color Mixer & Drawing */
+.art-mixer-lab {
+  background: linear-gradient(135deg, #fff1f2 0%, #fdf4ff 100%);
+  border: 2.5px solid #f472b6;
+  border-radius: 22px;
+  padding: 16px;
+  margin-bottom: 16px;
+  text-align: center;
+}
+.art-mixer-pots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0 12px 0;
+}
+.art-pot-btn {
+  border: 2.5px solid #cbd5e1;
+  border-bottom: 4px solid #94a3b8;
+  border-radius: 16px;
+  padding: 8px 14px;
+  background: #ffffff;
+  font-size: 13.5px;
+  font-weight: 900;
+  color: #0f172a;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.art-pot-btn.selected {
+  border-color: #db2777;
+  border-bottom-color: #9d174d;
+  background: #fdf2f8;
+  transform: translateY(-2px);
+}
+.art-mixer-result {
+  background: #ffffff;
+  border: 2px dashed #e879f9;
+  border-radius: 16px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #701a75;
+}
+
+/* Story Reader Buttons & Structural Styles */
+.btn-listen,
+.btn-outline {
+  border-radius: 16px;
+  padding: 8px 14px;
+  font-size: 13.5px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+.btn-listen {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: #ffffff;
+  border: 2px solid #0369a1;
+  border-bottom: 4px solid #075985;
+}
+.btn-outline {
+  background: #ffffff;
+  color: #1e293b;
+  border: 2px solid #cbd5e1;
+  border-bottom: 4px solid #94a3b8;
+}
+.story-title-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.story-title-main {
+  font-size: 20px;
+  font-weight: 900;
+  color: #881337;
+  margin: 0;
+}
+.story-q-tour-btn {
+  flex-shrink: 0;
+}
+.story-comp-q {
+  font-size: 15px;
+  font-weight: 900;
+  color: #0f172a;
+}
+.story-comp-opts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.story-opt-main {
+  flex: 1 1 auto;
+  text-align: left;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+/* Japanese Kanji, English Spelling, Arcade, Learning Plus & Utilities */
+.kanji-strokes-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 900;
+  background: #eef2ff;
+  color: #3730a3;
+  border: 1.5px solid #c7d2fe;
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-top: 3px;
+}
+.slot-wrong {
+  border-color: #e11d48 !important;
+  background: #fff1f2 !important;
+  color: #be123c !important;
+  box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.22);
+}
+.arcade-garage-btn,
+.arcade-decor-btn {
+  border: 2px solid #cbd5e1;
+  border-bottom: 4px solid #94a3b8;
+  background: #f8fafc;
+  color: #0f172a;
+  border-radius: 12px;
+  padding: 5px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.arcade-garage-btn.active,
+.arcade-decor-btn.active {
+  background: #fef3c7;
+  border-color: #f59e0b;
+  border-bottom-color: #b45309;
+  color: #78350f;
+}
+.dpad-mid {
+  gap: 12px;
+}
+.daily-hub-body {
+  margin-top: 10px;
+}
+.due-card-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.dino-roar-btn.active {
+  box-shadow: 0 0 0 3px #fef08a, 0 6px 14px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
+.dragon-memory-card {
+  border-color: #f87171;
+  border-bottom-color: #b91c1c;
+}
+.dig-site-header { margin-bottom: 10px; text-align: center; }
+.dig-rock-prompt { display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 900; color: #ffffff; text-shadow: 0 1px 3px rgba(0,0,0,0.65); }
+.dino-banner-content, .veh-banner-content { position: relative; z-index: 2; }
+.dino-cards-grid, .veh-cards-grid { margin-top: 14px; }
+.dino-fossil-svg svg { width: 100%; height: 100%; display: block; }
+.parent-gate-box { padding: 4px 0; }
+.math-bond-diagram { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.calc-vis-group { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+.shape-svg { width: 100%; height: 100%; display: block; }
+.arts-sub-pane, .science-sub-pane { margin-top: 10px; }
+.decod-play-kid-btn, .decod-karaoke-btn, .decod-rec-btn, .decod-check-btn, .decod-pass-btn, .decod-fail-btn { font-weight: 800; }
+.math-calc-filter, .math-bond-target-btn, .math-skip-btn, .vn-hint-btn, .ja-hint-btn, .ja-quiz-filter, .ja-write-set-btn, .ja-color-dot, .art-color-dot, .art-sticker-btn { cursor: pointer; }
+
+.art-canvas-status {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #15803d;
+  text-align: center;
+  min-height: 18px;
+}
+.art-canvas-status.is-warn {
+  color: #be123c;
 }

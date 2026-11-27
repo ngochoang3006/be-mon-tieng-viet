@@ -126,7 +126,7 @@ const MATH_SOLIDS_DATA = [
     audioKey: 'math_solid_sphere',
     quizQKey: 'math_q_solid_sphere',
     desc: 'Tròn xoay và lăn đi được mọi hướng — giống quả bóng đá & Trái Đất!',
-    svg: `<svg viewBox="0 0 120 120" class="shape-svg"><defs><radialGradient id="sphG" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#fef08a"/><stop offset="55%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#b45309"/></radialGradient></defs><circle cx="60" cy="60" r="40" fill="url(#sphG)" stroke="#92400e" stroke-width="3"/><ellipse cx="60" cy="60" rx="40" ry="13" fill="none" stroke="#fff7ed" stroke-width="2" stroke-dasharray="5 4"/></svg>`
+    svg: `<svg viewBox="0 0 120 120" class="shape-svg"><defs><radialGradient id="sphG_tpl" cx="38%" cy="32%" r="65%"><stop offset="0%" stop-color="#fef08a"/><stop offset="55%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#b45309"/></radialGradient></defs><circle cx="60" cy="60" r="40" fill="url(#sphG_tpl)" stroke="#92400e" stroke-width="3"/><ellipse cx="60" cy="60" rx="40" ry="13" fill="none" stroke="#fff7ed" stroke-width="2" stroke-dasharray="5 4"/></svg>`
   },
   {
     id: 'cylinder',
@@ -227,6 +227,7 @@ function renderMathHub() {
 
 function switchMathSubTab(subtab) {
   stopMathAutoPlay();
+  window.soundMgr?.stopAll?.();
   mathEpoch++;
   currentMathTab = subtab;
 
@@ -290,6 +291,7 @@ function renderMathNumbersTab() {
       : `<div class="math-dots-mini">${'<span class="math-dot"></span>'.repeat(dotsCount)}${item.num > 10 ? `<span class="math-dot-plus">+${item.num - 10}</span>` : ''}</div>`;
 
     const card = document.createElement('button');
+    card.type = 'button';
     card.className = `math-num-card ${item.num === mathSpotlightNum ? 'selected' : ''}`;
     card.innerHTML = `
       <div class="math-num-digit">${item.num}</div>
@@ -323,6 +325,7 @@ function renderMathNumbersTab() {
     tensGrid.innerHTML = '';
     MATH_TENS_DATA.forEach(t => {
       const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = 'math-ten-pill';
       btn.innerHTML = `<strong>${t.num}</strong> <span>${t.word}</span>`;
       btn.addEventListener('click', () => {
@@ -393,6 +396,7 @@ function updateMathNumberSpotlight() {
   } else {
     for (let i = 1; i <= item.num; i++) {
       const tok = document.createElement('button');
+      tok.type = 'button';
       tok.className = 'count-tap-token';
       tok.innerHTML = `<span class="tok-emoji">${item.emoji}</span><span class="tok-badge">${i}</span>`;
       tok.title = `Chạm để đếm số ${i}`;
@@ -415,6 +419,7 @@ function updateMathNumberSpotlight() {
 // PHẦN 2: CỘNG & TRỪ PHẠM VI 10 / 20 CÓ HÌNH TRỰC QUAN
 // ========================================================
 function initMathCalcGame(mode = mathCalcMode) {
+  mathEpoch++;
   mathCalcMode = mode;
 
   document.querySelectorAll('.math-calc-filter').forEach(btn => {
@@ -461,16 +466,16 @@ function initMathCalcGame(mode = mathCalcMode) {
     } else if (mode === 'max100') {
       op = Math.random() < 0.5 ? '+' : '-';
       if (op === '+') {
-        const t1 = 1 + Math.floor(Math.random() * 6);
-        const u1 = Math.floor(Math.random() * 6);
+        const t1 = 1 + Math.floor(Math.random() * 7);
+        const u1 = Math.floor(Math.random() * 9);
         const t2 = 1 + Math.floor(Math.random() * (8 - t1));
-        const u2 = Math.floor(Math.random() * (9 - u1));
+        const u2 = Math.floor(Math.random() * (10 - u1));
         a = t1 * 10 + u1;
         b = t2 * 10 + u2;
         ans = a + b;
       } else {
-        const t1 = 3 + Math.floor(Math.random() * 6);
-        const u1 = 3 + Math.floor(Math.random() * 6);
+        const t1 = 2 + Math.floor(Math.random() * 8);
+        const u1 = Math.floor(Math.random() * 10);
         const t2 = 1 + Math.floor(Math.random() * (t1 - 1));
         const u2 = Math.floor(Math.random() * (u1 + 1));
         a = t1 * 10 + u1;
@@ -701,6 +706,7 @@ function loadMathCalcQuestion() {
   let calcLocked = false;
   q.choices.forEach(num => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'math-ans-btn';
     btn.innerText = num;
     btn.addEventListener('click', () => {
@@ -715,7 +721,12 @@ function loadMathCalcQuestion() {
         const pts = mathCalcStreak >= 3 ? 15 : 10;
         mathCalcScore += pts;
         addMathSessionScore(pts);
-        window.recordAnswer?.(`math_${q.a}_${q.op}_${q.b}`, true, { label: `${q.a} ${q.op} ${q.b} = ${q.ans}`, mode: 'math' });
+        const opWordKey = q.op === '+' ? 'math_op_plus' : 'math_op_minus';
+        window.recordAnswer?.(`math_${q.a}_${q.op}_${q.b}`, true, {
+          label: `${q.a} ${q.op} ${q.b} = ${q.ans}`,
+          mode: 'math',
+          audioKey: `math_v_${q.a},${opWordKey},math_v_${q.b},math_q_eq`
+        });
 
         document.getElementById('mathCalcStreakBadge').innerText = `🔥 Chuỗi x${mathCalcStreak}`;
         document.getElementById('mathCalcScoreText').innerText = `⭐ ${mathCalcScore} điểm`;
@@ -735,10 +746,15 @@ function loadMathCalcQuestion() {
           loadMathCalcQuestion();
         };
         speakCalcEquation(q, true, () => setTimeout(goNextCalc, 220));
-        setTimeout(goNextCalc, window.soundMgr.isMuted ? 450 : 2200);
+        setTimeout(goNextCalc, window.soundMgr.isMuted ? 450 : 4200);
       } else {
         btn.classList.add('wrong');
-        window.recordAnswer?.(`math_${q.a}_${q.op}_${q.b}`, false, { label: `${q.a} ${q.op} ${q.b} = ${q.ans}`, mode: 'math' });
+        const opWordKey = q.op === '+' ? 'math_op_plus' : 'math_op_minus';
+        window.recordAnswer?.(`math_${q.a}_${q.op}_${q.b}`, false, {
+          label: `${q.a} ${q.op} ${q.b} = ${q.ans}`,
+          mode: 'math',
+          audioKey: `math_v_${q.a},${opWordKey},math_v_${q.b},math_q_eq`
+        });
         mathCalcStreak = 0;
         document.getElementById('mathCalcStreakBadge').innerText = `🔥 Chuỗi x0`;
         window.soundMgr.playWrong();
@@ -767,6 +783,7 @@ function showMathCalcVictory() {
 // PHẦN 3: SO SÁNH LỚN HƠN (>), BÉ HƠN (<), BẰNG NHAU (=)
 // ========================================================
 function initMathCompareGame(mode = mathCmpMode) {
+  mathEpoch++;
   mathCmpMode = mode;
   document.getElementById('btnCmpSimple')?.classList.toggle('active-filter', mode === 'simple');
   document.getElementById('btnCmp100')?.classList.toggle('active-filter', mode === 'max100');
@@ -810,7 +827,7 @@ function initMathCompareGame(mode = mathCmpMode) {
       const leftVal = a1 + a2;
       const rightVal = forceEq ? leftVal : Math.max(1, leftVal + [-3, -2, -1, 1, 2, 3][Math.floor(Math.random() * 6)]);
       const ans = leftVal > rightVal ? '>' : (leftVal < rightVal ? '<' : '=');
-      mathCmpQuestions.push({ leftLabel: `${a1} + ${a2}`, rightLabel: String(rightVal), leftVal, rightVal, ans });
+      mathCmpQuestions.push({ leftLabel: `${a1} + ${a2}`, rightLabel: String(rightVal), leftExpr: [a1, a2], leftVal, rightVal, ans });
     }
   }
 
@@ -826,6 +843,7 @@ function loadMathCompareQuestion() {
     fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_math_win', null, 'Hoan hô Bảo Long!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Chuyên gia So Sánh Dấu > < =!');
 
     document.getElementById('mathCmpPlayStage').style.display = 'none';
@@ -859,10 +877,19 @@ function loadMathCompareQuestion() {
   signBox.classList.remove('solved');
 
   const playCmpQuestion = () => {
-    if (mathCmpMode === 'simple' || mathCmpMode === 'max100') {
-      window.soundMgr.playAudioSequence([`math_v_${q.leftVal}`, 'math_and', `math_v_${q.rightVal}`, 'math_q_cmp'], null, `${q.leftLabel} và ${q.rightLabel}, chọn dấu lớn hơn, bé hơn, hay bằng nhau!`);
+    if (q.leftExpr) {
+      const [x1, x2] = q.leftExpr;
+      window.soundMgr.playAudioSequence(
+        [`math_v_${x1}`, 'math_op_plus', `math_v_${x2}`, 'math_and', `math_v_${q.rightVal}`, 'math_q_cmp'],
+        null,
+        `${q.leftLabel} và ${q.rightLabel}`
+      );
     } else {
-      window.soundMgr.playAudioFile('math_q_cmp', null, 'Chọn dấu lớn hơn, bé hơn, hay bằng nhau nhé!');
+      window.soundMgr.playAudioSequence(
+        [`math_v_${q.leftVal}`, 'math_and', `math_v_${q.rightVal}`, 'math_q_cmp'],
+        null,
+        `${q.leftLabel} và ${q.rightLabel}, chọn dấu lớn hơn, bé hơn, hay bằng nhau!`
+      );
     }
   };
   const btnHearCmp = document.getElementById('btnHearMathCmp');
@@ -879,15 +906,23 @@ function loadMathCompareQuestion() {
   document.querySelectorAll('.cmp-choice-btn').forEach(btn => {
     btn.classList.remove('correct', 'wrong');
     btn.onclick = () => {
-      if (signBox.classList.contains('solved')) return;
+      if (signBox.classList.contains('solved') || btn.classList.contains('wrong')) return;
       window.soundMgr.stopAll();
       const chosen = btn.dataset.sign;
+      const cmpAudioSeq = q.leftExpr
+        ? `math_v_${q.leftExpr[0]},math_op_plus,math_v_${q.leftExpr[1]},math_and,math_v_${q.rightVal},math_q_cmp`
+        : `math_v_${q.leftVal},math_and,math_v_${q.rightVal},math_q_cmp`;
       if (chosen === q.ans) {
         btn.classList.add('correct');
         signBox.innerText = q.ans;
         signBox.classList.add('solved');
         mathCmpScore += 10;
         addMathSessionScore(10);
+        window.recordAnswer?.(`cmp_${q.leftLabel}_${q.rightLabel}`, true, {
+          label: `${q.leftLabel} ? ${q.rightLabel}`,
+          mode: 'math',
+          audioKey: cmpAudioSeq
+        });
         document.getElementById('mathCmpScoreText').innerText = `⭐ ${mathCmpScore} điểm`;
         window.soundMgr.playCorrect();
         fireConfetti();
@@ -909,9 +944,14 @@ function loadMathCompareQuestion() {
         window.soundMgr.playAudioSequence([`math_v_${q.leftVal}`, cmpAudioKey, `math_v_${q.rightVal}`], () => {
           setTimeout(goNextCmp, 180);
         }, `${q.leftVal} ${q.ans} ${q.rightVal}`);
-        setTimeout(goNextCmp, window.soundMgr.isMuted ? 450 : 2100);
+        setTimeout(goNextCmp, window.soundMgr.isMuted ? 450 : 3800);
       } else {
         btn.classList.add('wrong');
+        window.recordAnswer?.(`cmp_${q.leftLabel}_${q.rightLabel}`, false, {
+          label: `${q.leftLabel} ? ${q.rightLabel}`,
+          mode: 'math',
+          audioKey: cmpAudioSeq
+        });
         window.soundMgr.playWrong();
         window.soundMgr.speakTryAgain();
         if (typeof showToast === 'function') showToast('🐊 Mẹo: Cá sấu há miệng to quay về phía SỐ LỚN HƠN nhé!');
@@ -924,6 +964,7 @@ function loadMathCompareQuestion() {
 // PHẦN 4: TÌM SỐ CÒN THIẾU & DÃY SỐ TÀU SHINKANSEN
 // ========================================================
 function initMathSequenceGame() {
+  mathEpoch++;
   mathSeqQuestions = [];
   for (let i = 0; i < 8; i++) {
     if (i === 4 || i === 6) {
@@ -1011,6 +1052,7 @@ function loadMathSequenceQuestion() {
     fireConfetti();
     window.soundMgr.playShinkansenWhistle();
     window.soundMgr.playAudioFile('cheer_math_win', null, 'Hoan hô Bảo Long!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Bậc thầy Dãy Số Shinkansen!');
 
     document.getElementById('mathSeqPlayStage').style.display = 'none';
@@ -1057,7 +1099,11 @@ function loadMathSequenceQuestion() {
 
   const myNav = window.appNavEpoch || 0;
   const myMathEpoch = mathEpoch;
-  const playSeqPrompt = () => window.soundMgr.playAudioFile('math_seq_prompt', null, 'Điền số còn thiếu lên toa tàu Shinkansen!');
+  const seqAudioKeys = q.kind === 'sequence'
+    ? q.cars.map((val, idx) => (idx === q.hiddenIdx ? 'math_blank' : `math_v_${val}`))
+    : [`math_v_${q.a}`, 'math_op_plus', 'math_blank', 'math_eq_word', `math_v_${q.c}`];
+  const seqAudioJoined = seqAudioKeys.join(',');
+  const playSeqPrompt = () => window.soundMgr.playAudioSequence(seqAudioKeys, null, q.hint);
   const btnHearSeq = document.getElementById('btnHearMathSeq');
   if (btnHearSeq) {
     btnHearSeq.onclick = () => {
@@ -1074,6 +1120,7 @@ function loadMathSequenceQuestion() {
   let seqLocked = false;
   q.choices.forEach(num => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'math-ans-btn';
     btn.innerText = num;
     btn.addEventListener('click', () => {
@@ -1089,6 +1136,11 @@ function loadMathSequenceQuestion() {
         }
         mathSeqScore += 10;
         addMathSessionScore(10);
+        window.recordAnswer?.(`seq_${mathSeqIndex}_${q.ans}`, true, {
+          label: q.kind === 'sequence' ? `Dãy số thiếu ${q.ans}` : `${q.a} + ? = ${q.c}`,
+          mode: 'math',
+          audioKey: seqAudioJoined
+        });
         document.getElementById('mathSeqScoreText').innerText = `⭐ ${mathSeqScore} điểm`;
         window.soundMgr.playShinkansenWhistle();
         fireConfetti();
@@ -1101,7 +1153,7 @@ function loadMathSequenceQuestion() {
             mathSeqIndex++;
             loadMathSequenceQuestion();
           },
-          2200
+          3600
         );
       } else {
         btn.classList.add('wrong');
@@ -1183,6 +1235,7 @@ function renderMathGeometryTab() {
     hourBtnsWrap.innerHTML = '';
     for (let h = 1; h <= 12; h++) {
       const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = `clock-hour-btn ${h === mathCurrentHour ? 'active' : ''}`;
       btn.innerText = `${h}g`;
       btn.addEventListener('click', () => {
@@ -1213,6 +1266,8 @@ function renderMathGeometryTab() {
     btnLearn.classList.toggle('active-filter', mathGeoMode === 'learn');
     btnQuiz.classList.toggle('active-filter', mathGeoMode === 'quiz');
     btnLearn.onclick = () => {
+      mathEpoch++;
+      window.soundMgr.stopAll();
       mathGeoMode = 'learn';
       window.soundMgr.playClick();
       renderMathGeometryTab();
@@ -1242,7 +1297,7 @@ function updateClockInfoText() {
   if (tipEl) tipEl.innerText = MATH_CLOCK_SCHEDULE[mathCurrentHour] || '';
 }
 
-function renderClockFace(svgId, hour, minute = 0) {
+function renderClockFace(svgId, hour, minute = 0, highlightHour = true) {
   const svg = document.getElementById(svgId);
   if (!svg) return;
 
@@ -1253,8 +1308,8 @@ function renderClockFace(svgId, hour, minute = 0) {
     const rad = ((i * 30) - 90) * (Math.PI / 180);
     const nx = 100 + Math.cos(rad) * 72;
     const ny = 100 + Math.sin(rad) * 72;
-    const isTarget = i === hour;
-    const isHalf = minute === 30 && i === 6;
+    const isTarget = highlightHour && i === hour;
+    const isHalf = highlightHour && minute === 30 && i === 6;
     numbersHtml += `<text x="${nx.toFixed(1)}" y="${(ny + 5).toFixed(1)}" text-anchor="middle" font-size="${isTarget ? '17' : '14'}" font-weight="900" fill="${isTarget ? '#e11d48' : (isHalf ? '#0284c7' : '#1e293b')}">${i}</text>`;
   }
 
@@ -1270,6 +1325,8 @@ function renderClockFace(svgId, hour, minute = 0) {
 }
 
 function initGeoClockQuiz() {
+  mathEpoch++;
+  window.soundMgr.stopAll();
   document.getElementById('mathGeoLearnStage').style.display = 'none';
   document.getElementById('mathGeoQuizStage').style.display = 'block';
   document.getElementById('mathGeoQuizActive').style.display = 'block';
@@ -1323,7 +1380,7 @@ function initGeoClockQuiz() {
   });
 
   // 3 câu Đồng hồ (mix Giờ đúng :00 & Giờ rưỡi :30)
-  const clockHours = [2, 4, 6, 7, 9, 10, 11].sort(() => Math.random() - 0.5).slice(0, 3);
+  const clockHours = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].sort(() => Math.random() - 0.5).slice(0, 3);
   clockHours.forEach((h, idx) => {
     const isHalf = idx === 1 || idx === 2;
     const opts = new Set([h]);
@@ -1375,6 +1432,7 @@ function loadGeoClockQuestion() {
     fireConfetti();
     window.soundMgr.playVictory();
     window.soundMgr.playAudioFile('cheer_math_win', null, 'Hoan hô Bảo Long!');
+    window.markDailyStep?.('play');
     if (typeof awardStars === 'function') awardStars(15, 'Siêu sao Hình Học, Đo cm & Xem Giờ!');
 
     document.getElementById('mathGeoQuizActive').style.display = 'none';
@@ -1402,7 +1460,7 @@ function loadGeoClockQuestion() {
 
   if (q.kind === 'clock') {
     clockWrap.style.display = 'flex';
-    renderClockFace('mathQuizClockSvg', q.targetHour, q.targetMinute || 0);
+    renderClockFace('mathQuizClockSvg', q.targetHour, q.targetMinute || 0, false);
     q.options.forEach(h => {
       const isHalf = q.targetMinute === 30;
       const aKey = isHalf ? `math_clock_half_${h}` : `math_clock_${h}`;
@@ -1550,7 +1608,7 @@ function loadGeoClockQuestion() {
       card.className = 'quiz-option-card';
       card.innerHTML = `
         <button type="button" class="quiz-opt-speak-btn" aria-label="Nghe tên hình">🔊</button>
-        <div style="width:76px; height:76px; margin-bottom:6px;">${sh.svg}</div>
+        <div style="width:76px; height:76px; margin-bottom:6px;">${sh.svg.replace(/sphG_tpl/g, 'sphG_quiz')}</div>
         <div class="quiz-opt-name">${sh.name}</div>
       `;
       const spk = card.querySelector('.quiz-opt-speak-btn');
@@ -1614,12 +1672,12 @@ function renderMathHundredBoard() {
 
   if (btnToggle) {
     const isOpen = box.style.display !== 'none';
-    btnToggle.innerHTML = isOpen ? '<span>🔼</span> Ẩn bảng 0–100' : '<span>🔢</span> Bảng 0–100 (HK2)';
+    btnToggle.innerHTML = isOpen ? '<span>🔼</span> Ẩn bảng 1–100' : '<span>🔢</span> Bảng 1–100 (HK2)';
     btnToggle.onclick = () => {
       window.soundMgr.playClick();
       const willOpen = box.style.display === 'none';
       box.style.display = willOpen ? 'block' : 'none';
-      btnToggle.innerHTML = willOpen ? '<span>🔼</span> Ẩn bảng 0–100' : '<span>🔢</span> Bảng 0–100 (HK2)';
+      btnToggle.innerHTML = willOpen ? '<span>🔼</span> Ẩn bảng 1–100' : '<span>🔢</span> Bảng 1–100 (HK2)';
     };
   }
 
@@ -1636,6 +1694,7 @@ function renderMathHundredBoard() {
   grid.innerHTML = '';
   for (let n = 1; n <= 100; n++) {
     const cell = document.createElement('button');
+    cell.type = 'button';
     const isHi = mathHundredSkipStep > 1 && n % mathHundredSkipStep === 0;
     cell.className = `math-hundred-cell ${isHi ? 'skip-hi' : ''}`;
     cell.innerText = String(n);
@@ -1685,6 +1744,7 @@ function renderMathBondsWidget() {
   for (let i = 0; i <= mathBondTarget; i++) {
     const j = mathBondTarget - i;
     const pill = document.createElement('button');
+    pill.type = 'button';
     pill.className = `math-bond-pair-btn ${i === mathBondSelectedA ? 'active' : ''}`;
     pill.innerHTML = `<span>${i}</span> + <span>${j}</span>`;
     pill.onclick = () => {
@@ -1705,7 +1765,7 @@ function renderMathSolids() {
     const card = document.createElement('div');
     card.className = 'math-shape-card';
     card.innerHTML = `
-      <div class="shape-svg-wrap">${sl.svg}</div>
+      <div class="shape-svg-wrap">${sl.svg.replace(/sphG_tpl/g, 'sphG_learn')}</div>
       <div class="shape-title">${sl.name}</div>
       <div class="shape-ja">🇯🇵 ${sl.ja}</div>
       <div class="shape-traits">${sl.desc}</div>
@@ -1750,6 +1810,7 @@ function renderMathRuler() {
   btns.innerHTML = '';
   MATH_RULER_ITEMS.forEach((it, idx) => {
     const b = document.createElement('button');
+    b.type = 'button';
     b.className = `tool-chip ${idx === mathRulerSelectedIdx ? 'active-filter' : ''}`;
     b.innerText = it.label;
     b.onclick = () => {
@@ -1781,6 +1842,7 @@ function renderMathDays() {
   grid.innerHTML = '';
   MATH_WEEKDAYS_DATA.forEach(d => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = `math-day-card ${d.isWeekend ? 'weekend' : ''}`;
     btn.innerHTML = `
       <div class="day-short">${d.short}</div>

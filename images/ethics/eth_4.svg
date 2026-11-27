@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="18" fill="url(#sky)"/>
+  
+  
+    <g fill="#ffffff" opacity="0.88">
+      <circle cx="110" cy="48" r="22"/><circle cx="136" cy="40" r="26"/><circle cx="164" cy="48" r="20"/>
+      <rect x="108" y="48" width="58" height="22" rx="11"/>
+      <circle cx="470" cy="62" r="18"/><circle cx="494" cy="54" r="24"/><circle cx="520" cy="62" r="18"/>
+      <rect x="468" y="62" width="54" height="18" rx="9"/>
+    </g>
+  <rect x="0" y="255" width="640" height="105" fill="#fde68a"/>
+  <rect x="30" y="70" width="210" height="185" rx="12" fill="#fed7aa" stroke="#ea580c" stroke-width="4"/>
+  <rect x="52" y="95" width="70" height="65" rx="6" fill="#bae6fd" stroke="#0284c7" stroke-width="3"/>
+  <rect x="148" y="95" width="70" height="65" rx="6" fill="#bae6fd" stroke="#0284c7" stroke-width="3"/>
+  <ellipse cx="430" cy="245" rx="140" ry="30" fill="#86efac"/>
+  <g transform="translate(255,222) scale(1.0)">
+      <ellipse cx="0" cy="84" rx="28" ry="8" fill="rgba(15,23,42,0.12)"/>
+      <rect x="-15" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <rect x="3" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <path d="M-24 14 Q0 6 24 14 L20 60 L-20 60 Z" fill="#38bdf8"/>
+      <path d="M-22 20 Q-38 35 -28 50" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <path d="M22 20 Q34 36 28 52" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <circle cx="0" cy="-14" r="24" fill="#fde68a"/>
+      <path d="M-25 -16 Q-24 -42 0 -42 Q24 -42 25 -16 Q16 -24 6 -20 Q-4 -26 -14 -20 Z" fill="#0f172a"/>
+      <circle cx="-8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="-13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <circle cx="13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <path d="M-7 -6 Q0 2 7 -6" stroke="#be123c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+    </g>
+  <g transform="translate(390,222) scale(0.96)">
+      <ellipse cx="0" cy="84" rx="28" ry="8" fill="rgba(15,23,42,0.12)"/>
+      <rect x="-15" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <rect x="3" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <path d="M-24 14 Q0 6 24 14 L20 60 L-20 60 Z" fill="#f43f5e"/>
+      <path d="M-22 20 Q-38 35 -28 50" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <path d="M22 20 Q42 0 38 -14" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <circle cx="0" cy="-14" r="24" fill="#fde68a"/>
+      <path d="M-25 -16 Q-24 -42 0 -42 Q24 -42 25 -16 Q16 -24 6 -20 Q-4 -26 -14 -20 Z" fill="#451a03"/>
+      <circle cx="-8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="-13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <circle cx="13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <path d="M-7 -6 Q0 2 7 -6" stroke="#be123c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+    </g>
+  <!-- Returned golden wallet/pencil pouch in the middle -->
+  <g transform="translate(318, 226)">
+    <rect x="-24" y="-15" width="48" height="30" rx="8" fill="#fbbf24" stroke="#b45309" stroke-width="3"/>
+    <path d="M-24 -3 L24 -3" stroke="#d97706" stroke-width="3"/>
+    <circle cx="0" cy="7" r="4" fill="#fffbeb"/>
+    <path d="M-38 -28 L-28 -20 M38 -28 L28 -20 M0 -36 L0 -26" stroke="#f59e0b" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+</svg>

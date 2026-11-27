@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#dcfce7"/>
+      <stop offset="100%" stop-color="#fef9c3"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="18" fill="url(#sky)"/>
+  
+  <circle cx="88" cy="70" r="34" fill="#fde047"/>
+  <path d="M0 242 L640 242 L640 360 L0 360 Z" fill="#92400e"/>
+  <path d="M0 242 Q320 226 640 242 L640 258 L0 258 Z" fill="#22c55e"/>
+  <!-- Plant anatomy: roots underground, stem, leaves, purple bloom -->
+  <path d="M210 242 L210 112" stroke="#16a34a" stroke-width="10" stroke-linecap="round"/>
+  <path d="M210 242 Q190 285 160 310 M210 242 Q215 292 212 325 M210 242 Q235 288 265 308" stroke="#fde68a" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="176" cy="182" rx="30" ry="14" fill="#4ade80" transform="rotate(-25 176 182)"/>
+  <ellipse cx="244" cy="166" rx="30" ry="14" fill="#4ade80" transform="rotate(25 244 166)"/>
+  <circle cx="210" cy="100" r="28" fill="#a855f7"/><circle cx="210" cy="100" r="11" fill="#fef08a"/>
+  <!-- Cute puppy & butterfly -->
+  <g transform="translate(450, 205)"><ellipse cx="0" cy="20" rx="36" ry="22" fill="#f59e0b"/><circle cx="-28" cy="-8" r="20" fill="#f59e0b"/><circle cx="-34" cy="-12" r="3" fill="#0f172a"/></g>
+  <g transform="translate(340, 120)"><ellipse cx="-10" cy="0" rx="12" ry="18" fill="#f472b6"/><ellipse cx="10" cy="0" rx="12" ry="18" fill="#f472b6"/><rect x="-2" y="-12" width="4" height="24" fill="#1e293b"/></g>
+
+</svg>

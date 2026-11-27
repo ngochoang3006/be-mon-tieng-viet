@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="18" fill="url(#sky)"/>
+  
+  
+    <g fill="#ffffff" opacity="0.88">
+      <circle cx="110" cy="46" r="22"/><circle cx="136" cy="38" r="26"/><circle cx="164" cy="46" r="20"/>
+      <rect x="108" y="46" width="58" height="22" rx="11"/>
+      <circle cx="470" cy="60" r="18"/><circle cx="494" cy="52" r="24"/><circle cx="520" cy="60" r="18"/>
+      <rect x="468" y="60" width="54" height="18" rx="9"/>
+    </g>
+  <!-- Sidewalk + Road + White Crosswalk -->
+  <rect x="0" y="218" width="640" height="40" fill="#cbd5e1"/>
+  <rect x="0" y="255" width="640" height="105" fill="#475569"/>
+  <rect x="35" y="272" width="54" height="72" rx="4" fill="#ffffff"/><rect x="120" y="272" width="54" height="72" rx="4" fill="#ffffff"/><rect x="205" y="272" width="54" height="72" rx="4" fill="#ffffff"/><rect x="290" y="272" width="54" height="72" rx="4" fill="#ffffff"/><rect x="375" y="272" width="54" height="72" rx="4" fill="#ffffff"/><rect x="460" y="272" width="54" height="72" rx="4" fill="#ffffff"/><rect x="545" y="272" width="54" height="72" rx="4" fill="#ffffff"/>
+  <!-- Traffic Light -->
+  <rect x="520" y="55" width="12" height="175" fill="#334155"/>
+  <rect x="496" y="42" width="60" height="118" rx="14" fill="#1e293b" stroke="#475569" stroke-width="4"/>
+  <circle cx="526" cy="70" r="15" fill="#ef4444"/><circle cx="526" cy="70" r="21" fill="#ef4444" opacity="0.28"/>
+  <circle cx="526" cy="103" r="13" fill="#713f12" opacity="0.5"/>
+  <circle cx="526" cy="134" r="13" fill="#14532d" opacity="0.5"/>
+  <!-- Father & Son holding hands safely on sidewalk -->
+  <g transform="translate(210, 176)">
+    <rect x="-18" y="34" width="36" height="54" rx="10" fill="#0284c7"/>
+    <rect x="-16" y="84" width="13" height="32" rx="6" fill="#1e293b"/>
+    <rect x="3" y="84" width="13" height="32" rx="6" fill="#1e293b"/>
+    <circle cx="0" cy="-4" r="24" fill="#fde68a"/>
+    <path d="M-24 -6 Q0 -34 24 -6 Z" fill="#0f172a"/>
+    <circle cx="-7" cy="-4" r="2.8" fill="#0f172a"/><circle cx="7" cy="-4" r="2.8" fill="#0f172a"/>
+    <path d="M-6 4 Q0 10 6 4" stroke="#991b1b" stroke-width="2.4" fill="none"/>
+    <path d="M18 46 Q46 56 64 46" stroke="#fed7aa" stroke-width="10" stroke-linecap="round" fill="none"/>
+  </g>
+  <g transform="translate(295,206) scale(0.9)">
+      <ellipse cx="0" cy="84" rx="28" ry="8" fill="rgba(15,23,42,0.12)"/>
+      <rect x="-15" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <rect x="3" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <path d="M-24 14 Q0 6 24 14 L20 60 L-20 60 Z" fill="#facc15"/>
+      <path d="M-22 20 Q-38 35 -28 50" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <path d="M22 20 Q34 36 28 52" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <circle cx="0" cy="-14" r="24" fill="#fde68a"/>
+      <path d="M-25 -16 Q-24 -42 0 -42 Q24 -42 25 -16 Q16 -24 6 -20 Q-4 -26 -14 -20 Z" fill="#0f172a"/>
+      <circle cx="-8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="-13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <circle cx="13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <path d="M-7 -6 Q0 2 7 -6" stroke="#be123c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+    </g>
+
+</svg>

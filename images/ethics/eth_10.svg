@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="100%" stop-color="#ffedd5"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+    <linearGradient id="wood" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+  </defs>
+  <rect width="640" height="360" rx="18" fill="url(#sky)"/>
+  
+  <rect x="0" y="260" width="640" height="100" fill="#fed7aa"/>
+  <!-- Kitchen counter + steaming kettle + safe shield zone -->
+  <rect x="350" y="165" width="240" height="125" rx="10" fill="#e2e8f0" stroke="#94a3b8" stroke-width="4"/>
+  <rect x="445" y="112" width="72" height="53" rx="14" fill="#ef4444"/>
+  <path d="M445 130 L422 120 M517 132 Q536 132 536 150 Q536 160 517 160" stroke="#475569" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M452 95 Q444 75 456 60 M478 92 Q472 70 484 55" stroke="#94a3b8" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- Wall electrical outlet with safety cover & warning ring -->
+  <rect x="92" y="115" width="68" height="84" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="4"/>
+  <circle cx="116" cy="145" r="5" fill="#334155"/><circle cx="136" cy="145" r="5" fill="#334155"/>
+  <circle cx="126" cy="158" r="38" fill="none" stroke="#ef4444" stroke-width="6"/>
+  <line x1="100" y1="184" x2="152" y2="132" stroke="#ef4444" stroke-width="6"/>
+  <!-- Smart boy stepping safely away in middle with green checkmark shield -->
+  <g transform="translate(275,212) scale(1.0)">
+      <ellipse cx="0" cy="84" rx="28" ry="8" fill="rgba(15,23,42,0.12)"/>
+      <rect x="-15" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <rect x="3" y="54" width="12" height="28" rx="6" fill="#334155"/>
+      <path d="M-24 14 Q0 6 24 14 L20 60 L-20 60 Z" fill="#22c55e"/>
+      <path d="M-22 20 Q-38 35 -28 50" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <path d="M22 20 Q42 0 38 -14" stroke="#fed7aa" stroke-width="11" stroke-linecap="round" fill="none"/>
+      <circle cx="0" cy="-14" r="24" fill="#fde68a"/>
+      <path d="M-25 -16 Q-24 -42 0 -42 Q24 -42 25 -16 Q16 -24 6 -20 Q-4 -26 -14 -20 Z" fill="#0f172a"/>
+      <circle cx="-8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="8" cy="-14" r="3" fill="#0f172a"/>
+      <circle cx="-13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <circle cx="13" cy="-7" r="4" fill="#fda4af" opacity="0.7"/>
+      <path d="M-7 -6 Q0 2 7 -6" stroke="#be123c" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+    </g>
+  <g transform="translate(275, 92)">
+    <path d="M0 -28 L26 -18 L22 12 Q0 30 0 30 Q0 30 -22 12 L-26 -18 Z" fill="#10b981" stroke="#ffffff" stroke-width="4"/>
+    <path d="M-10 2 L-2 10 L13 -7" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+
+</svg>

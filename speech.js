@@ -19,6 +19,12 @@ class SoundManager {
     this.sequenceToken = 0;
     this.blobCache = new Map();
     this.inflightFetches = new Map();
+    this.prefetchQueue = [];
+    this.prefetchActive = 0;
+    this._praiseTimers = new Set();
+    this.masterComp = null;
+    this.voicesByLang = {};
+    this._lastUtter = null;
     this.lastPraiseIdx = -1;
     this.lastTryIdx = -1;
 
@@ -37,39 +43,48 @@ class SoundManager {
   }
 
   bindUnlockOnFirstGesture() {
+    const events = ['pointerup', 'touchend', 'click', 'keydown'];
+    const cleanup = () => {
+      events.forEach(ev => document.removeEventListener(ev, unlock, true));
+    };
     const unlock = () => {
       try {
         this.getAudioContext();
-        if (!this.audioUnlocked && !this.currentAudio && this.player.paused) {
-          this.audioUnlocked = true;
-          const prevVol = this.player.volume;
-          this.player.volume = 0;
+        if (this.audioUnlocked) {
+          cleanup();
+          return;
+        }
+        if (!this.currentAudio && this.player.paused) {
+          const prevVol = this.player.volume > 0 ? this.player.volume : 1;
+          this.player.volume = 0.001;
           this.player.src = SILENT_UNLOCK_WAV;
           const p = this.player.play();
           if (p && typeof p.then === 'function') {
             p.then(() => {
+              this.audioUnlocked = true;
               if (!this.currentAudio) {
                 this.player.pause();
-                this.player.currentTime = 0;
+                try { this.player.currentTime = 0; } catch (e) {}
               }
               this.player.volume = prevVol;
+              cleanup();
             }).catch(() => {
               this.player.volume = prevVol;
             });
           } else {
             this.player.volume = prevVol;
+            this.audioUnlocked = true;
+            cleanup();
           }
         } else {
           this.audioUnlocked = true;
+          cleanup();
         }
       } catch (e) {
-        this.audioUnlocked = true;
+        this.player.volume = 1;
       }
-      ['touchstart', 'pointerdown', 'keydown', 'click'].forEach(ev => {
-        document.removeEventListener(ev, unlock, true);
-      });
     };
-    ['touchstart', 'pointerdown', 'keydown', 'click'].forEach(ev => {
+    events.forEach(ev => {
       document.addEventListener(ev, unlock, { capture: true, passive: true });
     });
   }
@@ -102,54 +117,91 @@ class SoundManager {
     this.prefetchKeys(keys);
   }
 
-  prefetchKeys(keys) {
-    if (!Array.isArray(keys) || window.location.protocol === 'file:' || typeof fetch !== 'function') return;
-    const g = this.gender;
-    keys.forEach(rawKey => {
-      if (!rawKey) return;
-      const key = this.normalizeKey(rawKey);
-      const ck = this.getCacheKey(g, key);
-      if (this.blobCache.has(ck) || this.inflightFetches.has(ck)) return;
+  _evictLruCacheIfNeeded() {
+    while (this.blobCache.size >= 800) {
+      let victimKey = null;
+      for (const k of this.blobCache.keys()) {
+        if (!k.includes(':cheer_')) {
+          victimKey = k;
+          break;
+        }
+      }
+      if (!victimKey) victimKey = this.blobCache.keys().next().value;
+      const oldUrl = this.blobCache.get(victimKey);
+      this.blobCache.delete(victimKey);
+      if (oldUrl) try { URL.revokeObjectURL(oldUrl); } catch (e) {}
+    }
+  }
+
+  _drainPrefetchQueue() {
+    while (this.prefetchActive < 4 && this.prefetchQueue.length > 0) {
+      if (this.isMuted) {
+        this.prefetchQueue.length = 0;
+        break;
+      }
+      const { g, key, ck } = this.prefetchQueue.shift();
+      if (g !== this.gender || this.blobCache.has(ck) || this.inflightFetches.has(ck)) continue;
+      this.prefetchActive++;
       const url = `audio/${g}/${encodeURIComponent(key)}.mp3`;
       const p = fetch(url)
         .then(res => (res.ok ? res.blob() : null))
         .then(blob => {
-          if (blob && blob.size > 500) {
-            if (this.blobCache.size > 650) {
-              const firstKey = this.blobCache.keys().next().value;
-              const oldUrl = this.blobCache.get(firstKey);
-              this.blobCache.delete(firstKey);
-              if (oldUrl) try { URL.revokeObjectURL(oldUrl); } catch (e) {}
-            }
+          if (blob && blob.size > 500 && g === this.gender) {
+            this._evictLruCacheIfNeeded();
             this.blobCache.set(ck, URL.createObjectURL(blob));
           }
         })
         .catch(() => {})
         .finally(() => {
           this.inflightFetches.delete(ck);
+          this.prefetchActive = Math.max(0, this.prefetchActive - 1);
+          this._drainPrefetchQueue();
         });
       this.inflightFetches.set(ck, p);
+    }
+  }
+
+  prefetchKeys(keys) {
+    if (this.isMuted || !Array.isArray(keys) || window.location.protocol === 'file:' || typeof fetch !== 'function') return;
+    const g = this.gender;
+    keys.forEach(rawKey => {
+      if (!rawKey) return;
+      const key = this.normalizeKey(rawKey);
+      if (window.customVoiceStore?.hasClip?.(key) || window.customVoiceStore?.hasClip?.(rawKey)) return;
+      const ck = this.getCacheKey(g, key);
+      if (this.blobCache.has(ck) || this.inflightFetches.has(ck)) return;
+      if (this.prefetchQueue.some(item => item.ck === ck)) return;
+      this.prefetchQueue.push({ g, key, ck });
     });
+    this._drainPrefetchQueue();
   }
 
   normalizeKey(key) {
-    if (key === 'alpha_â') return 'alpha_aa';
-    if (key === 'word_â') return 'word_aa';
-    if (key === 'word_sách') return 'word_sach';
-    return key;
+    if (typeof key !== 'string') return '';
+    const nfc = key.normalize('NFC').trim();
+    const low = nfc.toLowerCase();
+    if (low === 'alpha_â') return 'alpha_aa';
+    if (low === 'word_â') return 'word_aa';
+    if (low === 'word_sách') return 'word_sach';
+    return nfc;
   }
 
-  resolveAudioUrl(key) {
+  resolveAudioUrl(key, allowCustom = true) {
     const norm = this.normalizeKey(key);
-    const customUrl = window.customVoiceStore?.getSyncUrl?.(norm) || window.customVoiceStore?.getSyncUrl?.(key);
-    if (customUrl) {
-      return customUrl;
+    if (allowCustom) {
+      const customUrl = window.customVoiceStore?.getSyncUrl?.(norm) || window.customVoiceStore?.getSyncUrl?.(key);
+      if (customUrl) {
+        return { url: customUrl, isCustom: true, norm };
+      }
     }
     const ck = this.getCacheKey(this.gender, norm);
     if (this.blobCache.has(ck)) {
-      return this.blobCache.get(ck);
+      const cached = this.blobCache.get(ck);
+      this.blobCache.delete(ck);
+      this.blobCache.set(ck, cached);
+      return { url: cached, isCustom: false, norm };
     }
-    return `audio/${this.gender}/${encodeURIComponent(norm)}.mp3`;
+    return { url: `audio/${this.gender}/${encodeURIComponent(norm)}.mp3`, isCustom: false, norm };
   }
 
   loadPrefs() {
@@ -194,24 +246,27 @@ class SoundManager {
     this.savePrefs();
   }
 
+  _pickVoice(langPrefix, femaleRe, maleRe) {
+    const matches = this.voices.filter(v => (v.lang || '').toLowerCase().startsWith(langPrefix));
+    if (matches.length === 0) return null;
+    const natural = matches.filter(v => /Natural|Online|Google/i.test(v.name));
+    const pool = natural.length > 0 ? natural : matches;
+    const pref = this.gender === 'female' ? femaleRe : maleRe;
+    return pool.find(v => pref.test(v.name)) || pool[0];
+  }
+
   updateWebVoice() {
-    const viVoices = this.voices.filter(v => v.lang.includes('vi') || v.lang.includes('VI'));
-    if (viVoices.length > 0) {
-      // Ưu tiên giọng Natural / Online / Google trước, tránh giọng desktop Microsoft cũ khi buộc phải fallback
-      const natural = viVoices.filter(v => /Natural|Online|Google/i.test(v.name));
-      const pool = natural.length > 0 ? natural : viVoices;
-      if (this.gender === 'female') {
-        const f = pool.find(v => /HoaiMy|Linh|Female|Google/i.test(v.name));
-        this.selectedVoice = f || pool[0];
-      } else {
-        const m = pool.find(v => /NamMinh|Male/i.test(v.name));
-        this.selectedVoice = m || pool[0];
-      }
-    }
+    this.selectedVoice = this._pickVoice('vi', /HoaiMy|Linh|Female|Google/i, /NamMinh|Male/i);
+    this.voicesByLang = {
+      'vi-VN': this.selectedVoice,
+      'ja-JP': this._pickVoice('ja', /Nanami|Kyoko|Haruka|Female|Google/i, /Keita|Ichiro|Male/i),
+      'en-US': this._pickVoice('en', /Jenny|Aria|Samantha|Female|Google/i, /Andrew|Guy|David|Male/i)
+    };
   }
 
   setGender(gender) {
-    this.gender = gender;
+    this.gender = gender === 'male' ? 'male' : 'female';
+    this.prefetchQueue.length = 0;
     this.updateWebVoice();
     this.savePrefs();
     setTimeout(() => this.prefetchCommon(), 80);
@@ -219,7 +274,11 @@ class SoundManager {
 
   setSpeed(speedVal) {
     this.speedRate = speedVal === 'slow' ? 0.8 : 1.0;
+    if (this.player) {
+      this.player.defaultPlaybackRate = this.speedRate;
+    }
     if (this.currentAudio) {
+      this.currentAudio.defaultPlaybackRate = this.speedRate;
       this.currentAudio.playbackRate = this.speedRate;
     }
     this.savePrefs();
@@ -228,6 +287,7 @@ class SoundManager {
   setMuted(muted) {
     this.isMuted = !!muted;
     if (this.isMuted) {
+      this.prefetchQueue.length = 0;
       this.stopAll();
     }
     this.savePrefs();
@@ -235,10 +295,13 @@ class SoundManager {
 
   stopAll() {
     this.sequenceToken++;
+    this._praiseTimers.forEach(t => clearTimeout(t));
+    this._praiseTimers.clear();
     document.querySelectorAll('.is-reading-option').forEach(el => el.classList.remove('is-reading-option'));
     if (this.player) {
       this.player.onended = null;
       this.player.onerror = null;
+      this.player.onloadedmetadata = null;
       try {
         this.player.pause();
       } catch (e) {}
@@ -249,11 +312,15 @@ class SoundManager {
     }
   }
 
-  _playOnSharedPlayer(key, myToken, onDone, onErrorOrReject) {
+  _playOnSharedPlayer(key, myToken, onDone, onErrorOrReject, allowCustom = true) {
     const audio = this.player;
     audio.onended = null;
     audio.onerror = null;
-    audio.src = this.resolveAudioUrl(key);
+    audio.onloadedmetadata = null;
+    const resolved = this.resolveAudioUrl(key, allowCustom);
+    audio.volume = 1;
+    audio.src = resolved.url;
+    audio.defaultPlaybackRate = this.speedRate;
     audio.playbackRate = this.speedRate;
     this.currentAudio = audio;
 
@@ -263,12 +330,29 @@ class SoundManager {
       settled = true;
       audio.onended = null;
       audio.onerror = null;
+      audio.onloadedmetadata = null;
       this.currentAudio = null;
       if (fn) fn(arg);
     };
 
+    audio.onloadedmetadata = () => {
+      if (myToken === this.sequenceToken && !settled) {
+        audio.defaultPlaybackRate = this.speedRate;
+        audio.playbackRate = this.speedRate;
+      }
+    };
     audio.onended = () => settle(onDone);
-    audio.onerror = () => settle(onErrorOrReject, null);
+    audio.onerror = () => {
+      if (resolved.isCustom && myToken === this.sequenceToken && !settled) {
+        settled = true;
+        audio.onended = null;
+        audio.onerror = null;
+        audio.onloadedmetadata = null;
+        this._playOnSharedPlayer(key, myToken, onDone, onErrorOrReject, false);
+        return;
+      }
+      settle(onErrorOrReject, null);
+    };
 
     const p = audio.play();
     if (p && typeof p.catch === 'function') {
@@ -291,7 +375,9 @@ class SoundManager {
     this.prefetchKeys(steps.map(s => s.key).filter(Boolean));
 
     if (this.isMuted) {
-      if (onComplete) setTimeout(onComplete, 200);
+      if (onComplete) setTimeout(() => {
+        if (myToken === this.sequenceToken) onComplete();
+      }, 200);
       return;
     }
 
@@ -345,7 +431,9 @@ class SoundManager {
     const myToken = this.sequenceToken;
 
     if (this.isMuted) {
-      if (onCompleteCallback) setTimeout(onCompleteCallback, 200);
+      if (onCompleteCallback) setTimeout(() => {
+        if (myToken === this.sequenceToken) onCompleteCallback();
+      }, 200);
       return;
     }
 
@@ -379,13 +467,14 @@ class SoundManager {
 
   // Phát file audio người thật từ thư mục /audio/{gender}/{key}.mp3 (dùng cache 0ms!)
   playAudioFile(key, onEndCallback, fallbackText = null) {
-    if (this.isMuted) {
-      if (onEndCallback) setTimeout(onEndCallback, 200);
-      return;
-    }
-
     this.stopAll();
     const myToken = this.sequenceToken;
+    if (this.isMuted) {
+      if (onEndCallback) setTimeout(() => {
+        if (myToken === this.sequenceToken) onEndCallback();
+      }, 200);
+      return;
+    }
 
     const finish = () => {
       if (myToken !== this.sequenceToken) return;
@@ -512,21 +601,34 @@ class SoundManager {
     this.playAudioFile(`cheer_try_${idx + 1}`, onEndCallback, 'Cố lên Bảo Long ơi, thử chọn lại nhé!');
   }
 
-  // Khen xong (hoặc timeout an toàn nếu tắt tiếng / trình duyệt chặn) rồi mới chuyển câu mượt mà
-  playPraiseThen(isStreak, guardFn, advanceFn, maxFallbackMs = 2600) {
+  // Khen xong (hoặc timeout an toàn 6.5s để không cắt cụt 13 lời khen dài ở 0.8x) rồi mới chuyển câu
+  playPraiseThen(isStreak, guardFn, advanceFn, maxFallbackMs = 6500) {
     let advanced = false;
+    const startToken = this.sequenceToken + 1;
     const go = () => {
       if (advanced) return;
       advanced = true;
       if (typeof guardFn === 'function' && !guardFn()) return;
       if (typeof advanceFn === 'function') advanceFn();
     };
+    const trackTimer = (fn, ms) => {
+      const id = setTimeout(() => {
+        this._praiseTimers.delete(id);
+        fn();
+      }, ms);
+      this._praiseTimers.add(id);
+      return id;
+    };
     if (this.isMuted) {
-      setTimeout(go, 420);
+      this.stopAll();
+      const t = this.sequenceToken;
+      trackTimer(() => { if (this.sequenceToken === t) go(); }, 420);
       return;
     }
-    this.speakPraise(isStreak, () => setTimeout(go, 110));
-    setTimeout(go, maxFallbackMs);
+    this.speakPraise(isStreak, () => trackTimer(go, 110));
+    trackTimer(() => {
+      if (this.sequenceToken === startToken || this.sequenceToken === startToken - 1) go();
+    }, maxFallbackMs);
   }
 
   // Lời khen thưởng trò chơi
@@ -555,24 +657,37 @@ class SoundManager {
     const utter = new SpeechSynthesisUtterance(cleanText);
     utter.rate = this.speedRate === 0.8 ? 0.75 : 0.95;
     utter.lang = lang;
-    if (lang === 'vi-VN' && this.selectedVoice) {
-      utter.voice = this.selectedVoice;
-    }
-    if (onEndCallback) {
-      utter.onend = onEndCallback;
-      utter.onerror = onEndCallback;
-    }
+    const picked = this.voicesByLang[lang] || (lang === 'vi-VN' ? this.selectedVoice : null);
+    if (picked) utter.voice = picked;
+    this._lastUtter = utter;
+    const done = () => {
+      if (this._lastUtter === utter) this._lastUtter = null;
+      if (onEndCallback) onEndCallback();
+    };
+    utter.onend = done;
+    utter.onerror = done;
     this.synth.speak(utter);
   }
 
-  // Web Audio Context cho hiệu ứng game
+  // Web Audio Context cho hiệu ứng game & Pianica (an toàn iOS + tránh click/clip)
   getAudioContext() {
     if (!this.audioCtx) {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) this.audioCtx = new AudioCtx();
+      if (AudioCtx) {
+        this.audioCtx = new AudioCtx();
+        try {
+          const comp = this.audioCtx.createDynamicsCompressor();
+          comp.threshold.value = -12;
+          comp.ratio.value = 4;
+          comp.connect(this.audioCtx.destination);
+          this.masterComp = comp;
+        } catch (e) {
+          this.masterComp = null;
+        }
+      }
     }
-    if (this.audioCtx && this.audioCtx.state === 'suspended') {
-      this.audioCtx.resume();
+    if (this.audioCtx && (this.audioCtx.state === 'suspended' || this.audioCtx.state === 'interrupted')) {
+      this.audioCtx.resume().catch(() => {});
     }
     return this.audioCtx;
   }
@@ -584,16 +699,24 @@ class SoundManager {
       if (!ctx) return;
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
+      const t0 = ctx.currentTime + Math.max(0, delay);
+      const dur = Math.max(0.03, duration);
+      const peak = Math.max(0.005, vol);
 
       osc.type = type;
-      osc.frequency.setValueAtTime(freq, ctx.currentTime + delay);
-      gain.gain.setValueAtTime(vol, ctx.currentTime + delay);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+      osc.frequency.setValueAtTime(freq, t0);
+      gain.gain.setValueAtTime(0.0001, t0);
+      gain.gain.linearRampToValueAtTime(peak, t0 + 0.006);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
 
       osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start(ctx.currentTime + delay);
-      osc.stop(ctx.currentTime + delay + duration);
+      gain.connect(this.masterComp || ctx.destination);
+      osc.onended = () => {
+        try { osc.disconnect(); } catch (e) {}
+        try { gain.disconnect(); } catch (e) {}
+      };
+      osc.start(t0);
+      osc.stop(t0 + dur + 0.01);
     } catch (e) {
       // Ignore Web Audio errors
     }
