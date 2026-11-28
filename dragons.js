@@ -184,12 +184,17 @@ function switchDragonSubMode(sub) {
   stopDragonAutoPlay();
   window.soundMgr.stopAll();
   dragonEpoch++;
+  if (sub !== 'explore' && document.body.classList.contains('focus-hide-games')) {
+    sub = 'explore';
+  }
   currentDragonSubMode = sub;
 
   const panes = {
     explore: ['dragonCardsContainer', 'btnDragonModeExplore'],
     quiz: ['dragonQuizPane', 'btnDragonModeQuiz'],
-    memory: ['dragonMemoryPane', 'btnDragonModeMemory']
+    memory: ['dragonMemoryPane', 'btnDragonModeMemory'],
+    hatch: ['dragonHatchPane', 'btnDragonModeHatch'],
+    battle: ['dragonBattlePane', 'btnDragonModeBattle']
   };
   Object.entries(panes).forEach(([k, [paneId, btnId]]) => {
     const p = document.getElementById(paneId);
@@ -201,6 +206,8 @@ function switchDragonSubMode(sub) {
   if (sub === 'explore') renderDragonCardsView();
   else if (sub === 'quiz') initDragonQuiz();
   else if (sub === 'memory') initDragonMemoryGame();
+  else if (sub === 'hatch') window.dinoDragonGames?.initDragonHatch?.();
+  else if (sub === 'battle') window.dinoDragonGames?.initDragonBattle?.();
 }
 
 function renderDragonCardsView() {

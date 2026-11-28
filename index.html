@@ -9,7 +9,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="images/icons/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="images/icons/icon-192.png">
-  <link rel="stylesheet" href="style.css?v=20261128v11">
+  <link rel="stylesheet" href="style.css?v=20261128v13">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -301,6 +301,12 @@
             <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); border-bottom-color: #7c2d12;" onclick="switchMode('game'); switchSubGame('dino_dig');">
               <span>⛏️</span> Khai Quật
             </button>
+            <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); border-bottom-color: #14532d;" onclick="switchMode('game'); switchSubGame('dino_feed');">
+              <span>🍖</span> Cho Ăn Chữ
+            </button>
+            <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-bottom-color: #78350f;" onclick="switchMode('game'); switchSubGame('dino_hatch');">
+              <span>🥚</span> Ấp Trứng
+            </button>
           </div>
         </div>
       </div>
@@ -334,6 +340,12 @@
             </button>
             <button type="button" class="dino-roar-btn" id="btnDragonModeMemory" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-bottom-color: #0c4a6e;" onclick="switchDragonSubMode('memory')">
               <span>🃏</span> Lật Thẻ Rồng
+            </button>
+            <button type="button" class="dino-roar-btn" id="btnDragonModeHatch" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-bottom-color: #78350f;" onclick="switchDragonSubMode('hatch')">
+              <span>🥚</span> Ấp Trứng Rồng
+            </button>
+            <button type="button" class="dino-roar-btn" id="btnDragonModeBattle" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); border-bottom-color: #7c2d12;" onclick="switchDragonSubMode('battle')">
+              <span>🔥</span> Rồng Bắt Chữ
             </button>
           </div>
         </div>
@@ -391,6 +403,45 @@
           <div class="victory-actions">
             <button type="button" class="challenge-btn" onclick="initDragonMemoryGame()">🔄 Chơi ván Rồng mới</button>
             <button type="button" class="home-btn" onclick="switchDragonSubMode('quiz')">🎯 Chơi Đố Vui Rồng</button>
+            <button type="button" class="home-btn" onclick="switchDragonSubMode('explore')">🐉 Về 8 Loài Rồng</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ấp Trứng Rồng Thần -->
+      <div class="dragon-sub-panel" id="dragonHatchPane" style="display: none;">
+        <div class="egg-hatch-header-row">
+          <span class="egg-count-pill" id="dragonHatchStatsPill">🥚 Đã ấp nở: 0 / 8 Rồng Thần</span>
+        </div>
+        <div class="egg-roster-grid" id="dragonHatchRoster"></div>
+        <div id="dragonHatchNestHost"></div>
+      </div>
+
+      <!-- Rồng Phun Lửa Bắt Chữ -->
+      <div class="dragon-sub-panel" id="dragonBattlePane" style="display: none;">
+        <div id="dragonBattlePlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="dragonBattleRoundText">🔥 Lượt bắn 1 / 6</span>
+            <span class="game-stars" id="dragonBattleStreakText">🔥 Chuỗi x0</span>
+          </div>
+          <div class="arena-stage-card theme-dragon-egg">
+            <div class="arena-host-row" id="dragonBattleAvatarBox"></div>
+            <div class="arena-prompt-banner">
+              <div class="arena-prompt-text" id="dragonBattlePrompt">Nghe phép thuật của Rồng Thần!</div>
+              <button type="button" class="btn-hear-hint" id="btnHearDragonBattle">
+                <span>🔊</span> Nghe lại chữ cần bắn
+              </button>
+            </div>
+            <div class="arena-targets-grid" id="dragonBattleTargetsGrid"></div>
+          </div>
+        </div>
+        <div id="dragonBattleVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🐉🔥💥🏆</div>
+          <h2 class="victory-title" style="color: #b91c1c;">CHIẾN BINH RỒNG BẮT CHỮ SIÊU ĐỈNH!</h2>
+          <p class="victory-desc" id="dragonBattleVictoryDesc">Bảo Long đã hoàn thành xuất sắc thử thách Rồng Thần!</p>
+          <div class="victory-actions">
+            <button type="button" class="challenge-btn" onclick="window.dinoDragonGames?.initDragonBattle?.()">🔄 Chơi lại Rồng Bắt Chữ</button>
+            <button type="button" class="home-btn" onclick="switchDragonSubMode('hatch')">🥚 Sang Ấp Trứng Rồng</button>
             <button type="button" class="home-btn" onclick="switchDragonSubMode('explore')">🐉 Về 8 Loài Rồng</button>
           </div>
         </div>
@@ -1542,7 +1593,7 @@
       </div>
     </section>
 
-    <!-- Khu Vực Khu Trò Chơi (Game Hub - 7 Trò Chơi Tương Tác & Thực Tế) -->
+    <!-- Khu Vực Khu Trò Chơi (Game Hub - 9 Trò Chơi Tương Tác & Thực Tế) -->
     <section id="gameViewContainer" style="display: none;">
       <div class="game-hub-coins-bar" id="gameHubStatsBar">
         <div class="game-coins-info">
@@ -1570,6 +1621,12 @@
         </button>
         <button type="button" class="game-tab-btn" id="tabBtnDinoDig" onclick="switchSubGame('dino_dig')">
           <span>⛏️</span><span>Khai Quật Hóa Thạch</span>
+        </button>
+        <button type="button" class="game-tab-btn" id="tabBtnDinoFeed" onclick="switchSubGame('dino_feed')">
+          <span>🍖</span><span>Khủng Long Ăn Chữ</span>
+        </button>
+        <button type="button" class="game-tab-btn" id="tabBtnDinoHatch" onclick="switchSubGame('dino_hatch')">
+          <span>🥚</span><span>Ấp Trứng Khủng Long</span>
         </button>
         <button type="button" class="game-tab-btn" id="tabBtnQuiz" onclick="switchSubGame('quiz')">
           <span>🚗</span><span>Đố Vui Xe Cộ</span>
@@ -1828,7 +1885,46 @@
         </div>
       </div>
 
-      <!-- SUBGAME 7: ĐỐ VUI XE CỘ (KÈM KIẾN THỨC THỰC TẾ) -->
+      <!-- SUBGAME 7: CHO KHỦNG LONG ĂN CHỮ -->
+      <div class="game-view" id="subgameDinoFeedPane" style="display: none;">
+        <div id="dinoFeedPlayStage">
+          <div class="game-score-row">
+            <span class="game-progress-text" id="dinoFeedRoundText">🍖 Bữa ăn 1 / 6</span>
+            <span class="game-stars" id="dinoFeedStreakText">🔥 Chuỗi x0</span>
+          </div>
+          <div class="arena-stage-card theme-dino-egg">
+            <div class="arena-host-row" id="dinoFeedAvatarBox"></div>
+            <div class="arena-prompt-banner">
+              <div class="arena-prompt-text" id="dinoFeedPrompt">Nghe xem Khủng Long đang thèm món gì nào!</div>
+              <button type="button" class="btn-hear-hint" id="btnHearDinoFeed">
+                <span>🔊</span> Nghe Khủng Long gọi món
+              </button>
+            </div>
+            <div class="arena-targets-grid" id="dinoFeedTargetsGrid"></div>
+          </div>
+        </div>
+        <div id="dinoFeedVictoryStage" class="game-victory-box" style="display: none;">
+          <div class="victory-emojis">🦖🍖🍉🏆</div>
+          <h2 class="victory-title" style="color: #15803d;">ĐẦU BẾP CÔNG VIÊN KHỦNG LONG!</h2>
+          <p class="victory-desc" id="dinoFeedVictoryDesc">Bảo Long đã cho các bạn Khủng Long ăn no căng bụng rồi!</p>
+          <div class="victory-actions">
+            <button type="button" class="challenge-btn" onclick="window.dinoDragonGames?.initDinoFeed?.()">🔄 Cho ăn lượt mới</button>
+            <button type="button" class="home-btn" onclick="switchSubGame('dino_hatch')">🥚 Chơi Ấp Trứng Khủng Long</button>
+            <button type="button" class="home-btn" onclick="switchMode('dino')">🦖 Về Công Viên Khủng Long</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBGAME 8: ẤP TRỨNG KHỦNG LONG BÍ ẨN -->
+      <div class="game-view" id="subgameDinoHatchPane" style="display: none;">
+        <div class="egg-hatch-header-row">
+          <span class="egg-count-pill" id="dinoHatchStatsPill">🦴 Đã ấp nở: 0 / 10 Khủng Long</span>
+        </div>
+        <div class="egg-roster-grid" id="dinoHatchRoster"></div>
+        <div id="dinoHatchNestHost"></div>
+      </div>
+
+      <!-- SUBGAME 9: ĐỐ VUI XE CỘ (KÈM KIẾN THỨC THỰC TẾ) -->
       <div class="game-view" id="subgameQuizPane" style="display: none;">
         <div id="quizPlayStage">
           <div class="game-score-row">
@@ -2061,23 +2157,25 @@
   <canvas id="confettiCanvas"></canvas>
 
   <!-- Scripts -->
-  <script src="data.js?v=20261128v11"></script>
-  <script src="speech.js?v=20261128v11"></script>
-  <script src="math.js?v=20261128v11"></script>
-  <script src="ethics.js?v=20261128v11"></script>
-  <script src="english.js?v=20261128v11"></script>
-  <script src="japanese.js?v=20261128v11"></script>
-  <script src="science_life.js?v=20261128v11"></script>
-  <script src="arts_pe.js?v=20261128v11"></script>
-  <script src="arcade.js?v=20261128v11"></script>
-  <script src="dragons.js?v=20261128v11"></script>
-  <script src="learning_plus.js?v=20261128v11"></script>
-  <script src="living_media.js?v=20261128v11"></script>
-  <script src="app.js?v=20261128v11"></script>
+  <script src="data.js?v=20261128v13"></script>
+  <script src="speech.js?v=20261128v13"></script>
+  <script src="math.js?v=20261128v13"></script>
+  <script src="ethics.js?v=20261128v13"></script>
+  <script src="english.js?v=20261128v13"></script>
+  <script src="japanese.js?v=20261128v13"></script>
+  <script src="science_life.js?v=20261128v13"></script>
+  <script src="arts_pe.js?v=20261128v13"></script>
+  <script src="arcade.js?v=20261128v13"></script>
+  <script src="dragons.js?v=20261128v13"></script>
+  <script src="learning_plus.js?v=20261128v13"></script>
+  <script src="dino_dragon_games.js?v=20261128v13"></script>
+  <script src="story_scenes.js?v=20261128v13"></script>
+  <script src="living_media.js?v=20261128v13"></script>
+  <script src="app.js?v=20261128v13"></script>
   <script>
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20261128v11').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=20261128v13').catch(() => {});
       });
     }
   </script>

@@ -374,7 +374,14 @@ function initEventListeners() {
   });
 
   document.getElementById('btnToggleSidebar')?.addEventListener('click', handleSidebarToggle);
-  document.getElementById('btnCollapseSidebar')?.addEventListener('click', handleSidebarToggle);
+  document.getElementById('btnCollapseSidebar')?.addEventListener('click', () => {
+    if (window.innerWidth < 1040) {
+      window.soundMgr.playClick();
+      closeMobileSidebar();
+    } else {
+      handleSidebarToggle();
+    }
+  });
   document.getElementById('sideNavBackdrop')?.addEventListener('click', closeMobileSidebar);
   initSidebarPrefs();
 
@@ -659,7 +666,7 @@ function switchMode(mode) {
     arts_pe: '🎨 Chế độ: Âm nhạc (Đàn Pianica), Mỹ thuật & Thể dục',
     english: '🇬🇧 Chế độ: Tiếng Anh Lớp 1 (ABC & 8 Chủ đề)',
     japanese: '🇯🇵 Chế độ: Tiếng Nhật 小1 (Hiragana, Katakana, 80 Kanji & Truyện)',
-    game: '🎮 Khu Trò Chơi (7 game cho Bảo Long!)',
+    game: '🎮 Khu Trò Chơi (9 game cho Bảo Long!)',
     arcade: '🏎️ Khu Đua Tốc Độ: Xe Lamborghini, Khủng Long & Rồng Bay!'
   };
   if (msgs[mode]) showToast(msgs[mode]);
@@ -1754,6 +1761,8 @@ function switchSubGame(subgame) {
     dino_memory: ['subgameMemoryPane', 'tabBtnMemory'],
     dino_quiz: ['subgameDinoQuizPane', 'tabBtnDinoQuiz'],
     dino_dig: ['subgameDinoDigPane', 'tabBtnDinoDig'],
+    dino_feed: ['subgameDinoFeedPane', 'tabBtnDinoFeed'],
+    dino_hatch: ['subgameDinoHatchPane', 'tabBtnDinoHatch'],
     quiz: ['subgameQuizPane', 'tabBtnQuiz']
   };
 
@@ -1779,6 +1788,10 @@ function switchSubGame(subgame) {
     initDinoQuiz();
   } else if (subgame === 'dino_dig') {
     initDinoDig();
+  } else if (subgame === 'dino_feed') {
+    window.dinoDragonGames?.initDinoFeed?.();
+  } else if (subgame === 'dino_hatch') {
+    window.dinoDragonGames?.initDinoHatch?.();
   } else if (subgame === 'quiz') {
     initVehicleQuiz();
   }
@@ -3234,6 +3247,10 @@ function initSidebarPrefs() {
     }
   } catch (e) {}
   updateSidebarToggleUI();
+  window.addEventListener('resize', () => {
+    if (window.innerWidth >= 1040) closeMobileSidebar();
+    updateSidebarToggleUI();
+  });
 }
 
 function handleSidebarToggle() {
@@ -3435,6 +3452,7 @@ function initParentCornerOnce() {
       } catch (e) {}
       await window.customVoiceStore?.clearAll?.();
       await window.customVideoStore?.clearAll?.();
+      window.dinoDragonGames?.clearHatchedStorage?.();
       try { localStorage.removeItem('baolong_buddy_collapsed'); } catch (e) {}
       window.dinoBuddy?.syncVisibility?.();
       window.resetLearningPlusSessionFlags?.();

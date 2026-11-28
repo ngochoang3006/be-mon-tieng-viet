@@ -595,12 +595,20 @@
 
     preloadImages() {
       if (!this.payload) return;
-      this.payload.scenes.forEach(s => {
+      this.payload.scenes.forEach((s, idx) => {
         if (s.img && !this.imgCache.has(s.img)) {
           const im = new Image();
           im.src = s.img;
           this.imgCache.set(s.img, im);
         }
+        const extras = window.storySceneRenderer?.getSceneExtras?.(this.payload, idx) || [];
+        extras.forEach(p => {
+          if (p && !this.imgCache.has(p)) {
+            const im = new Image();
+            im.src = p;
+            this.imgCache.set(p, im);
+          }
+        });
       });
     },
 
@@ -783,27 +791,32 @@
       const sc = this.payload.scenes[this.sceneIdx] || this.payload.scenes[0];
       const elapsedSec = Math.max(0, (now - this.sceneStartMs) / 1000);
 
-      // Rich sky/storybook backdrop
-      const grad = ctx.createLinearGradient(0, 0, W, H);
-      grad.addColorStop(0, '#0f172a');
-      grad.addColorStop(0.5, '#1e293b');
-      grad.addColorStop(1, '#0c4a6e');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, W, H);
+      // Rich multi-scene animated storyboard or themed Ken Burns photo backdrop
+      const motionPaused = this.paused || prefersReducedMotion();
+      const customDrawn = window.storySceneRenderer?.drawSceneAnimated?.(
+        ctx, W, H, this.payload, sc, this.sceneIdx, now, this.imgCache, motionPaused
+      );
+      if (!customDrawn) {
+        const grad = ctx.createLinearGradient(0, 0, W, H);
+        grad.addColorStop(0, '#0f172a');
+        grad.addColorStop(0.5, '#1e293b');
+        grad.addColorStop(1, '#0c4a6e');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
 
-      // Ken Burns animated picture frame
-      const im = sc.img ? this.imgCache.get(sc.img) : null;
-      if (im && im.complete && im.naturalWidth > 0) {
-        const motionOn = !prefersReducedMotion();
-        const zoom = motionOn ? (1.03 + Math.sin(elapsedSec * 0.45) * 0.045) : 1.02;
-        const panX = motionOn ? Math.sin(elapsedSec * 0.35 + this.sceneIdx) * 18 : 0;
-        const panY = motionOn ? Math.cos(elapsedSec * 0.28) * 10 : 0;
-        const ratio = Math.max(W / im.naturalWidth, H / im.naturalHeight) * zoom;
-        const dw = im.naturalWidth * ratio;
-        const dh = im.naturalHeight * ratio;
-        ctx.save();
-        ctx.drawImage(im, (W - dw) / 2 + panX, (H - dh) / 2 + panY, dw, dh);
-        ctx.restore();
+        const im = sc.img ? this.imgCache.get(sc.img) : null;
+        if (im && im.complete && im.naturalWidth > 0) {
+          const motionOn = !prefersReducedMotion();
+          const zoom = motionOn ? (1.03 + Math.sin(elapsedSec * 0.45) * 0.045) : 1.02;
+          const panX = motionOn ? Math.sin(elapsedSec * 0.35 + this.sceneIdx) * 18 : 0;
+          const panY = motionOn ? Math.cos(elapsedSec * 0.28) * 10 : 0;
+          const ratio = Math.max(W / im.naturalWidth, H / im.naturalHeight) * zoom;
+          const dw = im.naturalWidth * ratio;
+          const dh = im.naturalHeight * ratio;
+          ctx.save();
+          ctx.drawImage(im, (W - dw) / 2 + panX, (H - dh) / 2 + panY, dw, dh);
+          ctx.restore();
+        }
       }
 
       // Soft bottom readability vignette
