@@ -99,6 +99,9 @@ const MATH_CLOCK_SCHEDULE = {
 
 // State Toán Lớp 1
 let currentMathTab = 'numbers'; // 'numbers' | 'calc' | 'compare' | 'sequence' | 'geometry'
+let mathClockTickOn = false;
+let mathClockTickTimer = null;
+let mathClockSec = 0;
 // 4 Khối hình 3D Lớp 1 (GDPT 2018 & MEXT 1年生)
 const MATH_SOLIDS_DATA = [
   {
@@ -262,7 +265,21 @@ function switchMathSubTab(subtab) {
   }
 }
 
+function stopMathClockTick() {
+  mathClockTickOn = false;
+  if (mathClockTickTimer) {
+    clearInterval(mathClockTickTimer);
+    mathClockTickTimer = null;
+  }
+  const btn = document.getElementById('btnToggleClockTick');
+  if (btn) {
+    btn.classList.remove('active-filter');
+    btn.innerText = '⏱️ Bật kim giây chạy thật';
+  }
+}
+
 function stopMathAutoPlay() {
+  stopMathClockTick();
   mathNumbersAutoRunning = false;
   if (mathNumbersAutoTimer) {
     clearTimeout(mathNumbersAutoTimer);
@@ -1259,6 +1276,31 @@ function renderMathGeometryTab() {
     };
   }
 
+  const btnClockTick = document.getElementById('btnToggleClockTick');
+  if (btnClockTick) {
+    btnClockTick.classList.toggle('active-filter', mathClockTickOn);
+    btnClockTick.innerText = mathClockTickOn ? '⏸️ Tắt kim giây' : '⏱️ Bật kim giây chạy thật';
+    btnClockTick.onclick = () => {
+      mathClockTickOn = !mathClockTickOn;
+      window.soundMgr.playPop();
+      if (mathClockTickTimer) { clearInterval(mathClockTickTimer); mathClockTickTimer = null; }
+      if (mathClockTickOn) {
+        mathClockTickTimer = setInterval(() => {
+          if (currentMathTab !== 'geometry' || mathGeoMode !== 'learn') {
+            stopMathClockTick();
+            return;
+          }
+          mathClockSec = (mathClockSec + 1) % 60;
+          const hand = document.getElementById('mathClockSecHand');
+          if (hand) hand.setAttribute('transform', `rotate(${mathClockSec * 6} 100 100)`);
+        }, 1000);
+      }
+      renderClockFace('mathClockSvg', mathCurrentHour, mathCurrentMinute);
+      btnClockTick.classList.toggle('active-filter', mathClockTickOn);
+      btnClockTick.innerText = mathClockTickOn ? '⏸️ Tắt kim giây' : '⏱️ Bật kim giây chạy thật';
+    };
+  }
+
   // Switch between Learn Clock & Quiz (Shapes + Solids + cm + Clock + Days)
   const btnLearn = document.getElementById('btnGeoLearnMode');
   const btnQuiz = document.getElementById('btnGeoQuizMode');
@@ -1319,6 +1361,7 @@ function renderClockFace(svgId, hour, minute = 0, highlightHour = true) {
     ${numbersHtml}
     <line x1="100" y1="100" x2="100" y2="34" stroke="#0284c7" stroke-width="5" stroke-linecap="round" transform="rotate(${minuteAngleDeg} 100 100)"/>
     <line x1="100" y1="100" x2="100" y2="54" stroke="#e11d48" stroke-width="8" stroke-linecap="round" transform="rotate(${angleDeg} 100 100)"/>
+    ${highlightHour ? `<line id="mathClockSecHand" x1="100" y1="108" x2="100" y2="28" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" transform="rotate(${mathClockSec * 6} 100 100)" opacity="${mathClockTickOn ? '1' : '0.4'}"/>` : ''}
     <circle cx="100" cy="100" r="7" fill="#0f172a"/>
     <circle cx="100" cy="100" r="3" fill="#facc15"/>
   `;

@@ -168,8 +168,12 @@ function renderDragonHub() {
   const btnRoar = document.getElementById('btnDragonRoar');
   if (btnRoar) {
     btnRoar.onclick = () => {
-      window.soundMgr.playClick();
+      window.soundMgr.playDragonRoar?.();
       window.soundMgr.playAudioFile('cheer_dragon_roar', null, 'Rồng thiêng gầm vang chào Bảo Long!');
+      window.livingFX?.pulseRumble(document.getElementById('dragonContainer'));
+      const r = btnRoar.getBoundingClientRect();
+      window.livingFX?.burst(r.left + r.width / 2, r.top + r.height / 2, 'dragon', 24);
+      window.livingFX?.floatLabel(r.left + r.width / 2, r.top, 'ROAAAR! 🔥', '#b91c1c');
       if (typeof fireConfetti === 'function') fireConfetti();
     };
   }

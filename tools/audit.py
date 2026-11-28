@@ -56,8 +56,9 @@ def check_css_classes():
             for tok in re.split(r"\s+", re.sub(r"\$\{[^}]*\}", " ", m)):
                 if tok and re.match(r"^[a-zA-Z_-][a-zA-Z0-9_-]*$", tok):
                     used.add(tok)
-        for m in re.findall(r"classList\.(?:add|remove|toggle|contains)\(([^)]+)\)", t):
-            for tok in re.findall(r'["\']([a-zA-Z0-9_-]+)["\']', m):
+        for method, args in re.findall(r"classList\.(add|remove|toggle|contains)\(([^)]+)\)", t):
+            check_str = args.split(",")[0] if method in ("toggle", "contains") else args
+            for tok in re.findall(r'["\']([a-zA-Z0-9_-]+)["\']', check_str):
                 used.add(tok)
     missing = sorted(c for c in used if c not in defined and c not in dynamic_tokens)
     print(f"CSS Classes: used={len(used)}, defined={len(defined)}, missing={len(missing)}")

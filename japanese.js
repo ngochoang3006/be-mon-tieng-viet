@@ -2238,6 +2238,9 @@ function renderJaStoriesTab() {
         <div class="story-title-main">${st.title}</div>
       </div>
       <div class="story-header-actions">
+        <button type="button" class="btn-theater-launch" id="btnWatchJaStoryMovie">
+          <span>🎬</span> Xem phim hoạt hình
+        </button>
         <button type="button" class="btn-listen" id="btnHearJaStory">
           <span>🎧</span> Nghe từng câu (Tô sáng)
         </button>
@@ -2319,6 +2322,12 @@ function renderJaStoriesTab() {
     row.addEventListener('click', playLine);
     const btn = row.querySelector('.story-ja-line-btn');
     if (btn) btn.addEventListener('click', playLine);
+  });
+
+  document.getElementById('btnWatchJaStoryMovie')?.addEventListener('click', () => {
+    stopJaAutoPlay();
+    window.soundMgr.playClick();
+    window.openStoryTheater?.({ kind: 'ja', itemId: st.id });
   });
 
   // Hear line-by-line with live highlight

@@ -9,7 +9,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="images/icons/icon-192.png">
   <link rel="icon" type="image/png" sizes="192x192" href="images/icons/icon-192.png">
-  <link rel="stylesheet" href="style.css?v=20261127v10">
+  <link rel="stylesheet" href="style.css?v=20261128v11">
   <!-- Google Fonts chuẩn trẻ thơ -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -153,6 +153,9 @@
           <span>📚 Đã thuộc: <strong id="learnedWordsCount">0</strong> từ</span>
           <span class="rank-cta">🏆 Xem Sticker</span>
         </div>
+        <button type="button" class="btn-theater-pill" id="btnOpenVideoHub" title="Mở Rạp Phim Hoạt Hình Offline & Video của Ba Mẹ">
+          <span>🎬</span> Rạp Phim &amp; Video
+        </button>
       </div>
     </section>
 
@@ -283,6 +286,9 @@
             <button type="button" class="dino-roar-btn" id="btnDinoRoar">
               <span>🌋</span> Gầm to nào: ROAR!
             </button>
+            <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); border-bottom-color: #881337;" onclick="window.openStoryTheater?.({ kind: 'movie', itemId: 'dino_world' })">
+              <span>🎬</span> Xem Phim Khủng Long
+            </button>
             <button type="button" class="dino-roar-btn" id="btnAutoPlayDinos" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #064e3b;">
               <span>🎧</span> Nghe cả 10 loài
             </button>
@@ -313,6 +319,9 @@
           <div class="banner-action-row">
             <button type="button" class="dino-roar-btn" id="btnDragonRoar">
               <span>🔥</span> Rồng gầm nào: ROAAAR!
+            </button>
+            <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-bottom-color: #92400e;" onclick="window.openStoryTheater?.({ kind: 'movie', itemId: 'dragon_kingdom' })">
+              <span>🎬</span> Xem Phim Rồng Thần
             </button>
             <button type="button" class="dino-roar-btn" id="btnAutoPlayDragons" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #064e3b;">
               <span>🎧</span> Nghe cả 8 loài Rồng
@@ -401,6 +410,12 @@
             </button>
             <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); border-bottom-color: #075985;" onclick="switchMode('game'); switchSubGame('shinkansen');">
               <span>🚅</span> Lắp Tàu Shinkansen Đánh Vần
+            </button>
+            <button type="button" class="dino-roar-btn" id="btnVehicleHonk" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-bottom-color: #92400e;">
+              <span>📢</span> Bấm Còi Xe: BÍP BÍP!
+            </button>
+            <button type="button" class="dino-roar-btn" style="background: linear-gradient(135deg, #e11d48 0%, #be123c 100%); border-bottom-color: #881337;" onclick="window.openStoryTheater?.({ kind: 'movie', itemId: 'vehicle_parade' })">
+              <span>🎬</span> Xem Phim Xe Cộ
             </button>
             <button type="button" class="dino-roar-btn" id="btnAutoPlayVehicles" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-bottom-color: #047857;">
               <span>🎧</span> Nghe cả 12 xe
@@ -719,10 +734,13 @@
               </div>
               <div style="font-size: 20px; font-weight: 900; color: #0369a1;" id="mathClockReadout">🕒 Đồng hồ chỉ: 3 giờ đúng</div>
               <div style="font-size: 13px; font-weight: 700; color: #475569; margin: 6px 0;" id="mathClockScheduleTip"></div>
-              <button type="button" class="btn-hear-hint" id="btnHearClock" style="margin: 6px auto 10px auto;">
-                <span>🔊</span> Nghe đọc giờ
-              </button>
-              <div style="font-size: 12px; font-weight: 800; color: #64748b;">Chạm số giờ bên dưới để xoay kim đỏ nhé:</div>
+              <div class="listen-filter-row" style="justify-content: center; margin: 6px auto 10px auto;">
+                <button type="button" class="btn-hear-hint" id="btnHearClock">
+                  <span>🔊</span> Nghe đọc giờ
+                </button>
+                <button type="button" class="tool-chip" id="btnToggleClockTick">⏱️ Bật kim giây chạy thật</button>
+              </div>
+              <div style="font-size: 12px; font-weight: 800; color: #475569;">Chạm số giờ bên dưới để xoay kim đỏ nhé:</div>
               <div class="clock-hours-grid" id="mathClockHourBtns"></div>
             </div>
           </div>
@@ -1964,6 +1982,76 @@
     </div>
   </div>
 
+  <!-- Modal Rạp Chiếu Phim Hoạt Hình Kể Chuyện 100% Offline -->
+  <div class="modal-overlay" id="storyTheaterOverlay" role="dialog" aria-modal="true" aria-labelledby="theaterTitle">
+    <div class="modal-content theater-modal" id="storyTheaterBox">
+      <div class="modal-nav-header" style="justify-content: space-between; margin-bottom: 10px;">
+        <span class="theater-title" id="theaterTitle">🎬 Rạp Hoạt Hình Kể Chuyện</span>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <button type="button" class="tool-chip" id="btnTheaterFullscreen" title="Phóng to / Thu gọn rạp phim">⛶ Mở rộng</button>
+          <button type="button" class="modal-close-btn" id="btnTheaterClose" aria-label="Đóng rạp phim">✕</button>
+        </div>
+      </div>
+      <div class="theater-stage-frame" id="theaterStageFrame">
+        <canvas id="storyTheaterCanvas" width="840" height="440"></canvas>
+      </div>
+      <div class="theater-sub-box" id="theaterSubBox">
+        <div class="theater-sub-main" id="theaterSubMain">Sẵn sàng chiếu phim...</div>
+        <div class="theater-sub-sub" id="theaterSubSub"></div>
+        <div class="theater-sub-vi" id="theaterSubVi"></div>
+      </div>
+      <div class="theater-controls-bar">
+        <div class="theater-dots-row" id="theaterSceneDots"></div>
+        <div class="theater-btn-row">
+          <button type="button" class="tool-chip" id="btnTheaterPrev">⏮️ Cảnh trước</button>
+          <button type="button" class="challenge-btn" id="btnTheaterPlayPause" style="padding: 8px 18px; font-size: 14px;"><span>⏸️</span> Tạm dừng</button>
+          <button type="button" class="tool-chip" id="btnTheaterNext">Cảnh sau ⏭️</button>
+          <button type="button" class="tool-chip" id="btnTheaterSub">💬 Ẩn phụ đề</button>
+          <button type="button" class="tool-chip" id="btnTheaterSpeed">⚡ 1×</button>
+          <button type="button" class="tool-chip" id="btnTheaterMute">🔊 Có tiếng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Rạp Video Hoạt Hình & Kho Video Ba Mẹ -->
+  <div class="modal-overlay" id="kidVideoOverlay" role="dialog" aria-modal="true" aria-labelledby="kidVideoTitle">
+    <div class="modal-content kid-video-modal" id="kidVideoBox">
+      <div class="modal-nav-header" style="justify-content: space-between; margin-bottom: 10px;">
+        <span class="theater-title" id="kidVideoTitle">📺 Rạp Phim &amp; Kho Video Của Bảo Long</span>
+        <button type="button" class="modal-close-btn" id="btnKidVideoClose" aria-label="Đóng kho video">✕</button>
+      </div>
+      <div class="video-hub-tabs">
+        <button type="button" class="tool-chip active-filter" id="vidTabMovies">🎬 Phim Hoạt Hình Offline (5)</button>
+        <button type="button" class="tool-chip" id="vidTabStories">📖 Phim Truyện Việt–Nhật (16)</button>
+        <button type="button" class="tool-chip" id="vidTabParent">👨‍👩‍👦 Video Của Ba Mẹ (MP4 / YouTube)</button>
+      </div>
+      <div class="kid-video-body" id="kidVideoBody"></div>
+    </div>
+  </div>
+
+  <!-- Linh Vật Khủng Long Con Đồng Hành -->
+  <div class="dino-buddy-dock" id="dinoBuddyDock" aria-live="polite">
+    <div class="dino-buddy-bubble" id="dinoBuddyBubble">Cố lên Bảo Long ơi! 🦖</div>
+    <div class="dino-buddy-controls">
+      <button type="button" class="dino-buddy-btn" id="dinoBuddyBtn" title="Chạm vào bạn Khủng Long để nhận cổ vũ!">
+        <svg class="dino-buddy-svg" viewBox="0 0 64 64" width="44" height="44" aria-hidden="true">
+          <ellipse cx="32" cy="57" rx="18" ry="4" fill="rgba(15,23,42,0.16)"/>
+          <path d="M18 44 Q8 42 12 31 Q17 28 21 36 Z" fill="#059669"/>
+          <ellipse cx="33" cy="40" rx="14" ry="13" fill="#10b981" stroke="#047857" stroke-width="2.5"/>
+          <ellipse cx="35" cy="43" rx="8" ry="8" fill="#a7f3d0"/>
+          <circle cx="35" cy="21" r="14" fill="#10b981" stroke="#047857" stroke-width="2.5"/>
+          <circle cx="30" cy="18" r="3.5" fill="#ffffff"/>
+          <circle cx="30.8" cy="18" r="1.8" fill="#0f172a"/>
+          <path d="M35 25 Q41 29 45 24" fill="none" stroke="#881337" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="42" cy="22" r="2.2" fill="#fda4af"/>
+          <path d="M23 11 L26 6 L30 10 L35 5 L38 11" fill="#f59e0b" stroke="#b45309" stroke-width="1.5" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <button type="button" class="dino-buddy-toggle" id="btnBuddyToggle" aria-label="Thu gọn bạn Khủng Long">−</button>
+    </div>
+  </div>
+
   <!-- Thông báo Toast dưới đáy màn hình -->
   <div class="toast-notice" id="toastNotice" role="status" aria-live="polite">
     Chào mừng Bảo Long đến với Tiếng Việt kỳ thú! 🦖
@@ -1973,22 +2061,23 @@
   <canvas id="confettiCanvas"></canvas>
 
   <!-- Scripts -->
-  <script src="data.js?v=20261127v10"></script>
-  <script src="speech.js?v=20261127v10"></script>
-  <script src="math.js?v=20261127v10"></script>
-  <script src="ethics.js?v=20261127v10"></script>
-  <script src="english.js?v=20261127v10"></script>
-  <script src="japanese.js?v=20261127v10"></script>
-  <script src="science_life.js?v=20261127v10"></script>
-  <script src="arts_pe.js?v=20261127v10"></script>
-  <script src="arcade.js?v=20261127v10"></script>
-  <script src="dragons.js?v=20261127v10"></script>
-  <script src="learning_plus.js?v=20261127v10"></script>
-  <script src="app.js?v=20261127v10"></script>
+  <script src="data.js?v=20261128v11"></script>
+  <script src="speech.js?v=20261128v11"></script>
+  <script src="math.js?v=20261128v11"></script>
+  <script src="ethics.js?v=20261128v11"></script>
+  <script src="english.js?v=20261128v11"></script>
+  <script src="japanese.js?v=20261128v11"></script>
+  <script src="science_life.js?v=20261128v11"></script>
+  <script src="arts_pe.js?v=20261128v11"></script>
+  <script src="arcade.js?v=20261128v11"></script>
+  <script src="dragons.js?v=20261128v11"></script>
+  <script src="learning_plus.js?v=20261128v11"></script>
+  <script src="living_media.js?v=20261128v11"></script>
+  <script src="app.js?v=20261128v11"></script>
   <script>
     if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === '127.0.0.1' || location.hostname === 'localhost')) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=20261127v10').catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=20261128v11').catch(() => {});
       });
     }
   </script>

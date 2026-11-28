@@ -21,7 +21,8 @@ let explorerState = {
   dailyLog: {},
   coins: 0,
   arcadeGear: { speedLv: 0, boostLv: 0, decor: 'none', unlockedDecors: ['none'] },
-  parentSettings: { eyeBreakMinutes: 20, focusHideGames: false, dailyArcadeCap: 25 }
+  parentSettings: { eyeBreakMinutes: 20, focusHideGames: false, dailyArcadeCap: 25, hideDinoBuddy: false },
+  parentVideos: []
 };
 
 // Auto-play audio tour state
@@ -104,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
   syncTopControlsUI();
   updateProfileHUD();
   window.initLearningPlus?.();
+  window.initLivingMedia?.();
   renderCurrentView();
   initCanvas();
 });
@@ -182,6 +184,14 @@ function awardStars(amount, reasonText = '', countAsGame = amount >= 10, sourceC
   if (typeof renderDailyRoadmapHost === 'function') renderDailyRoadmapHost();
   const nextRank = getCurrentRank(explorerState.stars);
 
+  if (actual > 0) {
+    const starChip = document.getElementById('navTotalStars');
+    if (starChip && window.livingFX) {
+      const r = starChip.getBoundingClientRect();
+      window.livingFX.burst(r.left + r.width / 2, r.top + r.height / 2, 'star', 10);
+      window.livingFX.floatLabel(r.left + r.width / 2, r.bottom + 8, `+${actual} ⭐`, '#d97706');
+    }
+  }
   if (nextRank.title !== prevRank.title) {
     fireConfetti();
     showToast(`🎊 THĂNG HẠNG! Bảo Long đạt danh hiệu mới: ${nextRank.badge} ${nextRank.title}!`);
@@ -449,14 +459,20 @@ function initEventListeners() {
   document.addEventListener('keydown', (e) => {
     const modalOv = document.getElementById('modalOverlay');
     const stkOv = document.getElementById('stickerModalOverlay');
+    const thOv = document.getElementById('storyTheaterOverlay');
+    const vidOv = document.getElementById('kidVideoOverlay');
     const modalOpen = modalOv?.classList.contains('active');
     const stkOpen = stkOv?.classList.contains('active');
+    const thOpen = thOv?.classList.contains('active');
+    const vidOpen = vidOv?.classList.contains('active');
     if (e.key === 'Escape') {
       closeMobileSidebar();
       if (modalOpen) closeModal();
       if (stkOpen) closeStickerModalHelper();
     } else if (e.key === 'Tab') {
-      if (modalOpen && modalOv) trapFocusInOverlay(modalOv, e);
+      if (thOpen && thOv) trapFocusInOverlay(thOv, e);
+      else if (vidOpen && vidOv) trapFocusInOverlay(vidOv, e);
+      else if (modalOpen && modalOv) trapFocusInOverlay(modalOv, e);
       else if (stkOpen && stkOv) trapFocusInOverlay(stkOv, e);
     } else if (modalOpen) {
       if (e.key === 'ArrowLeft') navigateModal(-1);
@@ -625,6 +641,7 @@ function switchMode(mode) {
   currentLessonIdx = 0;
   phonicsShowStories = false;
 
+  document.body.classList.toggle('in-arcade-mode', mode === 'arcade');
   document.querySelectorAll('.mode-pill').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.mode === mode);
   });
@@ -1142,9 +1159,14 @@ function renderVnStoriesView() {
       <div class="lesson-tabs-track" id="vnStoriesTrack" style="margin-bottom: 14px;"></div>
       <div class="story-header-row">
         <h3 style="margin:0; font-size:20px; font-weight:900; color:#be123c;">${st.icon} ${st.title}</h3>
-        <button type="button" class="challenge-btn" id="btnHearVnStory" style="padding:8px 18px; font-size:14px;">
-          <span>🔊</span> Nghe ${window.soundMgr?.gender === 'male' ? 'ba' : 'cô'} đọc bài văn
-        </button>
+        <div class="story-header-actions">
+          <button type="button" class="btn-theater-launch" id="btnWatchVnStoryMovie">
+            <span>🎬</span> Xem phim kể chuyện
+          </button>
+          <button type="button" class="challenge-btn" id="btnHearVnStory" style="padding:8px 18px; font-size:14px;">
+            <span>🔊</span> Nghe ${window.soundMgr?.gender === 'male' ? 'ba' : 'cô'} đọc bài văn
+          </button>
+        </div>
       </div>
       ${st.image ? `<div class="story-cover-frame"><img src="${st.image}" alt="${st.title}" loading="lazy"></div>` : ''}
       <div class="story-vn-lines">
@@ -1172,6 +1194,12 @@ function renderVnStoriesView() {
       renderVnStoriesView();
     };
     track.appendChild(pill);
+  });
+
+  document.getElementById('btnWatchVnStoryMovie')?.addEventListener('click', () => {
+    window.soundMgr.playClick();
+    window.openStoryTheater?.({ kind: 'vn', itemId: st.id });
+    markWordLearned(st.id);
   });
 
   document.getElementById('btnHearVnStory').onclick = () => {
@@ -1242,8 +1270,12 @@ function renderDinoView() {
   const btnRoar = document.getElementById('btnDinoRoar');
   if (btnRoar) {
     btnRoar.onclick = () => {
-      window.soundMgr.playClick();
+      window.soundMgr.playDinoRoar?.();
       window.soundMgr.playAudioFile('cheer_dino', null, 'Gầm to nào Bảo Long ơi! Roar!');
+      window.livingFX?.pulseRumble(document.getElementById('dinoContainer'));
+      const r = btnRoar.getBoundingClientRect();
+      window.livingFX?.burst(r.left + r.width / 2, r.top + r.height / 2, 'dino', 22);
+      window.livingFX?.floatLabel(r.left + r.width / 2, r.top, 'ROAAAR! 🌋', '#15803d');
       fireConfetti();
     };
   }
@@ -1286,6 +1318,16 @@ function renderVehicleView() {
   const container = document.getElementById('vehicleCardsContainer');
   if (!container) return;
   container.innerHTML = '';
+
+  const btnHonk = document.getElementById('btnVehicleHonk');
+  if (btnHonk) {
+    btnHonk.onclick = () => {
+      window.soundMgr.playCarHorn?.();
+      const r = btnHonk.getBoundingClientRect();
+      window.livingFX?.burst(r.left + r.width / 2, r.top + r.height / 2, 'vehicle', 18);
+      window.livingFX?.floatLabel(r.left + r.width / 2, r.top, 'BÍP BÍP! 🚗💨', '#0284c7');
+    };
+  }
 
   const btnAutoVeh = document.getElementById('btnAutoPlayVehicles');
   if (btnAutoVeh) {
@@ -3392,6 +3434,9 @@ function initParentCornerOnce() {
          `${PROGRESS_KEY}_corrupt_backup`].forEach(k => localStorage.removeItem(k));
       } catch (e) {}
       await window.customVoiceStore?.clearAll?.();
+      await window.customVideoStore?.clearAll?.();
+      try { localStorage.removeItem('baolong_buddy_collapsed'); } catch (e) {}
+      window.dinoBuddy?.syncVisibility?.();
       window.resetLearningPlusSessionFlags?.();
       window.soundMgr.gender = 'female';
       window.soundMgr.speedRate = 1.0;

@@ -361,8 +361,13 @@ function renderScienceLabTab() {
     const curStep = scienceAsagaoState.stage || 1;
     const st = SCIENCE_ASAGAO_STAGES.find(s => s.step === curStep) || SCIENCE_ASAGAO_STAGES[0];
     const canGrow = curStep < 5 && scienceAsagaoState.watered && scienceAsagaoState.sunned;
+    const weatherFxHtml = `
+      ${scienceAsagaoState.watered ? '<div class="asagao-fx-rain" aria-hidden="true"><span class="asagao-drop">💧</span><span class="asagao-drop">💧</span><span class="asagao-drop">💧</span><span class="asagao-drop">💧</span></div>' : ''}
+      ${scienceAsagaoState.sunned ? '<div class="asagao-fx-sun" aria-hidden="true">☀️</div>' : ''}
+      ${curStep === 5 ? '<div class="asagao-fx-butterfly" aria-hidden="true">🦋</div>' : ''}
+    `;
     stageBox.innerHTML = `
-      <div class="asagao-illus-wrap"><img src="images/science/asagao_${st.step}.svg" alt="${st.title}" loading="lazy"></div>
+      <div class="asagao-illus-wrap">${weatherFxHtml}<img src="images/science/asagao_${st.step}.svg" alt="${st.title}" loading="lazy"></div>
       <div class="asagao-stage-title">${st.title}</div>
       <div class="asagao-stage-desc">${st.desc}</div>
       <div class="asagao-care-bar">
@@ -375,11 +380,18 @@ function renderScienceLabTab() {
         ${curStep < 5 ? `<button type="button" class="challenge-btn" id="btnAsagaoGrow" style="padding:7px 14px; font-size:13px;" ${canGrow ? '' : 'disabled'}>🌱 Lớn lên bước ${curStep + 1}!</button>` : '<span class="story-status-badge done">🌺 Hoa đã nở rộ!</span>'}
         ${curStep > 1 ? '<button type="button" class="tool-chip" id="btnAsagaoReset">🔄 Gieo lại</button>' : ''}
       </div>
-      <button type="button" class="btn-hear-hint" id="btnHearAsagaoStage" style="margin: 10px auto 0 auto;"><span>🔊</span> Nghe giải thích bước này</button>
+      <div class="asagao-action-strip">
+        <button type="button" class="btn-hear-hint" id="btnHearAsagaoStage"><span>🔊</span> Nghe giải thích bước này</button>
+        <button type="button" class="btn-theater-launch" id="btnWatchAsagaoMovie"><span>🎬</span> Xem phim Cây Bìm Bìm</button>
+      </div>
     `;
     document.getElementById('btnHearAsagaoStage')?.addEventListener('click', () => {
       window.soundMgr.playClick();
       window.soundMgr.playAudioFile(st.key, null, `${st.title}. ${st.desc}`);
+    });
+    document.getElementById('btnWatchAsagaoMovie')?.addEventListener('click', () => {
+      window.soundMgr.playClick();
+      window.openStoryTheater?.({ kind: 'movie', itemId: 'asagao_cycle' });
     });
     document.getElementById('btnAsagaoWater')?.addEventListener('click', () => {
       scienceAsagaoState.watered = true;

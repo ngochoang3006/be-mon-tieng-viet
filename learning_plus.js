@@ -330,8 +330,18 @@ function normalizePlusStateFields(raw) {
   const parentSettings = {
     eyeBreakMinutes: [0, 15, 20, 30].includes(Number(rawSet.eyeBreakMinutes)) ? Number(rawSet.eyeBreakMinutes) : 20,
     focusHideGames: !!rawSet.focusHideGames,
-    dailyArcadeCap: Number(rawSet.dailyArcadeCap) >= 10 ? Math.min(100, Math.floor(Number(rawSet.dailyArcadeCap))) : DAILY_ARCADE_STAR_CAP
+    dailyArcadeCap: Number(rawSet.dailyArcadeCap) >= 10 ? Math.min(100, Math.floor(Number(rawSet.dailyArcadeCap))) : DAILY_ARCADE_STAR_CAP,
+    hideDinoBuddy: !!rawSet.hideDinoBuddy
   };
+  const rawVideos = Array.isArray(raw?.parentVideos) ? raw.parentVideos : [];
+  const parentVideos = rawVideos
+    .filter(v => v && typeof v.ytId === 'string' && /^[a-zA-Z0-9_-]{11}$/.test(v.ytId))
+    .slice(0, 40)
+    .map(v => ({
+      id: typeof v.id === 'string' ? v.id : `yt_${v.ytId}`,
+      title: typeof v.title === 'string' && v.title.trim() ? v.title.trim().slice(0, 80) : `Video (${v.ytId})`,
+      ytId: v.ytId
+    }));
   const rawGear = raw && typeof raw.arcadeGear === 'object' && raw.arcadeGear ? raw.arcadeGear : {};
   const unlockedDecors = Array.isArray(rawGear.unlockedDecors)
     ? Array.from(new Set(['none', ...rawGear.unlockedDecors.filter(x => typeof x === 'string')]))
@@ -343,7 +353,7 @@ function normalizePlusStateFields(raw) {
     unlockedDecors
   };
   const coins = typeof raw?.coins === 'number' && Number.isFinite(raw.coins) && raw.coins >= 0 ? Math.floor(raw.coins) : 0;
-  return { wordStats: cleanStats, dailyLog: cleanDaily, parentSettings, coins, arcadeGear };
+  return { wordStats: cleanStats, dailyLog: cleanDaily, parentSettings, coins, arcadeGear, parentVideos };
 }
 
 function ensureTodayLog() {
@@ -1192,6 +1202,7 @@ function renderParentPlusSection() {
         <button type="button" class="tool-chip parent-reset-btn" id="btnParentClearAllClips">🗑️ Xóa toàn bộ bản ghi âm cá nhân</button>
       </div>
     </div>
+    <div id="parentVideoManagerHost"></div>
   `;
 
   document.getElementById('parentEyeBreakSelect')?.addEventListener('change', (e) => {
@@ -1262,6 +1273,8 @@ function renderParentPlusSection() {
     renderParentPlusSection();
     if (typeof showToast === 'function') showToast('🗑️ Đã xóa toàn bộ bản ghi âm cá nhân trên thiết bị.');
   });
+
+  window.renderParentVideoManager?.();
 }
 window.renderParentPlusSection = renderParentPlusSection;
 
