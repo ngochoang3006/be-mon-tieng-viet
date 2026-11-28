@@ -456,15 +456,15 @@
       id: 'traffic_hero',
       title: '🚦 Phim An Toàn Giao Thông & Bảo Vệ Trái Đất',
       badge: '🌱 Đạo đức Offline • 6 cảnh',
-      cover: 'images/ethics/eth_7.jpg',
+      cover: 'images/ethics/eth_6.svg',
       fxTheme: 'ethics',
       scenes: [
-        { img: 'images/ethics/eth_7.jpg', captionMain: '🔴 ĐÈN ĐỎ DỪNG LẠI', captionSub: 'An toàn giao thông', captionVi: 'Gặp đèn đỏ tất cả xe phải dừng ngay trước vạch trắng!', audioKey: 'ethics_tl_red', fallbackText: 'Đèn đỏ dừng lại trước vạch trắng.', fxTheme: 'ethics' },
-        { img: 'images/ethics/eth_7.jpg', captionMain: '🟡 ĐÈN VÀNG CHẠY CHẬM', captionSub: 'Quan sát an toàn', captionVi: 'Thấy đèn vàng hãy giảm tốc độ và chuẩn bị dừng lại!', audioKey: 'ethics_tl_yellow', fallbackText: 'Đèn vàng đi chậm lại.', fxTheme: 'ethics' },
-        { img: 'images/ethics/eth_7.jpg', captionMain: '🟢 ĐÈN XANH ĐƯỢC ĐI', captionSub: 'Đội mũ bảo hiểm & thắt dây an toàn', captionVi: 'Đèn xanh mới được đi và luôn quan sát hai bên!', audioKey: 'ethics_tl_green', fallbackText: 'Đèn xanh mới được đi.', fxTheme: 'ethics' },
-        { img: 'images/ethics/eth_11.svg', captionMain: '🥬 RÁC HỮU CƠ', captionSub: 'Vỏ chuối, thức ăn thừa, lá cây', captionVi: 'Bỏ đúng thùng rác hữu cơ giúp ủ phân xanh nuôi cây!', audioKey: 'ethics_bin_organic', fallbackText: 'Rác hữu cơ.', fxTheme: 'science' },
-        { img: 'images/ethics/eth_11.svg', captionMain: '♻️ RÁC TÁI CHẾ', captionSub: 'Chai nhựa PET, lon nước, giấy báo', captionVi: 'Chai nhựa sạch tái chế thành nhiều đồ dùng mới!', audioKey: 'ethics_bin_recycle', fallbackText: 'Rác tái chế.', fxTheme: 'ethics' },
-        { img: 'images/ethics/eth_11.svg', captionMain: '🔋 PIN & RÁC ĐẶC BIỆT', captionSub: 'Pin cũ, bóng đèn hỏng', captionVi: 'Pin cũ phải bỏ riêng đúng nơi quy định để bảo vệ đất và nước!', audioKey: 'ethics_bin_hazard', fallbackText: 'Pin và rác đặc biệt.', fxTheme: 'ethics' }
+        { img: 'images/ethics/eth_6.svg', captionMain: '🔴 ĐÈN ĐỎ DỪNG LẠI', captionSub: 'An toàn giao thông', captionVi: 'Gặp đèn đỏ tất cả xe phải dừng ngay trước vạch trắng!', audioKey: 'ethics_tl_red', fallbackText: 'Đèn đỏ dừng lại trước vạch trắng.', fxTheme: 'ethics' },
+        { img: 'images/ethics/eth_6.svg', captionMain: '🟡 ĐÈN VÀNG CHẠY CHẬM', captionSub: 'Quan sát an toàn', captionVi: 'Thấy đèn vàng hãy giảm tốc độ và chuẩn bị dừng lại!', audioKey: 'ethics_tl_yellow', fallbackText: 'Đèn vàng đi chậm lại.', fxTheme: 'ethics' },
+        { img: 'images/ethics/eth_6.svg', captionMain: '🟢 ĐÈN XANH ĐƯỢC ĐI', captionSub: 'Đội mũ bảo hiểm & thắt dây an toàn', captionVi: 'Đèn xanh mới được đi và luôn quan sát hai bên!', audioKey: 'ethics_tl_green', fallbackText: 'Đèn xanh mới được đi.', fxTheme: 'ethics' },
+        { img: 'images/ethics/eth_7.jpg', captionMain: '🥬 RÁC HỮU CƠ', captionSub: 'Vỏ chuối, thức ăn thừa, lá cây', captionVi: 'Bỏ đúng thùng rác hữu cơ giúp ủ phân xanh nuôi cây!', audioKey: 'ethics_bin_organic', fallbackText: 'Rác hữu cơ.', fxTheme: 'science' },
+        { img: 'images/ethics/eth_7.jpg', captionMain: '♻️ RÁC TÁI CHẾ', captionSub: 'Chai nhựa PET, lon nước, giấy báo', captionVi: 'Chai nhựa sạch tái chế thành nhiều đồ dùng mới!', audioKey: 'ethics_bin_recycle', fallbackText: 'Rác tái chế.', fxTheme: 'ethics' },
+        { img: 'images/ethics/eth_7.jpg', captionMain: '🔋 PIN & RÁC ĐẶC BIỆT', captionSub: 'Pin cũ, bóng đèn hỏng', captionVi: 'Pin cũ phải bỏ riêng đúng nơi quy định để bảo vệ đất và nước!', audioKey: 'ethics_bin_hazard', fallbackText: 'Pin và rác đặc biệt.', fxTheme: 'ethics' }
       ]
     });
     return movies;
@@ -865,23 +865,37 @@
       ctx.strokeStyle = '#10b981';
       ctx.lineWidth = 3.5;
       ctx.stroke();
-      // Cute T-Rex head vector
+      // Cute T-Rex crest spikes & buddy face matching #dinoBuddyBtn
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.moveTo(-14, -18); ctx.lineTo(-9, -26); ctx.lineTo(-3, -19);
+      ctx.lineTo(3, -27); ctx.lineTo(9, -18);
+      ctx.closePath();
+      ctx.fill();
       ctx.fillStyle = '#10b981';
       ctx.beginPath();
-      ctx.arc(-2, -2, 19, 0, Math.PI * 2);
+      ctx.arc(-2, -1, 19, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#a7f3d0';
+      ctx.beginPath();
+      ctx.ellipse(5, 8, 9, 6, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.arc(-8, -7, 4, 0, Math.PI * 2);
+      ctx.arc(-7, -7, 4.5, 0, Math.PI * 2);
       ctx.fill();
       ctx.fillStyle = '#0f172a';
       ctx.beginPath();
-      ctx.arc(-8, -7, 2, 0, Math.PI * 2);
+      ctx.arc(-6, -7, 2.2, 0, Math.PI * 2);
       ctx.fill();
-      // Mouth animation
+      ctx.fillStyle = '#fda4af';
+      ctx.beginPath();
+      ctx.arc(-11, 2, 3, 0, Math.PI * 2);
+      ctx.fill();
+      // Smiling talking mouth
       ctx.fillStyle = '#be123c';
       ctx.beginPath();
-      ctx.ellipse(7, 3, 6, 1.5 + mouthOpen, 0, 0, Math.PI * 2);
+      ctx.ellipse(7, 2, 6.5, 1.8 + mouthOpen, 0, 0, Math.PI * 2);
       ctx.fill();
       ctx.restore();
     },

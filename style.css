@@ -5856,7 +5856,7 @@ body.focus-hide-games .banner-action-row button[onclick*="switchMode('game')"] {
 }
 .ethics-card-illus {
   width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   margin: 4px 0 8px 0;
   border-color: #bbf7d0;
 }
@@ -5870,9 +5870,9 @@ body.focus-hide-games .banner-action-row button[onclick*="switchMode('game')"] {
   display: block;
 }
 .ethics-sit-illus {
-  width: 240px;
+  width: 280px;
   max-width: 100%;
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 16 / 9;
   margin: 6px auto 10px auto;
   border-color: #f59e0b;
   box-shadow: 0 6px 16px rgba(245, 158, 11, 0.2);
@@ -7100,4 +7100,20 @@ body.in-arcade-mode .dino-buddy-dock {
   .arena-targets-grid {
     grid-template-columns: 1fr;
   }
+}
+.math-ans-row {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+.math-ans-row .math-ans-btn {
+  width: 100%;
+  padding-right: 44px;
+}
+.real-photo[src*="veh_tau_hoa"],
+.real-photo[src*="veh_truc_thang"],
+.arena-target-thumb img[src*="veh_tau_hoa"],
+.arena-target-thumb img[src*="veh_truc_thang"] {
+  object-fit: contain !important;
+  background: linear-gradient(180deg, #e0f2fe 0%, #f8fafc 100%);
 }

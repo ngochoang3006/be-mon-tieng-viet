@@ -458,7 +458,7 @@ function initDragonMemoryGame() {
             dragonMemMatched++;
             window.awardCoins?.(2);
             window.recordAnswer?.(a.data.id, true, { label: a.data.word, mode: 'dragons', audioKey: a.data.audioKey, noAutoCoin: true });
-            document.getElementById('dragonMemPairsText').innerText = `⭐ Đã ghép: ${dragonMemMatched} / 6 cặp`;
+            document.getElementById('dragonMemPairsText').innerText = `⭐ Đã ghép: ${dragonMemMatched} / 6 cặp${drBestTxt}`;
             window.soundMgr.playCorrect();
             if (typeof showToast === 'function') showToast(`🔥 Tuyệt! Đã tìm thấy cặp ${a.data.word} (+2 🪙)!`);
             window.soundMgr.playAudioFile(a.data.audioKey);

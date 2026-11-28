@@ -1,14 +1,42 @@
 /* ========================================================
    DINO & DRAGON MINI-GAMES MODULE
-   - 🥚 Ấp Trứng Rồng Thần (8 Eggs + Crack SVG + Riddle + Photo Reveal)
+   - 🥚 Ấp Trứng Rồng Thần (8 Element Eggs + Crack SVG + Riddle + Photo Reveal)
    - 🔥 Rồng Luyện Chữ Bay (Target Audio Arena + Combo Streak)
-   - 🍖 Cho Khủng Long Ăn Chữ (Hungry Dino Belly Meter + Word Feed)
+   - 🍖 Cho Khủng Long Ăn Chữ (Hungry Dino Belly Meter + Edible Word Feed)
    - 🥚 Ấp Trứng Khủng Long Bí Ẩn (10 Fossil/Amber Eggs + Album)
    ======================================================== */
 (function () {
   'use strict';
 
   const ROUNDS_ARENA = 6;
+  const EDIBLE_DINO_WORDS = new Set([
+    'cá', 'lá', 'gà', 'dưa hấu', 'xoài', 'ổi', 'nho',
+    'dâu tây', 'chuối', 'táo', 'dừa', 'bánh chưng'
+  ]);
+
+  const DRAGON_EGG_THEMES = {
+    dragon1: { top: '#fca5a5', mid: '#ef4444', bot: '#991b1b', spot: 'rgba(254, 240, 138, 0.58)' },
+    dragon2: { top: '#bae6fd', mid: '#0284c7', bot: '#1e3a8a', spot: 'rgba(224, 242, 254, 0.65)' },
+    dragon3: { top: '#cffafe', mid: '#06b6d4', bot: '#0e7490', spot: 'rgba(255, 255, 255, 0.72)' },
+    dragon4: { top: '#bbf7d0', mid: '#16a34a', bot: '#14532d', spot: 'rgba(254, 240, 138, 0.5)' },
+    dragon5: { top: '#fef08a', mid: '#eab308', bot: '#a16207', spot: 'rgba(255, 255, 255, 0.65)' },
+    dragon6: { top: '#e2e8f0', mid: '#64748b', bot: '#334155', spot: 'rgba(241, 245, 249, 0.55)' },
+    dragon7: { top: '#fed7aa', mid: '#c2410c', bot: '#78350f', spot: 'rgba(254, 243, 199, 0.5)' },
+    dragon8: { top: '#fbcfe8', mid: '#f472b6', bot: '#be185d', spot: 'rgba(254, 240, 138, 0.65)' }
+  };
+
+  const DINO_EGG_THEMES = {
+    dino1: { top: '#fecaca', mid: '#dc2626', bot: '#7f1d1d', spot: 'rgba(254, 226, 226, 0.55)' },
+    dino2: { top: '#bbf7d0', mid: '#22c55e', bot: '#15803d', spot: 'rgba(254, 240, 138, 0.55)' },
+    dino3: { top: '#bae6fd', mid: '#0ea5e9', bot: '#0369a1', spot: 'rgba(224, 242, 254, 0.6)' },
+    dino4: { top: '#ddd6fe', mid: '#8b5cf6', bot: '#4c1d95', spot: 'rgba(255, 255, 255, 0.55)' },
+    dino5: { top: '#fde68a', mid: '#f59e0b', bot: '#b45309', spot: 'rgba(120, 53, 15, 0.25)' },
+    dino6: { top: '#cbd5e1', mid: '#475569', bot: '#1e293b', spot: 'rgba(248, 250, 252, 0.45)' },
+    dino7: { top: '#fed7aa', mid: '#ea580c', bot: '#9a3412', spot: 'rgba(254, 240, 138, 0.55)' },
+    dino8: { top: '#fef9c3', mid: '#eab308', bot: '#854d0e', spot: 'rgba(255, 255, 255, 0.7)' },
+    dino9: { top: '#e7e5e4', mid: '#78716c', bot: '#44403c', spot: 'rgba(254, 243, 199, 0.4)' },
+    dino10: { top: '#fde68a', mid: '#d97706', bot: '#78350f', spot: 'rgba(255, 255, 255, 0.5)' }
+  };
 
   function shuffle(arr) {
     return [...arr].sort(() => Math.random() - 0.5);
@@ -43,12 +71,12 @@
     return out;
   }
 
-  function renderCrackSvg(taps, themeKind) {
-    const isDragon = themeKind === 'dragon';
-    const baseTop = isDragon ? '#fca5a5' : '#fde68a';
-    const baseMid = isDragon ? '#ef4444' : '#f59e0b';
-    const baseBot = isDragon ? '#991b1b' : '#b45309';
-    const spotCol = isDragon ? 'rgba(254, 240, 138, 0.5)' : 'rgba(120, 53, 15, 0.25)';
+  function renderCrackSvg(taps, themeKind, itemId) {
+    const paletteMap = themeKind === 'dragon' ? DRAGON_EGG_THEMES : DINO_EGG_THEMES;
+    const pal = paletteMap[itemId] || (themeKind === 'dragon'
+      ? { top: '#fca5a5', mid: '#ef4444', bot: '#991b1b', spot: 'rgba(254, 240, 138, 0.5)' }
+      : { top: '#fde68a', mid: '#f59e0b', bot: '#b45309', spot: 'rgba(120, 53, 15, 0.25)' });
+    const gradId = `eggGrad_${themeKind}_${itemId || 'def'}`;
 
     const crack1 = taps >= 1
       ? '<path d="M72 34 L62 56 L78 68 L66 84" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>'
@@ -63,19 +91,19 @@
     return `
       <svg class="egg-hatch-svg ${taps > 0 ? 'egg-is-tapped' : ''}" viewBox="0 0 140 160" width="128" height="146" aria-hidden="true">
         <defs>
-          <radialGradient id="eggGrad_${themeKind}" cx="38%" cy="30%" r="70%">
-            <stop offset="0%" stop-color="${baseTop}"/>
-            <stop offset="55%" stop-color="${baseMid}"/>
-            <stop offset="100%" stop-color="${baseBot}"/>
+          <radialGradient id="${gradId}" cx="38%" cy="30%" r="70%">
+            <stop offset="0%" stop-color="${pal.top}"/>
+            <stop offset="55%" stop-color="${pal.mid}"/>
+            <stop offset="100%" stop-color="${pal.bot}"/>
           </radialGradient>
         </defs>
         <ellipse cx="70" cy="144" rx="44" ry="9" fill="rgba(15,23,42,0.18)"/>
         <path d="M70 16 C40 16 22 62 22 98 C22 128 42 142 70 142 C98 142 118 128 118 98 C118 62 100 16 70 16 Z"
-              fill="url(#eggGrad_${themeKind})" stroke="#ffffff" stroke-width="3"/>
-        <circle cx="48" cy="64" r="7" fill="${spotCol}"/>
-        <circle cx="90" cy="52" r="5" fill="${spotCol}"/>
-        <circle cx="88" cy="108" r="9" fill="${spotCol}"/>
-        <circle cx="46" cy="106" r="6" fill="${spotCol}"/>
+              fill="url(#${gradId})" stroke="#ffffff" stroke-width="3"/>
+        <circle cx="48" cy="64" r="7" fill="${pal.spot}"/>
+        <circle cx="90" cy="52" r="5" fill="${pal.spot}"/>
+        <circle cx="88" cy="108" r="9" fill="${pal.spot}"/>
+        <circle cx="46" cy="106" r="6" fill="${pal.spot}"/>
         ${crack1}
         ${crack2}
         ${glow3}
@@ -86,7 +114,7 @@
   function createEggHatchController(cfg) {
     let selectedId = null;
     let taps = 0;
-    let stage = 'warm'; // 'warm' | 'riddle' | 'revealed'
+    let stage = 'warm';
     let riddleOpts = [];
 
     function getItems() {
@@ -151,21 +179,24 @@
         const pct = Math.round((taps / 3) * 100);
         const wrap = document.createElement('div');
         wrap.className = `egg-nest-card ${cfg.themeClass}`;
+        const mysteryText = taps >= 2
+          ? `🔍 Sắp nở rồi! Gợi ý đặc điểm: "${current.funFact}"`
+          : '🥚 Quả trứng bí ẩn đang rung lắc! Chạm 3 lần & lắng nghe tiếng gọi bên trong nhé!';
         wrap.innerHTML = `
           <div class="egg-warmth-row">
             <span class="egg-warmth-label">${cfg.warmPrompt} (${taps}/3 chạm)</span>
             <div class="egg-warmth-bar"><div class="egg-warmth-fill" style="width:${pct}%"></div></div>
           </div>
           <div class="egg-tap-stage" id="${cfg.ids.tapHost}"></div>
-          <p class="egg-hint-fact">💡 Gợi ý bí mật: "${current.funFact}"</p>
+          <p class="egg-hint-fact">${mysteryText}</p>
           <div class="egg-nest-actions"></div>
         `;
         const tapHost = wrap.querySelector(`#${cfg.ids.tapHost}`);
         const tapBtn = document.createElement('button');
         tapBtn.type = 'button';
         tapBtn.className = 'egg-tap-btn';
-        tapBtn.setAttribute('aria-label', `Chạm để ấp ${current.word}`);
-        tapBtn.innerHTML = `${renderCrackSvg(taps, cfg.themeKind)}<span class="egg-tap-cta">${taps === 0 ? '👆 Chạm 3 lần để gõ vỏ trứng!' : (taps < 3 ? '💥 Sắp nứt rồi! Chạm tiếp nào!' : '✨ Nứt vỏ!')}</span>`;
+        tapBtn.setAttribute('aria-label', `Chạm để ấp quả trứng bí mật`);
+        tapBtn.innerHTML = `${renderCrackSvg(taps, cfg.themeKind, current.id)}<span class="egg-tap-cta">${taps === 0 ? '👆 Chạm 3 lần để gõ vỏ trứng!' : (taps < 3 ? '💥 Sắp nứt rồi! Chạm tiếp nào!' : '✨ Nứt vỏ!')}</span>`;
         tapBtn.onclick = (e) => {
           taps++;
           window.soundMgr?.playPop?.();
@@ -199,7 +230,7 @@
         box.innerHTML = `
           <div class="egg-riddle-header">
             <h3 class="egg-riddle-title">🎉 Vỏ trứng nứt toác rồi! Bạn nào sắp chào đời thế?</h3>
-            <p class="egg-hint-fact">🔍 "${current.funFact}"</p>
+            <p class="egg-hint-fact">💡 Gợi ý: "${current.funFact}"</p>
           </div>
           <div class="egg-nest-actions" id="${cfg.ids.riddleHearHost}"></div>
           <div class="egg-choices-grid" id="${cfg.ids.choicesHost}"></div>
@@ -535,16 +566,13 @@
     fxKind: 'dino',
     targetThemeClass: 'theme-dino-target',
     progressLabel: '🍖 Bữa ăn',
-    promptPrefix: 'Khủng Long đang thèm món chữ:',
+    promptPrefix: 'Khủng Long đang thèm món ngon:',
     hitEmoji: '🍖',
     victoryAwardMsg: 'Đầu bếp Công Viên Khủng Long!',
     badgePool: ['🍖', '🌿', '🍎', '🍉'],
     playRoar: () => window.soundMgr?.playDinoRoar?.(),
     getHosts: () => (typeof DINO_LESSONS !== 'undefined' ? DINO_LESSONS : []),
-    getPool: () => [
-      ...getVocabWords([7, 6]),
-      ...(typeof DINO_LESSONS !== 'undefined' ? DINO_LESSONS : [])
-    ],
+    getPool: () => getVocabWords([1, 7, 10]).filter(w => EDIBLE_DINO_WORDS.has(w.word)),
     ids: {
       playStage: 'dinoFeedPlayStage',
       victoryStage: 'dinoFeedVictoryStage',

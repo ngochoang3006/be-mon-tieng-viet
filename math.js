@@ -1508,14 +1508,19 @@ function loadGeoClockQuestion() {
       const isHalf = q.targetMinute === 30;
       const aKey = isHalf ? `math_clock_half_${h}` : `math_clock_${h}`;
       const labelTxt = isHalf ? `${h}:30 (${h} giờ rưỡi)` : `${h} giờ`;
-      const btn = document.createElement('div');
-      btn.setAttribute('role', 'button');
-      btn.setAttribute('tabindex', '0');
+      const row = document.createElement('div');
+      row.className = 'math-ans-row';
+      const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = 'math-ans-btn';
       btn.style.fontSize = isHalf ? '18px' : '24px';
-      btn.innerHTML = `<span>${labelTxt}</span><button type="button" class="quiz-opt-speak-btn" aria-label="Nghe giờ">🔊</button>`;
-      const spk = btn.querySelector('.quiz-opt-speak-btn');
-      if (spk) spk.onclick = (e) => {
+      btn.textContent = labelTxt;
+      const spk = document.createElement('button');
+      spk.type = 'button';
+      spk.className = 'quiz-opt-speak-btn';
+      spk.setAttribute('aria-label', 'Nghe giờ');
+      spk.textContent = '🔊';
+      spk.onclick = (e) => {
         e.stopPropagation();
         window.soundMgr.playClick();
         window.soundMgr.playAudioFile(aKey, null, labelTxt);
@@ -1547,24 +1552,31 @@ function loadGeoClockQuestion() {
           if (typeof showToast === 'function') showToast('🕒 Mẹo: Xem kim NGẮN màu ĐỎ đang chỉ qua số nào nhé!');
         }
       };
-      optsGrid.appendChild(btn);
+      row.appendChild(btn);
+      row.appendChild(spk);
+      optsGrid.appendChild(row);
     });
   } else if (q.kind === 'ruler') {
     clockWrap.style.display = 'none';
     if (visWrap) {
       visWrap.style.display = 'flex';
-      visWrap.innerHTML = `<svg viewBox="0 0 560 150" class="math-ruler-svg" style="max-width:460px;">${buildMathRulerSvgMarkup(q.rulerItem)}</svg>`;
+      visWrap.innerHTML = `<svg viewBox="0 0 560 150" class="math-ruler-svg" style="max-width:460px;">${buildMathRulerSvgMarkup(q.rulerItem, true)}</svg>`;
     }
     q.options.forEach(cmVal => {
-      const btn = document.createElement('div');
-      btn.setAttribute('role', 'button');
-      btn.setAttribute('tabindex', '0');
+      const row = document.createElement('div');
+      row.className = 'math-ans-row';
+      const btn = document.createElement('button');
+      btn.type = 'button';
       btn.className = 'math-ans-btn';
       btn.style.fontSize = '22px';
-      btn.innerHTML = `<span>${cmVal} cm</span><button type="button" class="quiz-opt-speak-btn" aria-label="Nghe độ dài">🔊</button>`;
+      btn.textContent = `${cmVal} cm`;
       const aKey = `math_cm_opt_${cmVal}`;
-      const spk = btn.querySelector('.quiz-opt-speak-btn');
-      if (spk) spk.onclick = (e) => {
+      const spk = document.createElement('button');
+      spk.type = 'button';
+      spk.className = 'quiz-opt-speak-btn';
+      spk.setAttribute('aria-label', 'Nghe độ dài');
+      spk.textContent = '🔊';
+      spk.onclick = (e) => {
         e.stopPropagation();
         window.soundMgr.playClick();
         window.soundMgr.playAudioFile(aKey, null, `${cmVal} xăng-ti-mét`);
@@ -1596,7 +1608,9 @@ function loadGeoClockQuestion() {
           if (typeof showToast === 'function') showToast('📏 Mẹo: Đuôi bắt đầu ở số 0, nhìn mũi nhọn chạm vạch số mấy nhé!');
         }
       };
-      optsGrid.appendChild(btn);
+      row.appendChild(btn);
+      row.appendChild(spk);
+      optsGrid.appendChild(row);
     });
   } else if (q.kind === 'day') {
     clockWrap.style.display = 'none';
@@ -1822,22 +1836,24 @@ function renderMathSolids() {
   });
 }
 
-function buildMathRulerSvgMarkup(item) {
+function buildMathRulerSvgMarkup(item, isQuiz = false) {
   const cmWidth = 40;
   const startX = 40;
   let ticks = '';
   for (let c = 0; c <= 12; c++) {
     const x = startX + c * cmWidth;
-    ticks += `<line x1="${x}" y1="78" x2="${x}" y2="${c % 5 === 0 ? 104 : 96}" stroke="#0f172a" stroke-width="${c === item.cm ? 3 : 2}"/>`;
-    ticks += `<text x="${x}" y="124" text-anchor="middle" font-size="14" font-weight="900" fill="${c === item.cm || c === 0 ? '#e11d48' : '#334155'}" font-family="Nunito,sans-serif">${c}</text>`;
+    const highlightTick = isQuiz ? (c === 0) : (c === item.cm || c === 0);
+    ticks += `<line x1="${x}" y1="78" x2="${x}" y2="${c % 5 === 0 ? 104 : 96}" stroke="#0f172a" stroke-width="${!isQuiz && c === item.cm ? 3 : 2}"/>`;
+    ticks += `<text x="${x}" y="124" text-anchor="middle" font-size="14" font-weight="900" fill="${highlightTick ? '#e11d48' : '#334155'}" font-family="Nunito,sans-serif">${c}</text>`;
   }
   const barW = item.cm * cmWidth;
+  const barLabel = isQuiz ? `${item.icon} ? cm` : `${item.icon} ${item.cm} cm`;
   return `
     <rect x="20" y="78" width="520" height="58" rx="10" fill="#fef08a" stroke="#ca8a04" stroke-width="3"/>
     ${ticks}
     <text x="536" y="124" font-size="12" font-weight="900" fill="#92400e">cm</text>
     <rect x="${startX}" y="28" width="${barW}" height="32" rx="10" fill="${item.color}" stroke="#0f172a" stroke-width="2.5"/>
-    <text x="${startX + barW / 2}" y="49" text-anchor="middle" font-size="15" font-weight="900" fill="#ffffff" font-family="Nunito,sans-serif">${item.icon} ${item.cm} cm</text>
+    <text x="${startX + barW / 2}" y="49" text-anchor="middle" font-size="15" font-weight="900" fill="#ffffff" stroke="#0f172a" stroke-width="3.5" paint-order="stroke" font-family="Nunito,sans-serif">${barLabel}</text>
     <line x1="${startX + barW}" y1="60" x2="${startX + barW}" y2="78" stroke="#e11d48" stroke-width="3" stroke-dasharray="4 3"/>
   `;
 }

@@ -1,26 +1,30 @@
-const CACHE_NAME = 'baolong-v20261128v13';
+const CACHE_NAME = 'baolong-v20261128v15';
 const CORE_SHELL = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './style.css?v=20261128v13',
-  './data.js?v=20261128v13',
-  './speech.js?v=20261128v13',
-  './math.js?v=20261128v13',
-  './ethics.js?v=20261128v13',
-  './english.js?v=20261128v13',
-  './japanese.js?v=20261128v13',
-  './science_life.js?v=20261128v13',
-  './arts_pe.js?v=20261128v13',
-  './arcade.js?v=20261128v13',
-  './dragons.js?v=20261128v13',
-  './dino_dragon_games.js?v=20261128v13',
-  './story_scenes.js?v=20261128v13',
-  './learning_plus.js?v=20261128v13',
-  './living_media.js?v=20261128v13',
-  './app.js?v=20261128v13',
+  './style.css?v=20261128v15',
+  './data.js?v=20261128v15',
+  './speech.js?v=20261128v15',
+  './math.js?v=20261128v15',
+  './ethics.js?v=20261128v15',
+  './english.js?v=20261128v15',
+  './japanese.js?v=20261128v15',
+  './science_life.js?v=20261128v15',
+  './arts_pe.js?v=20261128v15',
+  './arcade.js?v=20261128v15',
+  './dragons.js?v=20261128v15',
+  './dino_dragon_games.js?v=20261128v15',
+  './story_scenes.js?v=20261128v15',
+  './learning_plus.js?v=20261128v15',
+  './living_media.js?v=20261128v15',
+  './app.js?v=20261128v15',
   './images/icons/icon-192.png',
-  './images/icons/icon-512.png'
+  './images/icons/icon-512.png',
+  './images/ethics/sit_shinkansen.svg',
+  './images/ethics/sit_spill_water.svg',
+  './images/ethics/sit_help_friend.svg',
+  './images/ethics/sit_stranger_gate.svg'
 ];
 
 self.addEventListener('install', (event) => {

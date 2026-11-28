@@ -155,7 +155,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit2',
-    image: 'images/ethics/eth_6.svg',
+    image: 'images/ethics/sit_shinkansen.svg',
     badge: '🚅 Văn minh trên Tàu Shinkansen',
     audioKey: 'ethics_sit_2',
     icon: '🚅',
@@ -167,7 +167,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit3',
-    image: 'images/ethics/eth_4.svg',
+    image: 'images/ethics/sit_spill_water.svg',
     badge: '🌟 Dũng cảm nhận lỗi',
     audioKey: 'ethics_sit_3',
     icon: '🥛',
@@ -203,7 +203,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit6',
-    image: 'images/ethics/eth_3.jpg',
+    image: 'images/science/sc_topic_1.jpg',
     badge: '🧸 Tự lập thu dọn đồ chơi',
     audioKey: 'ethics_sit_6',
     icon: '🦖',
@@ -215,7 +215,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit7',
-    image: 'images/ethics/eth_5.svg',
+    image: 'images/ethics/sit_help_friend.svg',
     badge: '🤕 Yêu thương bạn bè',
     audioKey: 'ethics_sit_7',
     icon: '🩹',
@@ -239,7 +239,7 @@ const ETHICS_SITUATIONS_DATA = [
   },
   {
     id: 'sit9',
-    image: 'images/ethics/eth_10.svg',
+    image: 'images/ethics/sit_stranger_gate.svg',
     badge: '🆘 An toàn với người lạ',
     audioKey: 'ethics_sit_9',
     icon: '🚪',
